@@ -2,7 +2,7 @@
 Yomitoku Client - Main client class for processing SageMaker outputs
 """
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 from pathlib import Path
 
 from .parsers.sagemaker_parser import SageMakerParser, DocumentResult
@@ -43,7 +43,7 @@ class YomitokuClient:
     
     def convert_to_format(
         self, 
-        data: DocumentResult, 
+        data: Union[DocumentResult, str], 
         format_type: str, 
         output_path: Optional[str] = None,
         **kwargs
@@ -52,7 +52,7 @@ class YomitokuClient:
         Convert document data to specified format
         
         Args:
-            data: Document result to convert
+            data: Document result to convert (DocumentResult or JSON string)
             format_type: Target format (csv, markdown, html, json)
             output_path: Optional path to save the output
             **kwargs: Additional rendering options
@@ -64,6 +64,10 @@ class YomitokuClient:
             FormatConversionError: If format is not supported or conversion fails
         """
         try:
+            # Parse data if it's a string
+            if isinstance(data, str):
+                data = self.parse_json(data)
+            
             # Create renderer using factory
             renderer = RendererFactory.create_renderer(format_type, **kwargs)
             
