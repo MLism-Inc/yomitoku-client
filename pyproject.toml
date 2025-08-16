@@ -53,7 +53,7 @@ notebooks = [
 ]
 
 [project.scripts]
-yomitoku-client = "yomitoku_client.cli:main"
+yomitoku = "yomitoku_client.cli:main"
 
 [tool.uv]
 dev-dependencies = [
