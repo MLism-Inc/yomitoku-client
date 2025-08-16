@@ -1,0 +1,114 @@
+# Yomitoku Client - Cursor AI 助手配置
+
+## 项目概述
+这是一个用于处理SageMaker Yomitoku API输出的Python客户端库，提供格式转换和可视化功能。
+
+## 核心功能
+- 解析SageMaker Yomitoku API的JSON输出
+- 提供多种格式转换（CSV、Markdown、HTML等）
+- 数据可视化功能
+- 支持AWS Marketplace部署
+
+## 开发规则
+
+### 代码风格
+- 使用Python 3.8+语法
+- 遵循PEP 8代码风格指南
+- 所有函数和类必须有文档字符串
+- 使用类型提示（type hints）
+- 严格遵循设计模式（工厂模式、策略模式等）
+
+### 项目结构
+```
+yomitoku-client/
+├── src/yomitoku_client/     # 源代码目录
+│   ├── __init__.py
+│   ├── client.py           # 主客户端类
+│   ├── parsers/            # 解析器模块
+│   ├── renderers/          # 渲染器模块（工厂模式）
+│   ├── formatters/         # 格式转换器（策略模式）
+│   ├── visualizers/        # 可视化模块
+│   └── exceptions.py       # 自定义异常
+├── tests/                  # 测试代码
+├── notebooks/              # Jupyter笔记本示例
+├── pyproject.toml          # uv项目配置
+├── README.md              # 项目说明
+└── .cursorrules           # Cursor AI配置
+```
+
+### 依赖管理
+- 使用uv进行依赖管理
+- 在pyproject.toml中定义依赖
+- 明确指定版本号避免兼容性问题
+
+### API开发规范
+- 所有API调用必须有适当的错误处理
+- 使用异步编程模式（async/await）处理网络请求
+- 实现重试机制和超时处理
+- 提供清晰的错误消息和日志记录
+
+### 设计模式要求
+- 使用工厂模式管理不同的渲染器
+- 使用策略模式处理不同的格式转换
+- 使用适配器模式处理不同的输入格式
+- 确保代码的可扩展性和可维护性
+
+### 格式转换功能
+- CSV格式输出
+- Markdown格式输出
+- HTML格式输出
+- JSON格式输出
+- Excel格式输出
+- 自定义格式支持
+
+### 可视化功能
+- 使用matplotlib、plotly进行数据可视化
+- 支持多种图表类型
+- 提供交互式图表功能
+
+### 测试要求
+- 为所有主要功能编写单元测试
+- 包含集成测试验证API调用
+- 测试覆盖率应达到80%以上
+
+### 文档要求
+- 所有公共API必须有详细的文档字符串
+- 包含使用示例和参数说明
+- 提供中文和日文文档支持
+
+## 代码示例模式
+
+### 渲染器工厂模式
+```python
+class RendererFactory:
+    """渲染器工厂类"""
+    
+    @staticmethod
+    def create_renderer(format_type: str) -> BaseRenderer:
+        """创建指定类型的渲染器"""
+        if format_type == "csv":
+            return CSVRenderer()
+        elif format_type == "markdown":
+            return MarkdownRenderer()
+        # ... 其他格式
+```
+
+### 格式转换策略模式
+```python
+class FormatConverter:
+    """格式转换器"""
+    
+    def __init__(self, strategy: ConversionStrategy):
+        self.strategy = strategy
+    
+    def convert(self, data: dict) -> str:
+        """使用策略进行格式转换"""
+        return self.strategy.convert(data)
+```
+
+## 注意事项
+- 当前项目处于开发准备阶段
+- 优先实现核心功能
+- 保持代码的可维护性和可扩展性
+- 考虑AWS Marketplace部署需求
+- 严格遵循设计模式原则
