@@ -47,13 +47,13 @@ client.convert_to_format(data, 'markdown', 'output.md')
 
 ```bash
 # Convert to CSV
-yomitoku-client sagemaker_output.json --format csv --output result.csv
+yomitoku sagemaker_output.json --format csv --output result.csv
 
 # Convert to Markdown
-yomitoku-client sagemaker_output.json --format markdown --output result.md
+yomitoku sagemaker_output.json --format markdown --output result.md
 
 # Ignore line breaks
-yomitoku-client sagemaker_output.json --format csv --ignore-line-break
+yomitoku sagemaker_output.json --format csv --ignore-line-break
 ```
 
 ## Supported Formats
