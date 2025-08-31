@@ -78,7 +78,37 @@ class SageMakerParser:
         """Initialize the parser"""
         pass
     
-    def parse_json(self, json_data: str) -> DocumentResult:
+    def parse_dict(self, data: Dict[str, Any]) -> List[DocumentResult]:
+        """
+        Parse dictionary data from SageMaker output
+        
+        Args:
+            data: Dictionary from SageMaker
+            
+        Returns:
+            List[DocumentResult]: List of all parsed document results
+            
+        Raises:
+            ValidationError: If data format is invalid
+            DocumentAnalysisError: If parsing fails
+        """
+        try:
+            if "result" not in data or not data["result"]:
+                raise ValidationError("Invalid SageMaker output format: missing 'result' field")
+
+            # Handle both single result and multiple results
+            if isinstance(data["result"], list):
+                if len(data["result"]) == 0:
+                    raise ValidationError("Empty result list")
+                # Return all results
+                return [DocumentResult(**result_data) for result_data in data["result"]]
+            else:
+                # Single result, return as list
+                return [DocumentResult(**data["result"])]
+        except Exception as e:
+            raise DocumentAnalysisError(f"Failed to parse document: {e}")
+    
+    def parse_json(self, json_data: str) -> List[DocumentResult]:
         """
         Parse JSON data from SageMaker output
         
@@ -86,7 +116,7 @@ class SageMakerParser:
             json_data: JSON string from SageMaker
             
         Returns:
-            DocumentResult: Parsed document result
+            List[DocumentResult]: List of all parsed document results
             
         Raises:
             ValidationError: If JSON format is invalid
@@ -94,21 +124,16 @@ class SageMakerParser:
         """
         try:
             data = json.loads(json_data)
-            
-            if "result" not in data or not data["result"]:
-                raise ValidationError("Invalid SageMaker output format: missing 'result' field")
-            
-            # Take the first result if multiple
-            result_data = data["result"][0] if isinstance(data["result"], list) else data["result"]
-            
-            return DocumentResult(**result_data)
+            return self.parse_dict(data)
             
         except json.JSONDecodeError as e:
             raise ValidationError(f"Invalid JSON format: {e}")
         except Exception as e:
             raise DocumentAnalysisError(f"Failed to parse document: {e}")
     
-    def parse_file(self, file_path: str) -> DocumentResult:
+
+    
+    def parse_file(self, file_path: str) -> List[DocumentResult]:
         """
         Parse JSON file from SageMaker output
         
@@ -116,7 +141,7 @@ class SageMakerParser:
             file_path: Path to JSON file
             
         Returns:
-            DocumentResult: Parsed document result
+            List[DocumentResult]: List of all parsed document results
         """
         try:
             with open(file_path, 'r', encoding='utf-8') as f:

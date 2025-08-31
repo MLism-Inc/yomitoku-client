@@ -2,7 +2,7 @@
 Yomitoku Client - Main client class for processing SageMaker outputs
 """
 
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Any, List
 from pathlib import Path
 
 from .parsers.sagemaker_parser import SageMakerParser, DocumentResult
@@ -17,7 +17,7 @@ class YomitokuClient:
         """Initialize the client"""
         self.parser = SageMakerParser()
     
-    def parse_json(self, json_data: str) -> DocumentResult:
+    def parse_json(self, json_data: str) -> List[DocumentResult]:
         """
         Parse JSON data from SageMaker output
         
@@ -25,11 +25,23 @@ class YomitokuClient:
             json_data: JSON string from SageMaker
             
         Returns:
-            DocumentResult: Parsed document result
+            List[DocumentResult]: List of all parsed document results
         """
         return self.parser.parse_json(json_data)
     
-    def parse_file(self, file_path: str) -> DocumentResult:
+    def parse_dict(self, data: Dict[str, Any]) -> List[DocumentResult]:
+        """
+        Parse dictionary data from SageMaker output
+        
+        Args:
+            data: Dictionary from SageMaker
+            
+        Returns:
+            List[DocumentResult]: List of all parsed document results
+        """
+        return self.parser.parse_dict(data)
+    
+    def parse_file(self, file_path: str) -> List[DocumentResult]:
         """
         Parse JSON file from SageMaker output
         
@@ -37,13 +49,13 @@ class YomitokuClient:
             file_path: Path to JSON file
             
         Returns:
-            DocumentResult: Parsed document result
+            List[DocumentResult]: List of all parsed document results
         """
         return self.parser.parse_file(file_path)
     
     def convert_to_format(
         self, 
-        data: Union[DocumentResult, str], 
+        data: List[DocumentResult], 
         format_type: str, 
         output_path: Optional[str] = None,
         **kwargs
@@ -52,7 +64,7 @@ class YomitokuClient:
         Convert document data to specified format
         
         Args:
-            data: Document result to convert (DocumentResult or JSON string)
+            data: List of document results to convert
             format_type: Target format (csv, markdown, html, json)
             output_path: Optional path to save the output
             **kwargs: Additional rendering options
@@ -64,24 +76,42 @@ class YomitokuClient:
             FormatConversionError: If format is not supported or conversion fails
         """
         try:
-            # Parse data if it's a string
-            if isinstance(data, str):
-                data = self.parse_json(data)
-            
             # Create renderer using factory
             renderer = RendererFactory.create_renderer(format_type, **kwargs)
             
-            # Render content
-            content = renderer.render(data, **kwargs)
+            # For now, we'll combine all results into one
+            # This is a simple approach - you might want to customize this based on your needs
+            combined_content = []
+            
+            for i, doc_data in enumerate(data):
+                # Add separator between documents
+                if i > 0:
+                    combined_content.append(f"\n--- Document {i+1} ---\n")
+                else:
+                    combined_content.append(f"--- Document {i+1} ---\n")
+                
+                # Render individual document
+                content = renderer.render(doc_data, **kwargs)
+                combined_content.append(content)
+            
+            final_content = "".join(combined_content)
             
             # Save to file if output path is provided
             if output_path:
-                renderer.save(data, output_path, **kwargs)
+                # For multiple documents, we might want to save them separately
+                # For now, we'll save the combined content
+                try:
+                    with open(output_path, 'w', encoding='utf-8') as f:
+                        f.write(final_content)
+                except Exception as e:
+                    raise FormatConversionError(f"Failed to save file: {e}")
             
-            return content
+            return final_content
             
         except Exception as e:
             raise FormatConversionError(f"Failed to convert to {format_type}: {e}")
+    
+
     
     def get_supported_formats(self) -> list:
         """

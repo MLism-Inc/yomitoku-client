@@ -21,6 +21,7 @@ class RendererFactory:
         "markdown": MarkdownRenderer,
         "md": MarkdownRenderer,
         "html": HTMLRenderer,
+        "htm": HTMLRenderer,
         "json": JSONRenderer,
     }
     

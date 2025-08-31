@@ -29,6 +29,7 @@ dependencies = [
     "openpyxl>=3.0.10",
     "python-docx>=0.8.11",
     "PyPDF2>=3.0.0",
+    "pyarrow>=12.0.0",
 ]
 
 [project.optional-dependencies]
@@ -53,7 +54,7 @@ notebooks = [
 ]
 
 [project.scripts]
-yomitoku = "yomitoku_client.cli:main"
+yomitoku-client = "yomitoku_client.cli:main"
 
 [tool.uv]
 dev-dependencies = [
@@ -69,7 +70,7 @@ dev-dependencies = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.5.44",
     "jupyter>=1.0.0",
-    "ipykernel>=6.20.0",
+    "ipykernel>=6.20.0"
 ]
 
 [tool.black]
@@ -79,7 +80,9 @@ target-version = ['py38']
 [tool.ruff]
 line-length = 88
 target-version = "py38"
-select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "EM", "EXE", "FA", "ICN", "INP", "ISC", "ICN", "G", "SIM", "TID", "TCH", "INT", "Q", "ARG", "PIE", "PYI", "PT", "YTT", "S", "BLE", "FBT", "B", "COM", "C4", "DTZ", "T10", "EM", "EXE", "FA", "ICN", "INP", "ISC", "ICN", "G", "SIM", "TID", "TCH", "INT", "Q", "ARG", "PIE", "PYI", "PT", "YTT", "S", "BLE", "FBT"]
+select = [
+    "E", "F", "W", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "EM", "EXE", "FA", "ICN", "INP", "ISC", "G", "SIM", "TID", "TCH", "INT", "Q", "ARG", "PIE", "PYI", "PT", "YTT", "S", "BLE", "FBT", "COM"
+]
 ignore = ["E501", "B008", "C901"]
 
 [tool.pytest.ini_options]

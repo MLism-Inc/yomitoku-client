@@ -11,6 +11,7 @@ __email__ = "support-aws-marketplace@mlism.com"
 
 from .client import YomitokuClient
 from .exceptions import YomitokuError, DocumentAnalysisError, APIError
+from .samples import image_sample, pdf_sample
 
 __all__ = [
     "YomitokuClient",
@@ -18,4 +19,6 @@ __all__ = [
     "DocumentAnalysisError",
     "APIError",
     "__version__",
+    "image_sample",
+    "pdf_sample",
 ]

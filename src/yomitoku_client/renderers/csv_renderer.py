@@ -4,33 +4,47 @@ CSV Renderer - For converting document data to CSV format
 
 import csv
 import os
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+import numpy as np
 
 from .base import BaseRenderer
-from ..parsers.sagemaker_parser import DocumentResult, Table, Paragraph
+from ..parsers.sagemaker_parser import DocumentResult, Table, Paragraph, Figure
 from ..exceptions import FormatConversionError
+from ..utils import save_figure
 
 
 class CSVRenderer(BaseRenderer):
     """CSV format renderer"""
     
-    def __init__(self, ignore_line_break: bool = True, **kwargs):
+    def __init__(self, 
+                 ignore_line_break: bool = False,
+                 export_figure: bool = True,
+                 export_figure_letter: bool = False,
+                 figure_dir: str = "figures",
+                 **kwargs):
         """
         Initialize CSV renderer
         
         Args:
             ignore_line_break: Whether to ignore line breaks in text
+            export_figure: Whether to export figures
+            export_figure_letter: Whether to export figure letters/text
+            figure_dir: Directory to save figures
             **kwargs: Additional options
         """
         super().__init__(**kwargs)
         self.ignore_line_break = ignore_line_break
+        self.export_figure = export_figure
+        self.export_figure_letter = export_figure_letter
+        self.figure_dir = figure_dir
     
-    def render(self, data: DocumentResult, **kwargs) -> str:
+    def render(self, data: DocumentResult, img: Optional[np.ndarray] = None, **kwargs) -> str:
         """
         Render document data to CSV format
         
         Args:
             data: Document result to render
+            img: Optional image array for figure extraction
             **kwargs: Additional rendering options
             
         Returns:
@@ -58,22 +72,41 @@ class CSVRenderer(BaseRenderer):
                 "order": paragraph.order,
             })
         
+        # Process figure letters if requested
+        if self.export_figure_letter and hasattr(data, 'figures'):
+            for figure in data.figures:
+                if hasattr(figure, 'paragraphs'):
+                    for paragraph in sorted(figure.paragraphs, key=lambda x: x.order):
+                        contents = self._paragraph_to_csv(paragraph)
+                        elements.append({
+                            "type": "paragraph",
+                            "box": paragraph.box,
+                            "element": contents,
+                            "order": figure.order,
+                        })
+        
         # Sort by order
         elements.sort(key=lambda x: x["order"])
         
         # Convert to CSV string
         return self._elements_to_csv_string(elements)
     
-    def save(self, data: DocumentResult, output_path: str, **kwargs) -> None:
+    def save(self, data: DocumentResult, output_path: str, img: Optional[np.ndarray] = None, **kwargs) -> None:
         """
         Save rendered content to CSV file
         
         Args:
             data: Document result to render
             output_path: Path to save the CSV file
+            img: Optional image array for figure extraction
             **kwargs: Additional rendering options
         """
-        csv_content = self.render(data, **kwargs)
+        # Save figures if requested
+        if self.export_figure and img is not None and hasattr(data, 'figures'):
+            save_figure(data.figures, img, output_path, self.figure_dir)
+        
+        # Render and save CSV
+        csv_content = self.render(data, img=img, **kwargs)
         
         try:
             with open(output_path, 'w', newline='', encoding='utf-8') as f:
@@ -132,7 +165,7 @@ class CSVRenderer(BaseRenderer):
     
     def _elements_to_csv_string(self, elements: List[Dict[str, Any]]) -> str:
         """
-        Convert elements to CSV string
+        Convert elements to CSV string using proper CSV writer
         
         Args:
             elements: List of document elements
@@ -140,21 +173,23 @@ class CSVRenderer(BaseRenderer):
         Returns:
             str: CSV formatted string
         """
-        output = []
+        import io
+        output = io.StringIO()
+        writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
         
         for element in elements:
             if element["type"] == "table":
-                # Add table as CSV
+                # Add table rows
                 table_data = element["element"]
-                for row in table_data:
-                    output.append(",".join(f'"{cell}"' for cell in row))
-                output.append("")  # Empty line between tables
+                writer.writerows(table_data)
+                writer.writerow([])  # Empty row between tables
             elif element["type"] == "paragraph":
                 # Add paragraph as single row
-                content = element["element"]
-                output.append(f'"{content}"')
+                writer.writerow([element["element"]])
+            
+            writer.writerow([])  # Empty row after each element
         
-        return "\n".join(output)
+        return output.getvalue()
     
     def get_supported_formats(self) -> list:
         """Get supported formats"""
