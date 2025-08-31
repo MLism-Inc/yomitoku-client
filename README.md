@@ -6,6 +6,7 @@ A Python client library for processing SageMaker Yomitoku API outputs with forma
 
 - **SageMaker Output Processing**: Parse and validate SageMaker Yomitoku API JSON outputs
 - **Multiple Format Support**: Convert to CSV, Markdown, HTML, and JSON formats
+- **Data Visualization**: Comprehensive visualization capabilities for documents, tables, and charts
 - **Factory Pattern Design**: Extensible renderer system using factory pattern
 - **Strategy Pattern**: Flexible format conversion strategies
 - **CLI Interface**: Command-line tool for quick conversions
@@ -41,6 +42,22 @@ md_result = client.convert_to_format(data, 'markdown')
 # Save to files
 client.convert_to_format(data, 'csv', 'output.csv')
 client.convert_to_format(data, 'markdown', 'output.md')
+
+# Visualize data
+from yomitoku_client.visualizers import DocumentVisualizer, TableVisualizer, ChartVisualizer
+
+# Document layout visualization
+doc_viz = DocumentVisualizer()
+result_img = doc_viz.visualize((image, results), type='layout_detail')
+
+# Table visualization
+table_viz = TableVisualizer()
+html_table = table_viz.visualize(data, format='html')
+
+# Chart visualization
+chart_viz = ChartVisualizer()
+fig = chart_viz.visualize(data, type='bar', title='Sales Data')
+fig.savefig('chart.png')
 ```
 
 ### Command Line Interface
@@ -62,6 +79,12 @@ yomitoku-client sagemaker_output.json --format csv --ignore-line-break
 - **Markdown**: Structured document format with tables and headings
 - **HTML**: Web-ready format (basic implementation)
 - **JSON**: Structured data export
+
+## Visualization Features
+
+- **Document Visualization**: Layout analysis, reading order, OCR results
+- **Table Visualization**: Multi-format output (text, HTML, JSON) with structure analysis
+- **Chart Visualization**: Line charts, bar charts, scatter plots, histograms, pie charts, box plots
 
 ## Architecture
 
