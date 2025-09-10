@@ -444,7 +444,6 @@ class DocumentVisualizer(BaseVisualizer):
         
         for element in elements:
             try:
-                # 安全获取box属性
                 if hasattr(element, 'box'):
                     box = element.box
                 elif isinstance(element, dict) and 'box' in element:
@@ -515,7 +514,6 @@ class DocumentVisualizer(BaseVisualizer):
                                 2,
                             )
                     
-                    # 处理figures中的paragraphs
                     if category == "figures":
                         paragraphs = None
                         if hasattr(element, 'paragraphs'):

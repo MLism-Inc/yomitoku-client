@@ -92,7 +92,10 @@ class TableVisualizer(BaseVisualizer):
             if isinstance(data, pd.DataFrame):
                 # Remove format parameter from kwargs
                 html_kwargs = {k: v for k, v in kwargs.items() if k != 'format'}
-                return data.to_html(**html_kwargs)
+                html_output = data.to_html(**html_kwargs)
+                # Convert \n to <br> tags for proper HTML line breaks
+                html_output = html_output.replace('\\n', '<br>')
+                return html_output
             elif isinstance(data, list):
                 if not data:
                     return "<table><tr><td>Empty table</td></tr></table>"
@@ -127,7 +130,9 @@ class TableVisualizer(BaseVisualizer):
         """Visualize table as JSON structure"""
         try:
             if isinstance(data, pd.DataFrame):
-                return data.to_dict(**kwargs)
+                # Remove 'format' from kwargs as it's not valid for to_dict()
+                json_kwargs = {k: v for k, v in kwargs.items() if k != 'format'}
+                return data.to_dict(**json_kwargs)
             elif isinstance(data, list):
                 if not data:
                     return {"table": [], "message": "Empty table"}
