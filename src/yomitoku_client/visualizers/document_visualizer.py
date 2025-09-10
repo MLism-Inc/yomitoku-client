@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import logging
 
 from .base import BaseVisualizer
+from ..utils import calc_overlap_ratio, calc_distance, is_contained
 
 
 class DocumentVisualizer(BaseVisualizer):
@@ -106,6 +107,21 @@ class DocumentVisualizer(BaseVisualizer):
             recognition_kwargs = {k: v for k, v in kwargs.items() 
                                 if k not in ['type']}
             return self.visualize_recognition(img, results, **recognition_kwargs)
+        elif visualization_type == 'relationships':
+            # Filter out non-relationships parameters
+            relationships_kwargs = {k: v for k, v in kwargs.items() 
+                                  if k not in ['type']}
+            return self.visualize_element_relationships(img, results, **relationships_kwargs)
+        elif visualization_type == 'hierarchy':
+            # Filter out non-hierarchy parameters
+            hierarchy_kwargs = {k: v for k, v in kwargs.items() 
+                              if k not in ['type']}
+            return self.visualize_element_hierarchy(img, results, **hierarchy_kwargs)
+        elif visualization_type == 'confidence':
+            # Filter out non-confidence parameters
+            confidence_kwargs = {k: v for k, v in kwargs.items() 
+                               if k not in ['type']}
+            return self.visualize_confidence_scores(img, results, **confidence_kwargs)
         else:
             return self.visualize_layout_detail(img, results)
     
@@ -581,3 +597,168 @@ class DocumentVisualizer(BaseVisualizer):
                 )
         
         return out
+    
+    def visualize_element_relationships(self, img: np.ndarray, results: Any, 
+                                     show_overlaps: bool = True,
+                                     show_distances: bool = False,
+                                     overlap_threshold: float = 0.1) -> np.ndarray:
+        """
+        Visualize relationships between document elements
+        
+        Args:
+            img: Input image
+            results: Document analysis results
+            show_overlaps: Whether to show overlapping elements
+            show_distances: Whether to show distances between elements
+            overlap_threshold: Threshold for overlap detection
+            
+        Returns:
+            Image with element relationships visualization
+        """
+        try:
+            out = img.copy()
+            
+            # Get all elements
+            all_elements = []
+            if hasattr(results, 'paragraphs'):
+                all_elements.extend([(p, 'paragraph') for p in results.paragraphs])
+            if hasattr(results, 'tables'):
+                all_elements.extend([(t, 'table') for t in results.tables])
+            if hasattr(results, 'figures'):
+                all_elements.extend([(f, 'figure') for f in results.figures])
+            
+            # Check relationships between elements
+            for i, (element1, type1) in enumerate(all_elements):
+                for j, (element2, type2) in enumerate(all_elements[i+1:], i+1):
+                    if not hasattr(element1, 'box') or not hasattr(element2, 'box'):
+                        continue
+                    
+                    box1 = element1.box
+                    box2 = element2.box
+                    
+                    if show_overlaps:
+                        # Check for overlaps
+                        overlap_ratio, intersection = calc_overlap_ratio(box1, box2)
+                        if overlap_ratio > overlap_threshold:
+                            # Draw overlap region
+                            if intersection:
+                                x1, y1, x2, y2 = intersection
+                                cv2.rectangle(out, (x1, y1), (x2, y2), (255, 0, 255), 2)
+                                cv2.putText(out, f"Overlap: {overlap_ratio:.2f}", 
+                                          (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 1)
+                    
+                    if show_distances:
+                        # Calculate and show distance
+                        distance = calc_distance(box1, box2)
+                        center1 = ((box1[0] + box1[2]) // 2, (box1[1] + box1[3]) // 2)
+                        center2 = ((box2[0] + box2[2]) // 2, (box2[1] + box2[3]) // 2)
+                        
+                        # Draw line between centers
+                        cv2.line(out, center1, center2, (0, 255, 255), 1)
+                        
+                        # Draw distance text
+                        mid_point = ((center1[0] + center2[0]) // 2, (center1[1] + center2[1]) // 2)
+                        cv2.putText(out, f"{distance:.1f}px", mid_point, 
+                                  cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+            
+            return out
+        except Exception as e:
+            self.logger.error(f"Error in element relationships visualization: {e}")
+            return img
+    
+    def visualize_element_hierarchy(self, img: np.ndarray, results: Any,
+                                  show_containment: bool = True,
+                                  containment_threshold: float = 0.8) -> np.ndarray:
+        """
+        Visualize hierarchical relationships between elements
+        
+        Args:
+            img: Input image
+            results: Document analysis results
+            show_containment: Whether to show containment relationships
+            containment_threshold: Threshold for containment detection
+            
+        Returns:
+            Image with element hierarchy visualization
+        """
+        try:
+            out = img.copy()
+            
+            # Get all elements
+            all_elements = []
+            if hasattr(results, 'paragraphs'):
+                all_elements.extend([(p, 'paragraph') for p in results.paragraphs])
+            if hasattr(results, 'tables'):
+                all_elements.extend([(t, 'table') for t in results.tables])
+            if hasattr(results, 'figures'):
+                all_elements.extend([(f, 'figure') for f in results.figures])
+            
+            if show_containment:
+                # Check for containment relationships
+                for i, (element1, type1) in enumerate(all_elements):
+                    for j, (element2, type2) in enumerate(all_elements):
+                        if i == j or not hasattr(element1, 'box') or not hasattr(element2, 'box'):
+                            continue
+                        
+                        box1 = element1.box
+                        box2 = element2.box
+                        
+                        # Check if element2 is contained in element1
+                        if is_contained(box1, box2, containment_threshold):
+                            # Draw containment indicator
+                            x1, y1, x2, y2 = map(int, box2)
+                            cv2.rectangle(out, (x1, y1), (x2, y2), (0, 255, 0), 3)
+                            cv2.putText(out, f"{type2} in {type1}", 
+                                      (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            
+            return out
+        except Exception as e:
+            self.logger.error(f"Error in element hierarchy visualization: {e}")
+            return img
+    
+    def visualize_confidence_scores(self, img: np.ndarray, results: Any,
+                                  show_ocr_confidence: bool = True,
+                                  show_detection_confidence: bool = False) -> np.ndarray:
+        """
+        Visualize confidence scores for different elements
+        
+        Args:
+            img: Input image
+            results: Document analysis results
+            show_ocr_confidence: Whether to show OCR confidence scores
+            show_detection_confidence: Whether to show detection confidence scores
+            
+        Returns:
+            Image with confidence scores visualization
+        """
+        try:
+            out = img.copy()
+            
+            if show_ocr_confidence and hasattr(results, 'words'):
+                for word in results.words:
+                    if hasattr(word, 'confidence') and hasattr(word, 'points'):
+                        confidence = word.confidence
+                        points = word.points
+                        
+                        # Convert points to bounding box
+                        x_coords = [p[0] for p in points]
+                        y_coords = [p[1] for p in points]
+                        x1, y1 = int(min(x_coords)), int(min(y_coords))
+                        x2, y2 = int(max(x_coords)), int(max(y_coords))
+                        
+                        # Color based on confidence
+                        if confidence > 0.8:
+                            color = (0, 255, 0)  # Green for high confidence
+                        elif confidence > 0.6:
+                            color = (0, 255, 255)  # Yellow for medium confidence
+                        else:
+                            color = (0, 0, 255)  # Red for low confidence
+                        
+                        cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+                        cv2.putText(out, f"{confidence:.2f}", (x1, y1-5), 
+                                  cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
+            
+            return out
+        except Exception as e:
+            self.logger.error(f"Error in confidence scores visualization: {e}")
+            return img

@@ -9,6 +9,7 @@ from .csv_renderer import CSVRenderer
 from .markdown_renderer import MarkdownRenderer
 from .html_renderer import HTMLRenderer
 from .json_renderer import JSONRenderer
+from .pdf_renderer import PDFRenderer
 
 from ..exceptions import FormatConversionError
 
@@ -23,6 +24,7 @@ class RendererFactory:
         "html": HTMLRenderer,
         "htm": HTMLRenderer,
         "json": JSONRenderer,
+        "pdf": PDFRenderer,
     }
     
     @classmethod

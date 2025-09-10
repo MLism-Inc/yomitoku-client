@@ -10,7 +10,7 @@ import numpy as np
 from .base import BaseRenderer
 from ..parsers.sagemaker_parser import DocumentResult, Table, Paragraph, Figure
 from ..exceptions import FormatConversionError
-from ..utils import save_figure
+from ..utils import save_figure, table_to_csv
 
 
 class CSVRenderer(BaseRenderer):
@@ -114,37 +114,18 @@ class CSVRenderer(BaseRenderer):
         except Exception as e:
             raise FormatConversionError(f"Failed to save CSV file: {e}")
     
-    def _table_to_csv(self, table: Table) -> List[List[str]]:
+    def _table_to_csv(self, table: Table) -> str:
         """
-        Convert table to CSV array
+        Convert table to CSV string
         
         Args:
             table: Table data
             
         Returns:
-            List[List[str]]: 2D array representing table
+            str: CSV formatted table
         """
-        num_rows = table.n_row
-        num_cols = table.n_col
-        
-        table_array = [["" for _ in range(num_cols)] for _ in range(num_rows)]
-        
-        for cell in table.cells:
-            row = cell.row - 1
-            col = cell.col - 1
-            row_span = cell.row_span
-            col_span = cell.col_span
-            contents = cell.contents
-            
-            if self.ignore_line_break:
-                contents = contents.replace("\n", "")
-            
-            for i in range(row, row + row_span):
-                for j in range(col, col + col_span):
-                    if i == row and j == col:
-                        table_array[i][j] = contents
-        
-        return table_array
+        # Use the utility function for better table handling
+        return table_to_csv(table, padding=False, drop_empty=True)
     
     def _paragraph_to_csv(self, paragraph: Paragraph) -> str:
         """
@@ -179,9 +160,12 @@ class CSVRenderer(BaseRenderer):
         
         for element in elements:
             if element["type"] == "table":
-                # Add table rows
-                table_data = element["element"]
-                writer.writerows(table_data)
+                # Add table as CSV string
+                table_csv = element["element"]
+                # Split CSV string into lines and write each line
+                for line in table_csv.split('\n'):
+                    if line.strip():  # Skip empty lines
+                        writer.writerow([line])
                 writer.writerow([])  # Empty row between tables
             elif element["type"] == "paragraph":
                 # Add paragraph as single row

@@ -55,6 +55,10 @@ notebooks = [
     "jupyter>=1.0.0",
     "ipykernel>=6.20.0",
 ]
+pdf = [
+    "reportlab>=4.0.0",
+    "jaconv>=0.3.0",
+]
 
 [project.scripts]
 yomitoku-client = "yomitoku_client.cli:main"
