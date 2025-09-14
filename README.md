@@ -2,50 +2,15 @@
 
 <div align="center">
 
-<button onclick="toggleLanguage()" style="background: linear-gradient(45deg, #007bff, #0056b3); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; margin: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-  <span id="lang-button">🌐 日本語 / English</span>
-</button>
+[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](#english) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](#japanese)
+
+**Click the buttons above to jump to the language version**
 
 </div>
 
-<script>
-let currentLang = 'en';
-
-function toggleLanguage() {
-  const englishSection = document.getElementById('english-section');
-  const japaneseSection = document.getElementById('japanese-section');
-  const langButton = document.getElementById('lang-button');
-  
-  if (currentLang === 'en') {
-    englishSection.style.display = 'none';
-    japaneseSection.style.display = 'block';
-    langButton.textContent = '🌐 English / 日本語';
-    currentLang = 'ja';
-  } else {
-    englishSection.style.display = 'block';
-    japaneseSection.style.display = 'none';
-    langButton.textContent = '🌐 日本語 / English';
-    currentLang = 'en';
-  }
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-  const englishSection = document.getElementById('english-section');
-  const japaneseSection = document.getElementById('japanese-section');
-  
-  if (englishSection && japaneseSection) {
-    englishSection.style.display = 'block';
-    japaneseSection.style.display = 'none';
-  }
-});
-</script>
-
 ---
 
-<div id="english-section">
-
-## English
+## English {#english}
 
 ### Overview
 
@@ -228,13 +193,9 @@ MIT License - see LICENSE file for details.
 
 For questions and support: support-aws-marketplace@mlism.com
 
-</div>
-
 ---
 
-<div id="japanese-section">
-
-## 日本語
+## 日本語 {#japanese}
 
 ### 概要
 
@@ -416,5 +377,3 @@ MITライセンス - 詳細はLICENSEファイルを参照してください。
 ### お問い合わせ
 
 ご質問やサポートについては：support-aws-marketplace@mlism.com
-
-</div>
