@@ -110,18 +110,23 @@ class DocumentVisualizer(BaseVisualizer):
         elif visualization_type == 'relationships':
             # Filter out non-relationships parameters
             relationships_kwargs = {k: v for k, v in kwargs.items() 
-                                  if k not in ['type']}
+                                  if k not in ['type', 'results']}
             return self.visualize_element_relationships(img, results, **relationships_kwargs)
         elif visualization_type == 'hierarchy':
             # Filter out non-hierarchy parameters
             hierarchy_kwargs = {k: v for k, v in kwargs.items() 
-                              if k not in ['type']}
+                              if k not in ['type', 'results']}
             return self.visualize_element_hierarchy(img, results, **hierarchy_kwargs)
         elif visualization_type == 'confidence':
             # Filter out non-confidence parameters
-            confidence_kwargs = {k: v for k, v in kwargs.items() 
-                               if k not in ['type']}
+            confidence_kwargs = {k: v for k, v in kwargs.items()
+                               if k not in ['type', 'results']}
             return self.visualize_confidence_scores(img, results, **confidence_kwargs)
+        elif visualization_type == 'captions':
+            # Filter out non-caption parameters
+            caption_kwargs = {k: v for k, v in kwargs.items()
+                            if k not in ['type', 'results']}
+            return self.visualize_captions(img, results, **caption_kwargs)
         else:
             return self.visualize_layout_detail(img, results)
     
@@ -507,27 +512,31 @@ class DocumentVisualizer(BaseVisualizer):
                         caption = element.caption
                     elif isinstance(element, dict) and 'caption' in element:
                         caption = element['caption']
-                    
+
                     if caption is not None:
                         caption_box = None
+
+                        # Extract caption box
                         if hasattr(caption, 'box'):
                             caption_box = caption.box
                         elif isinstance(caption, dict) and 'box' in caption:
                             caption_box = caption['box']
-                        
+
                         if caption_box is not None:
                             color_index = categories.index("caption")
                             color = self.palette[color_index % len(self.palette)]
                             x1, y1, x2, y2 = tuple(map(int, caption_box))
                             out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+
+                            # Just display "caption" label for consistency
                             out = cv2.putText(
                                 out,
                                 "caption",
-                                (x1, y1),
+                                (x1, y1 - 5),
                                 cv2.FONT_HERSHEY_SIMPLEX,
-                                0.5,
-                                (0, 0, 0),
-                                2,
+                                0.4,
+                                color,
+                                1,
                             )
                     
                     if category == "figures":
@@ -618,14 +627,51 @@ class DocumentVisualizer(BaseVisualizer):
         try:
             out = img.copy()
             
-            # Get all elements
+            # Get all elements including captions
             all_elements = []
-            if hasattr(results, 'paragraphs'):
+            if hasattr(results, 'paragraphs') and results.paragraphs:
                 all_elements.extend([(p, 'paragraph') for p in results.paragraphs])
-            if hasattr(results, 'tables'):
+            if hasattr(results, 'tables') and results.tables:
                 all_elements.extend([(t, 'table') for t in results.tables])
-            if hasattr(results, 'figures'):
+                # Add table captions as separate elements
+                for table in results.tables:
+                    if hasattr(table, 'caption') and table.caption:
+                        # Handle caption as dict or object
+                        if isinstance(table.caption, dict) and 'box' in table.caption:
+                            caption_obj = type('Caption', (), table.caption)()  # Convert dict to object
+                            all_elements.append((caption_obj, 'caption'))
+                        elif hasattr(table.caption, 'box'):
+                            all_elements.append((table.caption, 'caption'))
+            if hasattr(results, 'figures') and results.figures:
                 all_elements.extend([(f, 'figure') for f in results.figures])
+                # Add figure captions as separate elements
+                for figure in results.figures:
+                    if hasattr(figure, 'caption') and figure.caption:
+                        # Handle caption as dict or object
+                        if isinstance(figure.caption, dict) and 'box' in figure.caption:
+                            caption_obj = type('Caption', (), figure.caption)()  # Convert dict to object
+                            all_elements.append((caption_obj, 'caption'))
+                        elif hasattr(figure.caption, 'box'):
+                            all_elements.append((figure.caption, 'caption'))
+
+            # Visualize all elements including captions
+            if len(all_elements) > 0:
+                # Draw bounding boxes for all elements with different colors
+                color_map = {
+                    'paragraph': (255, 0, 0),    # Red
+                    'table': (0, 255, 0),         # Green
+                    'figure': (0, 0, 255),        # Blue
+                    'caption': (255, 128, 0)      # Orange for captions
+                }
+                for element, elem_type in all_elements:
+                    if hasattr(element, 'box'):
+                        box = element.box
+                        color = color_map.get(elem_type, (128, 128, 128))
+                        cv2.rectangle(out, (box[0], box[1]), (box[2], box[3]), color, 2)
+
+                        # Add label - just show element type name for consistency
+                        cv2.putText(out, elem_type, (box[0], box[1]-5),
+                                  cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
             
             # Check relationships between elements
             for i, (element1, type1) in enumerate(all_elements):
@@ -684,14 +730,34 @@ class DocumentVisualizer(BaseVisualizer):
         try:
             out = img.copy()
             
-            # Get all elements
+            # Get all elements including captions
             all_elements = []
-            if hasattr(results, 'paragraphs'):
+            if hasattr(results, 'paragraphs') and results.paragraphs:
                 all_elements.extend([(p, 'paragraph') for p in results.paragraphs])
-            if hasattr(results, 'tables'):
+            if hasattr(results, 'tables') and results.tables:
                 all_elements.extend([(t, 'table') for t in results.tables])
-            if hasattr(results, 'figures'):
+                # Add table captions
+                for table in results.tables:
+                    if hasattr(table, 'caption') and table.caption:
+                        if isinstance(table.caption, dict) and 'box' in table.caption:
+                            caption_obj = type('Caption', (), table.caption)()
+                            all_elements.append((caption_obj, 'caption'))
+                        elif hasattr(table.caption, 'box'):
+                            all_elements.append((table.caption, 'caption'))
+            if hasattr(results, 'figures') and results.figures:
                 all_elements.extend([(f, 'figure') for f in results.figures])
+                # Add figure captions
+                for figure in results.figures:
+                    if hasattr(figure, 'caption') and figure.caption:
+                        if isinstance(figure.caption, dict) and 'box' in figure.caption:
+                            caption_obj = type('Caption', (), figure.caption)()
+                            all_elements.append((caption_obj, 'caption'))
+                        elif hasattr(figure.caption, 'box'):
+                            all_elements.append((figure.caption, 'caption'))
+
+            # If no high-level elements, visualize what we have
+            if not all_elements and hasattr(results, 'texts') and results.texts:
+                all_elements.extend([(t, 'text') for t in results.texts[:30]])
             
             if show_containment:
                 # Check for containment relationships
@@ -716,6 +782,104 @@ class DocumentVisualizer(BaseVisualizer):
             self.logger.error(f"Error in element hierarchy visualization: {e}")
             return img
     
+    def visualize_captions(self, img: np.ndarray, results: Any,
+                         show_text: bool = True,
+                         font_size: float = 0.5,
+                         box_color: Tuple[int, int, int] = (255, 128, 0),
+                         text_color: Tuple[int, int, int] = (255, 128, 0)) -> np.ndarray:
+        """
+        Visualize captions for tables and figures
+
+        Args:
+            img: Input image
+            results: Document analysis results
+            show_text: Whether to show caption text
+            font_size: Font size for caption text
+            box_color: Color for caption boxes
+            text_color: Color for caption text
+
+        Returns:
+            Image with caption visualization
+        """
+        try:
+            out = img.copy()
+
+            # Process table captions
+            if hasattr(results, 'tables'):
+                for table in results.tables:
+                    if hasattr(table, 'caption') and table.caption:
+                        out = self._draw_caption(out, table.caption, show_text, font_size, box_color, text_color)
+
+            # Process figure captions
+            if hasattr(results, 'figures'):
+                for figure in results.figures:
+                    if hasattr(figure, 'caption') and figure.caption:
+                        out = self._draw_caption(out, figure.caption, show_text, font_size, box_color, text_color)
+
+            return out
+        except Exception as e:
+            self.logger.error(f"Error in caption visualization: {e}")
+            return img
+
+    def _draw_caption(self, img: np.ndarray, caption: Any, show_text: bool,
+                     font_size: float, box_color: Tuple[int, int, int],
+                     text_color: Tuple[int, int, int]) -> np.ndarray:
+        """Draw a single caption"""
+        out = img.copy()
+
+        # Extract caption box
+        caption_box = None
+        if hasattr(caption, 'box'):
+            caption_box = caption.box
+        elif isinstance(caption, dict) and 'box' in caption:
+            caption_box = caption['box']
+
+        # Extract caption text
+        caption_text = None
+        if hasattr(caption, 'contents'):
+            caption_text = caption.contents
+        elif isinstance(caption, dict) and 'contents' in caption:
+            caption_text = caption.get('contents', '')
+        elif isinstance(caption, str):
+            caption_text = caption
+
+        if caption_box is not None:
+            x1, y1, x2, y2 = tuple(map(int, caption_box))
+
+            # Draw caption box
+            cv2.rectangle(out, (x1, y1), (x2, y2), box_color, 2)
+
+            # Draw caption text if requested
+            if show_text and caption_text:
+                # Split long text into multiple lines
+                max_width = x2 - x1
+                words = caption_text.split()
+                lines = []
+                current_line = []
+
+                for word in words:
+                    test_line = ' '.join(current_line + [word])
+                    text_size = cv2.getTextSize(test_line, cv2.FONT_HERSHEY_SIMPLEX, font_size, 1)[0]
+
+                    if text_size[0] <= max_width or not current_line:
+                        current_line.append(word)
+                    else:
+                        lines.append(' '.join(current_line))
+                        current_line = [word]
+
+                if current_line:
+                    lines.append(' '.join(current_line))
+
+                # Draw each line
+                line_height = int(cv2.getTextSize("Test", cv2.FONT_HERSHEY_SIMPLEX, font_size, 1)[0][1] * 1.5)
+                for i, line in enumerate(lines[:3]):  # Limit to 3 lines
+                    y_pos = y1 + (i + 1) * line_height
+                    if y_pos < y2:
+                        cv2.putText(out, line, (x1 + 5, y_pos),
+                                  cv2.FONT_HERSHEY_SIMPLEX, font_size, text_color, 1)
+
+        return out
+
     def visualize_confidence_scores(self, img: np.ndarray, results: Any,
                                   show_ocr_confidence: bool = True,
                                   show_detection_confidence: bool = False) -> np.ndarray:
@@ -736,8 +900,14 @@ class DocumentVisualizer(BaseVisualizer):
             
             if show_ocr_confidence and hasattr(results, 'words'):
                 for word in results.words:
-                    if hasattr(word, 'confidence') and hasattr(word, 'points'):
+                    # Support both 'confidence' and 'det_score' attributes
+                    confidence = None
+                    if hasattr(word, 'confidence'):
                         confidence = word.confidence
+                    elif hasattr(word, 'det_score'):
+                        confidence = word.det_score
+                    
+                    if confidence is not None and hasattr(word, 'points'):
                         points = word.points
                         
                         # Convert points to bounding box

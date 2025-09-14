@@ -43,16 +43,16 @@ class SearchablePDFGenerator:
     def __init__(self, font_path: Optional[str] = None):
         """
         Initialize PDF generator
-        
+
         Args:
             font_path: Path to font file. If None, uses default font
         """
         if not PIL_AVAILABLE:
             raise ImportError("PIL is required for PDF generation. Install with: pip install Pillow")
-        
+
         if not REPORTLAB_AVAILABLE:
             raise ImportError("ReportLab is required for PDF generation. Install with: pip install reportlab")
-        
+
         self.font_path = font_path
         self._register_font()
     
@@ -128,49 +128,111 @@ class SearchablePDFGenerator:
     def _add_ocr_text(self, canvas_obj, ocr_result: Any, page_width: int, page_height: int) -> None:
         """
         Add OCR text to PDF canvas
-        
+
         Args:
             canvas_obj: ReportLab canvas object
             ocr_result: OCR result object
             page_width: Page width
             page_height: Page height
         """
-        for word in ocr_result.words:
-            text = word.content
-            bbox = self._poly_to_rect(word.points)
-            direction = getattr(word, 'direction', 'horizontal')
-            
-            x1, y1, x2, y2 = bbox
-            bbox_height = y2 - y1
-            bbox_width = x2 - x1
-            
-            # Convert to full-width characters for vertical text
-            if direction == "vertical" and JACONV_AVAILABLE:
-                text = self._to_full_width(text)
-            
-            # Calculate font size
-            if direction == "horizontal":
-                font_size = self._calc_font_size(text, bbox_height, bbox_width)
-            else:
-                font_size = self._calc_font_size(text, bbox_width, bbox_height)
-            
-            # Set font and color
-            canvas_obj.setFont(self.font_name, font_size)
-            canvas_obj.setFillColorRGB(1, 1, 1, alpha=0)  # Transparent
-            
-            # Draw text
-            if direction == "vertical":
-                self._draw_vertical_text(canvas_obj, text, x1, y1, y2, font_size, page_height)
-            else:
-                self._draw_horizontal_text(canvas_obj, text, x1, y1, y2, bbox_height, font_size, page_height)
+        # Process words
+        if hasattr(ocr_result, 'words'):
+            for word in ocr_result.words:
+                text = word.content
+                bbox = self._poly_to_rect(word.points)
+                direction = getattr(word, 'direction', 'horizontal')
+
+                x1, y1, x2, y2 = bbox
+                bbox_height = y2 - y1
+                bbox_width = x2 - x1
+
+                # Convert to full-width characters for vertical text
+                if direction == "vertical" and JACONV_AVAILABLE:
+                    text = self._to_full_width(text)
+
+                # Calculate font size
+                if direction == "horizontal":
+                    font_size = self._calc_font_size(text, bbox_height, bbox_width)
+                else:
+                    font_size = self._calc_font_size(text, bbox_width, bbox_height)
+
+                # Set font and color
+                canvas_obj.setFont(self.font_name, font_size)
+                canvas_obj.setFillColorRGB(1, 1, 1, alpha=0)  # Transparent
+
+                # Draw text
+                if direction == "vertical":
+                    self._draw_vertical_text(canvas_obj, text, x1, y1, y2, font_size, page_height)
+                else:
+                    self._draw_horizontal_text(canvas_obj, text, x1, y1, y2, bbox_height, font_size, page_height)
+
+        # Process tables with captions
+        if hasattr(ocr_result, 'tables'):
+            for table in ocr_result.tables:
+                if hasattr(table, 'caption') and table.caption:
+                    self._add_caption_text(canvas_obj, table.caption, page_height)
+
+        # Process figures with captions
+        if hasattr(ocr_result, 'figures'):
+            for figure in ocr_result.figures:
+                if hasattr(figure, 'caption') and figure.caption:
+                    self._add_caption_text(canvas_obj, figure.caption, page_height)
     
+    def _add_caption_text(self, canvas_obj, caption: Any, page_height: int) -> None:
+        """
+        Add caption text to PDF canvas
+
+        Args:
+            canvas_obj: ReportLab canvas object
+            caption: Caption object with contents and box
+            page_height: Page height
+        """
+        # Extract caption text
+        if hasattr(caption, 'contents'):
+            text = caption.contents
+        elif isinstance(caption, dict) and 'contents' in caption:
+            text = caption.get('contents', '')
+        else:
+            text = str(caption)
+
+        # Extract caption box
+        if hasattr(caption, 'box'):
+            box = caption.box
+        elif isinstance(caption, dict) and 'box' in caption:
+            box = caption.get('box')
+        else:
+            return  # No box information, skip
+
+        if not text or not box:
+            return
+
+        x1, y1, x2, y2 = box
+        bbox_height = y2 - y1
+        bbox_width = x2 - x1
+
+        # Calculate font size for caption
+        font_size = self._calc_font_size(text, bbox_height, bbox_width)
+
+        # Set font and color for caption
+        try:
+            canvas_obj.setFont(self.font_name, font_size)
+        except Exception:
+            # If font fails, try Helvetica
+            canvas_obj.setFont("Helvetica", font_size)
+
+        # Make caption text transparent but searchable
+        canvas_obj.setFillColorRGB(1, 1, 1, alpha=0)  # Fully transparent for searchability
+
+        # Draw caption text
+        self._draw_horizontal_text(canvas_obj, text, x1, y1, y2, bbox_height, font_size, page_height)
+
     def _poly_to_rect(self, points: List[List[float]]) -> List[int]:
         """
         Convert polygon to bounding rectangle
-        
+
         Args:
             points: Polygon points [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
-            
+
         Returns:
             List[int]: Bounding rectangle [x1, y1, x2, y2]
         """
@@ -179,7 +241,7 @@ class SearchablePDFGenerator:
         x_max = points[:, 0].max()
         y_min = points[:, 1].min()
         y_max = points[:, 1].max()
-        
+
         return [x_min, y_min, x_max, y_max]
     
     def _calc_font_size(self, content: str, bbox_height: float, bbox_width: float) -> float:
