@@ -51,7 +51,10 @@ class SearchablePDFGenerator:
             raise ImportError("PIL is required for PDF generation. Install with: pip install Pillow")
         
         if not REPORTLAB_AVAILABLE:
-            raise ImportError("ReportLab is required for PDF generation. Install with: pip install reportlab")
+            raise ImportError(
+                "ReportLab is required for PDF generation. Install with: pip install reportlab\n"
+                "Or in Jupyter notebook, run: !pip install reportlab jaconv"
+            )
         
         self.font_path = font_path
         self._register_font()

@@ -77,8 +77,12 @@ dev-dependencies = [
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.5.44",
     "jupyter>=1.0.0",
-    "ipykernel>=6.20.0"
+    "yomitoku-client",
+    "reportlab>=4.4.3",
 ]
+
+[tool.uv.sources]
+yomitoku-client = { workspace = true }
 
 [tool.black]
 line-length = 88
