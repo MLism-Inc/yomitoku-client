@@ -8178,7 +8178,7 @@ dev = [
     { name = "pytest", specifier = ">=7.3.0" },
     { name = "pytest-asyncio", specifier = ">=0.21.0" },
     { name = "pytest-cov", specifier = ">=4.0.0" },
-    { name = "reportlab" },
+    { name = "reportlab", specifier = ">=4.4.3" },
     { name = "ruff", specifier = ">=0.7.0" },
     { name = "sphinx", specifier = ">=6.0.0" },
     { name = "sphinx-rtd-theme", specifier = ">=1.2.0" },

@@ -2,11 +2,48 @@
 
 <div align="center">
 
-[![Language](https://img.shields.io/badge/Language-English-blue)](#english) [![Language](https://img.shields.io/badge/Language-日本語-red)](#japanese)
+<button onclick="toggleLanguage()" style="background: linear-gradient(45deg, #007bff, #0056b3); color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; margin: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+  <span id="lang-button">🌐 日本語 / English</span>
+</button>
 
 </div>
 
+<script>
+let currentLang = 'en';
+
+function toggleLanguage() {
+  const englishSection = document.getElementById('english-section');
+  const japaneseSection = document.getElementById('japanese-section');
+  const langButton = document.getElementById('lang-button');
+  
+  if (currentLang === 'en') {
+    englishSection.style.display = 'none';
+    japaneseSection.style.display = 'block';
+    langButton.textContent = '🌐 English / 日本語';
+    currentLang = 'ja';
+  } else {
+    englishSection.style.display = 'block';
+    japaneseSection.style.display = 'none';
+    langButton.textContent = '🌐 日本語 / English';
+    currentLang = 'en';
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const englishSection = document.getElementById('english-section');
+  const japaneseSection = document.getElementById('japanese-section');
+  
+  if (englishSection && japaneseSection) {
+    englishSection.style.display = 'block';
+    japaneseSection.style.display = 'none';
+  }
+});
+</script>
+
 ---
+
+<div id="english-section">
 
 ## English
 
@@ -26,11 +63,8 @@ Yomitoku Client is a Python library for processing SageMaker Yomitoku API output
 ### Installation
 
 ```bash
-# Install from PyPI
+# Install from PyPI (includes PDF support by default)
 pip install yomitoku-client
-
-# Install with PDF support (optional)
-pip install yomitoku-client[pdf]
 
 # Install from GitHub (latest features)
 pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
@@ -194,7 +228,11 @@ MIT License - see LICENSE file for details.
 
 For questions and support: support-aws-marketplace@mlism.com
 
+</div>
+
 ---
+
+<div id="japanese-section">
 
 ## 日本語
 
@@ -214,11 +252,8 @@ Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的な�
 ### インストール
 
 ```bash
-# PyPIからインストール
+# PyPIからインストール（PDFサポートはデフォルトで含まれます）
 pip install yomitoku-client
-
-# PDFサポート付きでインストール（オプション）
-pip install yomitoku-client[pdf]
 
 # GitHubから最新機能をインストール
 pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
@@ -381,3 +416,5 @@ MITライセンス - 詳細はLICENSEファイルを参照してください。
 ### お問い合わせ
 
 ご質問やサポートについては：support-aws-marketplace@mlism.com
+
+</div>
