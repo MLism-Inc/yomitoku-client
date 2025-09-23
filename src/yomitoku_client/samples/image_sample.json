@@ -1,0 +1,5687 @@
+{
+  "result": [
+    {
+      "figures": [
+        {
+          "box": [
+            724,
+            60,
+            925,
+            162
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 3,
+          "paragraphs": [
+            {
+              "box": [
+                797,
+                111,
+                866,
+                146
+              ],
+              "contents": "特集",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            }
+          ],
+          "role": "picture"
+        },
+        {
+          "box": [
+            992,
+            1206,
+            1439,
+            1496
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 6,
+          "paragraphs": [
+            {
+              "box": [
+                1035,
+                1359,
+                1393,
+                1425
+              ],
+              "contents": "働く、を変える",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            },
+            {
+              "box": [
+                1110,
+                1447,
+                1326,
+                1480
+              ],
+              "contents": "テレワーク月間",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 1,
+              "role": null
+            }
+          ],
+          "role": null
+        },
+        {
+          "box": [
+            794,
+            1634,
+            978,
+            1673
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 8,
+          "paragraphs": [
+            {
+              "box": [
+                848,
+                1639,
+                982,
+                1677
+              ],
+              "contents": "テレワーク月間",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            }
+          ],
+          "role": "logo"
+        },
+        {
+          "box": [
+            791,
+            1751,
+            1476,
+            2025
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 11,
+          "paragraphs": [
+            {
+              "box": [
+                893,
+                1765,
+                1365,
+                1821
+              ],
+              "contents": "「くらし」と「しごと」をつなぐ",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            },
+            {
+              "box": [
+                802,
+                1819,
+                1464,
+                1930
+              ],
+              "contents": "TELEWORK",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 1,
+              "role": null
+            }
+          ],
+          "role": "logo"
+        },
+        {
+          "box": [
+            1366,
+            2042,
+            1505,
+            2177
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 14,
+          "paragraphs": [],
+          "role": "code"
+        },
+        {
+          "box": [
+            175,
+            555,
+            847,
+            1094
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 15,
+          "paragraphs": [
+            {
+              "box": [
+                395,
+                574,
+                626,
+                654
+              ],
+              "contents": "11月は",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            },
+            {
+              "box": [
+                279,
+                660,
+                740,
+                737
+              ],
+              "contents": "テレワーク月間",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 1,
+              "role": null
+            },
+            {
+              "box": [
+                273,
+                756,
+                746,
+                896
+              ],
+              "contents": "TELE",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 2,
+              "role": null
+            },
+            {
+              "box": [
+                194,
+                923,
+                571,
+                1082
+              ],
+              "contents": "We",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 3,
+              "role": null
+            },
+            {
+              "box": [
+                543,
+                927,
+                824,
+                1080
+              ],
+              "contents": "RK",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 4,
+              "role": null
+            }
+          ],
+          "role": "logo"
+        },
+        {
+          "box": [
+            176,
+            1225,
+            353,
+            1331
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 17,
+          "paragraphs": [],
+          "role": "picture"
+        },
+        {
+          "box": [
+            160,
+            1390,
+            302,
+            1483
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 18,
+          "paragraphs": [],
+          "role": null
+        },
+        {
+          "box": [
+            212,
+            1508,
+            256,
+            1546
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 19,
+          "paragraphs": [],
+          "role": "logo"
+        },
+        {
+          "box": [
+            310,
+            1404,
+            387,
+            1480
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 21,
+          "paragraphs": [],
+          "role": "code"
+        },
+        {
+          "box": [
+            2797,
+            162,
+            3160,
+            384
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 34,
+          "paragraphs": [
+            {
+              "box": [
+                2834,
+                223,
+                3114,
+                379
+              ],
+              "contents": "「テレワーク\nトップランナー\n2023 総務大臣賞」\n受賞イベントの様子",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            }
+          ],
+          "role": null
+        },
+        {
+          "box": [
+            2799,
+            400,
+            3153,
+            630
+          ],
+          "caption": {
+            "box": [
+              2867,
+              642,
+              3085,
+              702
+            ],
+            "contents": "主催者代表挨拶\n(小森総務大臣政務官)",
+            "direction": "horizontal",
+            "indent_level": null,
+            "order": 0,
+            "role": "caption"
+          },
+          "decode": null,
+          "direction": "horizontal",
+          "order": 35,
+          "paragraphs": [],
+          "role": "picture"
+        },
+        {
+          "box": [
+            2799,
+            721,
+            3158,
+            959
+          ],
+          "caption": {
+            "box": [
+              2921,
+              966,
+              3030,
+              990
+            ],
+            "contents": "表彰状授与",
+            "direction": "horizontal",
+            "indent_level": null,
+            "order": 0,
+            "role": "caption"
+          },
+          "decode": null,
+          "direction": "horizontal",
+          "order": 36,
+          "paragraphs": [],
+          "role": "picture"
+        },
+        {
+          "box": [
+            2801,
+            1014,
+            3151,
+            1250
+          ],
+          "caption": {
+            "box": [
+              2816,
+              1255,
+              3133,
+              1283
+            ],
+            "contents": "受賞企業集合写真(3府省合同)",
+            "direction": "horizontal",
+            "indent_level": null,
+            "order": 0,
+            "role": "caption"
+          },
+          "decode": null,
+          "direction": "horizontal",
+          "order": 37,
+          "paragraphs": [],
+          "role": "picture"
+        },
+        {
+          "box": [
+            2745,
+            1670,
+            3150,
+            1910
+          ],
+          "caption": {
+            "box": [
+              2743,
+              1914,
+              3091,
+              1939
+            ],
+            "contents": "テレワーク月間関連イベントの様子",
+            "direction": "horizontal",
+            "indent_level": null,
+            "order": 0,
+            "role": "caption"
+          },
+          "decode": null,
+          "direction": "horizontal",
+          "order": 42,
+          "paragraphs": [
+            {
+              "box": [
+                2823,
+                1678,
+                3030,
+                1693
+              ],
+              "contents": "ハワーク·ワンストック·サポート (全面へd",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 0,
+              "role": null
+            },
+            {
+              "box": [
+                2959,
+                1877,
+                3037,
+                1903
+              ],
+              "contents": "www",
+              "direction": "horizontal",
+              "indent_level": null,
+              "order": 1,
+              "role": null
+            }
+          ],
+          "role": null
+        },
+        {
+          "box": [
+            3011,
+            1969,
+            3146,
+            2104
+          ],
+          "caption": null,
+          "decode": null,
+          "direction": "horizontal",
+          "order": 45,
+          "paragraphs": [],
+          "role": "code"
+        }
+      ],
+      "paragraphs": [
+        {
+          "box": [
+            1,
+            75,
+            747,
+            104
+          ],
+          "contents": "TELEWORK\nLEWORK",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 0,
+          "role": "page_header"
+        },
+        {
+          "box": [
+            907,
+            76,
+            2282,
+            105
+          ],
+          "contents": "ORK\nLEWORK TELEWORK",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 1,
+          "role": "page_header"
+        },
+        {
+          "box": [
+            2367,
+            78,
+            3298,
+            106
+          ],
+          "contents": "テレワークのさらなる普及・定着に向け「テレワーク月間」を実施します!\nTELEWORK",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 2,
+          "role": "page_header"
+        },
+        {
+          "box": [
+            155,
+            165,
+            1509,
+            558
+          ],
+          "contents": "テレワークのさらなる普及·定着に向け\n「テレワーク月間」\nを実施します!",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 4,
+          "role": "section_headings"
+        },
+        {
+          "box": [
+            925,
+            663,
+            1517,
+            1167
+          ],
+          "contents": "総務省は、内閣官房、内閣府、デジタル庁、\n厚生労働省、経済産業省、国土交通省、観光庁、\n環境省、日本テレワーク協会、日本テレワーク\n学会と連携して、11月をテレワーク月間とし、\nテレワークのさらなる普及·定着に向けた各種\nイベント等を集中的に開催します。テレワーク\n月間期間中は駅構内やイベント会場等にポス\nターを掲出するほか、ホームページ(※)にて、テ\nレワーク実施団体·実施者の登録受付や、テレ\nワーク活用に関するトピック·コンテンツの掲\n載、各種イベントに係る情報発信等を行います。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 5,
+          "role": null
+        },
+        {
+          "box": [
+            881,
+            1529,
+            1230,
+            1555
+          ],
+          "contents": "令和6年度テレワーク月間ポスター",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 7,
+          "role": null
+        },
+        {
+          "box": [
+            1201,
+            1635,
+            1458,
+            1654
+          ],
+          "contents": "文字サイズの求具 *",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 9,
+          "role": null
+        },
+        {
+          "box": [
+            869,
+            1706,
+            1420,
+            1724
+          ],
+          "contents": "テレワーク導入お役立も情報",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 10,
+          "role": null
+        },
+        {
+          "box": [
+            777,
+            2036,
+            1084,
+            2061
+          ],
+          "contents": "※テレワーク月間ホームページ",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 12,
+          "role": null
+        },
+        {
+          "box": [
+            770,
+            2112,
+            1300,
+            2156
+          ],
+          "contents": "https://teleworkgekkan.go.jp/",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 13,
+          "role": null
+        },
+        {
+          "box": [
+            195,
+            1121,
+            831,
+            1202
+          ],
+          "contents": "働きたい、働き続けたいに、テレワーク\nテレワーク継続意向は80%超",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 16,
+          "role": null
+        },
+        {
+          "box": [
+            377,
+            1232,
+            666,
+            1335
+          ],
+          "contents": "2024",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 20,
+          "role": null
+        },
+        {
+          "box": [
+            256,
+            1512,
+            341,
+            1545
+          ],
+          "contents": "デジタルテ",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 22,
+          "role": null
+        },
+        {
+          "box": [
+            710,
+            1265,
+            823,
+            1350
+          ],
+          "contents": "テレワーク月間\n関連イベント\n参加者募集中!",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 23,
+          "role": null
+        },
+        {
+          "box": [
+            595,
+            1411,
+            838,
+            1466
+          ],
+          "contents": "テレワーク月間WEBサイトでは、\nテレワークの先行事例、テレワークに関する\nイベント-お役立ち情報を発信しています。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 24,
+          "role": null
+        },
+        {
+          "box": [
+            614,
+            1514,
+            703,
+            1545
+          ],
+          "contents": "普段車庫",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 25,
+          "role": null
+        },
+        {
+          "box": [
+            717,
+            1514,
+            790,
+            1545
+          ],
+          "contents": "...",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 26,
+          "role": null
+        },
+        {
+          "box": [
+            2301,
+            73,
+            2355,
+            109
+          ],
+          "contents": "特集",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 27,
+          "role": null
+        },
+        {
+          "box": [
+            1794,
+            166,
+            2771,
+            386
+          ],
+          "contents": "テレワーク月間最終週の11月25日(月)には、内閣府、総務省、厚生労働省、\n経済産業省、国土交通省主催で「働く、を変える」テレワークイベントを開催し、\nテレワークトップランナー 2024 (総務大臣賞)、輝くテレワーク大賞(厚生労\n働大臣)および地方創生テレワークアワード(地方創生担当大臣賞)の合同表彰\n式を実施予定です。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 28,
+          "role": null
+        },
+        {
+          "box": [
+            1795,
+            402,
+            2765,
+            622
+          ],
+          "contents": "総務省では、平成27年度から、テレワークの導入·活用を進めている企業·\n団体を「テレワーク先駆者」とし、その中から十分な実績を持つ企業·団体等を\n「テレワーク先駆者百選」として公表するとともに、平成28年度には「テレワー\nク先駆者百選 総務大臣賞」を創設し、「テレワーク先駆者百選」の中から特に優\nれた取組を表彰してきました。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 29,
+          "role": null
+        },
+        {
+          "box": [
+            1795,
+            638,
+            2766,
+            1043
+          ],
+          "contents": "新型コロナウイルス感染症の拡大に際して、企業·団体等においてテレワー\nクの導入が進んだ経緯を踏まえ、令和5年度からは、名称や一部の審査基準を\n見直したうえで、新たに「テレワークトップランナー」として先進企業の公表、\n表彰を開始しました。本年は、テレワークの活用による経営効果の発揮やテレ\nワーク導入が馴染まないと思われている業態の企業におけるテレワーク活用·\n業務改革等について、特色ある優れた取組等を実施している企業·団体を「テ\nレワークトップランナー 2024」として選定·公表し、その中から特に優れた取\n組を「テレワークトップランナー 2024総務大臣賞」として表彰します 。※ 今年度の\n表彰団体の募集は、すでに終了しています。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 30,
+          "role": null
+        },
+        {
+          "box": [
+            1796,
+            1063,
+            2765,
+            1142
+          ],
+          "contents": "表彰式は、会場(御茶ノ水ソラシティ、東京都)での観覧の他、オンライン配\n信も実施予定です。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 31,
+          "role": null
+        },
+        {
+          "box": [
+            1798,
+            1158,
+            2762,
+            1284
+          ],
+          "contents": "テレワークの必要性について考え直すきっかけとなるよう、各種イベントに\nご参加いただくとともに、テレワーク月間実施団体·実施者としての登録の呼\nびかけについても、是非、ご協力をお願いします。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 32,
+          "role": null
+        },
+        {
+          "box": [
+            2739,
+            1430,
+            3001,
+            1517
+          ],
+          "contents": "TELEWORK\nTOP RUNNER",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 38,
+          "role": null
+        },
+        {
+          "box": [
+            2738,
+            1520,
+            2894,
+            1581
+          ],
+          "contents": "2023",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 39,
+          "role": null
+        },
+        {
+          "box": [
+            2902,
+            1526,
+            3152,
+            1580
+          ],
+          "contents": "総務大臣賞\n「くらし」と「しごと」をつなぐ",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 40,
+          "role": null
+        },
+        {
+          "box": [
+            2742,
+            1598,
+            3063,
+            1650
+          ],
+          "contents": "テレワークトップランナー 2023\nロゴマーク",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 41,
+          "role": null
+        },
+        {
+          "box": [
+            2745,
+            1962,
+            2983,
+            2016
+          ],
+          "contents": "※総務省主催セミナー「ニューノー\nマル時代に求められる働き方·\n環境整備の実態」",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 43,
+          "role": null
+        },
+        {
+          "box": [
+            2755,
+            2019,
+            2980,
+            2078
+          ],
+          "contents": "セミナーのアーカイブ動画を、\nて公開しております。\nテレワーク月間ホームページに",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 44,
+          "role": null
+        },
+        {
+          "box": [
+            2739,
+            2124,
+            3136,
+            2180
+          ],
+          "contents": "https://teleworkgekkan.go.jp/events/\ntelework-seminar-202403.html",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 46,
+          "role": null
+        },
+        {
+          "box": [
+            2773,
+            2243,
+            3184,
+            2283
+          ],
+          "contents": "2024 November Vol.287 MIC",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 47,
+          "role": null
+        },
+        {
+          "box": [
+            3194,
+            2243,
+            3232,
+            2281
+          ],
+          "contents": "3",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 48,
+          "role": null
+        },
+        {
+          "box": [
+            154,
+            1631,
+            744,
+            1801
+          ],
+          "contents": "今年度は育児·介護休業法の改正法が成立し、\n来年度以降は3歳未満の子を育てる社員がテレ\nワークを選択できるように措置を講ずることが、\n事業主の努力義務になります。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 49,
+          "role": null
+        },
+        {
+          "box": [
+            152,
+            1819,
+            737,
+            2181
+          ],
+          "contents": "総務省では、地方や中小企業等を含め、テレ\nワークの活用により、多様な働き手が活躍の機\n会を持てるよう、テレビ番組とのタイアップを\n通じて、テレワークの必要性を改めて実感でき\nるような情報発信を行います。また、全国の総\n合通信局等では、それぞれの地域における取組\nやテレワーク活用を進める先進企業を紹介する\n催しを実施します。",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 50,
+          "role": null
+        },
+        {
+          "box": [
+            397,
+            1443,
+            496,
+            1476
+          ],
+          "contents": "テレワーク月間",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 51,
+          "role": null
+        },
+        {
+          "box": [
+            492,
+            1443,
+            548,
+            1476
+          ],
+          "contents": "ma",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 52,
+          "role": null
+        },
+        {
+          "box": [
+            76,
+            2247,
+            99,
+            2279
+          ],
+          "contents": "2",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 53,
+          "role": "page_footer"
+        },
+        {
+          "box": [
+            139,
+            2251,
+            526,
+            2278
+          ],
+          "contents": "MIC 2024 November Vol.287",
+          "direction": "horizontal",
+          "indent_level": null,
+          "order": 54,
+          "role": "page_footer"
+        }
+      ],
+      "preprocess": {
+        "angle": 0.0,
+        "angle_score": 1.0
+      },
+      "tables": [
+        {
+          "box": [
+            1797,
+            1418,
+            2707,
+            2181
+          ],
+          "caption": {
+            "box": [
+              1796,
+              1360,
+              2476,
+              1392
+            ],
+            "contents": "テレワークトップランナー 2023 総務大臣賞受賞企業",
+            "direction": "horizontal",
+            "indent_level": null,
+            "order": 0,
+            "role": "caption"
+          },
+          "cells": [
+            {
+              "box": [
+                1800,
+                1418,
+                1955,
+                1471
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "企業名\n(五十音順)",
+              "row": 1,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                1418,
+                2145,
+                1471
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "業種、所在地、\n従業員数",
+              "row": 1,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                1418,
+                2703,
+                1471
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "取組の特徴",
+              "row": 1,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1799,
+                1471,
+                1955,
+                1589
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "アフラック生命\n保険株式会社",
+              "row": 2,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                1471,
+                2145,
+                1589
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "金融・保険業\n東京都、4,910人",
+              "row": 2,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                1471,
+                2703,
+                1589
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "·20-30 代の女性の離職率が半減、育児に関わる短時間勤務制度を利用\nする社員の人数が 27.9%減少(フルタイムの増加)など、女性の仕事\nと家庭の両立、キャリア形成に寄与\n·通勤手当 39.3%削減、紙帳票のペーパレス化等により、コストダウンの\n効果も顕在化",
+              "row": 2,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1799,
+                1589,
+                1955,
+                1708
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "株式会社\nキャリア·マム",
+              "row": 3,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                1589,
+                2145,
+                1708
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "サービス業\n東京都、38人",
+              "row": 3,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                1589,
+                2703,
+                1708
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "·11万人の主婦会員のうち、年間約3,000 人の地方在住テレワーカーに\n業務発注を行い、就労支援を実施するとともに、在宅ワーカーとしての\n人材育成を実施\n·地方自治体と連携し、地域でのテレワーカーの創出、テレワーク活用の\n裾野拡大に貢献",
+              "row": 3,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1799,
+                1708,
+                1955,
+                1825
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "シェイプウィン\n株式会社",
+              "row": 4,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                1708,
+                2145,
+                1825
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "専門·\n技術サービス業\n東京都、17人",
+              "row": 4,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                1708,
+                2703,
+                1825
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "·フルリモートでの勤務も可能とし、求人応募数が約7倍に増加。東京\nでは人材獲得の競争が激しい PR·マーケティング系の専門人材を地方\nや海外から採用\n·離職率は約80%から約 14%まで低下",
+              "row": 4,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1799,
+                1825,
+                1955,
+                1944
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "株式会社\nスタッフサービス·\nクラウドワーク",
+              "row": 5,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                1825,
+                2145,
+                1944
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "サービス業\n神奈川県、454人",
+              "row": 5,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                1825,
+                2703,
+                1944
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "·通勤が困難な 454 名の重度身体障がい者の雇用を創出。入社 1年後の\n定着率は 97.3%\n·入社後、配属前2ヶ月間のコミュニケーション研修を実施する他、自\n主性を重んじた1日3回の定時ミーティングにより、社員による主体的\nなチーム運営を実現",
+              "row": 5,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1799,
+                1943,
+                1955,
+                2063
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "株式会社\nテレワーク\nマネジメント",
+              "row": 6,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                1943,
+                2145,
+                2063
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "専門·\n技術サービス業\n北海道、11人",
+              "row": 6,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                1943,
+                2703,
+                2063
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "·社内SNS及びバーチャルオフィスにて社内コミュニケーションを統一し、\n全員が同じルールの下で活用することを徹底することで、効率の良い意\n思疎通、社員の一体感の醸成を図っている\n·簡単な操作で細かく労働時間を記録できるシステムの運用により、フェ\nアに働ける環境を実現",
+              "row": 6,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1799,
+                2063,
+                1955,
+                2179
+              ],
+              "col": 1,
+              "col_span": 1,
+              "contents": "株式会社\nプログレス",
+              "row": 7,
+              "row_span": 1
+            },
+            {
+              "box": [
+                1956,
+                2063,
+                2145,
+                2179
+              ],
+              "col": 2,
+              "col_span": 1,
+              "contents": "情報通信業\n東京都、86人",
+              "row": 7,
+              "row_span": 1
+            },
+            {
+              "box": [
+                2145,
+                2063,
+                2703,
+                2179
+              ],
+              "col": 3,
+              "col_span": 1,
+              "contents": "·コミュニケーションの促進に向け、対面でのチームビルディング、バーチャ\nルオフィスの活用等、多数の取り組みを進める他、コミュニケーション\n時の留意点等を示したガイドを全社員に向けて公開\n·リーダー間でのメンバー状態の共有、社員への毎月サーベイを実施し、\n社員の変化に対し、きめ細やか且つ早期にフォローできる仕組みを構築",
+              "row": 7,
+              "row_span": 1
+            }
+          ],
+          "cols": [
+            {
+              "box": [
+                1799,
+                1418,
+                1955,
+                2179
+              ],
+              "score": 0.9879449605941772
+            },
+            {
+              "box": [
+                1956,
+                1418,
+                2145,
+                2179
+              ],
+              "score": 0.9878174662590027
+            },
+            {
+              "box": [
+                2145,
+                1418,
+                2703,
+                2179
+              ],
+              "score": 0.9899024963378906
+            }
+          ],
+          "n_col": 3,
+          "n_row": 7,
+          "order": 33,
+          "rows": [
+            {
+              "box": [
+                1800,
+                1418,
+                2704,
+                1471
+              ],
+              "score": 0.9811916947364807
+            },
+            {
+              "box": [
+                1799,
+                1471,
+                2703,
+                1589
+              ],
+              "score": 0.9862063527107239
+            },
+            {
+              "box": [
+                1799,
+                1589,
+                2703,
+                1708
+              ],
+              "score": 0.9852697253227234
+            },
+            {
+              "box": [
+                1799,
+                1708,
+                2703,
+                1825
+              ],
+              "score": 0.9859278202056885
+            },
+            {
+              "box": [
+                1799,
+                1825,
+                2703,
+                1944
+              ],
+              "score": 0.9855771660804749
+            },
+            {
+              "box": [
+                1798,
+                1943,
+                2704,
+                2063
+              ],
+              "score": 0.9853803515434265
+            },
+            {
+              "box": [
+                1799,
+                2063,
+                2704,
+                2179
+              ],
+              "score": 0.9855636358261108
+            }
+          ],
+          "spans": []
+        }
+      ],
+      "words": [
+        {
+          "content": "2024 November Vol.287 MIC",
+          "det_score": 0.8698560242438697,
+          "direction": "horizontal",
+          "points": [
+            [
+              2773,
+              2243
+            ],
+            [
+              3184,
+              2243
+            ],
+            [
+              3184,
+              2283
+            ],
+            [
+              2773,
+              2283
+            ]
+          ],
+          "rec_score": 0.9947170615196228
+        },
+        {
+          "content": "MIC 2024 November Vol.287",
+          "det_score": 0.8828141296666765,
+          "direction": "horizontal",
+          "points": [
+            [
+              111,
+              2245
+            ],
+            [
+              529,
+              2241
+            ],
+            [
+              529,
+              2278
+            ],
+            [
+              112,
+              2283
+            ]
+          ],
+          "rec_score": 0.9993717074394226
+        },
+        {
+          "content": "3",
+          "det_score": 0.7355877315824471,
+          "direction": "horizontal",
+          "points": [
+            [
+              3194,
+              2243
+            ],
+            [
+              3232,
+              2243
+            ],
+            [
+              3232,
+              2281
+            ],
+            [
+              3194,
+              2281
+            ]
+          ],
+          "rec_score": 0.9990523457527161
+        },
+        {
+          "content": "2",
+          "det_score": 0.6079680030775625,
+          "direction": "horizontal",
+          "points": [
+            [
+              72,
+              2243
+            ],
+            [
+              105,
+              2243
+            ],
+            [
+              105,
+              2281
+            ],
+            [
+              72,
+              2281
+            ]
+          ],
+          "rec_score": 0.9919583797454834
+        },
+        {
+          "content": "telework-seminar-202403.html",
+          "det_score": 0.8642178307455339,
+          "direction": "horizontal",
+          "points": [
+            [
+              2733,
+              2147
+            ],
+            [
+              3074,
+              2147
+            ],
+            [
+              3074,
+              2184
+            ],
+            [
+              2733,
+              2184
+            ]
+          ],
+          "rec_score": 0.9900938868522644
+        },
+        {
+          "content": "社員の変化に対し、きめ細やか且つ早期にフォローできる仕組みを構築",
+          "det_score": 0.9026159626278378,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              2145
+            ],
+            [
+              2700,
+              2143
+            ],
+            [
+              2700,
+              2180
+            ],
+            [
+              2154,
+              2182
+            ]
+          ],
+          "rec_score": 0.994909405708313
+        },
+        {
+          "content": "催しを実施します。",
+          "det_score": 0.9039446353182075,
+          "direction": "horizontal",
+          "points": [
+            [
+              149,
+              2145
+            ],
+            [
+              395,
+              2145
+            ],
+            [
+              395,
+              2184
+            ],
+            [
+              149,
+              2184
+            ]
+          ],
+          "rec_score": 0.9998633861541748
+        },
+        {
+          "content": "·リーダー間でのメンバー状態の共有、社員への毎月サーベイを実施し、",
+          "det_score": 0.7969945643273034,
+          "direction": "horizontal",
+          "points": [
+            [
+              2144,
+              2126
+            ],
+            [
+              2696,
+              2126
+            ],
+            [
+              2696,
+              2157
+            ],
+            [
+              2144,
+              2157
+            ]
+          ],
+          "rec_score": 0.9983696937561035
+        },
+        {
+          "content": "https://teleworkgekkan.go.jp/events/",
+          "det_score": 0.8622410969167459,
+          "direction": "horizontal",
+          "points": [
+            [
+              2735,
+              2118
+            ],
+            [
+              3143,
+              2118
+            ],
+            [
+              3143,
+              2157
+            ],
+            [
+              2735,
+              2157
+            ]
+          ],
+          "rec_score": 0.9995938539505005
+        },
+        {
+          "content": "東京都、86人",
+          "det_score": 0.8628448986374171,
+          "direction": "horizontal",
+          "points": [
+            [
+              1954,
+              2113
+            ],
+            [
+              2090,
+              2113
+            ],
+            [
+              2090,
+              2151
+            ],
+            [
+              1954,
+              2151
+            ]
+          ],
+          "rec_score": 0.9858852028846741
+        },
+        {
+          "content": "プログレス",
+          "det_score": 0.8401465397953187,
+          "direction": "horizontal",
+          "points": [
+            [
+              1799,
+              2113
+            ],
+            [
+              1910,
+              2113
+            ],
+            [
+              1910,
+              2153
+            ],
+            [
+              1799,
+              2153
+            ]
+          ],
+          "rec_score": 0.9998103380203247
+        },
+        {
+          "content": "https://teleworkgekkan.go.jp/",
+          "det_score": 0.8850298985088995,
+          "direction": "horizontal",
+          "points": [
+            [
+              765,
+              2105
+            ],
+            [
+              1305,
+              2105
+            ],
+            [
+              1305,
+              2159
+            ],
+            [
+              765,
+              2159
+            ]
+          ],
+          "rec_score": 0.9999186992645264
+        },
+        {
+          "content": "時の留意点等を示したガイドを全社員に向けて公開",
+          "det_score": 0.8984682889007,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              2105
+            ],
+            [
+              2551,
+              2105
+            ],
+            [
+              2551,
+              2134
+            ],
+            [
+              2156,
+              2134
+            ]
+          ],
+          "rec_score": 0.9916874170303345
+        },
+        {
+          "content": "やテレワーク活用を進める先進企業を紹介する",
+          "det_score": 0.9365198169451312,
+          "direction": "horizontal",
+          "points": [
+            [
+              149,
+              2095
+            ],
+            [
+              738,
+              2097
+            ],
+            [
+              738,
+              2139
+            ],
+            [
+              149,
+              2136
+            ]
+          ],
+          "rec_score": 0.999887228012085
+        },
+        {
+          "content": "情報通信業",
+          "det_score": 0.825883667427918,
+          "direction": "horizontal",
+          "points": [
+            [
+              1958,
+              2090
+            ],
+            [
+              2065,
+              2090
+            ],
+            [
+              2065,
+              2124
+            ],
+            [
+              1958,
+              2124
+            ]
+          ],
+          "rec_score": 0.9999374151229858
+        },
+        {
+          "content": "株式会社",
+          "det_score": 0.8933022433275627,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              2086
+            ],
+            [
+              1898,
+              2086
+            ],
+            [
+              1898,
+              2126
+            ],
+            [
+              1797,
+              2126
+            ]
+          ],
+          "rec_score": 0.9990707635879517
+        },
+        {
+          "content": "ルオフィスの活用等、多数の取り組みを進める他、コミュニケーション",
+          "det_score": 0.8328606729154233,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              2082
+            ],
+            [
+              2700,
+              2082
+            ],
+            [
+              2700,
+              2113
+            ],
+            [
+              2156,
+              2113
+            ]
+          ],
+          "rec_score": 0.9998774528503418
+        },
+        {
+          "content": "·コミュニケーションの促進に向け、対面でのチームビルディング、バーチャ",
+          "det_score": 0.8315079828412699,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              2061
+            ],
+            [
+              2700,
+              2061
+            ],
+            [
+              2700,
+              2093
+            ],
+            [
+              2146,
+              2093
+            ]
+          ],
+          "rec_score": 0.8743436932563782
+        },
+        {
+          "content": "合通信局等では、それぞれの地域における取組",
+          "det_score": 0.8340543800367237,
+          "direction": "horizontal",
+          "points": [
+            [
+              151,
+              2051
+            ],
+            [
+              738,
+              2051
+            ],
+            [
+              738,
+              2090
+            ],
+            [
+              151,
+              2090
+            ]
+          ],
+          "rec_score": 0.9998911619186401
+        },
+        {
+          "content": "て公開しております。",
+          "det_score": 0.8712006286841952,
+          "direction": "horizontal",
+          "points": [
+            [
+              2750,
+              2046
+            ],
+            [
+              2911,
+              2051
+            ],
+            [
+              2910,
+              2085
+            ],
+            [
+              2749,
+              2080
+            ]
+          ],
+          "rec_score": 0.9982337355613708
+        },
+        {
+          "content": "テレワーク月間ホームページに",
+          "det_score": 0.8198321515508972,
+          "direction": "horizontal",
+          "points": [
+            [
+              2750,
+              2030
+            ],
+            [
+              2992,
+              2030
+            ],
+            [
+              2992,
+              2068
+            ],
+            [
+              2750,
+              2068
+            ]
+          ],
+          "rec_score": 0.8475146889686584
+        },
+        {
+          "content": "アに働ける環境を実現",
+          "det_score": 0.9225578324368157,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              2030
+            ],
+            [
+              2338,
+              2030
+            ],
+            [
+              2338,
+              2059
+            ],
+            [
+              2156,
+              2059
+            ]
+          ],
+          "rec_score": 0.9961590766906738
+        },
+        {
+          "content": "※テレワーク月間ホームページ",
+          "det_score": 0.8988311202311124,
+          "direction": "horizontal",
+          "points": [
+            [
+              769,
+              2028
+            ],
+            [
+              1088,
+              2028
+            ],
+            [
+              1088,
+              2065
+            ],
+            [
+              769,
+              2065
+            ]
+          ],
+          "rec_score": 0.9996130466461182
+        },
+        {
+          "content": "セミナーのアーカイブ動画を、",
+          "det_score": 0.8263458169388528,
+          "direction": "horizontal",
+          "points": [
+            [
+              2750,
+              2009
+            ],
+            [
+              2988,
+              2011
+            ],
+            [
+              2987,
+              2045
+            ],
+            [
+              2750,
+              2042
+            ]
+          ],
+          "rec_score": 0.9995837211608887
+        },
+        {
+          "content": "北海道、11人",
+          "det_score": 0.8253075366649102,
+          "direction": "horizontal",
+          "points": [
+            [
+              1954,
+              2009
+            ],
+            [
+              2092,
+              2009
+            ],
+            [
+              2092,
+              2047
+            ],
+            [
+              1954,
+              2047
+            ]
+          ],
+          "rec_score": 0.9773737192153931
+        },
+        {
+          "content": "マネジメント",
+          "det_score": 0.8465640308601515,
+          "direction": "horizontal",
+          "points": [
+            [
+              1799,
+              2009
+            ],
+            [
+              1925,
+              2009
+            ],
+            [
+              1925,
+              2049
+            ],
+            [
+              1799,
+              2049
+            ]
+          ],
+          "rec_score": 0.99709552526474
+        },
+        {
+          "content": "·簡単な操作で細かく労働時間を記録できるシステムの運用により、フェ",
+          "det_score": 0.8900493490124339,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              2009
+            ],
+            [
+              2700,
+              2009
+            ],
+            [
+              2700,
+              2040
+            ],
+            [
+              2146,
+              2040
+            ]
+          ],
+          "rec_score": 0.99928218126297
+        },
+        {
+          "content": "るような情報発信を行います。また、全国の総",
+          "det_score": 0.824944683894323,
+          "direction": "horizontal",
+          "points": [
+            [
+              153,
+              2003
+            ],
+            [
+              738,
+              2003
+            ],
+            [
+              738,
+              2042
+            ],
+            [
+              153,
+              2042
+            ]
+          ],
+          "rec_score": 0.9999163150787354
+        },
+        {
+          "content": "環境整備の実態」",
+          "det_score": 0.7625809257394237,
+          "direction": "horizontal",
+          "points": [
+            [
+              2750,
+              1992
+            ],
+            [
+              2886,
+              1992
+            ],
+            [
+              2886,
+              2024
+            ],
+            [
+              2750,
+              2024
+            ]
+          ],
+          "rec_score": 0.9740626811981201
+        },
+        {
+          "content": "思疎通、社員の一体感の醸成を図っている",
+          "det_score": 0.7810869622579981,
+          "direction": "horizontal",
+          "points": [
+            [
+              2158,
+              1986
+            ],
+            [
+              2489,
+              1986
+            ],
+            [
+              2489,
+              2017
+            ],
+            [
+              2158,
+              2017
+            ]
+          ],
+          "rec_score": 0.6964508891105652
+        },
+        {
+          "content": "技術サービス業",
+          "det_score": 0.9284924828343921,
+          "direction": "horizontal",
+          "points": [
+            [
+              1956,
+              1982
+            ],
+            [
+              2103,
+              1982
+            ],
+            [
+              2103,
+              2019
+            ],
+            [
+              1956,
+              2019
+            ]
+          ],
+          "rec_score": 0.9778309464454651
+        },
+        {
+          "content": "テレワーク",
+          "det_score": 0.802472447216325,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1982
+            ],
+            [
+              1910,
+              1982
+            ],
+            [
+              1910,
+              2022
+            ],
+            [
+              1797,
+              2022
+            ]
+          ],
+          "rec_score": 0.9986926913261414
+        },
+        {
+          "content": "マル時代に求められる働き方·",
+          "det_score": 0.7700155410713281,
+          "direction": "horizontal",
+          "points": [
+            [
+              2748,
+              1974
+            ],
+            [
+              2990,
+              1974
+            ],
+            [
+              2990,
+              2005
+            ],
+            [
+              2748,
+              2005
+            ]
+          ],
+          "rec_score": 0.9292922019958496
+        },
+        {
+          "content": "全員が同じルールの下で活用することを徹底することで、効率の良い意",
+          "det_score": 0.8854505975841092,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              1961
+            ],
+            [
+              2704,
+              1961
+            ],
+            [
+              2704,
+              1999
+            ],
+            [
+              2154,
+              1999
+            ]
+          ],
+          "rec_score": 0.9841829538345337
+        },
+        {
+          "content": "専門·",
+          "det_score": 0.8530162681941114,
+          "direction": "horizontal",
+          "points": [
+            [
+              1956,
+              1959
+            ],
+            [
+              2022,
+              1959
+            ],
+            [
+              2022,
+              1992
+            ],
+            [
+              1956,
+              1992
+            ]
+          ],
+          "rec_score": 0.9220244884490967
+        },
+        {
+          "content": "株式会社",
+          "det_score": 0.8953812357715585,
+          "direction": "horizontal",
+          "points": [
+            [
+              1799,
+              1957
+            ],
+            [
+              1896,
+              1957
+            ],
+            [
+              1896,
+              1990
+            ],
+            [
+              1799,
+              1990
+            ]
+          ],
+          "rec_score": 0.9999344348907471
+        },
+        {
+          "content": "通じて、テレワークの必要性を改めて実感でき",
+          "det_score": 0.9179653090779066,
+          "direction": "horizontal",
+          "points": [
+            [
+              149,
+              1955
+            ],
+            [
+              736,
+              1955
+            ],
+            [
+              736,
+              1994
+            ],
+            [
+              149,
+              1994
+            ]
+          ],
+          "rec_score": 0.9999725818634033
+        },
+        {
+          "content": "※総務省主催セミナー「ニューノー",
+          "det_score": 0.8033152855161962,
+          "direction": "horizontal",
+          "points": [
+            [
+              2733,
+              1953
+            ],
+            [
+              2988,
+              1953
+            ],
+            [
+              2988,
+              1984
+            ],
+            [
+              2733,
+              1984
+            ]
+          ],
+          "rec_score": 0.9993388056755066
+        },
+        {
+          "content": "·社内SNS及びバーチャルオフィスにて社内コミュニケーションを統一し、",
+          "det_score": 0.8564455486110216,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              1940
+            ],
+            [
+              2700,
+              1942
+            ],
+            [
+              2700,
+              1976
+            ],
+            [
+              2146,
+              1973
+            ]
+          ],
+          "rec_score": 0.6701968312263489
+        },
+        {
+          "content": "なチーム運営を実現",
+          "det_score": 0.8096588150505726,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              1911
+            ],
+            [
+              2324,
+              1911
+            ],
+            [
+              2324,
+              1942
+            ],
+            [
+              2156,
+              1942
+            ]
+          ],
+          "rec_score": 0.9487742781639099
+        },
+        {
+          "content": "会を持てるよう、テレビ番組とのタイアップを",
+          "det_score": 0.8480970013418035,
+          "direction": "horizontal",
+          "points": [
+            [
+              151,
+              1909
+            ],
+            [
+              738,
+              1909
+            ],
+            [
+              738,
+              1948
+            ],
+            [
+              151,
+              1948
+            ]
+          ],
+          "rec_score": 0.9999270439147949
+        },
+        {
+          "content": "テレワーク月間関連イベントの様子",
+          "det_score": 0.8244730395062608,
+          "direction": "horizontal",
+          "points": [
+            [
+              2735,
+              1907
+            ],
+            [
+              3095,
+              1907
+            ],
+            [
+              3095,
+              1944
+            ],
+            [
+              2735,
+              1944
+            ]
+          ],
+          "rec_score": 0.9994210600852966
+        },
+        {
+          "content": "クラウドワーク",
+          "det_score": 0.8474818057997127,
+          "direction": "horizontal",
+          "points": [
+            [
+              1799,
+              1894
+            ],
+            [
+              1923,
+              1894
+            ],
+            [
+              1923,
+              1928
+            ],
+            [
+              1799,
+              1928
+            ]
+          ],
+          "rec_score": 0.9993855953216553
+        },
+        {
+          "content": "主性を重んじた1日3回の定時ミーティングにより、社員による主体的",
+          "det_score": 0.8011153741975625,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              1886
+            ],
+            [
+              2704,
+              1886
+            ],
+            [
+              2704,
+              1923
+            ],
+            [
+              2154,
+              1923
+            ]
+          ],
+          "rec_score": 0.8712220788002014
+        },
+        {
+          "content": "神奈川県、454人",
+          "det_score": 0.8416354830688658,
+          "direction": "horizontal",
+          "points": [
+            [
+              1954,
+              1877
+            ],
+            [
+              2117,
+              1877
+            ],
+            [
+              2117,
+              1915
+            ],
+            [
+              1954,
+              1915
+            ]
+          ],
+          "rec_score": 0.971415102481842
+        },
+        {
+          "content": "www",
+          "det_score": 0.6170569318924507,
+          "direction": "horizontal",
+          "points": [
+            [
+              2959,
+              1877
+            ],
+            [
+              3037,
+              1877
+            ],
+            [
+              3037,
+              1903
+            ],
+            [
+              2959,
+              1903
+            ]
+          ],
+          "rec_score": 0.21142011880874634
+        },
+        {
+          "content": "·入社後、配属前2ヶ月間のコミュニケーション研修を実施する他、自",
+          "det_score": 0.8740998891379798,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              1865
+            ],
+            [
+              2704,
+              1865
+            ],
+            [
+              2704,
+              1903
+            ],
+            [
+              2146,
+              1903
+            ]
+          ],
+          "rec_score": 0.886018693447113
+        },
+        {
+          "content": "スタッフサービス·",
+          "det_score": 0.8340360852271582,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1865
+            ],
+            [
+              1956,
+              1865
+            ],
+            [
+              1956,
+              1903
+            ],
+            [
+              1797,
+              1903
+            ]
+          ],
+          "rec_score": 0.9630979895591736
+        },
+        {
+          "content": "ワークの活用により、多様な働き手が活躍の機",
+          "det_score": 0.9379513432730491,
+          "direction": "horizontal",
+          "points": [
+            [
+              153,
+              1861
+            ],
+            [
+              740,
+              1861
+            ],
+            [
+              740,
+              1900
+            ],
+            [
+              153,
+              1900
+            ]
+          ],
+          "rec_score": 0.9996869564056396
+        },
+        {
+          "content": "サービス業",
+          "det_score": 0.85012787279405,
+          "direction": "horizontal",
+          "points": [
+            [
+              1956,
+              1854
+            ],
+            [
+              2061,
+              1854
+            ],
+            [
+              2061,
+              1888
+            ],
+            [
+              1956,
+              1888
+            ]
+          ],
+          "rec_score": 0.9998480081558228
+        },
+        {
+          "content": "定着率は 97.3%",
+          "det_score": 0.8115608019842987,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              1846
+            ],
+            [
+              2289,
+              1846
+            ],
+            [
+              2289,
+              1877
+            ],
+            [
+              2154,
+              1877
+            ]
+          ],
+          "rec_score": 0.9302524328231812
+        },
+        {
+          "content": "株式会社",
+          "det_score": 0.800863458688958,
+          "direction": "horizontal",
+          "points": [
+            [
+              1799,
+              1838
+            ],
+            [
+              1883,
+              1838
+            ],
+            [
+              1883,
+              1873
+            ],
+            [
+              1799,
+              1873
+            ]
+          ],
+          "rec_score": 0.9998214840888977
+        },
+        {
+          "content": "TELEWORK",
+          "det_score": 0.8913123843793211,
+          "direction": "horizontal",
+          "points": [
+            [
+              802,
+              1828
+            ],
+            [
+              1463,
+              1819
+            ],
+            [
+              1464,
+              1921
+            ],
+            [
+              803,
+              1930
+            ]
+          ],
+          "rec_score": 0.9999326467514038
+        },
+        {
+          "content": "·通勤が困難な 454 名の重度身体障がい者の雇用を創出。入社 1年後の",
+          "det_score": 0.7911110001744008,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              1825
+            ],
+            [
+              2702,
+              1825
+            ],
+            [
+              2702,
+              1857
+            ],
+            [
+              2146,
+              1857
+            ]
+          ],
+          "rec_score": 0.5418102145195007
+        },
+        {
+          "content": "総務省では、地方や中小企業等を含め、テレ",
+          "det_score": 0.8356097724064286,
+          "direction": "horizontal",
+          "points": [
+            [
+              178,
+              1815
+            ],
+            [
+              738,
+              1815
+            ],
+            [
+              738,
+              1854
+            ],
+            [
+              178,
+              1854
+            ]
+          ],
+          "rec_score": 0.9999653100967407
+        },
+        {
+          "content": "·離職率は約80%から約 14%まで低下",
+          "det_score": 0.8535850021865342,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              1781
+            ],
+            [
+              2446,
+              1781
+            ],
+            [
+              2446,
+              1813
+            ],
+            [
+              2146,
+              1813
+            ]
+          ],
+          "rec_score": 0.45332518219947815
+        },
+        {
+          "content": "東京都、17人",
+          "det_score": 0.9085082512767844,
+          "direction": "horizontal",
+          "points": [
+            [
+              1958,
+              1775
+            ],
+            [
+              2090,
+              1775
+            ],
+            [
+              2090,
+              1806
+            ],
+            [
+              1958,
+              1806
+            ]
+          ],
+          "rec_score": 0.9908609390258789
+        },
+        {
+          "content": "「くらし」と「しごと」をつなぐ",
+          "det_score": 0.8884172219953953,
+          "direction": "horizontal",
+          "points": [
+            [
+              893,
+              1765
+            ],
+            [
+              1365,
+              1769
+            ],
+            [
+              1364,
+              1821
+            ],
+            [
+              893,
+              1817
+            ]
+          ],
+          "rec_score": 0.9997491836547852
+        },
+        {
+          "content": "事業主の努力義務になります。",
+          "det_score": 0.8560660185584622,
+          "direction": "horizontal",
+          "points": [
+            [
+              151,
+              1767
+            ],
+            [
+              531,
+              1767
+            ],
+            [
+              531,
+              1806
+            ],
+            [
+              151,
+              1806
+            ]
+          ],
+          "rec_score": 0.9999192953109741
+        },
+        {
+          "content": "株式会社",
+          "det_score": 0.8894256200415619,
+          "direction": "horizontal",
+          "points": [
+            [
+              1799,
+              1763
+            ],
+            [
+              1896,
+              1763
+            ],
+            [
+              1896,
+              1796
+            ],
+            [
+              1799,
+              1796
+            ]
+          ],
+          "rec_score": 0.9999041557312012
+        },
+        {
+          "content": "や海外から採用",
+          "det_score": 0.8468791475303494,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              1761
+            ],
+            [
+              2289,
+              1761
+            ],
+            [
+              2289,
+              1792
+            ],
+            [
+              2154,
+              1792
+            ]
+          ],
+          "rec_score": 0.9650553464889526
+        },
+        {
+          "content": "技術サービス業",
+          "det_score": 0.8914811159600181,
+          "direction": "horizontal",
+          "points": [
+            [
+              1956,
+              1750
+            ],
+            [
+              2101,
+              1750
+            ],
+            [
+              2101,
+              1781
+            ],
+            [
+              1956,
+              1781
+            ]
+          ],
+          "rec_score": 0.9887142777442932
+        },
+        {
+          "content": "では人材獲得の競争が激しい PR·マーケティング系の専門人材を地方",
+          "det_score": 0.8993264736127965,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              1735
+            ],
+            [
+              2700,
+              1738
+            ],
+            [
+              2700,
+              1771
+            ],
+            [
+              2154,
+              1769
+            ]
+          ],
+          "rec_score": 0.9737185835838318
+        },
+        {
+          "content": "シェイプウィン",
+          "det_score": 0.8439147964419934,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1733
+            ],
+            [
+              1948,
+              1733
+            ],
+            [
+              1948,
+              1773
+            ],
+            [
+              1797,
+              1773
+            ]
+          ],
+          "rec_score": 0.997520387172699
+        },
+        {
+          "content": "専門·",
+          "det_score": 0.8506236983463169,
+          "direction": "horizontal",
+          "points": [
+            [
+              1956,
+              1723
+            ],
+            [
+              2024,
+              1723
+            ],
+            [
+              2024,
+              1756
+            ],
+            [
+              1956,
+              1756
+            ]
+          ],
+          "rec_score": 0.9370483756065369
+        },
+        {
+          "content": "ワークを選択できるように措置を講ずることが、",
+          "det_score": 0.9299410214883418,
+          "direction": "horizontal",
+          "points": [
+            [
+              153,
+              1719
+            ],
+            [
+              748,
+              1719
+            ],
+            [
+              748,
+              1758
+            ],
+            [
+              153,
+              1758
+            ]
+          ],
+          "rec_score": 0.996730625629425
+        },
+        {
+          "content": "·フルリモートでの勤務も可能とし、求人応募数が約7倍に増加。東京",
+          "det_score": 0.7809862166972772,
+          "direction": "horizontal",
+          "points": [
+            [
+              2148,
+              1717
+            ],
+            [
+              2700,
+              1717
+            ],
+            [
+              2700,
+              1748
+            ],
+            [
+              2148,
+              1748
+            ]
+          ],
+          "rec_score": 0.9846593737602234
+        },
+        {
+          "content": "テレワーク導入お役立も情報",
+          "det_score": 0.5937307002709679,
+          "direction": "horizontal",
+          "points": [
+            [
+              1274,
+              1700
+            ],
+            [
+              1433,
+              1700
+            ],
+            [
+              1433,
+              1729
+            ],
+            [
+              1274,
+              1729
+            ]
+          ],
+          "rec_score": 0.84978187084198
+        },
+        {
+          "content": "裾野拡大に貢献",
+          "det_score": 0.8252481739364268,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              1675
+            ],
+            [
+              2293,
+              1675
+            ],
+            [
+              2293,
+              1706
+            ],
+            [
+              2156,
+              1706
+            ]
+          ],
+          "rec_score": 0.9927469491958618
+        },
+        {
+          "content": "来年度以降は3歳未満の子を育てる社員がテレ",
+          "det_score": 0.8407703687541785,
+          "direction": "horizontal",
+          "points": [
+            [
+              151,
+              1673
+            ],
+            [
+              738,
+              1673
+            ],
+            [
+              738,
+              1712
+            ],
+            [
+              151,
+              1712
+            ]
+          ],
+          "rec_score": 0.9995430707931519
+        },
+        {
+          "content": "ハワーク·ワンストック·サポート (全面へd",
+          "det_score": 0.5242100588216132,
+          "direction": "horizontal",
+          "points": [
+            [
+              2824,
+              1671
+            ],
+            [
+              2996,
+              1671
+            ],
+            [
+              2996,
+              1700
+            ],
+            [
+              2824,
+              1700
+            ]
+          ],
+          "rec_score": 0.00047119392547756433
+        },
+        {
+          "content": "·地方自治体と連携し、地域でのテレワーカーの創出、テレワーク活用の",
+          "det_score": 0.9210105978954336,
+          "direction": "horizontal",
+          "points": [
+            [
+              2148,
+              1654
+            ],
+            [
+              2702,
+              1654
+            ],
+            [
+              2702,
+              1685
+            ],
+            [
+              2148,
+              1685
+            ]
+          ],
+          "rec_score": 0.9919477105140686
+        },
+        {
+          "content": "東京都、38人",
+          "det_score": 0.8140887882751275,
+          "direction": "horizontal",
+          "points": [
+            [
+              1954,
+              1641
+            ],
+            [
+              2090,
+              1641
+            ],
+            [
+              2090,
+              1679
+            ],
+            [
+              1954,
+              1679
+            ]
+          ],
+          "rec_score": 0.9911113977432251
+        },
+        {
+          "content": "キャリア·マム",
+          "det_score": 0.8372176875738793,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1641
+            ],
+            [
+              1950,
+              1641
+            ],
+            [
+              1950,
+              1679
+            ],
+            [
+              1797,
+              1679
+            ]
+          ],
+          "rec_score": 0.9778923988342285
+        },
+        {
+          "content": "テレワーク月間",
+          "det_score": 0.7343457023752985,
+          "direction": "horizontal",
+          "points": [
+            [
+              848,
+              1639
+            ],
+            [
+              982,
+              1639
+            ],
+            [
+              982,
+              1677
+            ],
+            [
+              848,
+              1677
+            ]
+          ],
+          "rec_score": 0.829547107219696
+        },
+        {
+          "content": "人材育成を実施",
+          "det_score": 0.9053680291729616,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              1633
+            ],
+            [
+              2293,
+              1633
+            ],
+            [
+              2293,
+              1662
+            ],
+            [
+              2156,
+              1662
+            ]
+          ],
+          "rec_score": 0.9771186709403992
+        },
+        {
+          "content": "文字サイズの求具 *",
+          "det_score": 0.7409081643118578,
+          "direction": "horizontal",
+          "points": [
+            [
+              1300,
+              1629
+            ],
+            [
+              1416,
+              1629
+            ],
+            [
+              1416,
+              1658
+            ],
+            [
+              1300,
+              1658
+            ]
+          ],
+          "rec_score": 0.025682659819722176
+        },
+        {
+          "content": "今年度は育児·介護休業法の改正法が成立し、",
+          "det_score": 0.9418003253630811,
+          "direction": "horizontal",
+          "points": [
+            [
+              178,
+              1623
+            ],
+            [
+              748,
+              1625
+            ],
+            [
+              748,
+              1667
+            ],
+            [
+              178,
+              1664
+            ]
+          ],
+          "rec_score": 0.9589713215827942
+        },
+        {
+          "content": "ロゴマーク",
+          "det_score": 0.8454840317879139,
+          "direction": "horizontal",
+          "points": [
+            [
+              2737,
+              1623
+            ],
+            [
+              2855,
+              1623
+            ],
+            [
+              2855,
+              1656
+            ],
+            [
+              2737,
+              1656
+            ]
+          ],
+          "rec_score": 0.9997232556343079
+        },
+        {
+          "content": "サービス業",
+          "det_score": 0.8310694837364657,
+          "direction": "horizontal",
+          "points": [
+            [
+              1954,
+              1614
+            ],
+            [
+              2063,
+              1614
+            ],
+            [
+              2063,
+              1654
+            ],
+            [
+              1954,
+              1654
+            ]
+          ],
+          "rec_score": 0.9974911212921143
+        },
+        {
+          "content": "株式会社",
+          "det_score": 0.842268146520896,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1614
+            ],
+            [
+              1898,
+              1614
+            ],
+            [
+              1898,
+              1654
+            ],
+            [
+              1797,
+              1654
+            ]
+          ],
+          "rec_score": 0.9991051554679871
+        },
+        {
+          "content": "業務発注を行い、就労支援を実施するとともに、在宅ワーカーとしての",
+          "det_score": 0.7816501320303125,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              1610
+            ],
+            [
+              2702,
+              1610
+            ],
+            [
+              2702,
+              1641
+            ],
+            [
+              2156,
+              1641
+            ]
+          ],
+          "rec_score": 0.9971479773521423
+        },
+        {
+          "content": "テレワークトップランナー 2023",
+          "det_score": 0.8899192498220752,
+          "direction": "horizontal",
+          "points": [
+            [
+              2735,
+              1587
+            ],
+            [
+              3068,
+              1587
+            ],
+            [
+              3068,
+              1627
+            ],
+            [
+              2735,
+              1627
+            ]
+          ],
+          "rec_score": 0.9974113702774048
+        },
+        {
+          "content": "·11万人の主婦会員のうち、年間約3,000 人の地方在住テレワーカーに",
+          "det_score": 0.8132178116206443,
+          "direction": "horizontal",
+          "points": [
+            [
+              2148,
+              1589
+            ],
+            [
+              2702,
+              1589
+            ],
+            [
+              2702,
+              1621
+            ],
+            [
+              2148,
+              1621
+            ]
+          ],
+          "rec_score": 0.9515610337257385
+        },
+        {
+          "content": "効果も顕在化",
+          "det_score": 0.8664024302772447,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              1558
+            ],
+            [
+              2276,
+              1558
+            ],
+            [
+              2276,
+              1589
+            ],
+            [
+              2156,
+              1589
+            ]
+          ],
+          "rec_score": 0.9908877015113831
+        },
+        {
+          "content": "「くらし」と「しごと」をつなぐ",
+          "det_score": 0.8584298753809787,
+          "direction": "horizontal",
+          "points": [
+            [
+              2915,
+              1545
+            ],
+            [
+              3157,
+              1545
+            ],
+            [
+              3157,
+              1583
+            ],
+            [
+              2915,
+              1583
+            ]
+          ],
+          "rec_score": 0.9931744337081909
+        },
+        {
+          "content": "·通勤手当 39.3%削減、紙帳票のペーパレス化等により、コストダウンの",
+          "det_score": 0.8177334044828622,
+          "direction": "horizontal",
+          "points": [
+            [
+              2148,
+              1535
+            ],
+            [
+              2700,
+              1535
+            ],
+            [
+              2700,
+              1566
+            ],
+            [
+              2148,
+              1566
+            ]
+          ],
+          "rec_score": 0.9766072630882263
+        },
+        {
+          "content": "保険株式会社",
+          "det_score": 0.8481092038960932,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1525
+            ],
+            [
+              1941,
+              1525
+            ],
+            [
+              1941,
+              1562
+            ],
+            [
+              1797,
+              1562
+            ]
+          ],
+          "rec_score": 0.9994108080863953
+        },
+        {
+          "content": "東京都、4,910人",
+          "det_score": 0.8802356874070516,
+          "direction": "horizontal",
+          "points": [
+            [
+              1954,
+              1522
+            ],
+            [
+              2113,
+              1522
+            ],
+            [
+              2113,
+              1560
+            ],
+            [
+              1954,
+              1560
+            ]
+          ],
+          "rec_score": 0.9846718311309814
+        },
+        {
+          "content": "令和6年度テレワーク月間ポスター",
+          "det_score": 0.8219930293281731,
+          "direction": "horizontal",
+          "points": [
+            [
+              879,
+              1522
+            ],
+            [
+              1238,
+              1522
+            ],
+            [
+              1238,
+              1560
+            ],
+            [
+              879,
+              1560
+            ]
+          ],
+          "rec_score": 0.9995118975639343
+        },
+        {
+          "content": "2023",
+          "det_score": 0.8786857600239191,
+          "direction": "horizontal",
+          "points": [
+            [
+              2735,
+              1514
+            ],
+            [
+              2899,
+              1514
+            ],
+            [
+              2899,
+              1585
+            ],
+            [
+              2735,
+              1585
+            ]
+          ],
+          "rec_score": 0.9999958276748657
+        },
+        {
+          "content": "総務大臣賞",
+          "det_score": 0.8219344689765988,
+          "direction": "horizontal",
+          "points": [
+            [
+              2886,
+              1514
+            ],
+            [
+              3041,
+              1514
+            ],
+            [
+              3041,
+              1562
+            ],
+            [
+              2886,
+              1562
+            ]
+          ],
+          "rec_score": 0.9991063475608826
+        },
+        {
+          "content": "と家庭の両立、キャリア形成に寄与",
+          "det_score": 0.7863063664286287,
+          "direction": "horizontal",
+          "points": [
+            [
+              2156,
+              1514
+            ],
+            [
+              2436,
+              1514
+            ],
+            [
+              2436,
+              1545
+            ],
+            [
+              2156,
+              1545
+            ]
+          ],
+          "rec_score": 0.9991584420204163
+        },
+        {
+          "content": "...",
+          "det_score": 0.5358245803491912,
+          "direction": "horizontal",
+          "points": [
+            [
+              717,
+              1514
+            ],
+            [
+              790,
+              1514
+            ],
+            [
+              790,
+              1545
+            ],
+            [
+              717,
+              1545
+            ]
+          ],
+          "rec_score": 0.7743909358978271
+        },
+        {
+          "content": "普段車庫",
+          "det_score": 0.5458312367017453,
+          "direction": "horizontal",
+          "points": [
+            [
+              614,
+              1514
+            ],
+            [
+              703,
+              1514
+            ],
+            [
+              703,
+              1545
+            ],
+            [
+              614,
+              1545
+            ]
+          ],
+          "rec_score": 0.005824517458677292
+        },
+        {
+          "content": "デジタルテ",
+          "det_score": 0.7298127378105486,
+          "direction": "horizontal",
+          "points": [
+            [
+              256,
+              1512
+            ],
+            [
+              341,
+              1512
+            ],
+            [
+              341,
+              1545
+            ],
+            [
+              256,
+              1545
+            ]
+          ],
+          "rec_score": 0.4083397388458252
+        },
+        {
+          "content": "金融・保険業",
+          "det_score": 0.8894349608513025,
+          "direction": "horizontal",
+          "points": [
+            [
+              1958,
+              1499
+            ],
+            [
+              2086,
+              1499
+            ],
+            [
+              2086,
+              1533
+            ],
+            [
+              1958,
+              1533
+            ]
+          ],
+          "rec_score": 0.9977355599403381
+        },
+        {
+          "content": "アフラック生命",
+          "det_score": 0.8799402037914613,
+          "direction": "horizontal",
+          "points": [
+            [
+              1797,
+              1495
+            ],
+            [
+              1950,
+              1495
+            ],
+            [
+              1950,
+              1535
+            ],
+            [
+              1797,
+              1535
+            ]
+          ],
+          "rec_score": 0.999235212802887
+        },
+        {
+          "content": "する社員の人数が 27.9%減少(フルタイムの増加)など、女性の仕事",
+          "det_score": 0.8907929187019666,
+          "direction": "horizontal",
+          "points": [
+            [
+              2154,
+              1489
+            ],
+            [
+              2704,
+              1489
+            ],
+            [
+              2704,
+              1527
+            ],
+            [
+              2154,
+              1527
+            ]
+          ],
+          "rec_score": 0.8975739479064941
+        },
+        {
+          "content": "TOP RUNNER",
+          "det_score": 0.8711455192574313,
+          "direction": "horizontal",
+          "points": [
+            [
+              2735,
+              1472
+            ],
+            [
+              3004,
+              1472
+            ],
+            [
+              3004,
+              1522
+            ],
+            [
+              2735,
+              1522
+            ]
+          ],
+          "rec_score": 0.9997637867927551
+        },
+        {
+          "content": "·20-30 代の女性の離職率が半減、育児に関わる短時間勤務制度を利用",
+          "det_score": 0.8271324516588469,
+          "direction": "horizontal",
+          "points": [
+            [
+              2146,
+              1470
+            ],
+            [
+              2702,
+              1470
+            ],
+            [
+              2702,
+              1502
+            ],
+            [
+              2146,
+              1502
+            ]
+          ],
+          "rec_score": 0.9236487746238708
+        },
+        {
+          "content": "テレワーク月間",
+          "det_score": 0.8526531767658687,
+          "direction": "horizontal",
+          "points": [
+            [
+              1104,
+              1439
+            ],
+            [
+              1331,
+              1439
+            ],
+            [
+              1331,
+              1487
+            ],
+            [
+              1104,
+              1487
+            ]
+          ],
+          "rec_score": 0.9995315670967102
+        },
+        {
+          "content": "イベント-お役立ち情報を発信しています。",
+          "det_score": 0.7102468609048317,
+          "direction": "horizontal",
+          "points": [
+            [
+              593,
+              1443
+            ],
+            [
+              835,
+              1443
+            ],
+            [
+              835,
+              1474
+            ],
+            [
+              593,
+              1474
+            ]
+          ],
+          "rec_score": 0.7037457227706909
+        },
+        {
+          "content": "ma",
+          "det_score": 0.5124716353913148,
+          "direction": "horizontal",
+          "points": [
+            [
+              492,
+              1443
+            ],
+            [
+              548,
+              1443
+            ],
+            [
+              548,
+              1476
+            ],
+            [
+              492,
+              1476
+            ]
+          ],
+          "rec_score": 0.07284436374902725
+        },
+        {
+          "content": "テレワーク月間",
+          "det_score": 0.6454607856039908,
+          "direction": "horizontal",
+          "points": [
+            [
+              397,
+              1443
+            ],
+            [
+              496,
+              1443
+            ],
+            [
+              496,
+              1476
+            ],
+            [
+              397,
+              1476
+            ]
+          ],
+          "rec_score": 0.34732091426849365
+        },
+        {
+          "content": "従業員数",
+          "det_score": 0.8597799445529585,
+          "direction": "horizontal",
+          "points": [
+            [
+              2003,
+              1439
+            ],
+            [
+              2094,
+              1439
+            ],
+            [
+              2094,
+              1472
+            ],
+            [
+              2003,
+              1472
+            ]
+          ],
+          "rec_score": 0.9999805688858032
+        },
+        {
+          "content": "(五十音順)",
+          "det_score": 0.784311906228979,
+          "direction": "horizontal",
+          "points": [
+            [
+              1821,
+              1435
+            ],
+            [
+              1931,
+              1435
+            ],
+            [
+              1931,
+              1474
+            ],
+            [
+              1821,
+              1474
+            ]
+          ],
+          "rec_score": 0.9980736970901489
+        },
+        {
+          "content": "TELEWORK",
+          "det_score": 0.8829773447262215,
+          "direction": "horizontal",
+          "points": [
+            [
+              2733,
+              1422
+            ],
+            [
+              3004,
+              1422
+            ],
+            [
+              3004,
+              1481
+            ],
+            [
+              2733,
+              1481
+            ]
+          ],
+          "rec_score": 0.9999371767044067
+        },
+        {
+          "content": "取組の特徴",
+          "det_score": 0.8647865031281827,
+          "direction": "horizontal",
+          "points": [
+            [
+              2369,
+              1426
+            ],
+            [
+              2477,
+              1426
+            ],
+            [
+              2477,
+              1460
+            ],
+            [
+              2369,
+              1460
+            ]
+          ],
+          "rec_score": 0.9987138509750366
+        },
+        {
+          "content": "テレワークの先行事例、テレワークに関する",
+          "det_score": 0.7362728197385305,
+          "direction": "horizontal",
+          "points": [
+            [
+              591,
+              1420
+            ],
+            [
+              839,
+              1420
+            ],
+            [
+              839,
+              1458
+            ],
+            [
+              591,
+              1458
+            ]
+          ],
+          "rec_score": 0.7256764769554138
+        },
+        {
+          "content": "業種、所在地、",
+          "det_score": 0.8676661217037369,
+          "direction": "horizontal",
+          "points": [
+            [
+              1979,
+              1411
+            ],
+            [
+              2115,
+              1416
+            ],
+            [
+              2114,
+              1452
+            ],
+            [
+              1978,
+              1447
+            ]
+          ],
+          "rec_score": 0.9998003244400024
+        },
+        {
+          "content": "企業名",
+          "det_score": 0.7408485563255806,
+          "direction": "horizontal",
+          "points": [
+            [
+              1838,
+              1414
+            ],
+            [
+              1912,
+              1414
+            ],
+            [
+              1912,
+              1447
+            ],
+            [
+              1838,
+              1447
+            ]
+          ],
+          "rec_score": 0.9999860525131226
+        },
+        {
+          "content": "テレワーク月間WEBサイトでは、",
+          "det_score": 0.7998261140539424,
+          "direction": "horizontal",
+          "points": [
+            [
+              620,
+              1403
+            ],
+            [
+              808,
+              1403
+            ],
+            [
+              808,
+              1435
+            ],
+            [
+              620,
+              1435
+            ]
+          ],
+          "rec_score": 0.3330274522304535
+        },
+        {
+          "content": "働く、を変える",
+          "det_score": 0.8804066943596589,
+          "direction": "horizontal",
+          "points": [
+            [
+              1032,
+              1355
+            ],
+            [
+              1398,
+              1355
+            ],
+            [
+              1398,
+              1426
+            ],
+            [
+              1032,
+              1426
+            ]
+          ],
+          "rec_score": 0.99930739402771
+        },
+        {
+          "content": "テレワークトップランナー 2023 総務大臣賞受賞企業",
+          "det_score": 0.9069629548837508,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              1353
+            ],
+            [
+              2479,
+              1353
+            ],
+            [
+              2479,
+              1399
+            ],
+            [
+              1790,
+              1399
+            ]
+          ],
+          "rec_score": 0.9982561469078064
+        },
+        {
+          "content": "参加者募集中!",
+          "det_score": 0.7223592163829864,
+          "direction": "horizontal",
+          "points": [
+            [
+              705,
+              1320
+            ],
+            [
+              825,
+              1320
+            ],
+            [
+              825,
+              1353
+            ],
+            [
+              705,
+              1353
+            ]
+          ],
+          "rec_score": 0.9995128512382507
+        },
+        {
+          "content": "関連イベント",
+          "det_score": 0.790612726502147,
+          "direction": "horizontal",
+          "points": [
+            [
+              711,
+              1289
+            ],
+            [
+              819,
+              1289
+            ],
+            [
+              819,
+              1322
+            ],
+            [
+              711,
+              1322
+            ]
+          ],
+          "rec_score": 0.9862011075019836
+        },
+        {
+          "content": "テレワーク月間",
+          "det_score": 0.8080855388984536,
+          "direction": "horizontal",
+          "points": [
+            [
+              701,
+              1259
+            ],
+            [
+              825,
+              1259
+            ],
+            [
+              825,
+              1293
+            ],
+            [
+              701,
+              1293
+            ]
+          ],
+          "rec_score": 0.9759693145751953
+        },
+        {
+          "content": "受賞企業集合写真(3府省合同)",
+          "det_score": 0.9014871390335947,
+          "direction": "horizontal",
+          "points": [
+            [
+              2812,
+              1249
+            ],
+            [
+              3136,
+              1249
+            ],
+            [
+              3136,
+              1289
+            ],
+            [
+              2812,
+              1289
+            ]
+          ],
+          "rec_score": 0.9966365694999695
+        },
+        {
+          "content": "びかけについても、是非、ご協力をお願いします。",
+          "det_score": 0.9182371994929794,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              1245
+            ],
+            [
+              2423,
+              1245
+            ],
+            [
+              2423,
+              1291
+            ],
+            [
+              1793,
+              1291
+            ]
+          ],
+          "rec_score": 0.9999804496765137
+        },
+        {
+          "content": "2024",
+          "det_score": 0.9117530980964726,
+          "direction": "horizontal",
+          "points": [
+            [
+              368,
+              1228
+            ],
+            [
+              662,
+              1228
+            ],
+            [
+              662,
+              1334
+            ],
+            [
+              368,
+              1334
+            ]
+          ],
+          "rec_score": 0.9999986886978149
+        },
+        {
+          "content": "ご参加いただくとともに、テレワーク月間実施団体·実施者としての登録の呼",
+          "det_score": 0.9110826499515978,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              1197
+            ],
+            [
+              2770,
+              1197
+            ],
+            [
+              2770,
+              1241
+            ],
+            [
+              1793,
+              1241
+            ]
+          ],
+          "rec_score": 0.9831494092941284
+        },
+        {
+          "content": "テレワーク継続意向は80%超",
+          "det_score": 0.8461194966154494,
+          "direction": "horizontal",
+          "points": [
+            [
+              329,
+              1165
+            ],
+            [
+              678,
+              1165
+            ],
+            [
+              678,
+              1205
+            ],
+            [
+              329,
+              1205
+            ]
+          ],
+          "rec_score": 0.9794663190841675
+        },
+        {
+          "content": "テレワークの必要性について考え直すきっかけとなるよう、各種イベントに",
+          "det_score": 0.8423184434060182,
+          "direction": "horizontal",
+          "points": [
+            [
+              1819,
+              1151
+            ],
+            [
+              2768,
+              1151
+            ],
+            [
+              2768,
+              1195
+            ],
+            [
+              1819,
+              1195
+            ]
+          ],
+          "rec_score": 0.999854564666748
+        },
+        {
+          "content": "載、各種イベントに係る情報発信等を行います。",
+          "det_score": 0.9171724957622747,
+          "direction": "horizontal",
+          "points": [
+            [
+              920,
+              1128
+            ],
+            [
+              1522,
+              1130
+            ],
+            [
+              1522,
+              1172
+            ],
+            [
+              920,
+              1169
+            ]
+          ],
+          "rec_score": 0.999866247177124
+        },
+        {
+          "content": "働きたい、働き続けたいに、テレワーク",
+          "det_score": 0.869337149369912,
+          "direction": "horizontal",
+          "points": [
+            [
+              188,
+              1113
+            ],
+            [
+              835,
+              1113
+            ],
+            [
+              835,
+              1167
+            ],
+            [
+              188,
+              1167
+            ]
+          ],
+          "rec_score": 0.9998351335525513
+        },
+        {
+          "content": "信も実施予定です。",
+          "det_score": 0.8635725867945132,
+          "direction": "horizontal",
+          "points": [
+            [
+              1788,
+              1103
+            ],
+            [
+              2039,
+              1103
+            ],
+            [
+              2039,
+              1149
+            ],
+            [
+              1788,
+              1149
+            ]
+          ],
+          "rec_score": 0.9999700784683228
+        },
+        {
+          "content": "ワーク活用に関するトピック·コンテンツの掲",
+          "det_score": 0.9035144605362492,
+          "direction": "horizontal",
+          "points": [
+            [
+              922,
+              1084
+            ],
+            [
+              1511,
+              1084
+            ],
+            [
+              1511,
+              1124
+            ],
+            [
+              922,
+              1124
+            ]
+          ],
+          "rec_score": 0.9964378476142883
+        },
+        {
+          "content": "表彰式は、会場(御茶ノ水ソラシティ、東京都)での観覧の他、オンライン配",
+          "det_score": 0.8358670703128408,
+          "direction": "horizontal",
+          "points": [
+            [
+              1815,
+              1057
+            ],
+            [
+              2770,
+              1057
+            ],
+            [
+              2770,
+              1101
+            ],
+            [
+              1815,
+              1101
+            ]
+          ],
+          "rec_score": 0.9997744560241699
+        },
+        {
+          "content": "レワーク実施団体·実施者の登録受付や、テレ",
+          "det_score": 0.9378825399627934,
+          "direction": "horizontal",
+          "points": [
+            [
+              924,
+              1036
+            ],
+            [
+              1509,
+              1036
+            ],
+            [
+              1509,
+              1076
+            ],
+            [
+              924,
+              1076
+            ]
+          ],
+          "rec_score": 0.9974988102912903
+        },
+        {
+          "content": "表彰団体の募集は、すでに終了しています。",
+          "det_score": 0.9323944406675511,
+          "direction": "horizontal",
+          "points": [
+            [
+              1789,
+              1009
+            ],
+            [
+              2187,
+              1011
+            ],
+            [
+              2187,
+              1051
+            ],
+            [
+              1788,
+              1048
+            ]
+          ],
+          "rec_score": 0.99992835521698
+        },
+        {
+          "content": "ターを掲出するほか、ホームページ(※)にて、テ",
+          "det_score": 0.8556709934731166,
+          "direction": "horizontal",
+          "points": [
+            [
+              924,
+              990
+            ],
+            [
+              1509,
+              990
+            ],
+            [
+              1509,
+              1030
+            ],
+            [
+              924,
+              1030
+            ]
+          ],
+          "rec_score": 0.996286928653717
+        },
+        {
+          "content": "組を「テレワークトップランナー 2024総務大臣賞」として表彰します 。※ 今年度の",
+          "det_score": 0.9349598843885502,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              961
+            ],
+            [
+              2770,
+              961
+            ],
+            [
+              2770,
+              1005
+            ],
+            [
+              1790,
+              1005
+            ]
+          ],
+          "rec_score": 0.6534295678138733
+        },
+        {
+          "content": "表彰状授与",
+          "det_score": 0.85985740986227,
+          "direction": "horizontal",
+          "points": [
+            [
+              2911,
+              956
+            ],
+            [
+              3035,
+              956
+            ],
+            [
+              3035,
+              996
+            ],
+            [
+              2911,
+              996
+            ]
+          ],
+          "rec_score": 0.9987121224403381
+        },
+        {
+          "content": "RK",
+          "det_score": 0.8687264646692046,
+          "direction": "horizontal",
+          "points": [
+            [
+              543,
+              934
+            ],
+            [
+              820,
+              927
+            ],
+            [
+              824,
+              1073
+            ],
+            [
+              547,
+              1080
+            ]
+          ],
+          "rec_score": 0.9999291896820068
+        },
+        {
+          "content": "月間期間中は駅構内やイベント会場等にポス",
+          "det_score": 0.8790779534228143,
+          "direction": "horizontal",
+          "points": [
+            [
+              922,
+              942
+            ],
+            [
+              1509,
+              942
+            ],
+            [
+              1509,
+              982
+            ],
+            [
+              922,
+              982
+            ]
+          ],
+          "rec_score": 0.9982219934463501
+        },
+        {
+          "content": "We",
+          "det_score": 0.5309738611332708,
+          "direction": "horizontal",
+          "points": [
+            [
+              194,
+              923
+            ],
+            [
+              571,
+              923
+            ],
+            [
+              571,
+              1082
+            ],
+            [
+              194,
+              1082
+            ]
+          ],
+          "rec_score": 0.1075892448425293
+        },
+        {
+          "content": "レワークトップランナー 2024」として選定·公表し、その中から特に優れた取",
+          "det_score": 0.8513193702623145,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              915
+            ],
+            [
+              2770,
+              915
+            ],
+            [
+              2770,
+              959
+            ],
+            [
+              1793,
+              959
+            ]
+          ],
+          "rec_score": 0.7113279700279236
+        },
+        {
+          "content": "イベント等を集中的に開催します。テレワーク",
+          "det_score": 0.9125300081893802,
+          "direction": "horizontal",
+          "points": [
+            [
+              924,
+              894
+            ],
+            [
+              1509,
+              894
+            ],
+            [
+              1509,
+              934
+            ],
+            [
+              924,
+              934
+            ]
+          ],
+          "rec_score": 0.9999510049819946
+        },
+        {
+          "content": "業務改革等について、特色ある優れた取組等を実施している企業·団体を「テ",
+          "det_score": 0.9295038316419315,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              867
+            ],
+            [
+              2768,
+              867
+            ],
+            [
+              2768,
+              911
+            ],
+            [
+              1790,
+              911
+            ]
+          ],
+          "rec_score": 0.9352896213531494
+        },
+        {
+          "content": "テレワークのさらなる普及·定着に向けた各種",
+          "det_score": 0.8587932108771388,
+          "direction": "horizontal",
+          "points": [
+            [
+              922,
+              848
+            ],
+            [
+              1511,
+              848
+            ],
+            [
+              1511,
+              888
+            ],
+            [
+              922,
+              888
+            ]
+          ],
+          "rec_score": 0.9939852952957153
+        },
+        {
+          "content": "ワーク導入が馴染まないと思われている業態の企業におけるテレワーク活用·",
+          "det_score": 0.939477237777303,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              819
+            ],
+            [
+              2768,
+              819
+            ],
+            [
+              2768,
+              863
+            ],
+            [
+              1793,
+              863
+            ]
+          ],
+          "rec_score": 0.5623106956481934
+        },
+        {
+          "content": "学会と連携して、11月をテレワーク月間とし、",
+          "det_score": 0.9193119304661219,
+          "direction": "horizontal",
+          "points": [
+            [
+              922,
+              800
+            ],
+            [
+              1507,
+              800
+            ],
+            [
+              1507,
+              840
+            ],
+            [
+              922,
+              840
+            ]
+          ],
+          "rec_score": 0.9998779296875
+        },
+        {
+          "content": "表彰を開始しました。本年は、テレワークの活用による経営効果の発揮やテレ",
+          "det_score": 0.8621401811047323,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              771
+            ],
+            [
+              2766,
+              771
+            ],
+            [
+              2766,
+              814
+            ],
+            [
+              1790,
+              814
+            ]
+          ],
+          "rec_score": 0.9998414516448975
+        },
+        {
+          "content": "TELE",
+          "det_score": 0.9035637999355409,
+          "direction": "horizontal",
+          "points": [
+            [
+              273,
+              756
+            ],
+            [
+              746,
+              756
+            ],
+            [
+              746,
+              896
+            ],
+            [
+              273,
+              896
+            ]
+          ],
+          "rec_score": 0.7219071984291077
+        },
+        {
+          "content": "環境省、日本テレワーク協会、日本テレワーク",
+          "det_score": 0.8448921307551279,
+          "direction": "horizontal",
+          "points": [
+            [
+              922,
+              754
+            ],
+            [
+              1509,
+              754
+            ],
+            [
+              1509,
+              794
+            ],
+            [
+              922,
+              794
+            ]
+          ],
+          "rec_score": 0.9999600648880005
+        },
+        {
+          "content": "見直したうえで、新たに「テレワークトップランナー」として先進企業の公表、",
+          "det_score": 0.9257431042396568,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              725
+            ],
+            [
+              2764,
+              725
+            ],
+            [
+              2764,
+              769
+            ],
+            [
+              1793,
+              769
+            ]
+          ],
+          "rec_score": 0.9998352527618408
+        },
+        {
+          "content": "厚生労働省、経済産業省、国土交通省、観光庁、",
+          "det_score": 0.8578991101254517,
+          "direction": "horizontal",
+          "points": [
+            [
+              922,
+              706
+            ],
+            [
+              1520,
+              706
+            ],
+            [
+              1520,
+              746
+            ],
+            [
+              922,
+              746
+            ]
+          ],
+          "rec_score": 0.9999144077301025
+        },
+        {
+          "content": "クの導入が進んだ経緯を踏まえ、令和5年度からは、名称や一部の審査基準を",
+          "det_score": 0.8393014007076086,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              679
+            ],
+            [
+              2766,
+              679
+            ],
+            [
+              2766,
+              723
+            ],
+            [
+              1793,
+              723
+            ]
+          ],
+          "rec_score": 0.9979521632194519
+        },
+        {
+          "content": "(小森総務大臣政務官)",
+          "det_score": 0.8706033837116328,
+          "direction": "horizontal",
+          "points": [
+            [
+              2861,
+              668
+            ],
+            [
+              3087,
+              668
+            ],
+            [
+              3087,
+              708
+            ],
+            [
+              2861,
+              708
+            ]
+          ],
+          "rec_score": 0.9976861476898193
+        },
+        {
+          "content": "テレワーク月間",
+          "det_score": 0.9103374671040243,
+          "direction": "horizontal",
+          "points": [
+            [
+              279,
+              660
+            ],
+            [
+              740,
+              660
+            ],
+            [
+              740,
+              737
+            ],
+            [
+              279,
+              737
+            ]
+          ],
+          "rec_score": 0.9999397993087769
+        },
+        {
+          "content": "総務省は、内閣官房、内閣府、デジタル庁、",
+          "det_score": 0.8854589405013645,
+          "direction": "horizontal",
+          "points": [
+            [
+              949,
+              658
+            ],
+            [
+              1505,
+              658
+            ],
+            [
+              1505,
+              698
+            ],
+            [
+              949,
+              698
+            ]
+          ],
+          "rec_score": 0.9965526461601257
+        },
+        {
+          "content": "主催者代表挨拶",
+          "det_score": 0.8660365137666342,
+          "direction": "horizontal",
+          "points": [
+            [
+              2890,
+              635
+            ],
+            [
+              3060,
+              635
+            ],
+            [
+              3060,
+              672
+            ],
+            [
+              2890,
+              672
+            ]
+          ],
+          "rec_score": 0.9970863461494446
+        },
+        {
+          "content": "新型コロナウイルス感染症の拡大に際して、企業·団体等においてテレワー",
+          "det_score": 0.8413360061632837,
+          "direction": "horizontal",
+          "points": [
+            [
+              1817,
+              631
+            ],
+            [
+              2768,
+              631
+            ],
+            [
+              2768,
+              675
+            ],
+            [
+              1817,
+              675
+            ]
+          ],
+          "rec_score": 0.9960313439369202
+        },
+        {
+          "content": "れた取組を表彰してきました。",
+          "det_score": 0.9328737221038822,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              587
+            ],
+            [
+              2173,
+              587
+            ],
+            [
+              2173,
+              627
+            ],
+            [
+              1790,
+              627
+            ]
+          ],
+          "rec_score": 0.9998750686645508
+        },
+        {
+          "content": "11月は",
+          "det_score": 0.9074980553604653,
+          "direction": "horizontal",
+          "points": [
+            [
+              395,
+              574
+            ],
+            [
+              626,
+              574
+            ],
+            [
+              626,
+              654
+            ],
+            [
+              395,
+              654
+            ]
+          ],
+          "rec_score": 0.9999849796295166
+        },
+        {
+          "content": "ク先駆者百選 総務大臣賞」を創設し、「テレワーク先駆者百選」の中から特に優",
+          "det_score": 0.8561278902529892,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              537
+            ],
+            [
+              2770,
+              537
+            ],
+            [
+              2770,
+              581
+            ],
+            [
+              1793,
+              581
+            ]
+          ],
+          "rec_score": 0.9984646439552307
+        },
+        {
+          "content": "「テレワーク先駆者百選」として公表するとともに、平成28年度には「テレワー",
+          "det_score": 0.9085186387729994,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              489
+            ],
+            [
+              2768,
+              489
+            ],
+            [
+              2768,
+              533
+            ],
+            [
+              1790,
+              533
+            ]
+          ],
+          "rec_score": 0.9988926649093628
+        },
+        {
+          "content": "を実施します!",
+          "det_score": 0.9157312270638439,
+          "direction": "horizontal",
+          "points": [
+            [
+              926,
+              459
+            ],
+            [
+              1501,
+              459
+            ],
+            [
+              1501,
+              553
+            ],
+            [
+              926,
+              553
+            ]
+          ],
+          "rec_score": 0.9997356534004211
+        },
+        {
+          "content": "団体を「テレワーク先駆者」とし、その中から十分な実績を持つ企業·団体等を",
+          "det_score": 0.9491221868354153,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              441
+            ],
+            [
+              2766,
+              441
+            ],
+            [
+              2766,
+              485
+            ],
+            [
+              1790,
+              485
+            ]
+          ],
+          "rec_score": 0.6983200907707214
+        },
+        {
+          "content": "総務省では、平成27年度から、テレワークの導入·活用を進めている企業·",
+          "det_score": 0.8440971222529081,
+          "direction": "horizontal",
+          "points": [
+            [
+              1817,
+              395
+            ],
+            [
+              2766,
+              395
+            ],
+            [
+              2766,
+              439
+            ],
+            [
+              1817,
+              439
+            ]
+          ],
+          "rec_score": 0.9400444626808167
+        },
+        {
+          "content": "式を実施予定です。",
+          "det_score": 0.8279760288340705,
+          "direction": "horizontal",
+          "points": [
+            [
+              1788,
+              347
+            ],
+            [
+              2039,
+              347
+            ],
+            [
+              2039,
+              393
+            ],
+            [
+              1788,
+              393
+            ]
+          ],
+          "rec_score": 0.9999638795852661
+        },
+        {
+          "content": "受賞イベントの様子",
+          "det_score": 0.8650730073536903,
+          "direction": "horizontal",
+          "points": [
+            [
+              2839,
+              336
+            ],
+            [
+              3107,
+              336
+            ],
+            [
+              3107,
+              382
+            ],
+            [
+              2839,
+              382
+            ]
+          ],
+          "rec_score": 0.9999252557754517
+        },
+        {
+          "content": "働大臣)および地方創生テレワークアワード(地方創生担当大臣賞)の合同表彰",
+          "det_score": 0.8471590002805393,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              301
+            ],
+            [
+              2768,
+              301
+            ],
+            [
+              2768,
+              345
+            ],
+            [
+              1790,
+              345
+            ]
+          ],
+          "rec_score": 0.9518484473228455
+        },
+        {
+          "content": "2023 総務大臣賞」",
+          "det_score": 0.8419067143796244,
+          "direction": "horizontal",
+          "points": [
+            [
+              2832,
+              294
+            ],
+            [
+              3105,
+              294
+            ],
+            [
+              3105,
+              342
+            ],
+            [
+              2832,
+              342
+            ]
+          ],
+          "rec_score": 0.9916338324546814
+        },
+        {
+          "content": "「テレワーク月間」",
+          "det_score": 0.9106136090073972,
+          "direction": "horizontal",
+          "points": [
+            [
+              191,
+              263
+            ],
+            [
+              1466,
+              267
+            ],
+            [
+              1465,
+              435
+            ],
+            [
+              190,
+              430
+            ]
+          ],
+          "rec_score": 0.9980787634849548
+        },
+        {
+          "content": "トップランナー",
+          "det_score": 0.8222256280337611,
+          "direction": "horizontal",
+          "points": [
+            [
+              2876,
+              257
+            ],
+            [
+              3076,
+              257
+            ],
+            [
+              3076,
+              305
+            ],
+            [
+              2876,
+              305
+            ]
+          ],
+          "rec_score": 0.9999866485595703
+        },
+        {
+          "content": "テレワークトップランナー 2024 (総務大臣賞)、輝くテレワーク大賞(厚生労",
+          "det_score": 0.8556832817295863,
+          "direction": "horizontal",
+          "points": [
+            [
+              1790,
+              253
+            ],
+            [
+              2768,
+              253
+            ],
+            [
+              2768,
+              297
+            ],
+            [
+              1790,
+              297
+            ]
+          ],
+          "rec_score": 0.8140659928321838
+        },
+        {
+          "content": "「テレワーク",
+          "det_score": 0.8763733632289447,
+          "direction": "horizontal",
+          "points": [
+            [
+              2890,
+              217
+            ],
+            [
+              3060,
+              217
+            ],
+            [
+              3060,
+              265
+            ],
+            [
+              2890,
+              265
+            ]
+          ],
+          "rec_score": 0.9998311996459961
+        },
+        {
+          "content": "経済産業省、国土交通省主催で「働く、を変える」テレワークイベントを開催し、",
+          "det_score": 0.9478630349819956,
+          "direction": "horizontal",
+          "points": [
+            [
+              1793,
+              209
+            ],
+            [
+              2777,
+              209
+            ],
+            [
+              2777,
+              246
+            ],
+            [
+              1793,
+              246
+            ]
+          ],
+          "rec_score": 0.9997470378875732
+        },
+        {
+          "content": "テレワークのさらなる普及·定着に向け",
+          "det_score": 0.9246415484311918,
+          "direction": "horizontal",
+          "points": [
+            [
+              155,
+              165
+            ],
+            [
+              1499,
+              165
+            ],
+            [
+              1499,
+              251
+            ],
+            [
+              155,
+              251
+            ]
+          ],
+          "rec_score": 0.9997109770774841
+        },
+        {
+          "content": "テレワーク月間最終週の11月25日(月)には、内閣府、総務省、厚生労働省、",
+          "det_score": 0.8584602536003871,
+          "direction": "horizontal",
+          "points": [
+            [
+              1819,
+              159
+            ],
+            [
+              2764,
+              159
+            ],
+            [
+              2764,
+              203
+            ],
+            [
+              1819,
+              203
+            ]
+          ],
+          "rec_score": 0.7767161726951599
+        },
+        {
+          "content": "特集",
+          "det_score": 0.898116029598969,
+          "direction": "horizontal",
+          "points": [
+            [
+              790,
+              104
+            ],
+            [
+              870,
+              104
+            ],
+            [
+              870,
+              152
+            ],
+            [
+              790,
+              152
+            ]
+          ],
+          "rec_score": 0.9998107552528381
+        },
+        {
+          "content": "テレワークのさらなる普及・定着に向け「テレワーク月間」を実施します!",
+          "det_score": 0.8907957803696409,
+          "direction": "horizontal",
+          "points": [
+            [
+              2363,
+              71
+            ],
+            [
+              3066,
+              69
+            ],
+            [
+              3066,
+              109
+            ],
+            [
+              2363,
+              111
+            ]
+          ],
+          "rec_score": 0.43627822399139404
+        },
+        {
+          "content": "特集",
+          "det_score": 0.62371604602065,
+          "direction": "horizontal",
+          "points": [
+            [
+              2301,
+              73
+            ],
+            [
+              2355,
+              73
+            ],
+            [
+              2355,
+              109
+            ],
+            [
+              2301,
+              109
+            ]
+          ],
+          "rec_score": 0.9945905804634094
+        },
+        {
+          "content": "TELEWORK",
+          "det_score": 0.6249292492477452,
+          "direction": "horizontal",
+          "points": [
+            [
+              3047,
+              69
+            ],
+            [
+              3296,
+              69
+            ],
+            [
+              3296,
+              109
+            ],
+            [
+              3047,
+              109
+            ]
+          ],
+          "rec_score": 0.9999707937240601
+        },
+        {
+          "content": "LEWORK TELEWORK",
+          "det_score": 0.6294206811075763,
+          "direction": "horizontal",
+          "points": [
+            [
+              1857,
+              67
+            ],
+            [
+              2280,
+              67
+            ],
+            [
+              2280,
+              107
+            ],
+            [
+              1857,
+              107
+            ]
+          ],
+          "rec_score": 0.5509061217308044
+        },
+        {
+          "content": "ORK",
+          "det_score": 0.5027162518638831,
+          "direction": "horizontal",
+          "points": [
+            [
+              897,
+              69
+            ],
+            [
+              1011,
+              69
+            ],
+            [
+              1011,
+              109
+            ],
+            [
+              897,
+              109
+            ]
+          ],
+          "rec_score": 0.9986434578895569
+        },
+        {
+          "content": "LEWORK",
+          "det_score": 0.5330752443013842,
+          "direction": "horizontal",
+          "points": [
+            [
+              565,
+              64
+            ],
+            [
+              751,
+              69
+            ],
+            [
+              750,
+              109
+            ],
+            [
+              564,
+              104
+            ]
+          ],
+          "rec_score": 0.9999686479568481
+        },
+        {
+          "content": "TELEWORK",
+          "det_score": 0.6902553089809068,
+          "direction": "horizontal",
+          "points": [
+            [
+              2,
+              69
+            ],
+            [
+              250,
+              69
+            ],
+            [
+              250,
+              109
+            ],
+            [
+              2,
+              109
+            ]
+          ],
+          "rec_score": 0.9995792508125305
+        }
+      ]
+    }
+  ]
+}
