@@ -11,7 +11,7 @@ __email__ = "support-aws-marketplace@mlism.com"
 
 from .client import YomitokuClient
 from .exceptions import YomitokuError, DocumentAnalysisError, APIError
-from .samples import image_sample, pdf_sample
+from .samples import load_image_sample, load_pdf_sample
 from .pdf_generator import SearchablePDFGenerator, create_searchable_pdf
 
 __all__ = [
@@ -22,6 +22,6 @@ __all__ = [
     "SearchablePDFGenerator",
     "create_searchable_pdf",
     "__version__",
-    "image_sample",
-    "pdf_sample",
+    "load_image_sample",
+    "load_pdf_sample",
 ]
