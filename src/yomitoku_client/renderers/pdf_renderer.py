@@ -10,6 +10,7 @@ from .base import BaseRenderer
 from ..parsers.sagemaker_parser import DocumentResult
 from ..exceptions import FormatConversionError
 from ..pdf_generator import SearchablePDFGenerator
+from ..font_manager import FontManager
 
 
 class PDFRenderer(BaseRenderer):
@@ -20,14 +21,14 @@ class PDFRenderer(BaseRenderer):
                  **kwargs):
         """
         Initialize PDF renderer
-        
         Args:
-            font_path: Path to font file for PDF generation
+            font_path: Path to font file. If None, uses built-in font
             **kwargs: Additional options
         """
         super().__init__(**kwargs)
-        self.font_path = font_path
-        self.generator = SearchablePDFGenerator(font_path=font_path)
+        # Use FontManager to get appropriate font path
+        self.font_path = FontManager.get_font_path(font_path)
+        self.generator = SearchablePDFGenerator(font_path=self.font_path)
     
     def render(self, data: DocumentResult, img: Optional[np.ndarray] = None, **kwargs) -> str:
         """
