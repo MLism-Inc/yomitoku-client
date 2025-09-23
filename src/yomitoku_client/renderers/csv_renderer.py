@@ -125,7 +125,7 @@ class CSVRenderer(BaseRenderer):
             str: CSV formatted table
         """
         # Use the utility function for better table handling
-        return table_to_csv(table, padding=False, drop_empty=True)
+        return table_to_csv(table, padding=False, drop_empty=False)
     
     def _paragraph_to_csv(self, paragraph: Paragraph) -> str:
         """

@@ -30,6 +30,7 @@ Yomitoku Client is a Python library for processing SageMaker Yomitoku API output
 
 ## Installation
 
+### Using pip
 ```bash
 # Install from PyPI (includes PDF support by default)
 pip install yomitoku-client
@@ -37,6 +38,26 @@ pip install yomitoku-client
 # Install from GitHub (latest features)
 pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
+
+### Using uv (Recommended)
+```bash
+# Install from PyPI using uv
+uv add yomitoku-client
+
+# Install from GitHub using uv
+uv add git+https://github.com/MLism-Inc/yomitoku-client.git@main
+
+# For development (includes dev dependencies)
+uv sync --dev
+
+# Run with uv
+uv run python your_script.py
+```
+
+> **Note**: If you don't have uv installed, you can install it with:
+> ```bash
+> curl -LsSf https://astral.sh/uv/install.sh | sh
+> ```
 
 ## Quick Start
 

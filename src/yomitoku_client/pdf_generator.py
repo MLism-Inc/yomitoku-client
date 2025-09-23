@@ -35,6 +35,7 @@ except ImportError:
     jaconv = None
 
 from .exceptions import FormatConversionError
+from .font_manager import FontManager
 
 
 class SearchablePDFGenerator:
@@ -43,32 +44,32 @@ class SearchablePDFGenerator:
     def __init__(self, font_path: Optional[str] = None):
         """
         Initialize PDF generator
-        
+
         Args:
-            font_path: Path to font file. If None, uses default font
+            font_path: Path to font file. If None, uses built-in font
         """
         if not PIL_AVAILABLE:
             raise ImportError("PIL is required for PDF generation. Install with: pip install Pillow")
-        
+
         if not REPORTLAB_AVAILABLE:
             raise ImportError(
                 "ReportLab is required for PDF generation. Install with: pip install reportlab\n"
                 "Or in Jupyter notebook, run: !pip install reportlab jaconv"
             )
-        
-        self.font_path = font_path
+
+        # Use FontManager to get appropriate font path
+        self.font_path = FontManager.get_font_path(font_path)
         self._register_font()
     
     def _register_font(self) -> None:
         """Register font for PDF generation"""
-        if self.font_path and os.path.exists(self.font_path):
-            try:
-                pdfmetrics.registerFont(TTFont("CustomFont", self.font_path))
-                self.font_name = "CustomFont"
-            except Exception as e:
-                raise FormatConversionError(f"Failed to register font: {e}")
-        else:
-            # Use default font
+        try:
+            # Always try to register the font (either custom or built-in)
+            pdfmetrics.registerFont(TTFont("CustomFont", self.font_path))
+            self.font_name = "CustomFont"
+        except Exception as e:
+            # Fall back to Helvetica if registration fails
+            print(f"Warning: Failed to register font, falling back to Helvetica: {e}")
             self.font_name = "Helvetica"
     
     def create_searchable_pdf(

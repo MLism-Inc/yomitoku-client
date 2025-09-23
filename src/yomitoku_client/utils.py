@@ -365,7 +365,7 @@ def quad_to_xyxy(quad: List[List[float]]) -> Tuple[float, float, float, float]:
     return x1, y1, x2, y2
 
 
-def convert_table_array(table: Any, padding: bool = False, drop_empty: bool = True) -> List[List[str]]:
+def convert_table_array(table: Any, padding: bool = False, drop_empty: bool = False) -> List[List[str]]:
     """
     Convert table object to 2D array
     
@@ -412,7 +412,7 @@ def convert_table_array(table: Any, padding: bool = False, drop_empty: bool = Tr
     return table_array
 
 
-def table_to_csv(table: Any, padding: bool = False, drop_empty: bool = True) -> str:
+def table_to_csv(table: Any, padding: bool = False, drop_empty: bool = False) -> str:
     """
     Convert table object to CSV string
     
