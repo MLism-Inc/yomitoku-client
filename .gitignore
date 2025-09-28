@@ -56,7 +56,10 @@ ENV/
 env.bak/
 venv.bak/
 notebooks-env/
-
+notebooks/exported_data/
+notebooks/image_table_data/
+notebooks/pdf_table_data/
+src/yomitoku_client/samples/
 # IDE
 .vscode/
 .idea/
