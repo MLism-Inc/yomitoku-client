@@ -130,8 +130,16 @@ class TableVisualizer(BaseVisualizer):
         """Visualize table as JSON structure"""
         try:
             if isinstance(data, pd.DataFrame):
-                # Remove 'format' from kwargs as it's not valid for to_dict()
-                json_kwargs = {k: v for k, v in kwargs.items() if k != 'format'}
+                # Remove 'format' and 'index' from kwargs as they're not valid for to_dict()
+                # Handle 'index' parameter separately
+                include_index = kwargs.get('index', True)
+                json_kwargs = {k: v for k, v in kwargs.items()
+                              if k not in ['format', 'index']}
+
+                # Use 'records' orient if index=False is specified
+                if not include_index and 'orient' not in json_kwargs:
+                    json_kwargs['orient'] = 'records'
+
                 return data.to_dict(**json_kwargs)
             elif isinstance(data, list):
                 if not data:
@@ -152,7 +160,16 @@ class TableVisualizer(BaseVisualizer):
             else:
                 return {"data": str(data)}
         except Exception as e:
-            self.logger.error(f"Error in JSON visualization: {e}")
+            error_msg = f"Error in JSON visualization: {e}"
+            self.logger.error(error_msg)
+            # Return a list format if DataFrame.to_dict() fails
+            if isinstance(data, pd.DataFrame):
+                try:
+                    # Fallback to records format
+                    return data.to_dict(orient='records')
+                except:
+                    # Last resort: convert to list
+                    return {"data": data.values.tolist(), "columns": data.columns.tolist()}
             return {"error": str(e)}
     
     def visualize_table_structure(self, table_data: Any, **kwargs) -> str:
