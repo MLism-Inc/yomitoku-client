@@ -880,14 +880,14 @@ class DocumentVisualizer(BaseVisualizer):
 
         return out
 
-    def visualize_confidence_scores(self, img: np.ndarray, results: Any,
+    def visualize_confidence_scores(self, img_or_path: Union[np.ndarray, str], results: Any,
                                   show_ocr_confidence: bool = True,
                                   show_detection_confidence: bool = False) -> np.ndarray:
         """
         Visualize confidence scores for different elements
         
         Args:
-            img: Input image
+            img_or_path: Input image (numpy array) or path to image file
             results: Document analysis results
             show_ocr_confidence: Whether to show OCR confidence scores
             show_detection_confidence: Whether to show detection confidence scores
@@ -896,37 +896,68 @@ class DocumentVisualizer(BaseVisualizer):
             Image with confidence scores visualization
         """
         try:
+            # Handle both image array and image path
+            if isinstance(img_or_path, str):
+                img = cv2.imread(img_or_path)
+                if img is None:
+                    raise ValueError(f"Could not load image from path: {img_or_path}")
+            else:
+                img = img_or_path
+            
             out = img.copy()
             
-            if show_ocr_confidence and hasattr(results, 'words'):
+            if hasattr(results, 'words'):
                 for word in results.words:
-                    # Support both 'confidence' and 'det_score' attributes
-                    confidence = None
-                    if hasattr(word, 'confidence'):
-                        confidence = word.confidence
-                    elif hasattr(word, 'det_score'):
-                        confidence = word.det_score
+                    if not hasattr(word, 'points'):
+                        continue
+                        
+                    points = word.points
+                    # Convert points to bounding box
+                    x_coords = [p[0] for p in points]
+                    y_coords = [p[1] for p in points]
+                    x1, y1 = int(min(x_coords)), int(min(y_coords))
+                    x2, y2 = int(max(x_coords)), int(max(y_coords))
                     
-                    if confidence is not None and hasattr(word, 'points'):
-                        points = word.points
+                    # Show OCR confidence (rec_score) - Recognition confidence
+                    if show_ocr_confidence:
+                        rec_confidence = None
+                        if hasattr(word, 'rec_score'):
+                            rec_confidence = word.rec_score
+                        elif hasattr(word, 'confidence'):
+                            rec_confidence = word.confidence
                         
-                        # Convert points to bounding box
-                        x_coords = [p[0] for p in points]
-                        y_coords = [p[1] for p in points]
-                        x1, y1 = int(min(x_coords)), int(min(y_coords))
-                        x2, y2 = int(max(x_coords)), int(max(y_coords))
+                        if rec_confidence is not None:
+                            # Color based on OCR confidence
+                            if rec_confidence > 0.8:
+                                color = (0, 255, 0)  # Green for high confidence
+                            elif rec_confidence > 0.6:
+                                color = (0, 255, 255)  # Yellow for medium confidence
+                            else:
+                                color = (0, 0, 255)  # Red for low confidence
+                            
+                            cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+                            cv2.putText(out, f"OCR:{rec_confidence:.2f}", (x1, y1-5), 
+                                      cv2.FONT_HERSHEY_SIMPLEX, 0.3, color, 1)
+                    
+                    # Show detection confidence (det_score) - Detection confidence
+                    if show_detection_confidence:
+                        det_confidence = None
+                        if hasattr(word, 'det_score'):
+                            det_confidence = word.det_score
                         
-                        # Color based on confidence
-                        if confidence > 0.8:
-                            color = (0, 255, 0)  # Green for high confidence
-                        elif confidence > 0.6:
-                            color = (0, 255, 255)  # Yellow for medium confidence
-                        else:
-                            color = (0, 0, 255)  # Red for low confidence
-                        
-                        cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
-                        cv2.putText(out, f"{confidence:.2f}", (x1, y1-5), 
-                                  cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
+                        if det_confidence is not None:
+                            # Color based on detection confidence (different color scheme)
+                            if det_confidence > 0.8:
+                                color = (255, 0, 255)  # Magenta for high detection confidence
+                            elif det_confidence > 0.6:
+                                color = (255, 165, 0)  # Orange for medium detection confidence
+                            else:
+                                color = (0, 0, 128)  # Dark blue for low detection confidence
+                            
+                            # Draw detection confidence with different line style
+                            cv2.rectangle(out, (x1+2, y1+2), (x2-2, y2-2), color, 1)
+                            cv2.putText(out, f"DET:{det_confidence:.2f}", (x1, y2+15), 
+                                      cv2.FONT_HERSHEY_SIMPLEX, 0.3, color, 1)
             
             return out
         except Exception as e:

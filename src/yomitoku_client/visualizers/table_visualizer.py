@@ -90,8 +90,12 @@ class TableVisualizer(BaseVisualizer):
         """Visualize table as HTML"""
         try:
             if isinstance(data, pd.DataFrame):
-                # Remove format parameter from kwargs
-                html_kwargs = {k: v for k, v in kwargs.items() if k != 'format'}
+                # Only pass valid parameters to to_html()
+                valid_html_params = ['buf', 'columns', 'col_space', 'header', 'index', 'na_rep', 
+                                   'formatters', 'float_format', 'sparsify', 'index_names', 
+                                   'justify', 'max_rows', 'max_cols', 'show_dimensions', 
+                                   'decimal', 'table_id', 'render_links', 'escape', 'classes']
+                html_kwargs = {k: v for k, v in kwargs.items() if k in valid_html_params}
                 html_output = data.to_html(**html_kwargs)
                 # Convert \n to <br> tags for proper HTML line breaks
                 html_output = html_output.replace('\\n', '<br>')
@@ -103,15 +107,22 @@ class TableVisualizer(BaseVisualizer):
                 df = pd.DataFrame(data)
                 if kwargs.get('headers'):
                     df.columns = kwargs['headers']
-                # Remove format and headers parameters from kwargs
-                html_kwargs = {k: v for k, v in kwargs.items() 
-                              if k not in ['format', 'headers']}
+                # Only pass valid parameters to to_html()
+                valid_html_params = ['buf', 'columns', 'col_space', 'header', 'index', 'na_rep', 
+                                   'formatters', 'float_format', 'sparsify', 'index_names', 
+                                   'justify', 'max_rows', 'max_cols', 'show_dimensions', 
+                                   'decimal', 'table_id', 'render_links', 'escape', 'classes']
+                html_kwargs = {k: v for k, v in kwargs.items() if k in valid_html_params}
                 return df.to_html(**html_kwargs)
             elif isinstance(data, dict):
                 if all(isinstance(v, list) for v in data.values()):
                     df = pd.DataFrame(data)
-                    # Remove format parameter from kwargs
-                    html_kwargs = {k: v for k, v in kwargs.items() if k != 'format'}
+                    # Only pass valid parameters to to_html()
+                    valid_html_params = ['buf', 'columns', 'col_space', 'header', 'index', 'na_rep', 
+                                       'formatters', 'float_format', 'sparsify', 'index_names', 
+                                       'justify', 'max_rows', 'max_cols', 'show_dimensions', 
+                                       'decimal', 'table_id', 'render_links', 'escape', 'classes']
+                    html_kwargs = {k: v for k, v in kwargs.items() if k in valid_html_params}
                     return df.to_html(**html_kwargs)
                 else:
                     # Convert dict to HTML table
@@ -139,6 +150,10 @@ class TableVisualizer(BaseVisualizer):
                 # Use 'records' orient if index=False is specified
                 if not include_index and 'orient' not in json_kwargs:
                     json_kwargs['orient'] = 'records'
+
+                # Ensure we don't pass any invalid parameters to to_dict()
+                valid_params = ['orient', 'into', 'date_format', 'date_unit', 'default_handler']
+                json_kwargs = {k: v for k, v in json_kwargs.items() if k in valid_params}
 
                 return data.to_dict(**json_kwargs)
             elif isinstance(data, list):
