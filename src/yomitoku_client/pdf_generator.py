@@ -35,7 +35,7 @@ except ImportError:
     jaconv = None
 
 from .exceptions import FormatConversionError
-from .font_manager import FontManager
+from .font_manager import get_font_path
 
 
 class SearchablePDFGenerator:
@@ -57,8 +57,8 @@ class SearchablePDFGenerator:
                 "Or in Jupyter notebook, run: !pip install reportlab jaconv"
             )
 
-        # Use FontManager to get appropriate font path
-        self.font_path = FontManager.get_font_path(font_path)
+        # Use get_font_path function to get appropriate font path
+        self.font_path = get_font_path(font_path)
         self._register_font()
     
     def _register_font(self) -> None:
