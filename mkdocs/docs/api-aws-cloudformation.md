@@ -1,0 +1,1 @@
+# AWS CloudFormationでデプロイした場合のAPIアクセス方法
