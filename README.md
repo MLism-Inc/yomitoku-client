@@ -4,137 +4,137 @@
 
 [![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](docs/en/README.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](docs/ja/README.md)
 
-**Click the buttons above to view documentation in your preferred language**
+**上記のボタンをクリックして、お好みの言語でドキュメントを表示してください**
 
 </div>
 
 ---
 
-## Quick Links
+## クイックリンク
 
-- 📖 **[English Documentation](docs/en/README.md)** - Complete guide in English
+- 📖 **[English Documentation](docs/en/README.md)** - 英語での完全ガイド
 - 📖 **[日本語ドキュメント](docs/ja/README.md)** - 日本語での完全ガイド
-- 📓 **[Notebook Guide (English)](docs/en/NOTEBOOK_GUIDE.md)** - Step-by-step notebook tutorials
+- 📓 **[Notebook Guide (English)](docs/en/NOTEBOOK_GUIDE.md)** - ステップバイステップのノートブックチュートリアル（英語）
 - 📓 **[ノートブックガイド (日本語)](docs/ja/NOTEBOOK_GUIDE.md)** - ステップバイステップのノートブックチュートリアル
 
-Yomitoku Client is a Python library for processing SageMaker Yomitoku API outputs with comprehensive format conversion and visualization capabilities. It bridges the gap between Yomitoku Pro's OCR analysis and practical data processing workflows.
+Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的なフォーマット変換と可視化機能を提供するPythonライブラリです。Yomitoku ProのOCR分析と実用的なデータ処理ワークフローを橋渡しします。
 
-## Key Features
+## 主な機能
 
-- **SageMaker Integration**: Seamlessly process Yomitoku Pro OCR results
-- **Multiple Format Support**: Convert to CSV, Markdown, HTML, JSON, and PDF formats
-- **Searchable PDF Generation**: Create searchable PDFs with OCR text overlay
-- **Advanced Visualization**: Document layout analysis, element relationships, and confidence scores
-- **Utility Functions**: Rectangle calculations, text processing, and image manipulation
-- **Jupyter Notebook Support**: Ready-to-use examples and workflows
+- **SageMaker統合**: Yomitoku Pro OCR結果のシームレスな処理
+- **複数フォーマット対応**: CSV、Markdown、HTML、JSON、PDF形式への変換
+- **検索可能PDF生成**: OCRテキストオーバーレイ付きの検索可能PDFの作成
+- **高度な可視化**: 文書レイアウト分析、要素関係、信頼度スコア
+- **ユーティリティ関数**: 矩形計算、テキスト処理、画像操作
+- **Jupyter Notebook対応**: すぐに使える例とワークフロー
 
-## Installation
+## インストール
 
-### Using pip
+### pipを使用
 ```bash
 pip install yomitoku-client
 ```
 
-### Using uv (Recommended)
+### uvを使用（推奨）
 ```bash
 uv add yomitoku-client
 ```
 
-> **Note**: If you don't have uv installed, you can install it with:
+> **注意**: uvがインストールされていない場合は、以下でインストールできます：
 > ```bash
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
-## Quick Start
+## クイックスタート
 
-### Step 1: Connect to SageMaker Endpoint
+### ステップ1: SageMakerエンドポイントに接続
 
 ```python
 import boto3
 import json
 from yomitoku_client.parsers.sagemaker_parser import SageMakerParser
 
-# Initialize SageMaker runtime client
+# SageMakerランタイムクライアントを初期化
 sagemaker_runtime = boto3.client('sagemaker-runtime')
 ENDPOINT_NAME = 'your-yomitoku-endpoint'
 
-# Initialize parser
+# パーサーを初期化
 parser = SageMakerParser()
 
-# Call SageMaker endpoint with your document
+# 文書でSageMakerエンドポイントを呼び出し
 with open('document.pdf', 'rb') as f:
     response = sagemaker_runtime.invoke_endpoint(
         EndpointName=ENDPOINT_NAME,
-        ContentType='application/pdf',  # or 'image/png', 'image/jpeg'
+        ContentType='application/pdf',  # または 'image/png', 'image/jpeg'
         Body=f.read(),
     )
 
-# Parse the response
+# レスポンスをパース
 body_bytes = response['Body'].read()
 sagemaker_result = json.loads(body_bytes)
 
-# Convert to structured data
+# 構造化データに変換
 data = parser.parse_dict(sagemaker_result)
 
-print(f"Found {len(data.pages)} pages")
-print(f"Page 1 has {len(data.pages[0].paragraphs)} paragraphs")
-print(f"Page 1 has {len(data.pages[0].tables)} tables")
+print(f"ページ数: {len(data.pages)}")
+print(f"ページ1の段落数: {len(data.pages[0].paragraphs)}")
+print(f"ページ1のテーブル数: {len(data.pages[0].tables)}")
 ```
 
-### Step 2: Convert Data to Different Formats
+### ステップ2: データを異なる形式に変換
 
-#### Single Page Documents (Images)
+#### 単一ページ文書（画像）
 
 ```python
-# Convert to different formats
+# 異なる形式に変換
 data.pages[0].to_csv('output.csv')
 data.pages[0].to_html('output.html')
 data.pages[0].to_markdown('output.md')
 data.pages[0].to_json('output.json')
 
-# Create searchable PDF from image
+# 画像から検索可能PDFを作成
 data.to_pdf(output_path='searchable.pdf', img='document.png')
 ```
 
-#### Multi-page Documents (PDFs)
+#### 複数ページ文書（PDF）
 
 ```python
-# Convert all pages (creates folder structure)
+# 全ページを変換（フォルダ構造を作成）
 data.to_csv_folder('csv_output/')
 data.to_html_folder('html_output/')
 data.to_markdown_folder('markdown_output/')
 data.to_json_folder('json_output/')
 
-# Create searchable PDF (enhances existing PDF with searchable text)
+# 検索可能PDFを作成（既存のPDFに検索可能テキストを追加）
 data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
 
-# Or convert individual pages
+# または個別のページを変換
 data.pages[0].to_csv('page1.csv')
 data.pages[1].to_html('page2.html')
 ```
 
-#### Table Data Extraction
+#### テーブルデータ抽出
 
 ```python
-# Export tables in various formats
+# 様々な形式でテーブルをエクスポート
 data.pages[0].visualize_tables(
     output_folder='tables/',
-    output_format='csv'    # or 'html', 'json', 'text'
+    output_format='csv'    # または 'html', 'json', 'text'
 )
 
-# For multi-page documents
+# 複数ページ文書の場合
 data.visualize_tables(
     output_folder='all_tables/',
     output_format='csv'
 )
 ```
 
-### Step 3: Visualize Results
+### ステップ3: 結果を可視化
 
-#### OCR Text Visualization
+#### OCRテキスト可視化
 
 ```python
-# Show detected text with bounding boxes
+# 検出されたテキストをバウンディングボックスで表示
 result_img = data.pages[0].visualize(
     image_path='document.png',
     viz_type='ocr',
@@ -142,10 +142,10 @@ result_img = data.pages[0].visualize(
 )
 ```
 
-#### Layout Analysis Visualization
+#### レイアウト分析可視化
 
 ```python
-# Show document structure (text, tables, figures)
+# 文書構造を表示（テキスト、テーブル、図）
 result_img = data.pages[0].visualize(
     image_path='document.png',
     viz_type='layout_detail',
@@ -153,30 +153,30 @@ result_img = data.pages[0].visualize(
 )
 ```
 
-#### PDF Visualization
+#### PDF可視化
 
 ```python
-# Visualize specific PDF page
+# 特定のPDFページを可視化
 result_img = data.pages[0].visualize(
     image_path='document.pdf',
     viz_type='layout_detail',
     output_path='pdf_visualization.png',
-    page_index=0  # Specify which page to visualize
+    page_index=0  # 可視化するページを指定
 )
 ```
 
-## Supported Formats
+## サポート形式
 
-- **CSV**: Tabular data export with proper cell handling
-- **Markdown**: Structured document format with tables and headings
-- **HTML**: Web-ready format with proper styling
-- **JSON**: Structured data export with full document structure
-- **PDF**: Searchable PDF generation with OCR text overlay
+- **CSV**: 適切なセル処理による表形式データのエクスポート
+- **Markdown**: テーブルと見出しを含む構造化文書形式
+- **HTML**: 適切なスタイリングを含むWeb対応形式
+- **JSON**: 完全な文書構造を含む構造化データエクスポート
+- **PDF**: OCRテキストオーバーレイ付きの検索可能PDF生成
 
-## License
+## ライセンス
 
-MIT License - see LICENSE file for details.
+Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
-## Contact
+## お問い合わせ
 
-For questions and support: support-aws-marketplace@mlism.com
+ご質問やサポートについては: support-aws-marketplace@mlism.com

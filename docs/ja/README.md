@@ -308,7 +308,7 @@ uv run pytest
 
 ## ライセンス
 
-MITライセンス - 詳細はLICENSEファイルを参照してください。
+Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
 ## お問い合わせ
 
