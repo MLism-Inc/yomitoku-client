@@ -33,7 +33,7 @@ dependencies = [
     "openpyxl>=3.0.10",
     "python-docx>=0.8.11",
     "PyPDF2>=3.0.0",
-    "PyMuPDF>=1.26.0",
+    "pypdfium2>=4.30.0",
     "pyarrow>=12.0.0",
     "opencv-python>=4.8.0",
     "Pillow>=9.5.0",
@@ -67,6 +67,9 @@ notebooks = [
 sagemaker = [
     "boto3>=1.26.0",
     "botocore>=1.29.0",
+]
+ocr = [
+    "Pillow[raqm]>=9.5.0",
 ]
 
 

@@ -32,26 +32,12 @@ Yomitoku Client is a Python library for processing SageMaker Yomitoku API output
 
 ### Using pip
 ```bash
-# Install from PyPI (includes PDF support by default)
 pip install yomitoku-client
-
-# Install from GitHub (latest features)
-pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
 
 ### Using uv (Recommended)
 ```bash
-# Install from PyPI using uv
 uv add yomitoku-client
-
-# Install from GitHub using uv
-uv add git+https://github.com/MLism-Inc/yomitoku-client.git@main
-
-# For development (includes dev dependencies)
-uv sync --dev
-
-# Run with uv
-uv run python your_script.py
 ```
 
 > **Note**: If you don't have uv installed, you can install it with:
@@ -61,23 +47,122 @@ uv run python your_script.py
 
 ## Quick Start
 
+### Step 1: Connect to SageMaker Endpoint
+
 ```python
-from yomitoku_client import YomitokuClient
+import boto3
+import json
+from yomitoku_client.parsers.sagemaker_parser import SageMakerParser
 
-# Initialize client
-client = YomitokuClient()
+# Initialize SageMaker runtime client
+sagemaker_runtime = boto3.client('sagemaker-runtime')
+ENDPOINT_NAME = 'your-yomitoku-endpoint'
 
-# Parse SageMaker output (from Yomitoku Pro)
-data = client.parse_file('sagemaker_output.json')
+# Initialize parser
+parser = SageMakerParser()
 
+# Call SageMaker endpoint with your document
+with open('document.pdf', 'rb') as f:
+    response = sagemaker_runtime.invoke_endpoint(
+        EndpointName=ENDPOINT_NAME,
+        ContentType='application/pdf',  # or 'image/png', 'image/jpeg'
+        Body=f.read(),
+    )
+
+# Parse the response
+body_bytes = response['Body'].read()
+sagemaker_result = json.loads(body_bytes)
+
+# Convert to structured data
+data = parser.parse_dict(sagemaker_result)
+
+print(f"Found {len(data.pages)} pages")
+print(f"Page 1 has {len(data.pages[0].paragraphs)} paragraphs")
+print(f"Page 1 has {len(data.pages[0].tables)} tables")
+```
+
+### Step 2: Convert Data to Different Formats
+
+#### Single Page Documents (Images)
+
+```python
 # Convert to different formats
-csv_result = client.convert_to_format(data, 'csv')
-html_result = client.convert_to_format(data, 'html')
-markdown_result = client.convert_to_format(data, 'markdown')
+data.pages[0].to_csv('output.csv')
+data.pages[0].to_html('output.html')
+data.pages[0].to_markdown('output.md')
+data.pages[0].to_json('output.json')
 
-# Save to files
-client.convert_to_format(data, 'csv', 'output.csv')
-client.convert_to_format(data, 'html', 'output.html')
+# Create searchable PDF from image
+data.to_pdf(output_path='searchable.pdf', img='document.png')
+```
+
+#### Multi-page Documents (PDFs)
+
+```python
+# Convert all pages (creates folder structure)
+data.to_csv_folder('csv_output/')
+data.to_html_folder('html_output/')
+data.to_markdown_folder('markdown_output/')
+data.to_json_folder('json_output/')
+
+# Create searchable PDF (enhances existing PDF with searchable text)
+data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
+
+# Or convert individual pages
+data.pages[0].to_csv('page1.csv')
+data.pages[1].to_html('page2.html')
+```
+
+#### Table Data Extraction
+
+```python
+# Export tables in various formats
+data.pages[0].visualize_tables(
+    output_folder='tables/',
+    output_format='csv'    # or 'html', 'json', 'text'
+)
+
+# For multi-page documents
+data.visualize_tables(
+    output_folder='all_tables/',
+    output_format='csv'
+)
+```
+
+### Step 3: Visualize Results
+
+#### OCR Text Visualization
+
+```python
+# Show detected text with bounding boxes
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='ocr',
+    output_path='ocr_visualization.png'
+)
+```
+
+#### Layout Analysis Visualization
+
+```python
+# Show document structure (text, tables, figures)
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='layout_detail',
+    output_path='layout_visualization.png'
+)
+```
+
+#### PDF Visualization
+
+```python
+# Visualize specific PDF page
+result_img = data.pages[0].visualize(
+    image_path='document.pdf',
+    viz_type='layout_detail',
+    output_path='pdf_visualization.png',
+    page_index=0  # Specify which page to visualize
+)
 ```
 
 ## Supported Formats

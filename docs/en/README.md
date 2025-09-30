@@ -15,84 +15,139 @@ Yomitoku Client is a Python library for processing SageMaker Yomitoku API output
 
 ## Installation
 
+### Using pip
 ```bash
-# Install from PyPI (includes PDF support by default)
 pip install yomitoku-client
-
-# Install from GitHub (latest features)
-pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
+
+### Using uv (Recommended)
+```bash
+uv add yomitoku-client
+```
+
+> **Note**: If you don't have uv installed, you can install it with:
+> ```bash
+> curl -LsSf https://astral.sh/uv/install.sh | sh
+> ```
 
 ## Quick Start
 
-### Step 1: Get OCR Results from Yomitoku Pro
-
-First, you need to deploy Yomitoku Pro and get OCR results. See the `yomitoku-pro-document-analyzer.ipynb` notebook for detailed instructions on:
-
-1. **Deploying Yomitoku Pro** using CloudFormation or SageMaker Console
-2. **Creating endpoints** and configuring permissions
-3. **Running OCR analysis** on your documents
-4. **Getting structured results** in JSON format
-
-### Step 2: Process Results with Yomitoku Client
-
-Once you have OCR results from Yomitoku Pro, use Yomitoku Client to process and convert them:
+### Step 1: Connect to SageMaker Endpoint
 
 ```python
-from yomitoku_client import YomitokuClient
+import boto3
+import json
+from yomitoku_client.parsers.sagemaker_parser import SageMakerParser
 
-# Initialize client
-client = YomitokuClient()
+# Initialize SageMaker runtime client
+sagemaker_runtime = boto3.client('sagemaker-runtime')
+ENDPOINT_NAME = 'your-yomitoku-endpoint'
 
-# Parse SageMaker output (from Yomitoku Pro)
-data = client.parse_file('sagemaker_output.json')
+# Initialize parser
+parser = SageMakerParser()
 
+# Call SageMaker endpoint with your document
+with open('document.pdf', 'rb') as f:
+    response = sagemaker_runtime.invoke_endpoint(
+        EndpointName=ENDPOINT_NAME,
+        ContentType='application/pdf',  # or 'image/png', 'image/jpeg'
+        Body=f.read(),
+    )
+
+# Parse the response
+body_bytes = response['Body'].read()
+sagemaker_result = json.loads(body_bytes)
+
+# Convert to structured data
+data = parser.parse_dict(sagemaker_result)
+
+print(f"Found {len(data.pages)} pages")
+print(f"Page 1 has {len(data.pages[0].paragraphs)} paragraphs")
+print(f"Page 1 has {len(data.pages[0].tables)} tables")
+```
+
+### Step 2: Convert Data to Different Formats
+
+#### Single Page Documents (Images)
+
+```python
 # Convert to different formats
-csv_result = client.convert_to_format(data, 'csv')
-html_result = client.convert_to_format(data, 'html')
-markdown_result = client.convert_to_format(data, 'markdown')
+data.pages[0].to_csv('output.csv')
+data.pages[0].to_html('output.html')
+data.pages[0].to_markdown('output.md')
+data.pages[0].to_json('output.json')
 
-# Save to files
-client.convert_to_format(data, 'csv', 'output.csv')
-client.convert_to_format(data, 'html', 'output.html')
+# Create searchable PDF from image
+data.to_pdf(output_path='searchable.pdf', img='document.png')
 ```
 
-### Step 3: Advanced Processing and Visualization
+#### Multi-page Documents (PDFs)
 
 ```python
-# Enhanced document visualization
-from yomitoku_client.visualizers import DocumentVisualizer
+# Convert all pages (creates folder structure)
+data.to_csv_folder('csv_output/')
+data.to_html_folder('html_output/')
+data.to_markdown_folder('markdown_output/')
+data.to_json_folder('json_output/')
 
-doc_viz = DocumentVisualizer()
+# Create searchable PDF (enhances existing PDF with searchable text)
+data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
 
-# Element relationships visualization
-rel_img = doc_viz.visualize_element_relationships(
-    image, results, 
-    show_overlaps=True, 
-    show_distances=True
+# Or convert individual pages
+data.pages[0].to_csv('page1.csv')
+data.pages[1].to_html('page2.html')
+```
+
+#### Table Data Extraction
+
+```python
+# Export tables in various formats
+data.pages[0].visualize_tables(
+    output_folder='tables/',
+    output_format='csv'    # or 'html', 'json', 'text'
 )
 
-# Element hierarchy visualization
-hierarchy_img = doc_viz.visualize_element_hierarchy(
-    image, results, 
-    show_containment=True
-)
-
-# Confidence scores visualization
-confidence_img = doc_viz.visualize_confidence_scores(
-    image, ocr_results, 
-    show_ocr_confidence=True
+# For multi-page documents
+data.visualize_tables(
+    output_folder='all_tables/',
+    output_format='csv'
 )
 ```
 
-### Step 4: Searchable PDF Generation
+### Step 3: Visualize Results
+
+#### OCR Text Visualization
 
 ```python
-from yomitoku_client.pdf_generator import SearchablePDFGenerator
+# Show detected text with bounding boxes
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='ocr',
+    output_path='ocr_visualization.png'
+)
+```
 
-# Create searchable PDF from images and OCR results
-pdf_generator = SearchablePDFGenerator()
-pdf_generator.create_searchable_pdf(images, ocr_results, 'output.pdf')
+#### Layout Analysis Visualization
+
+```python
+# Show document structure (text, tables, figures)
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='layout_detail',
+    output_path='layout_visualization.png'
+)
+```
+
+#### PDF Visualization
+
+```python
+# Visualize specific PDF page
+result_img = data.pages[0].visualize(
+    image_path='document.pdf',
+    viz_type='layout_detail',
+    output_path='pdf_visualization.png',
+    page_index=0  # Specify which page to visualize
+)
 ```
 
 ## Notebook Examples
@@ -125,6 +180,84 @@ This notebook demonstrates:
 - Multi-format conversion
 - Visualization techniques
 - Utility function usage
+
+## Data Transformation and Visualization
+
+### Format Conversion
+
+Yomitoku Client provides comprehensive format conversion capabilities:
+
+```python
+# Single page conversion
+data.pages[0].to_csv('output.csv')
+data.pages[0].to_html('output.html')
+data.pages[0].to_markdown('output.md')
+data.pages[0].to_json('output.json')
+
+# Multi-page document conversion (creates folder structure)
+data.to_csv_folder('csv_output/')
+data.to_html_folder('html_output/')
+data.to_markdown_folder('markdown_output/')
+data.to_json_folder('json_output/')
+```
+
+### Searchable PDF Generation
+
+Create searchable PDFs with OCR text overlay:
+
+```python
+# From image
+data.to_pdf(output_path='searchable.pdf', img='document.png')
+
+# From PDF (enhances existing PDF with searchable text)
+data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
+```
+
+### Visualization
+
+Visualize OCR results with bounding boxes and layout analysis:
+
+```python
+# OCR text visualization
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='ocr',
+    output_path='ocr_visualization.png'
+)
+
+# Layout detail visualization (text, tables, figures)
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='layout_detail',
+    output_path='layout_visualization.png'
+)
+
+# PDF visualization (specify page index)
+result_img = data.pages[0].visualize(
+    image_path='document.pdf',
+    viz_type='layout_detail',
+    output_path='pdf_visualization.png',
+    page_index=0
+)
+```
+
+### Table Processing
+
+Extract and visualize table data in multiple formats:
+
+```python
+# Export tables in various formats
+data.pages[0].visualize_tables(
+    output_folder='tables/',
+    output_format='csv'    # or 'html', 'json', 'text'
+)
+
+# For multi-page documents
+data.visualize_tables(
+    output_folder='all_tables/',
+    output_format='csv'
+)
+```
 
 ## Supported Formats
 

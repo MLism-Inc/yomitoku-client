@@ -15,84 +15,139 @@ Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的な�
 
 ## インストール
 
+### pipを使用
 ```bash
-# PyPIからインストール（PDFサポートはデフォルトで含まれます）
 pip install yomitoku-client
-
-# GitHubから最新機能をインストール
-pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
+
+### uvを使用（推奨）
+```bash
+uv add yomitoku-client
+```
+
+> **注意**: uvがインストールされていない場合は、以下でインストールできます：
+> ```bash
+> curl -LsSf https://astral.sh/uv/install.sh | sh
+> ```
 
 ## クイックスタート
 
-### ステップ1: Yomitoku ProからOCR結果を取得
-
-まず、Yomitoku ProをデプロイしてOCR結果を取得する必要があります。詳細な手順は`yomitoku-pro-document-analyzer.ipynb`ノートブックを参照してください：
-
-1. **Yomitoku Proのデプロイ**（CloudFormationまたはSageMaker Consoleを使用）
-2. **エンドポイントの作成**と権限の設定
-3. **文書のOCR分析**の実行
-4. **構造化された結果**のJSON形式での取得
-
-### ステップ2: Yomitoku Clientで結果を処理
-
-Yomitoku ProからOCR結果を取得したら、Yomitoku Clientを使用して処理・変換します：
+### ステップ1: SageMakerエンドポイントに接続
 
 ```python
-from yomitoku_client import YomitokuClient
+import boto3
+import json
+from yomitoku_client.parsers.sagemaker_parser import SageMakerParser
 
-# クライアントを初期化
-client = YomitokuClient()
+# SageMakerランタイムクライアントを初期化
+sagemaker_runtime = boto3.client('sagemaker-runtime')
+ENDPOINT_NAME = 'your-yomitoku-endpoint'
 
-# SageMaker出力をパース（Yomitoku Proから）
-data = client.parse_file('sagemaker_output.json')
+# パーサーを初期化
+parser = SageMakerParser()
 
+# 文書でSageMakerエンドポイントを呼び出し
+with open('document.pdf', 'rb') as f:
+    response = sagemaker_runtime.invoke_endpoint(
+        EndpointName=ENDPOINT_NAME,
+        ContentType='application/pdf',  # または 'image/png', 'image/jpeg'
+        Body=f.read(),
+    )
+
+# レスポンスをパース
+body_bytes = response['Body'].read()
+sagemaker_result = json.loads(body_bytes)
+
+# 構造化データに変換
+data = parser.parse_dict(sagemaker_result)
+
+print(f"ページ数: {len(data.pages)}")
+print(f"ページ1の段落数: {len(data.pages[0].paragraphs)}")
+print(f"ページ1のテーブル数: {len(data.pages[0].tables)}")
+```
+
+### ステップ2: データを異なる形式に変換
+
+#### 単一ページ文書（画像）
+
+```python
 # 異なる形式に変換
-csv_result = client.convert_to_format(data, 'csv')
-html_result = client.convert_to_format(data, 'html')
-markdown_result = client.convert_to_format(data, 'markdown')
+data.pages[0].to_csv('output.csv')
+data.pages[0].to_html('output.html')
+data.pages[0].to_markdown('output.md')
+data.pages[0].to_json('output.json')
 
-# ファイルに保存
-client.convert_to_format(data, 'csv', 'output.csv')
-client.convert_to_format(data, 'html', 'output.html')
+# 画像から検索可能PDFを作成
+data.to_pdf(output_path='searchable.pdf', img='document.png')
 ```
 
-### ステップ3: 高度な処理と可視化
+#### 複数ページ文書（PDF）
 
 ```python
-# 強化された文書可視化
-from yomitoku_client.visualizers import DocumentVisualizer
+# 全ページを変換（フォルダ構造を作成）
+data.to_csv_folder('csv_output/')
+data.to_html_folder('html_output/')
+data.to_markdown_folder('markdown_output/')
+data.to_json_folder('json_output/')
 
-doc_viz = DocumentVisualizer()
+# 検索可能PDFを作成（既存のPDFに検索可能テキストを追加）
+data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
 
-# 要素関係の可視化
-rel_img = doc_viz.visualize_element_relationships(
-    image, results, 
-    show_overlaps=True, 
-    show_distances=True
+# または個別のページを変換
+data.pages[0].to_csv('page1.csv')
+data.pages[1].to_html('page2.html')
+```
+
+#### テーブルデータ抽出
+
+```python
+# 様々な形式でテーブルをエクスポート
+data.pages[0].visualize_tables(
+    output_folder='tables/',
+    output_format='csv'    # または 'html', 'json', 'text'
 )
 
-# 要素階層の可視化
-hierarchy_img = doc_viz.visualize_element_hierarchy(
-    image, results, 
-    show_containment=True
-)
-
-# 信頼度スコアの可視化
-confidence_img = doc_viz.visualize_confidence_scores(
-    image, ocr_results, 
-    show_ocr_confidence=True
+# 複数ページ文書の場合
+data.visualize_tables(
+    output_folder='all_tables/',
+    output_format='csv'
 )
 ```
 
-### ステップ4: 検索可能PDF生成
+### ステップ3: 結果を可視化
+
+#### OCRテキスト可視化
 
 ```python
-from yomitoku_client.pdf_generator import SearchablePDFGenerator
+# 検出されたテキストをバウンディングボックスで表示
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='ocr',
+    output_path='ocr_visualization.png'
+)
+```
 
-# 画像とOCR結果から検索可能PDFを作成
-pdf_generator = SearchablePDFGenerator()
-pdf_generator.create_searchable_pdf(images, ocr_results, 'output.pdf')
+#### レイアウト分析可視化
+
+```python
+# 文書構造を表示（テキスト、テーブル、図）
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='layout_detail',
+    output_path='layout_visualization.png'
+)
+```
+
+#### PDF可視化
+
+```python
+# 特定のPDFページを可視化
+result_img = data.pages[0].visualize(
+    image_path='document.pdf',
+    viz_type='layout_detail',
+    output_path='pdf_visualization.png',
+    page_index=0  # 可視化するページを指定
+)
 ```
 
 ## ノートブック例
@@ -125,6 +180,84 @@ pdf_generator.create_searchable_pdf(images, ocr_results, 'output.pdf')
 - マルチフォーマット変換
 - 可視化技術
 - ユーティリティ関数の使用
+
+## データ変換と可視化
+
+### フォーマット変換
+
+Yomitoku Clientは包括的なフォーマット変換機能を提供します：
+
+```python
+# 単一ページの変換
+data.pages[0].to_csv('output.csv')
+data.pages[0].to_html('output.html')
+data.pages[0].to_markdown('output.md')
+data.pages[0].to_json('output.json')
+
+# 複数ページドキュメントの変換（フォルダ構造を作成）
+data.to_csv_folder('csv_output/')
+data.to_html_folder('html_output/')
+data.to_markdown_folder('markdown_output/')
+data.to_json_folder('json_output/')
+```
+
+### 検索可能PDF生成
+
+OCRテキストオーバーレイを含む検索可能PDFを作成：
+
+```python
+# 画像から
+data.to_pdf(output_path='searchable.pdf', img='document.png')
+
+# PDFから（既存のPDFに検索可能テキストを追加）
+data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
+```
+
+### 可視化
+
+バウンディングボックスとレイアウト分析でOCR結果を可視化：
+
+```python
+# OCRテキスト可視化
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='ocr',
+    output_path='ocr_visualization.png'
+)
+
+# レイアウト詳細可視化（テキスト、テーブル、図）
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='layout_detail',
+    output_path='layout_visualization.png'
+)
+
+# PDF可視化（ページインデックスを指定）
+result_img = data.pages[0].visualize(
+    image_path='document.pdf',
+    viz_type='layout_detail',
+    output_path='pdf_visualization.png',
+    page_index=0
+)
+```
+
+### テーブル処理
+
+複数の形式でテーブルデータを抽出・可視化：
+
+```python
+# 様々な形式でテーブルをエクスポート
+data.pages[0].visualize_tables(
+    output_folder='tables/',
+    output_format='csv'    # または 'html', 'json', 'text'
+)
+
+# 複数ページドキュメントの場合
+data.visualize_tables(
+    output_folder='all_tables/',
+    output_format='csv'
+)
+```
 
 ## サポート形式
 
