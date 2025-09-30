@@ -5,7 +5,7 @@ SageMaker Parser - For parsing SageMaker Yomitoku API outputs
 import json
 import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, Tuple
 from pydantic import BaseModel, Field
 
 from ..exceptions import ValidationError, DocumentAnalysisError
@@ -232,14 +232,29 @@ class DocumentResult(BaseModel):
             renderer.save(self, output_path, img=img, pdf=pdf)
         return renderer.render(self)
     
-    def visualize(self, image_path: str, viz_type: str = 'layout_detail', output_path: Optional[str] = None) -> Any:
+    def visualize(self, image_path: str, viz_type: str = 'layout_detail', output_path: Optional[str] = None, 
+                  page_index: Optional[int] = None, dpi: int = 200, target_size: Optional[Tuple[int, int]] = None, **kwargs) -> Any:
         """
         Visualize document layout with bounding boxes
         
         Args:
-            image_path: Path to the source image file (string or pathlib.Path)
-            viz_type: Type of visualization ('layout_detail', 'reading_order', 'ocr', 'table', etc.)
+            image_path: Path to the source image file or PDF file (string or pathlib.Path)
+            viz_type: Type of visualization:
+                - 'layout_detail': Detailed layout with all elements
+                - 'layout_rough': Rough layout overview
+                - 'reading_order': Show reading order arrows
+                - 'ocr': OCR text visualization
+                - 'detection': Detection bounding boxes
+                - 'recognition': Recognition results
+                - 'relationships': Element relationships
+                - 'hierarchy': Element hierarchy
+                - 'confidence': Confidence scores
+                - 'captions': Caption visualization
             output_path: Optional path to save the visualization image
+            page_index: Page index for PDF files (0-based, default: 0)
+            dpi: DPI for PDF to image conversion (default: 200)
+            target_size: Manual target size (width, height) for PDF conversion to ensure alignment
+            **kwargs: Additional parameters for specific visualization types
             
         Returns:
             Any: Visualized image with bounding boxes drawn
@@ -265,15 +280,26 @@ class DocumentResult(BaseModel):
             words=self.words
         )
         
-        result_img = visualizer.visualize((image_path, doc_data), type=viz_type)
+        # Call the appropriate visualization method with PDF support
+        result_img = visualizer.visualize(
+            (image_path, doc_data), 
+            type=viz_type, 
+            page_index=page_index,
+            dpi=dpi,
+            target_size=target_size,
+            **kwargs
+        )
         
         # Save if output path is provided
         if output_path is not None:
             import cv2
+            # Ensure output path has a valid image extension
+            if not any(output_path.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.bmp', '.tiff']):
+                output_path += '.png'  # Default to PNG if no extension
             cv2.imwrite(output_path, result_img)
         
         return result_img
-    
+
     def visualize_tables(self, output_folder: Optional[str] = None, 
                         output_format: str = 'text') -> List[str]:
         """
@@ -437,54 +463,6 @@ class MultiPageDocumentResult(BaseModel):
                 raise ValueError("Image is required for searchable PDF generation. Set create_text_pdf=True for simple text PDF.")
         
         return output_path
-    
-    def visualize(self, image_paths: Union[str, List[str]], viz_type: str = 'layout_detail', 
-                  output_folder: str = 'visualizations', image_format: str = 'png') -> List[str]:
-        """
-        Visualize multi-page document with bounding boxes
-        
-        Args:
-            image_paths: Path(s) to source image file(s) (string, pathlib.Path, or list)
-            viz_type: Type of visualization ('layout_detail', 'reading_order', 'ocr', 'table', etc.)
-            output_folder: Folder to save visualization images
-            image_format: Image format for output ('png', 'jpg', 'jpeg')
-            
-        Returns:
-            List[str]: List of paths to generated visualization images
-        """
-        import os
-        
-        # Ensure output folder exists
-        os.makedirs(output_folder, exist_ok=True)
-        
-        # Handle single image path
-        if isinstance(image_paths, (str, Path)):
-            image_paths = [str(image_paths)]
-        else:
-            image_paths = [str(path) for path in image_paths]
-        
-        # Ensure we have enough image paths for all pages
-        if len(image_paths) < len(self.pages):
-            # If we have fewer images than pages, repeat the last image
-            while len(image_paths) < len(self.pages):
-                image_paths.append(image_paths[-1])
-        elif len(image_paths) > len(self.pages):
-            # If we have more images than pages, use only what we need
-            image_paths = image_paths[:len(self.pages)]
-        
-        output_paths = []
-        
-        # Process each page
-        for i, (page, image_path) in enumerate(zip(self.pages, image_paths)):
-            # Generate output filename
-            output_filename = f"page_{i+1}_{viz_type}.{image_format}"
-            output_path = os.path.join(output_folder, output_filename)
-            
-            # Call single page visualization
-            page.visualize(image_path, viz_type=viz_type, output_path=output_path)
-            output_paths.append(output_path)
-        
-        return output_paths
     
     def visualize_tables(self, output_folder: str = 'table_visualizations', 
                         output_format: str = 'text') -> List[str]:
