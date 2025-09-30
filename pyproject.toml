@@ -15,7 +15,7 @@ version = "0.1.0"
 authors = [{name = "Yomitoku Team", email = "support-aws-marketplace@mlism.com"}]
 description = "Yomitoku Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
 readme = "README.md"
-license = {text = "Apache License Version 2.0"}
+license = "Apache-2.0"
 requires-python = ">=3.10,<3.13"
 keywords = ["yomitoku", "sagemaker", "document-analysis", "format-conversion", "visualization"]
 dependencies = [
