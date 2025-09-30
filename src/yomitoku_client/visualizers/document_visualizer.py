@@ -7,9 +7,18 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont, features
 from typing import Any, Dict, List, Optional, Tuple, Union
 import logging
+import os
 
 from .base import BaseVisualizer
 from ..utils import calc_overlap_ratio, calc_distance, is_contained
+from ..constants import PALETTE
+
+try:
+    import pypdfium2
+    PYPDFIUM2_AVAILABLE = True
+except ImportError:
+    PYPDFIUM2_AVAILABLE = False
+    raise ImportError("pypdfium2 is required for PDF processing. Install with: pip install pypdfium2")
 
 
 class DocumentVisualizer(BaseVisualizer):
@@ -37,7 +46,264 @@ class DocumentVisualizer(BaseVisualizer):
     def __init__(self):
         super().__init__()
         self.logger = logging.getLogger(__name__)
-        self.palette = self.DEFAULT_PALETTE
+        self.palette = PALETTE
+        
+    def _convert_pdf_page_to_image(self, pdf_path: str, page_index: int = 0, dpi: int = 200, target_size: Optional[Tuple[int, int]] = None) -> np.ndarray:
+        """
+        Convert specified PDF page to image using pypdfium2
+        
+        Args:
+            pdf_path: PDF file path
+            page_index: Page index (0-based)
+            dpi: Image resolution (default 200)
+            target_size: Target image size (width, height) to match original parsing
+            
+        Returns:
+            Converted image as numpy array in BGR format
+            
+        Raises:
+            ImportError: If pypdfium2 is not installed
+            ValueError: If PDF file cannot be opened or page index is invalid
+        """
+        # Import pypdfium2 at the beginning to ensure it's available
+        import pypdfium2
+        
+        try:
+            # Open PDF document
+            doc = pypdfium2.PdfDocument(pdf_path)
+            
+            # Check if page index is valid
+            if page_index < 0 or page_index >= len(doc):
+                doc.close()
+                raise ValueError(f"Page index {page_index} is out of range. PDF has {len(doc)} pages.")
+            
+            if target_size is not None:
+                # Use target size to match original parsing dimensions
+                target_width, target_height = target_size
+                
+                # Validate target size
+                if target_width <= 0 or target_height <= 0 or target_width > 20000 or target_height > 20000:
+                    self.logger.warning(f"Invalid target size: {target_size}, falling back to DPI-based conversion")
+                    target_size = None
+                else:
+                    # Get specified page
+                    page = doc[page_index]
+                    
+                    # Get original page dimensions
+                    original_width = page.get_width()
+                    original_height = page.get_height()
+                    
+                    # Validate original dimensions
+                    if original_width <= 0 or original_height <= 0:
+                        self.logger.warning(f"Invalid original page dimensions: {original_width}x{original_height}")
+                        target_size = None
+                    else:
+                        # Calculate scale to match target size exactly
+                        # This ensures coordinate alignment between original parsing and visualization
+                        scale_x = target_width / original_width
+                        scale_y = target_height / original_height
+                        
+                        # Use uniform scaling to maintain aspect ratio
+                        scale = min(scale_x, scale_y)
+                        
+                        # Validate scale factor
+                        if scale <= 0 or scale > 10:  # Reasonable scale range
+                            self.logger.warning(f"Invalid scale factor: {scale}, falling back to DPI-based conversion")
+                            target_size = None
+                        else:
+                            try:
+                                # Render page with calculated scale 
+                                bitmap = page.render(scale=scale)
+                                pil_image = bitmap.to_pil()
+                                
+                                # Calculate the actual size after scaling
+                                actual_width = int(original_width * scale)
+                                actual_height = int(original_height * scale)
+                                
+                                # For coordinate alignment, we need to ensure the final image size matches target_size exactly
+                                # This is critical for proper bounding box alignment
+                                if actual_width != target_width or actual_height != target_height:
+                                    # Calculate scaling factors for final adjustment
+                                    final_scale_x = target_width / actual_width
+                                    final_scale_y = target_height / actual_height
+                                    
+                                    # Use uniform scaling to maintain aspect ratio
+                                    final_scale = min(final_scale_x, final_scale_y)
+                                    
+                                    # Calculate new size
+                                    new_width = int(actual_width * final_scale)
+                                    new_height = int(actual_height * final_scale)
+                                    
+                                    # Resize the image
+                                    pil_image = pil_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                                    
+                                    # If we still don't match exactly, crop or pad as needed
+                                    if new_width != target_width or new_height != target_height:
+                                        # Create a new image with target size
+                                        final_image = Image.new('RGB', (target_width, target_height), (255, 255, 255))
+                                        
+                                        # Calculate position to center the image
+                                        x_offset = (target_width - new_width) // 2
+                                        y_offset = (target_height - new_height) // 2
+                                        
+                                        # Paste the resized image onto the final image
+                                        final_image.paste(pil_image, (x_offset, y_offset))
+                                        pil_image = final_image
+                                
+                                # Log the coordinate mapping for debugging
+                                self.logger.info(f"PDF coordinate mapping: original({original_width}x{original_height}) -> target({target_width}x{target_height})")
+                                self.logger.info(f"Scale factor: {scale:.4f}, Final scale: {final_scale if 'final_scale' in locals() else 1.0:.4f}")
+                                self.logger.info(f"Final image size: {pil_image.size}")
+                                
+                            except Exception as e:
+                                self.logger.warning(f"Error in target size conversion: {e}, falling back to DPI-based conversion")
+                                target_size = None
+            
+            # If target_size is None (either not provided or failed), use DPI-based conversion
+            if target_size is None:
+                
+                renderer = doc.render(
+                    pypdfium2.PdfBitmap.to_pil,
+                    scale=dpi / 72,
+                )
+                images = list(renderer)
+                
+                # Get the specific page image
+                if page_index >= len(images):
+                    doc.close()
+                    raise ValueError(f"Page index {page_index} is out of range. PDF has {len(images)} pages.")
+                
+                pil_image = images[page_index]
+            
+            img_array = np.array(pil_image.convert("RGB"))
+            img_array = img_array[:, :, ::-1]  # RGB to BGR
+            
+            doc.close()
+            return img_array
+            
+        except Exception as e:
+            if 'doc' in locals():
+                doc.close()
+            raise ValueError(f"Failed to convert PDF page to image: {e}")
+    
+    
+    def _is_pdf_file(self, file_path: str) -> bool:
+        """
+        Check if file is a PDF file
+        
+        Args:
+            file_path: File path
+            
+        Returns:
+            True if PDF file, False otherwise
+        """
+        if not os.path.exists(file_path):
+            return False
+        
+        # Check file extension
+        _, ext = os.path.splitext(file_path.lower())
+        if ext == '.pdf':
+            return True
+        
+        # Check file header (more reliable method)
+        try:
+            with open(file_path, 'rb') as f:
+                header = f.read(4)
+                return header == b'%PDF'
+        except:
+            return False
+    
+    def _get_original_image_size(self, results: Any) -> Optional[Tuple[int, int]]:
+        """
+        Extract original image size from parsing results with improved accuracy and stability
+        
+        Args:
+            results: Document analysis results
+            
+        Returns:
+            Tuple of (width, height) if found, None otherwise
+        """
+        try:
+            all_coords = []
+            
+            # Collect all coordinates from different element types with validation
+            # Words (most precise for OCR results)
+            if hasattr(results, 'words') and results.words:
+                for word in results.words:
+                    if hasattr(word, 'points') and word.points:
+                        for point in word.points:
+                            if len(point) >= 2 and isinstance(point[0], (int, float)) and isinstance(point[1], (int, float)):
+                                all_coords.append((float(point[0]), float(point[1])))
+                    elif hasattr(word, 'box') and word.box:
+                        # Fallback to box coordinates
+                        if len(word.box) >= 4:
+                            all_coords.extend([
+                                (float(word.box[0]), float(word.box[1])),  # x1, y1
+                                (float(word.box[2]), float(word.box[3]))   # x2, y2
+                            ])
+            
+            # Paragraphs
+            if hasattr(results, 'paragraphs') and results.paragraphs:
+                for para in results.paragraphs:
+                    if hasattr(para, 'box') and para.box and len(para.box) >= 4:
+                        all_coords.extend([
+                            (float(para.box[0]), float(para.box[1])),  # x1, y1
+                            (float(para.box[2]), float(para.box[3]))   # x2, y2
+                        ])
+            
+            # Tables
+            if hasattr(results, 'tables') and results.tables:
+                for table in results.tables:
+                    if hasattr(table, 'box') and table.box and len(table.box) >= 4:
+                        all_coords.extend([
+                            (float(table.box[0]), float(table.box[1])),  # x1, y1
+                            (float(table.box[2]), float(table.box[3]))   # x2, y2
+                        ])
+            
+            # Figures
+            if hasattr(results, 'figures') and results.figures:
+                for figure in results.figures:
+                    if hasattr(figure, 'box') and figure.box and len(figure.box) >= 4:
+                        all_coords.extend([
+                            (float(figure.box[0]), float(figure.box[1])),  # x1, y1
+                            (float(figure.box[2]), float(figure.box[3]))   # x2, y2
+                        ])
+            
+            if all_coords:
+                # Filter out invalid coordinates
+                valid_coords = [(x, y) for x, y in all_coords if x >= 0 and y >= 0 and x < 10000 and y < 10000]
+                
+                if not valid_coords:
+                    self.logger.warning("No valid coordinates found")
+                    return None
+                
+                # Find the actual image boundaries
+                min_x = min(coord[0] for coord in valid_coords)
+                min_y = min(coord[1] for coord in valid_coords)
+                max_x = max(coord[0] for coord in valid_coords)
+                max_y = max(coord[1] for coord in valid_coords)
+                
+                # For PDF documents, coordinates are typically absolute pixel coordinates
+                # The max coordinates should represent the full image dimensions
+                # Add a small margin to ensure we capture the full image
+                margin = max(10, (max_x - min_x + max_y - min_y) * 0.01)  # Dynamic margin
+                final_width = int(max_x + margin)
+                final_height = int(max_y + margin)
+                
+                # Validate the detected size
+                if final_width > 0 and final_height > 0 and final_width < 20000 and final_height < 20000:
+                    self.logger.info(f"Detected original image size: {final_width}x{final_height} from coordinates")
+                    self.logger.info(f"Coordinate range: x=[{min_x:.1f}, {max_x:.1f}], y=[{min_y:.1f}, {max_y:.1f}]")
+                    self.logger.info(f"Valid coordinates: {len(valid_coords)}/{len(all_coords)}")
+                    return (final_width, final_height)
+                else:
+                    self.logger.warning(f"Detected size seems invalid: {final_width}x{final_height}")
+            
+            return None
+            
+        except Exception as e:
+            self.logger.warning(f"Could not extract original image size from results: {e}")
+            return None
         
     def visualize(self, data: Any, **kwargs) -> np.ndarray:
         """
@@ -45,7 +311,12 @@ class DocumentVisualizer(BaseVisualizer):
         
         Args:
             data: Document analysis results or image with results
-            **kwargs: Visualization parameters
+            **kwargs: Visualization parameters including:
+                - image_path: Path to image or PDF file
+                - page_index: Page index for PDF files (0-based, default: 0)
+                - dpi: DPI for PDF to image conversion (default: 300)
+                - results: Analysis results for visualization
+                - type: Visualization type (ocr, layout_detail, etc.)
             
         Returns:
             Visualized image as numpy array
@@ -55,24 +326,81 @@ class DocumentVisualizer(BaseVisualizer):
         else:
             img = data
             results = kwargs.get('results')
+        
+        # Get parameters
+        image_path = kwargs.get('image_path')
+        page_index = kwargs.get('page_index', 0)
+        dpi = kwargs.get('dpi', 200)
+        target_size = kwargs.get('target_size')  # Allow manual override
+        
+        # For PDF visualization, we should NOT try to match original image size
+        # The OCR coordinates are already in the correct coordinate system
+        if target_size is None and results is not None:
+            # Check if we're dealing with a PDF file
+            is_pdf = False
+            if image_path and self._is_pdf_file(image_path):
+                is_pdf = True
+            elif isinstance(img, str) and self._is_pdf_file(img):
+                is_pdf = True
             
+            if is_pdf:
+                self.logger.info("PDF file detected, using DPI-based conversion")
+                target_size = None
+            else:
+                # Only try to detect target size for non-PDF images
+                try:
+                    target_size = self._get_original_image_size(results)
+                    if target_size is not None:
+                        self.logger.info(f"Using detected target size: {target_size}")
+                    else:
+                        self.logger.info("Could not detect target size, using DPI-based conversion")
+                except Exception as e:
+                    self.logger.warning(f"Error detecting target size: {e}, using DPI-based conversion")
+                    target_size = None
+        
         # Handle image input - convert string path to numpy array
         if isinstance(img, str):
             try:
-                img = cv2.imread(img)
-                if img is None:
-                    self.logger.error(f"Failed to load image from path: {img}")
-                    return np.zeros((400, 600, 3), dtype=np.uint8)
+                # Check if it is a PDF file
+                if self._is_pdf_file(img):
+                    self.logger.info(f"Detected PDF file: {img}, converting page {page_index} to image")
+                    if target_size:
+                        self.logger.info(f"Using target size {target_size} to match original parsing dimensions")
+                    img = self._convert_pdf_page_to_image(img, page_index, dpi, target_size)
+                else:
+                    # Normal image file
+                    img = cv2.imread(img)
+                    if img is None:
+                        self.logger.error(f"Failed to load image from path: {img}")
+                        return np.zeros((400, 600, 3), dtype=np.uint8)
             except Exception as e:
                 self.logger.error(f"Error loading image from path {img}: {e}")
                 return np.zeros((400, 600, 3), dtype=np.uint8)
         elif not isinstance(img, np.ndarray):
             self.logger.error(f"Invalid image type: {type(img)}. Expected string path or numpy array.")
             return np.zeros((400, 600, 3), dtype=np.uint8)
+        
+        # If image_path parameter is provided, also try to process it
+        if image_path and isinstance(image_path, str):
+            try:
+                if self._is_pdf_file(image_path):
+                    self.logger.info(f"Processing PDF file from image_path: {image_path}, page {page_index}")
+                    if target_size:
+                        self.logger.info(f"Using target size {target_size} to match original parsing dimensions")
+                    img = self._convert_pdf_page_to_image(image_path, page_index, dpi, target_size)
+                else:
+                    # If img is not a numpy array, try to load from image_path
+                    if not isinstance(img, np.ndarray):
+                        img = cv2.imread(image_path)
+                        if img is None:
+                            self.logger.error(f"Failed to load image from image_path: {image_path}")
+                            return np.zeros((400, 600, 3), dtype=np.uint8)
+            except Exception as e:
+                self.logger.error(f"Error processing image_path {image_path}: {e}")
+                return np.zeros((400, 600, 3), dtype=np.uint8)
             
         if results is None:
             return img
-        
         # Handle results - if it's a list, take the first element
         if isinstance(results, list) and len(results) > 0:
             results = results[0]
@@ -86,7 +414,7 @@ class DocumentVisualizer(BaseVisualizer):
         if visualization_type == 'reading_order':
             # Filter out non-reading order parameters
             reading_kwargs = {k: v for k, v in kwargs.items() 
-                            if k not in ['type']}
+                            if k not in ['type', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_reading_order(img, results, **reading_kwargs)
         elif visualization_type == 'layout_detail':
             return self.visualize_layout_detail(img, results)
@@ -95,37 +423,37 @@ class DocumentVisualizer(BaseVisualizer):
         elif visualization_type == 'ocr':
             # Filter out non-ocr parameters
             ocr_kwargs = {k: v for k, v in kwargs.items() 
-                         if k not in ['type']}
+                         if k not in ['type', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_ocr(img, results, **ocr_kwargs)
         elif visualization_type == 'detection':
             # Filter out non-detection parameters
             detection_kwargs = {k: v for k, v in kwargs.items() 
-                              if k not in ['type']}
+                              if k not in ['type', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_detection(img, results, **detection_kwargs)
         elif visualization_type == 'recognition':
             # Filter out non-recognition parameters
             recognition_kwargs = {k: v for k, v in kwargs.items() 
-                                if k not in ['type']}
+                                if k not in ['type', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_recognition(img, results, **recognition_kwargs)
         elif visualization_type == 'relationships':
             # Filter out non-relationships parameters
             relationships_kwargs = {k: v for k, v in kwargs.items() 
-                                  if k not in ['type', 'results']}
+                                  if k not in ['type', 'results', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_element_relationships(img, results, **relationships_kwargs)
         elif visualization_type == 'hierarchy':
             # Filter out non-hierarchy parameters
             hierarchy_kwargs = {k: v for k, v in kwargs.items() 
-                              if k not in ['type', 'results']}
+                              if k not in ['type', 'results', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_element_hierarchy(img, results, **hierarchy_kwargs)
         elif visualization_type == 'confidence':
             # Filter out non-confidence parameters
             confidence_kwargs = {k: v for k, v in kwargs.items()
-                               if k not in ['type', 'results']}
+                               if k not in ['type', 'results', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_confidence_scores(img, results, **confidence_kwargs)
         elif visualization_type == 'captions':
             # Filter out non-caption parameters
             caption_kwargs = {k: v for k, v in kwargs.items()
-                            if k not in ['type', 'results']}
+                            if k not in ['type', 'results', 'page_index', 'dpi', 'image_path', 'target_size']}
             return self.visualize_captions(img, results, **caption_kwargs)
         else:
             return self.visualize_layout_detail(img, results)
@@ -148,25 +476,14 @@ class DocumentVisualizer(BaseVisualizer):
             Image with reading order visualization
         """
         try:
-            elements = results.paragraphs + results.tables + results.figures
-            elements = sorted(elements, key=lambda x: x.order)
-            
-            out = self._draw_reading_order_arrows(img, elements, line_color, tip_size)
-            
-            if visualize_figure_letter:
-                for figure in results.figures:
-                    out = self._draw_reading_order_arrows(
-                        out, figure.paragraphs, line_color=(0, 255, 0), tip_size=5
-                    )
-                    
-            return out
+            return self.reading_order_visualizer(img, results, line_color, tip_size, visualize_figure_letter)
         except Exception as e:
             self.logger.error(f"Error in reading order visualization: {e}")
             return img
     
     def visualize_layout_detail(self, img: np.ndarray, results: Any) -> np.ndarray:
         """
-        Detailed layout visualization
+        Detailed layout visualization 
         
         Args:
             img: Input image
@@ -176,22 +493,14 @@ class DocumentVisualizer(BaseVisualizer):
             Image with detailed layout visualization
         """
         try:
-            out = img.copy()
-            out = self._visualize_element(out, "paragraphs", results.paragraphs)
-            out = self._visualize_element(out, "tables", results.tables)
-            out = self._visualize_element(out, "figures", results.figures)
-            
-            for table in results.tables:
-                out = self._visualize_table(out, table)
-                
-            return out
+            return self.layout_visualizer_detail(results, img)
         except Exception as e:
             self.logger.error(f"Error in layout detail visualization: {e}")
             return img
     
     def visualize_layout_rough(self, img: np.ndarray, results: Any) -> np.ndarray:
         """
-        Rough layout visualization
+        Rough layout visualization 
         
         Args:
             img: Input image
@@ -201,38 +510,12 @@ class DocumentVisualizer(BaseVisualizer):
             Image with rough layout visualization
         """
         try:
-            out = img.copy()
-            results_dict = results.dict()
-            
-            for id, (category, preds) in enumerate(results_dict.items()):
-                for element in preds:
-                    box = element["box"]
-                    role = element.get("role")
-                    
-                    if role is None:
-                        role = ""
-                    else:
-                        role = f"({role})"
-                    
-                    color = self.palette[id % len(self.palette)]
-                    x1, y1, x2, y2 = tuple(map(int, box))
-                    out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
-                    out = cv2.putText(
-                        out,
-                        category + role,
-                        (x1, y1),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5,
-                        color,
-                        2,
-                    )
-                    
-            return out
+            return self.layout_visualizer_rough(results, img)
         except Exception as e:
             self.logger.error(f"Error in layout rough visualization: {e}")
             return img
     
-    def visualize_ocr(self, img: np.ndarray, words: List[Any], 
+    def visualize_ocr(self, img: np.ndarray, results: Any, 
                      font_path: str = None,
                      det_score: np.ndarray = None,
                      vis_heatmap: bool = False,
@@ -240,11 +523,11 @@ class DocumentVisualizer(BaseVisualizer):
                      font_color: Tuple[int, int, int] = (255, 0, 0),
                      line_color: Tuple[int, int, int] = (0, 255, 0)) -> np.ndarray:
         """
-        OCR visualization
+        OCR visualization 
         
         Args:
             img: Input image
-            words: OCR word results
+            results: Document analysis results containing words
             font_path: Path to font file
             det_score: Detection score heatmap
             vis_heatmap: Whether to visualize heatmap
@@ -256,56 +539,29 @@ class DocumentVisualizer(BaseVisualizer):
             Image with OCR visualization
         """
         try:
-            out = img.copy()
+            # Use default font path if not provided
+            if not font_path:
+                try:
+                    from ..font_manager import get_font_path
+                    font_path = get_font_path()
+                    self.logger.info(f"Using default font: {font_path}")
+                except Exception as e:
+                    self.logger.warning(f"No font path provided and default font not available: {e}")
+                    return img
             
-            if vis_heatmap and det_score is not None:
-                w, h = img.shape[1], img.shape[0]
-                det_score = (det_score * 255).astype(np.uint8)
-                det_score = cv2.resize(det_score, (w, h), interpolation=cv2.INTER_LINEAR)
-                heatmap = cv2.applyColorMap(det_score, cv2.COLORMAP_JET)
-                out = cv2.addWeighted(out, 0.5, heatmap, 0.5, 0)
+            # Extract words from results
+            words = []
+            if hasattr(results, 'words') and results.words:
+                words = results.words
+            elif hasattr(results, 'texts') and results.texts:
+                # If results has texts instead of words, convert them
+                words = results.texts
+            else:
+                self.logger.warning("No words found in results for OCR visualization")
+                return img
             
-            if font_path:
-                pillow_img = Image.fromarray(out)
-                draw = ImageDraw.Draw(pillow_img)
-                font = ImageFont.truetype(font_path, font_size)
-                
-                has_raqm = features.check_feature(feature="raqm")
-                if not has_raqm:
-                    self.logger.warning(
-                        "libraqm is not installed. Vertical text rendering is not supported."
-                    )
-                
-                for word in words:
-                    poly = word.points
-                    text = word.content
-                    direction = getattr(word, 'direction', 'horizontal')
-                    
-                    poly_line = [tuple(point) for point in poly]
-                    draw.polygon(poly_line, outline=line_color, fill=None)
-                    
-                    if direction == "horizontal" or not has_raqm:
-                        x_offset = 0
-                        y_offset = -font_size
-                        pos_x = poly[0][0] + x_offset
-                        pos_y = poly[0][1] + y_offset
-                        draw.text((pos_x, pos_y), text, font=font, fill=font_color)
-                    else:
-                        x_offset = -font_size
-                        y_offset = 0
-                        pos_x = poly[0][0] + x_offset
-                        pos_y = poly[0][1] + y_offset
-                        draw.text(
-                            (pos_x, pos_y),
-                            text,
-                            font=font,
-                            fill=font_color,
-                            direction="ttb",
-                        )
-                
-                out = np.array(pillow_img)
-            
-            return out
+            return self.ocr_visualizer(words, img, font_path, det_score, vis_heatmap, 
+                                     font_size, font_color, line_color)
         except Exception as e:
             self.logger.error(f"Error in OCR visualization: {e}")
             return img
@@ -315,7 +571,7 @@ class DocumentVisualizer(BaseVisualizer):
                            vis_heatmap: bool = False,
                            line_color: Tuple[int, int, int] = (0, 255, 0)) -> np.ndarray:
         """
-        Detection visualization
+        Detection visualization 
         
         Args:
             img: Input image
@@ -328,23 +584,7 @@ class DocumentVisualizer(BaseVisualizer):
             Image with detection visualization
         """
         try:
-            out = img.copy()
-            h, w = out.shape[:2]
-            
-            if vis_heatmap and preds is not None:
-                preds_binary = preds["binary"][0]
-                binary = preds_binary.detach().cpu().numpy()
-                binary = binary.squeeze(0)
-                binary = (binary * 255).astype(np.uint8)
-                binary = cv2.resize(binary, (w, h), interpolation=cv2.INTER_LINEAR)
-                heatmap = cv2.applyColorMap(binary, cv2.COLORMAP_JET)
-                out = cv2.addWeighted(out, 0.5, heatmap, 0.5, 0)
-            
-            for quad in quads:
-                quad = np.array(quad).astype(np.int32)
-                out = cv2.polylines(out, [quad], True, line_color, 1)
-                
-            return out
+            return self.det_visualizer(img, quads, preds, vis_heatmap, line_color)
         except Exception as e:
             self.logger.error(f"Error in detection visualization: {e}")
             return img
@@ -354,7 +594,7 @@ class DocumentVisualizer(BaseVisualizer):
                              font_size: int = 12,
                              font_color: Tuple[int, int, int] = (255, 0, 0)) -> np.ndarray:
         """
-        Recognition visualization
+        Recognition visualization 
         
         Args:
             img: Input image
@@ -369,46 +609,7 @@ class DocumentVisualizer(BaseVisualizer):
         try:
             if not font_path:
                 return img
-                
-            out = img.copy()
-            pillow_img = Image.fromarray(out)
-            draw = ImageDraw.Draw(pillow_img)
-            
-            has_raqm = features.check_feature(feature="raqm")
-            if not has_raqm:
-                self.logger.warning(
-                    "libraqm is not installed. Vertical text rendering is not supported."
-                )
-            
-            for pred, quad, direction, score in zip(
-                outputs.contents, outputs.points, outputs.directions, outputs.scores
-            ):
-                quad = np.array(quad).astype(np.int32)
-                font = ImageFont.truetype(font_path, font_size)
-                
-                pred_text = f"{pred} ({score:.3f})"
-                
-                if direction == "horizontal" or not has_raqm:
-                    x_offset = 0
-                    y_offset = -font_size
-                    pos_x = quad[0][0] + x_offset
-                    pos_y = quad[0][1] + y_offset
-                    draw.text((pos_x, pos_y), pred_text, font=font, fill=font_color)
-                else:
-                    x_offset = -font_size
-                    y_offset = 0
-                    pos_x = quad[0][0] + x_offset
-                    pos_y = quad[0][1] + y_offset
-                    draw.text(
-                        (pos_x, pos_y),
-                        pred_text,
-                        font=font,
-                        fill=font_color,
-                        direction="ttb",
-                    )
-            
-            out = np.array(pillow_img)
-            return out
+            return self.rec_visualizer(img, outputs, font_path, font_size, font_color)
         except Exception as e:
             self.logger.error(f"Error in recognition visualization: {e}")
             return img
@@ -455,7 +656,7 @@ class DocumentVisualizer(BaseVisualizer):
         return out
     
     def _visualize_element(self, img: np.ndarray, category: str, elements: List[Any]) -> np.ndarray:
-        """Visualize specific element category"""
+        """Visualize specific element category  visualize_element"""
         out = img.copy()
         categories = [
             "paragraphs", "tables", "figures", "section_headings", "page_header",
@@ -463,8 +664,9 @@ class DocumentVisualizer(BaseVisualizer):
             "caption", "inline_formula", "display_formula", "index",
         ]
         
-        for element in elements:
+        for i, element in enumerate(elements):
             try:
+                # Extract box - handle both object and dict formats
                 if hasattr(element, 'box'):
                     box = element.box
                 elif isinstance(element, dict) and 'box' in element:
@@ -473,23 +675,20 @@ class DocumentVisualizer(BaseVisualizer):
                     self.logger.warning(f"Element has no box attribute: {type(element)}")
                     continue
                 
+                # Extract role - handle both object and dict formats
                 role = None
-                
                 if category != "tables":
                     if hasattr(element, 'role'):
                         role = element.role
                     elif isinstance(element, dict) and 'role' in element:
                         role = element['role']
                 
+                # Color selection logic  exactly
                 color_index = categories.index(category)
                 if role is None:
                     role = ""
                 else:
-                    try:
-                        color_index = categories.index(role)
-                    except ValueError:
-                        # If role is not in categories, use default category index
-                        pass
+                    color_index = categories.index(role)
                     role = f"({role})"
                 
                 color = self.palette[color_index % len(self.palette)]
@@ -505,40 +704,37 @@ class DocumentVisualizer(BaseVisualizer):
                     2,
                 )
                 
+                # Handle captions for tables and figures 
                 if category in ["tables", "figures"]:
-                    # 处理caption
                     caption = None
                     if hasattr(element, 'caption'):
                         caption = element.caption
                     elif isinstance(element, dict) and 'caption' in element:
                         caption = element['caption']
-
+                    
                     if caption is not None:
                         caption_box = None
-
-                        # Extract caption box
                         if hasattr(caption, 'box'):
                             caption_box = caption.box
                         elif isinstance(caption, dict) and 'box' in caption:
                             caption_box = caption['box']
-
+                        
                         if caption_box is not None:
                             color_index = categories.index("caption")
                             color = self.palette[color_index % len(self.palette)]
                             x1, y1, x2, y2 = tuple(map(int, caption_box))
                             out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
-
-                            # Just display "caption" label for consistency
                             out = cv2.putText(
                                 out,
                                 "caption",
-                                (x1, y1 - 5),
+                                (x1, y1),
                                 cv2.FONT_HERSHEY_SIMPLEX,
-                                0.4,
-                                color,
-                                1,
+                                0.5,
+                                (0, 0, 0),
+                                2,
                             )
                     
+                    # Handle figure paragraphs 
                     if category == "figures":
                         paragraphs = None
                         if hasattr(element, 'paragraphs'):
@@ -579,32 +775,30 @@ class DocumentVisualizer(BaseVisualizer):
         return out
     
     def _visualize_table(self, img: np.ndarray, table: Any) -> np.ndarray:
-        """Visualize table structure"""
+        """Visualize table structure  table_visualizer exactly"""
         out = img.copy()
-        
-        if hasattr(table, 'cells'):
-            cells = table.cells
-            for cell in cells:
-                box = cell.box
-                row = cell.row
-                col = cell.col
-                row_span = cell.row_span
-                col_span = cell.col_span
-                
-                text = f"[{row}, {col}] ({row_span}x{col_span})"
-                
-                x1, y1, x2, y2 = map(int, box)
-                out = cv2.rectangle(out, (x1, y1), (x2, y2), (255, 0, 255), 2)
-                out = cv2.putText(
-                    out,
-                    text,
-                    (x1, y1),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (255, 0, 0),
-                    2,
-                )
-        
+        cells = table.cells
+        for cell in cells:
+            box = cell.box
+            row = cell.row
+            col = cell.col
+            row_span = cell.row_span
+            col_span = cell.col_span
+
+            text = f"[{row}, {col}] ({row_span}x{col_span})"
+
+            x1, y1, x2, y2 = map(int, box)
+            out = cv2.rectangle(out, (x1, y1), (x2, y2), (255, 0, 255), 2)
+            out = cv2.putText(
+                out,
+                text,
+                (x1, y1),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (255, 0, 0),
+                2,
+            )
+
         return out
     
     def visualize_element_relationships(self, img: np.ndarray, results: Any, 
@@ -963,3 +1157,347 @@ class DocumentVisualizer(BaseVisualizer):
         except Exception as e:
             self.logger.error(f"Error in confidence scores visualization: {e}")
             return img
+
+    # =============================================================================
+    # Visualization methods integrated as class methods
+    # =============================================================================
+    
+    def _reading_order_visualizer(self, img, elements, line_color, tip_size):
+        """Internal function for drawing reading order arrows """
+        out = img.copy()
+        for i, element in enumerate(elements):
+            if i == 0:
+                continue
+
+            prev_element = elements[i - 1]
+            cur_x1, cur_y1, cur_x2, cur_y2 = element.box
+            prev_x1, prev_y1, prev_x2, prev_y2 = prev_element.box
+
+            cur_center = (
+                cur_x1 + (cur_x2 - cur_x1) / 2,
+                cur_y1 + (cur_y2 - cur_y1) / 2,
+            )
+            prev_center = (
+                prev_x1 + (prev_x2 - prev_x1) / 2,
+                prev_y1 + (prev_y2 - prev_y1) / 2,
+            )
+
+            arrow_length = np.linalg.norm(np.array(cur_center) - np.array(prev_center))
+
+            # tipLength を計算（矢印長さに対する固定サイズの割合）
+            if arrow_length > 0:
+                tip_length = tip_size / arrow_length
+            else:
+                tip_length = 0  # 長さが0なら矢じりもゼロ
+
+            cv2.arrowedLine(
+                out,
+                (int(prev_center[0]), int(prev_center[1])),
+                (int(cur_center[0]), int(cur_center[1])),
+                line_color,
+                2,
+                tipLength=tip_length,
+            )
+        return out
+
+    def reading_order_visualizer(self, img, results, line_color=(0, 0, 255), tip_size=10, visualize_figure_letter=False):
+        """Visualize reading order of document elements """
+        elements = results.paragraphs + results.tables + results.figures
+        elements = sorted(elements, key=lambda x: x.order)
+
+        out = self._reading_order_visualizer(img, elements, line_color, tip_size)
+
+        if visualize_figure_letter:
+            for figure in results.figures:
+                out = self._reading_order_visualizer(
+                    out, figure.paragraphs, line_color=(0, 255, 0), tip_size=5
+                )
+
+        return out
+
+    def det_visualizer(self, img, quads, preds=None, vis_heatmap=False, line_color=(0, 255, 0)):
+        """Detection visualizer """
+        out = img.copy()
+        h, w = out.shape[:2]
+        if vis_heatmap:
+            preds = preds["binary"][0]
+            binary = preds.detach().cpu().numpy()
+            binary = binary.squeeze(0)
+            binary = (binary * 255).astype(np.uint8)
+            binary = cv2.resize(binary, (w, h), interpolation=cv2.INTER_LINEAR)
+            heatmap = cv2.applyColorMap(binary, cv2.COLORMAP_JET)
+            out = cv2.addWeighted(out, 0.5, heatmap, 0.5, 0)
+
+        for quad in quads:
+            quad = np.array(quad).astype(np.int32)
+            out = cv2.polylines(out, [quad], True, line_color, 1)
+        return out
+
+    def ocr_visualizer(self, words, img, font_path, det_score=None, vis_heatmap=False, font_size=12, font_color=(255, 0, 0), line_color=(0, 255, 0)):
+        """OCR visualizer """
+        out = img.copy()
+        if vis_heatmap and det_score is not None:
+            w, h = img.shape[1], img.shape[0]
+            det_score = (det_score * 255).astype(np.uint8)
+            det_score = cv2.resize(det_score, (w, h), interpolation=cv2.INTER_LINEAR)
+            heatmap = cv2.applyColorMap(det_score, cv2.COLORMAP_JET)
+            out = cv2.addWeighted(out, 0.5, heatmap, 0.5, 0)
+
+        pillow_img = Image.fromarray(out)
+        draw = ImageDraw.Draw(pillow_img)
+        font = ImageFont.truetype(font_path, font_size)
+
+        has_raqm = features.check_feature(feature="raqm")
+        if not has_raqm:
+            self.logger.warning(
+                "libraqm is not installed. Vertical text rendering is not supported. Rendering horizontally instead."
+            )
+
+        for word in words:
+            poly = word.points
+            text = word.content
+            direction = word.direction
+
+            poly_line = [tuple(point) for point in poly]
+            draw.polygon(poly_line, outline=line_color, fill=None)
+
+            if direction == "horizontal" or not has_raqm:
+                x_offset = 0
+                y_offset = -font_size
+
+                pos_x = poly[0][0] + x_offset
+                pox_y = poly[0][1] + y_offset
+                draw.text(
+                    (pos_x, pox_y),
+                    text,
+                    font=font,
+                    fill=font_color,
+                )
+            else:
+                x_offset = -font_size
+                y_offset = 0
+
+                pos_x = poly[0][0] + x_offset
+                pox_y = poly[0][1] + y_offset
+                draw.text(
+                    (pos_x, pox_y),
+                    text,
+                    font=font,
+                    fill=font_color,
+                    direction="ttb",
+                )
+
+        return np.array(pillow_img)
+
+    def visualize_element(self, img, category, elements):
+        """Visualize elements """
+        out = img.copy()
+        categories = [
+            "paragraphs", "tables", "figures", "section_headings", "page_header",
+            "page_footer", "picture", "logo", "code", "seal", "list_item",
+            "caption", "inline_formula", "display_formula", "index",
+        ]
+
+        for i, element in enumerate(elements):
+            box = element.box
+            role = None
+
+            if category != "tables":
+                role = element.role
+
+            color_index = categories.index(category)
+            if role is None:
+                role = ""
+            else:
+                color_index = categories.index(role)
+                role = f"({role})"
+
+            color = self.palette[color_index % len(self.palette)]
+            x1, y1, x2, y2 = tuple(map(int, box))
+            out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+            out = cv2.putText(
+                out,
+                category + role,
+                (x1, y1),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (0, 0, 0),
+                2,
+            )
+
+            if category in ["tables", "figures"]:
+                caption = None
+                if hasattr(element, 'caption'):
+                    caption = element.caption
+                elif isinstance(element, dict) and 'caption' in element:
+                    caption = element['caption']
+                
+                if caption is not None:
+                    caption_box = None
+                    if hasattr(caption, 'box'):
+                        caption_box = caption.box
+                    elif isinstance(caption, dict) and 'box' in caption:
+                        caption_box = caption['box']
+                    
+                    if caption_box is not None:
+                        color_index = categories.index("caption")
+                        color = self.palette[color_index % len(self.palette)]
+                        x1, y1, x2, y2 = tuple(map(int, caption_box))
+                        out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+                        out = cv2.putText(
+                            out,
+                            "caption",
+                            (x1, y1),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.5,
+                            (0, 0, 0),
+                            2,
+                        )
+
+                if category == "figures":
+                    paragraphs = None
+                    if hasattr(element, 'paragraphs'):
+                        paragraphs = element.paragraphs
+                    elif isinstance(element, dict) and 'paragraphs' in element:
+                        paragraphs = element['paragraphs']
+                    
+                    if paragraphs is not None:
+                        for paragraph in paragraphs:
+                            try:
+                                para_box = None
+                                if hasattr(paragraph, 'box'):
+                                    para_box = paragraph.box
+                                elif isinstance(paragraph, dict) and 'box' in paragraph:
+                                    para_box = paragraph['box']
+                                
+                                if para_box is not None:
+                                    color_index = categories.index("paragraphs")
+                                    color = self.palette[color_index % len(self.palette)]
+                                    x1, y1, x2, y2 = tuple(map(int, para_box))
+                                    out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+                                    out = cv2.putText(
+                                        out,
+                                        "paragraphs",
+                                        (x1, y1),
+                                        cv2.FONT_HERSHEY_SIMPLEX,
+                                        0.5,
+                                        (0, 0, 0),
+                                        2,
+                                    )
+                            except Exception as e:
+                                self.logger.warning(f"Error processing figure paragraph: {e}")
+                                continue
+
+        return out
+
+    def layout_visualizer_detail(self, results, img):
+        """Detailed layout visualizer """
+        out = img.copy()
+        # results_dict = results.dict()
+        out = self.visualize_element(out, "paragraphs", results.paragraphs)
+        out = self.visualize_element(out, "tables", results.tables)
+        out = self.visualize_element(out, "figures", results.figures)
+
+        for table in results.tables:
+            out = self.table_visualizer(out, table)
+
+        return out
+
+    def layout_visualizer_rough(self, results, img):
+        """Rough layout visualizer """
+        out = img.copy()
+        results_dict = results.dict()
+        for id, (category, preds) in enumerate(results_dict.items()):
+            for element in preds:
+                box = element["box"]
+                role = element["role"]
+
+                if role is None:
+                    role = ""
+                else:
+                    role = f"({role})"
+
+                color = self.palette[id % len(self.palette)]
+                x1, y1, x2, y2 = tuple(map(int, box))
+                out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
+                out = cv2.putText(
+                    out,
+                    category + role,
+                    (x1, y1),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    color,
+                    2,
+                )
+
+        return out
+
+    def table_visualizer(self, img, table):
+        """Table visualizer """
+        out = img.copy()
+        cells = table.cells
+        for cell in cells:
+            box = cell.box
+            row = cell.row
+            col = cell.col
+            row_span = cell.row_span
+            col_span = cell.col_span
+
+            text = f"[{row}, {col}] ({row_span}x{col_span})"
+
+            x1, y1, x2, y2 = map(int, box)
+            out = cv2.rectangle(out, (x1, y1), (x2, y2), (255, 0, 255), 2)
+            out = cv2.putText(
+                out,
+                text,
+                (x1, y1),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (255, 0, 0),
+                2,
+            )
+
+        return out
+
+    def rec_visualizer(self, img, outputs, font_path, font_size=12, font_color=(255, 0, 0)):
+        """Recognition visualizer """
+        out = img.copy()
+        pillow_img = Image.fromarray(out)
+        draw = ImageDraw.Draw(pillow_img)
+        has_raqm = features.check_feature(feature="raqm")
+        if not has_raqm:
+            self.logger.warning(
+                "libraqm is not installed. Vertical text rendering is not supported. Rendering horizontally instead."
+            )
+
+        for pred, quad, direction, score in zip(
+            outputs.contents, outputs.points, outputs.directions, outputs.scores
+        ):
+            quad = np.array(quad).astype(np.int32)
+            font = ImageFont.truetype(font_path, font_size)
+
+            pred = f"{pred} ({score:.3f})"
+
+            if direction == "horizontal" or not has_raqm:
+                x_offset = 0
+                y_offset = -font_size
+
+                pos_x = quad[0][0] + x_offset
+                pox_y = quad[0][1] + y_offset
+                draw.text((pos_x, pox_y), pred, font=font, fill=font_color)
+            else:
+                x_offset = -font_size
+                y_offset = 0
+
+                pos_x = quad[0][0] + x_offset
+                pox_y = quad[0][1] + y_offset
+                draw.text(
+                    (pos_x, pox_y),
+                    pred,
+                    font=font,
+                    fill=font_color,
+                    direction="ttb",
+                )
+
+        out = np.array(pillow_img)
+        return out

@@ -41,7 +41,7 @@ except ImportError:
     PYMUPDF_AVAILABLE = False
     fitz = None
 
-# Get the directory where this module is located (like yomitoku pro)
+# Get the directory where this module is located
 # Since we're in renderers/, we need to go up one level to find resource/
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONT_PATH = ROOT_DIR + "/resource/MPLUS1p-Medium.ttf"
@@ -64,7 +64,6 @@ def _poly2rect(points):
 def _calc_font_size(content, bbox_height, bbox_width):
     """
     Calculate optimal font size for text to fit in bounding box
-    Following yomitoku pro implementation
     """
     rates = np.arange(0.5, 1.0, 0.01)
 
@@ -160,6 +159,44 @@ def _detect_pdf_dpi(pdf_path):
     return 300
 
 
+def _pdf_to_images_pypdfium2(pdf_path, dpi=200):
+    """
+    Convert PDF pages to images using pypdfium2
+    
+    Args:
+        pdf_path (str): Path to the PDF file
+        dpi (int): Resolution for image conversion (default 200)
+        
+    Returns:
+        tuple: (list of PIL Images, list of original page dimensions, DPI)
+    """
+    try:
+        import pypdfium2
+    except ImportError:
+        raise ImportError("pypdfium2 is required for PDF processing. Install with: pip install pypdfium2")
+    
+    images = []
+    page_dimensions = []
+    doc = pypdfium2.PdfDocument(pdf_path)
+    
+    
+    renderer = doc.render(
+        pypdfium2.PdfBitmap.to_pil,
+        scale=dpi / 72,  
+    )
+    images = list(renderer)
+    
+    # Get page dimensions for each page
+    for page_num in range(len(doc)):
+        page = doc[page_num]
+        original_width = page.get_width()
+        original_height = page.get_height()
+        page_dimensions.append((original_width, original_height))
+    
+    doc.close()
+    return images, page_dimensions, dpi
+
+
 def _pdf_to_images(pdf_path, dpi=None):
     """
     Convert PDF pages to images using PyMuPDF with detected or specified DPI
@@ -211,19 +248,34 @@ def _pdf_to_images(pdf_path, dpi=None):
     return images, page_dimensions, dpi
 
 
-def create_searchable_pdf_from_pdf(pdf_path, ocr_results, output_path, font_path=None, dpi=None, page_index=None):
+def create_searchable_pdf_from_pdf(pdf_path, ocr_results, output_path, font_path=None, dpi=200, page_index=None, use_pypdfium2=True):
     """
     Create a searchable PDF by directly modifying the original PDF content.
-    This preserves the original quality and clarity perfectly.
+    This preserves the original quality and clarity.
 
     Args:
         pdf_path (str): Path to the input PDF file.
         ocr_results (list): List of OCR results corresponding to the PDF pages.
         output_path (str): Path to save the output PDF.
         font_path (str, optional): Path to the font file. Defaults to MPLUS1p-Medium.ttf from resource.
-        dpi (int, optional): Not used in direct PDF modification approach.
+        dpi (int, optional): DPI for image conversion (default 200).
         page_index (int, optional): Specific page index to process (0-based). If None, processes all pages.
+        use_pypdfium2 (bool, optional): Whether to use pypdfium2 or PyMuPDF.
     """
+    if use_pypdfium2:
+        try:
+            import pypdfium2
+        except ImportError:
+            raise ImportError("pypdfium2 is required for PDF processing. Install with: pip install pypdfium2")
+        
+        # Use the pypdfium2-based PDF processing
+        images, page_dimensions, actual_dpi = _pdf_to_images_pypdfium2(pdf_path, dpi)
+        
+        # Create searchable PDF using the images
+        create_searchable_pdf(images, ocr_results, output_path, font_path, page_dimensions)
+        return
+    
+    # Fallback to PyMuPDF approach
     if not PYMUPDF_AVAILABLE:
         raise ImportError("PyMuPDF is required for PDF processing. Install with: pip install PyMuPDF")
     
@@ -300,7 +352,6 @@ def create_searchable_pdf_from_pdf(pdf_path, ocr_results, output_path, font_path
 def create_searchable_pdf(images, ocr_results, output_path, font_path=None, page_dimensions=None):
     """
     Create a searchable PDF from images and OCR results.
-    Following yomitoku pro implementation pattern.
 
     Args:
         images (list): List of images as numpy arrays, PIL Images, file paths, or PDF paths.
@@ -315,11 +366,11 @@ def create_searchable_pdf(images, ocr_results, output_path, font_path=None, page
     if not REPORTLAB_AVAILABLE:
         raise ImportError("ReportLab is required for PDF generation. Install with: pip install reportlab")
 
-    # Use default MPLUS1p-Medium font from resource (like yomitoku pro)
+    # Use default MPLUS1p-Medium font from resource
     if font_path is None:
         font_path = FONT_PATH
 
-    # Register font exactly like yomitoku pro
+    # Register font
     pdfmetrics.registerFont(TTFont("MPLUS1p-Medium", font_path))
 
     packet = BytesIO()
@@ -334,7 +385,7 @@ def create_searchable_pdf(images, ocr_results, output_path, font_path=None, page
             # Load image from string path
             image = Image.open(image)
         elif hasattr(image, 'shape'):  # numpy array
-            # Convert BGR to RGB exactly like yomitoku pro
+            # Convert BGR to RGB
             image = Image.fromarray(image[:, :, ::-1])
         else:
             # Assume it's already a PIL Image
@@ -356,7 +407,7 @@ def create_searchable_pdf(images, ocr_results, output_path, font_path=None, page
         c.drawImage(image_path, 0, 0, width=w, height=h, preserveAspectRatio=True)
         os.remove(image_path)  # Clean up temporary image file
 
-        # Add OCR text exactly like yomitoku pro
+        # Add OCR text
         for word in ocr_result.words:
             text = word.content
             bbox = _poly2rect(word.points)
