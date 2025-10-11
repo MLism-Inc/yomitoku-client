@@ -19,7 +19,7 @@ from .renderers.pdf_renderer import PDFRenderer
 
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
-from .visualizers.table_visualizer import TableVisualizer
+from .visualizers.table_exporter import TableExtractor
 
 # Import font manager and PDF functions
 from .font_manager import FontManager, get_font_path
@@ -36,7 +36,7 @@ __all__ = [
     "JSONRenderer",
     "PDFRenderer",
     "DocumentVisualizer",
-    "TableVisualizer",
+    "TableExtractor",
     "FontManager",
     "create_searchable_pdf",
     "create_searchable_pdf_from_pdf",

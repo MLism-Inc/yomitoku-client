@@ -99,6 +99,21 @@ dev-dependencies = [
 [tool.uv.sources]
 yomitoku-client = { workspace = true }
 
+[tool.uv.workspace]
+members = [
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+    ".",
+]
+
 [tool.black]
 line-length = 88
 target-version = ['py310']

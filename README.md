@@ -32,12 +32,14 @@ Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的な�
 
 ### pipを使用
 ```bash
-pip install yomitoku-client
+# GitHubから直接インストール
+pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
 
 ### uvを使用（推奨）
 ```bash
-uv add yomitoku-client
+# GitHubから直接インストール
+uv add git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
 
 > **注意**: uvがインストールされていない場合は、以下でインストールできます：
@@ -79,6 +81,10 @@ data = parser.parse_dict(sagemaker_result)
 print(f"ページ数: {len(data.pages)}")
 print(f"ページ1の段落数: {len(data.pages[0].paragraphs)}")
 print(f"ページ1のテーブル数: {len(data.pages[0].tables)}")
+
+# 特定のページにアクセス（page_index: 0=最初のページ）
+page_index = 0  # 最初のページ
+print(f"指定ページの段落数: {len(data.pages[page_index].paragraphs)}")
 ```
 
 ### ステップ2: データを異なる形式に変換
@@ -86,11 +92,11 @@ print(f"ページ1のテーブル数: {len(data.pages[0].tables)}")
 #### 単一ページ文書（画像）
 
 ```python
-# 異なる形式に変換
-data.pages[0].to_csv('output.csv')
-data.pages[0].to_html('output.html')
-data.pages[0].to_markdown('output.md')
-data.pages[0].to_json('output.json')
+# 異なる形式に変換（page_index: 0=最初のページ）
+data.to_csv('output.csv', page_index=0)
+data.to_html('output.html', page_index=0)
+data.to_markdown('output.md', page_index=0)
+data.to_json('output.json', page_index=0)
 
 # 画像から検索可能PDFを作成
 data.to_pdf(output_path='searchable.pdf', img='document.png')
@@ -108,44 +114,48 @@ data.to_json_folder('json_output/')
 # 検索可能PDFを作成（既存のPDFに検索可能テキストを追加）
 data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
 
-# または個別のページを変換
-data.pages[0].to_csv('page1.csv')
-data.pages[1].to_html('page2.html')
+# または個別のページを変換（page_index: 0=最初のページ、1=2番目のページ）
+data.to_csv('page1.csv', page_index=0)  # 最初のページ
+data.to_html('page2.html', page_index=1)  # 2番目のページ
 ```
 
 #### テーブルデータ抽出
 
 ```python
-# 様々な形式でテーブルをエクスポート
-data.pages[0].visualize_tables(
+# 様々な形式でテーブルをエクスポート（page_index: 0=最初のページ）
+data.export_tables(
     output_folder='tables/',
-    output_format='csv'    # または 'html', 'json', 'text'
+    output_format='csv',    # または 'html', 'json', 'text'
+    page_index=0
 )
 
 # 複数ページ文書の場合
-data.visualize_tables(
+data.export_tables(
     output_folder='all_tables/',
     output_format='csv'
+)
+
+# 特定のページのテーブルのみをエクスポート
+data.export_tables(
+    output_folder='page1_tables/',
+    output_format='csv',
+    page_index=0  # 最初のページ
 )
 ```
 
 ### ステップ3: 結果を可視化
 
-#### OCRテキスト可視化
+#### 単一画像の可視化
 
 ```python
-# 検出されたテキストをバウンディングボックスで表示
+# OCRテキストの可視化
 result_img = data.pages[0].visualize(
     image_path='document.png',
     viz_type='ocr',
     output_path='ocr_visualization.png'
 )
-```
 
-#### レイアウト分析可視化
-
-```python
-# 文書構造を表示（テキスト、テーブル、図）
+# レイアウト詳細の可視化（テキスト、テーブル、図）
 result_img = data.pages[0].visualize(
     image_path='document.png',
     viz_type='layout_detail',
@@ -153,10 +163,36 @@ result_img = data.pages[0].visualize(
 )
 ```
 
+#### 複数画像の一括可視化
+
+```python
+# 全ページのOCR結果を一括可視化（0.png, 1.png, 2.png...として保存）
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='ocr_results/',
+    viz_type='ocr'
+)
+
+# 全ページのレイアウト詳細を一括可視化
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='layout_results/',
+    viz_type='layout_detail'
+)
+
+# 特定のページのみ可視化
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='page1_results/',
+    viz_type='layout_detail',
+    page_index=0  # 最初のページのみ
+)
+```
+
 #### PDF可視化
 
 ```python
-# 特定のPDFページを可視化
+# PDFの特定ページを可視化
 result_img = data.pages[0].visualize(
     image_path='document.pdf',
     viz_type='layout_detail',

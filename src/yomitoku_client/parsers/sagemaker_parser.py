@@ -300,10 +300,44 @@ class DocumentResult(BaseModel):
         
         return result_img
 
-    def visualize_tables(self, output_folder: Optional[str] = None, 
+    def export_viz_image(self, folder_path: str,output_filename: str = "0.png", viz_type: str = 'layout_detail', dpi: int = 200, target_size: Optional[Tuple[int, int]] = None, **kwargs) -> str:
+        """
+        Export visualized image to a folder with numbered filename
+        
+        Args:
+            folder_path: Path to the folder to save image
+            viz_type: Type of visualization ('layout_detail', 'ocr', etc.)
+            dpi: DPI for PDF to image conversion
+            target_size: Manual target size for PDF conversion
+            **kwargs: Additional parameters for visualization
+            
+        Returns:
+            str: Path to generated image file
+        """
+        import os
+        
+        # Create folder if it doesn't exist
+        os.makedirs(folder_path, exist_ok=True)
+        
+        # Use filename "0.png" for single page
+        output_path = os.path.join(folder_path, output_filename)
+        
+        # Visualize the page
+        result_img = self.visualize(
+            image_path=kwargs.get('image_path', ''),
+            viz_type=viz_type,
+            output_path=output_path,
+            dpi=dpi,
+            target_size=target_size,
+            **{k: v for k, v in kwargs.items() if k != 'image_path'}
+        )
+        
+        return output_path
+
+    def export_tables(self, output_folder: Optional[str] = None, 
                         output_format: str = 'text') -> List[str]:
         """
-        Visualize table structures using TableVisualizer
+        Extract table structures using TableExtractor
         
         Args:
             output_folder: Optional folder path to save all tables
@@ -315,10 +349,10 @@ class DocumentResult(BaseModel):
         import os
         
         # Dynamic import to avoid circular imports
-        from ..visualizers.table_visualizer import TableVisualizer
+        from ..visualizers.table_exporter import TableExtractor
         
-        # Create TableVisualizer instance
-        table_viz = TableVisualizer()
+        # Create TableExtractor instance
+        table_viz = TableExtractor()
         
         # Ensure output folder exists if provided
         if output_folder is not None:
@@ -343,7 +377,7 @@ class DocumentResult(BaseModel):
             # Convert to DataFrame
             df = pd.DataFrame(table_array, columns=[f"Column_{i+1}" for i in range(max_col)])
             
-            # Visualize the table with specified format
+            # Extract the table with specified format
             result = table_viz.visualize(df, format=output_format)
             results.append(result)
             
@@ -464,89 +498,138 @@ class MultiPageDocumentResult(BaseModel):
         
         return output_path
     
-    def visualize_tables(self, output_folder: str = 'table_visualizations', 
-                        output_format: str = 'text') -> List[str]:
+    def to_csv(self, output_path: str, page_index: Optional[int] = None) -> None:
         """
-        Visualize table structures for multi-page document using TableVisualizer
+        Convert multi-page document result to CSV format
         
         Args:
-            output_folder: Folder to save all table visualization files
+            output_path: Path to save the CSV file
+            page_index: Page index to convert
+        """
+        if page_index is None:
+            page_index = 0
+        self.pages[page_index].to_csv(output_path=output_path)
+    
+    def to_html(self, output_path: str, page_index: Optional[int] = None) -> None:
+        """
+        Convert multi-page document result to HTML format
+        
+        Args:
+            output_path: Path to save the HTML file
+            page_index: Page index to convert
+        """
+        if page_index is None:
+            page_index = 0
+        self.pages[page_index].to_html(output_path=output_path)
+
+    def to_markdown(self, output_path: str, page_index: Optional[int] = None) -> None:
+        """
+        Convert multi-page document result to Markdown format
+        
+        Args:
+            output_path: Path to save the Markdown file
+            page_index: Page index to convert
+        """
+        if page_index is None:
+            page_index = 0
+        self.pages[page_index].to_markdown(output_path=output_path)
+    
+    def to_json(self, output_path: str, page_index: Optional[int] = None) -> None:
+        """
+        Convert multi-page document result to JSON format
+        
+        Args:
+            output_path: Path to save the JSON file
+            page_index: Page index to convert
+        """
+        if page_index is None:
+            page_index = 0
+        self.pages[page_index].to_json(output_path=output_path)
+
+    def export_tables(self, output_folder: str = 'table_visualizations', 
+                        output_format: str = 'text',page_index: Optional[int] = None) -> List[str]:
+        """
+        Export table structures for multi-page document using TableExtractor
+        
+        Args:
+            output_folder: Folder to save all table extraction files
             output_format: Output format ('text', 'html', 'json', 'csv')
+            page_index: Page index to convert
             
         Returns:
-            List[str]: List of paths to generated table visualization files
+            List[str]: List of paths to generated table extraction files
         """
         import os
-        
-        # Ensure output folder exists
         os.makedirs(output_folder, exist_ok=True)
-        
-        # Count total tables across all pages
-        total_tables = sum(len(page.tables) for page in self.pages)
-        print(f"Found {total_tables} tables across {len(self.pages)} pages")
-        
-        all_output_paths = []
-        table_counter = 1
-        
-        # Process each page
-        for i, page in enumerate(self.pages):
-            # Print table count for this page
-            page_table_count = len(page.tables)
-            if page_table_count > 0:
-                print(f"Page {i+1}: {page_table_count} tables")
+        if page_index is None:
+            # Count total tables across all pages
+            total_tables = sum(len(page.tables) for page in self.pages)
+            print(f"Found {total_tables} tables across {len(self.pages)} pages")
             
-            # Process each table in this page
-            for j, table in enumerate(page.tables):
-                # Convert table to DataFrame for visualization
-                import pandas as pd
-                from ..visualizers.table_visualizer import TableVisualizer
+            all_output_paths = []
+            table_counter = 1
+            
+            # Process each page
+            for i, page in enumerate(self.pages):
+                # Print table count for this page
+                page_table_count = len(page.tables)
+                if page_table_count > 0:
+                    print(f"Page {i+1}: {page_table_count} tables")
                 
-                # Create TableVisualizer instance
-                table_viz = TableVisualizer()
-                
-                # Create a matrix to hold table data
-                max_row = max(cell.row for cell in table.cells)
-                max_col = max(cell.col for cell in table.cells)
-                
-                table_array = [[""] * max_col for _ in range(max_row)]
-                for cell in table.cells:
-                    table_array[cell.row - 1][cell.col - 1] = cell.contents
-                
-                # Convert to DataFrame
-                df = pd.DataFrame(table_array, columns=[f"Column_{k+1}" for k in range(max_col)])
-                
-                # Visualize the table with specified format
-                result = table_viz.visualize(df, format=output_format)
-                
-                # Generate output filename with global table numbering
-                if output_format == 'text':
-                    ext = 'txt'
-                elif output_format == 'html':
-                    ext = 'html'
-                elif output_format == 'json':
-                    ext = 'json'
-                elif output_format == 'csv':
-                    ext = 'csv'
-                else:
-                    ext = 'txt'
-                
-                output_filename = f"table_{table_counter}.{ext}"
-                output_path = os.path.join(output_folder, output_filename)
-                
-                # Save the table
-                if output_format == 'json':
-                    import json
-                    with open(output_path, 'w', encoding='utf-8') as f:
-                        json.dump(result, f, ensure_ascii=False, indent=2)
-                else:
-                    with open(output_path, 'w', encoding='utf-8') as f:
-                        f.write(str(result))
-                
-                all_output_paths.append(output_path)
-                table_counter += 1
-        
-        return all_output_paths
-    
+                # Process each table in this page
+                for j, table in enumerate(page.tables):
+                    # Convert table to DataFrame for extraction
+                    import pandas as pd
+                    from ..visualizers.table_exporter import TableExtractor
+                    
+                    # Create TableExtractor instance
+                    table_viz = TableExtractor()
+                    
+                    # Create a matrix to hold table data
+                    max_row = max(cell.row for cell in table.cells)
+                    max_col = max(cell.col for cell in table.cells)
+                    
+                    table_array = [[""] * max_col for _ in range(max_row)]
+                    for cell in table.cells:
+                        table_array[cell.row - 1][cell.col - 1] = cell.contents
+                    
+                    # Convert to DataFrame
+                    df = pd.DataFrame(table_array, columns=[f"Column_{k+1}" for k in range(max_col)])
+                    
+                    # Extract the table with specified format
+                    result = table_viz.visualize(df, format=output_format)
+                    
+                    # Generate output filename with global table numbering
+                    if output_format == 'text':
+                        ext = 'txt'
+                    elif output_format == 'html':
+                        ext = 'html'
+                    elif output_format == 'json':
+                        ext = 'json'
+                    elif output_format == 'csv':
+                        ext = 'csv'
+                    else:
+                        ext = 'txt'
+                    
+                    output_filename = f"table_{table_counter}.{ext}"
+                    output_path = os.path.join(output_folder, output_filename)
+                    
+                    # Save the table
+                    if output_format == 'json':
+                        import json
+                        with open(output_path, 'w', encoding='utf-8') as f:
+                            json.dump(result, f, ensure_ascii=False, indent=2)
+                    else:
+                        with open(output_path, 'w', encoding='utf-8') as f:
+                            f.write(str(result))
+                    
+                    all_output_paths.append(output_path)
+                    table_counter += 1
+            
+            return all_output_paths
+        else:
+            return self.pages[page_index].export_tables(output_folder=output_folder,output_format=output_format)
+ 
     def _create_text_pdf(self, output_path: str, font_path: Optional[str] = None) -> None:
         """
         Create a simple text-based PDF from document content
@@ -858,6 +941,74 @@ class MultiPageDocumentResult(BaseModel):
             json_files.append(json_path)
         
         return json_files
+
+    def visualize(self, image_path: str, viz_type: str = 'layout_detail', output_path: Optional[str] = None, 
+                  page_index: Optional[int] = None, dpi: int = 200, target_size: Optional[Tuple[int, int]] = None, **kwargs) -> Any:
+        """
+        Visualize the document result
+        """
+        
+        return self.pages[page_index].visualize(image_path=image_path, viz_type=viz_type, output_path=output_path, page_index=page_index, dpi=dpi, target_size=target_size, **kwargs)
+    
+    def export_viz_images(self, image_path: str,folder_path: str, viz_type: str = 'layout_detail', page_index: Optional[int] = None, dpi: int = 200, target_size: Optional[Tuple[int, int]] = None, **kwargs) -> List[str]:
+        """
+        Export visualized images to a folder with numbered filenames
+        
+        Args:
+            folder_path: Path to the folder to save images
+            viz_type: Type of visualization ('layout_detail', 'ocr', etc.)
+            page_index: Specific page index to visualize (None for all pages)
+            dpi: DPI for PDF to image conversion
+            target_size: Manual target size for PDF conversion
+            **kwargs: Additional parameters for visualization
+            
+        Returns:
+            List[str]: List of paths to generated image files
+        """
+        import os
+        
+        # Create folder if it doesn't exist
+        os.makedirs(folder_path, exist_ok=True)
+        
+        output_paths = []
+        
+        if page_index is not None:
+            # Visualize specific page
+            output_filename = f"{page_index}.png"
+            
+            # Get the page data
+            page_data = self.pages[page_index]
+            
+            # Use export_viz_image method
+            output_path = page_data.export_viz_image(
+                image_path=image_path,
+                folder_path=folder_path,
+                viz_type=viz_type,
+                dpi=dpi,
+                target_size=target_size,
+                **kwargs
+            )
+            
+            output_paths.append(output_path)
+        else:
+            # Visualize all pages
+            for i, page_data in enumerate(self.pages):
+                output_filename = f"{i}.png"
+                # Use export_viz_image method
+                output_path = page_data.export_viz_image(
+                    image_path=image_path,
+                    output_filename = f"{i}.png",
+                    folder_path=folder_path,
+                    viz_type=viz_type,
+                    page_index=i,
+                    dpi=dpi,
+                    target_size=target_size,                    
+                    **kwargs
+                )
+                
+                output_paths.append(output_path)
+        
+        return output_paths
     
 class SageMakerParser:
     """Parser for SageMaker Yomitoku API outputs"""

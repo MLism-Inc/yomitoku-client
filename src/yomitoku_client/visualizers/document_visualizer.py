@@ -81,8 +81,8 @@ class DocumentVisualizer(BaseVisualizer):
                 # Use target size to match original parsing dimensions
                 target_width, target_height = target_size
                 
-                # Validate target size
-                if target_width <= 0 or target_height <= 0 or target_width > 20000 or target_height > 20000:
+                # Validate target size (check for None and invalid values)
+                if target_width is None or target_height is None or target_width <= 0 or target_height <= 0 or target_width > 20000 or target_height > 20000:
                     self.logger.warning(f"Invalid target size: {target_size}, falling back to DPI-based conversion")
                     target_size = None
                 else:
@@ -93,8 +93,8 @@ class DocumentVisualizer(BaseVisualizer):
                     original_width = page.get_width()
                     original_height = page.get_height()
                     
-                    # Validate original dimensions
-                    if original_width <= 0 or original_height <= 0:
+                    # Validate original dimensions (check for None and invalid values)
+                    if original_width is None or original_height is None or original_width <= 0 or original_height <= 0:
                         self.logger.warning(f"Invalid original page dimensions: {original_width}x{original_height}")
                         target_size = None
                     else:

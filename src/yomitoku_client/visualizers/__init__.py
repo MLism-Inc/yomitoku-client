@@ -1,13 +1,13 @@
 """
-Visualizers module - For data visualization capabilities
+Visualizers module - For data visualization and extraction capabilities
 """
 
 from .base import BaseVisualizer
-from .table_visualizer import TableVisualizer
+from .table_exporter import TableExtractor
 from .document_visualizer import DocumentVisualizer
 
 __all__ = [
     "BaseVisualizer",
-    "TableVisualizer",
+    "TableExtractor",
     "DocumentVisualizer",
 ]

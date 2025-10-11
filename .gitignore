@@ -59,6 +59,10 @@ notebooks-env/
 notebooks/exported_data/
 notebooks/image_table_data/
 notebooks/pdf_table_data/
+notebooks/image_ocr_data/
+notebooks/pdf_ocr_data/
+notebooks/image_layout_data/
+notebooks/pdf_layout_data/
 src/yomitoku_client/samples/
 # IDE
 .vscode/

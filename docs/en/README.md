@@ -17,12 +17,14 @@ Yomitoku Client is a Python library for processing SageMaker Yomitoku API output
 
 ### Using pip
 ```bash
-pip install yomitoku-client
+# Install directly from GitHub
+pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
 
 ### Using uv (Recommended)
 ```bash
-uv add yomitoku-client
+# Install directly from GitHub
+uv add git+https://github.com/MLism-Inc/yomitoku-client.git@main
 ```
 
 > **Note**: If you don't have uv installed, you can install it with:
@@ -64,6 +66,10 @@ data = parser.parse_dict(sagemaker_result)
 print(f"Found {len(data.pages)} pages")
 print(f"Page 1 has {len(data.pages[0].paragraphs)} paragraphs")
 print(f"Page 1 has {len(data.pages[0].tables)} tables")
+
+# Access specific page (page_index: 0=first page)
+page_index = 0  # First page
+print(f"Specified page has {len(data.pages[page_index].paragraphs)} paragraphs")
 ```
 
 ### Step 2: Convert Data to Different Formats
@@ -71,11 +77,11 @@ print(f"Page 1 has {len(data.pages[0].tables)} tables")
 #### Single Page Documents (Images)
 
 ```python
-# Convert to different formats
-data.pages[0].to_csv('output.csv')
-data.pages[0].to_html('output.html')
-data.pages[0].to_markdown('output.md')
-data.pages[0].to_json('output.json')
+# Convert to different formats (page_index: 0=first page)
+data.to_csv('output.csv', page_index=0)
+data.to_html('output.html', page_index=0)
+data.to_markdown('output.md', page_index=0)
+data.to_json('output.json', page_index=0)
 
 # Create searchable PDF from image
 data.to_pdf(output_path='searchable.pdf', img='document.png')
@@ -93,18 +99,32 @@ data.to_json_folder('json_output/')
 # Create searchable PDF (enhances existing PDF with searchable text)
 data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
 
-# Or convert individual pages
-data.pages[0].to_csv('page1.csv')
-data.pages[1].to_html('page2.html')
+# Or convert individual pages (page_index: 0=first page, 1=second page)
+data.to_csv('page1.csv', page_index=0)  # First page
+data.to_html('page2.html', page_index=1)  # Second page
 ```
 
 #### Table Data Extraction
 
 ```python
-# Export tables in various formats
-data.pages[0].visualize_tables(
+# Export tables in various formats (page_index: 0=first page)
+data.export_tables(
     output_folder='tables/',
-    output_format='csv'    # or 'html', 'json', 'text'
+    output_format='csv',    # or 'html', 'json', 'text'
+    page_index=0
+)
+
+# For multi-page documents
+data.export_tables(
+    output_folder='all_tables/',
+    output_format='csv'
+)
+
+# Export tables from specific page only
+data.export_tables(
+    output_folder='page1_tables/',
+    output_format='csv',
+    page_index=0  # First page
 )
 
 # For multi-page documents
@@ -116,25 +136,47 @@ data.visualize_tables(
 
 ### Step 3: Visualize Results
 
-#### OCR Text Visualization
+#### Single Image Visualization
 
 ```python
-# Show detected text with bounding boxes
+# OCR text visualization
 result_img = data.pages[0].visualize(
     image_path='document.png',
     viz_type='ocr',
     output_path='ocr_visualization.png'
 )
-```
 
-#### Layout Analysis Visualization
-
-```python
-# Show document structure (text, tables, figures)
+# Layout detail visualization (text, tables, figures)
 result_img = data.pages[0].visualize(
     image_path='document.png',
     viz_type='layout_detail',
     output_path='layout_visualization.png'
+)
+```
+
+#### Batch Image Visualization
+
+```python
+# Batch visualize OCR results for all pages (saved as 0.png, 1.png, 2.png...)
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='ocr_results/',
+    viz_type='ocr'
+)
+
+# Batch visualize layout details for all pages
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='layout_results/',
+    viz_type='layout_detail'
+)
+
+# Visualize specific page only
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='page1_results/',
+    viz_type='layout_detail',
+    page_index=0  # First page only
 )
 ```
 

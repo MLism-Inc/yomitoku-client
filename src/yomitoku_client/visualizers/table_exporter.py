@@ -1,5 +1,5 @@
 """
-Table visualizer for table data visualization
+Table extractor for table data extraction and formatting
 """
 
 import numpy as np
@@ -10,8 +10,8 @@ import logging
 from .base import BaseVisualizer
 
 
-class TableVisualizer(BaseVisualizer):
-    """Table data visualization"""
+class TableExtractor(BaseVisualizer):
+    """Table data extraction and formatting"""
     
     def __init__(self):
         super().__init__()
@@ -19,28 +19,41 @@ class TableVisualizer(BaseVisualizer):
         
     def visualize(self, data: Any, **kwargs) -> Union[str, Dict]:
         """
-        Main visualization method for table data
+        Main visualization method (calls extract for table data)
         
         Args:
             data: Table data (DataFrame, list of lists, or dict)
-            **kwargs: Visualization parameters
+            **kwargs: Extraction parameters
             
         Returns:
-            Visualized table as string or dict
+            Extracted table as string or dict
+        """
+        return self.extract(data, **kwargs)
+    
+    def extract(self, data: Any, **kwargs) -> Union[str, Dict]:
+        """
+        Main extraction method for table data
+        
+        Args:
+            data: Table data (DataFrame, list of lists, or dict)
+            **kwargs: Extraction parameters
+            
+        Returns:
+            Extracted table as string or dict
         """
         if not self._validate_input(data):
-            return "No data to visualize"
+            return "No data to extract"
             
         output_format = kwargs.get('format', 'text')
         
         if output_format == 'text':
-            return self._visualize_as_text(data, **kwargs)
+            return self._extract_as_text(data, **kwargs)
         elif output_format == 'html':
-            return self._visualize_as_html(data, **kwargs)
+            return self._extract_as_html(data, **kwargs)
         elif output_format == 'json':
-            return self._visualize_as_json(data, **kwargs)
+            return self._extract_as_json(data, **kwargs)
         else:
-            return self._visualize_as_text(data, **kwargs)
+            return self._extract_as_text(data, **kwargs)
     
     def _validate_input(self, data: Any) -> bool:
         """Validate table input data"""
@@ -52,8 +65,8 @@ class TableVisualizer(BaseVisualizer):
             
         return False
     
-    def _visualize_as_text(self, data: Any, **kwargs) -> str:
-        """Visualize table as formatted text"""
+    def _extract_as_text(self, data: Any, **kwargs) -> str:
+        """Extract table as formatted text"""
         try:
             if isinstance(data, pd.DataFrame):
                 # Remove format parameter from kwargs
@@ -83,11 +96,11 @@ class TableVisualizer(BaseVisualizer):
             else:
                 return str(data)
         except Exception as e:
-            self.logger.error(f"Error in text visualization: {e}")
+            self.logger.error(f"Error in text extraction: {e}")
             return str(data)
     
-    def _visualize_as_html(self, data: Any, **kwargs) -> str:
-        """Visualize table as HTML"""
+    def _extract_as_html(self, data: Any, **kwargs) -> str:
+        """Extract table as HTML"""
         try:
             if isinstance(data, pd.DataFrame):
                 # Only pass valid parameters to to_html()
@@ -134,11 +147,11 @@ class TableVisualizer(BaseVisualizer):
             else:
                 return f"<table><tr><td>{data}</td></tr></table>"
         except Exception as e:
-            self.logger.error(f"Error in HTML visualization: {e}")
+            self.logger.error(f"Error in HTML extraction: {e}")
             return f"<table><tr><td>Error: {e}</td></tr></table>"
     
-    def _visualize_as_json(self, data: Any, **kwargs) -> Dict:
-        """Visualize table as JSON structure"""
+    def _extract_as_json(self, data: Any, **kwargs) -> Dict:
+        """Extract table as JSON structure"""
         try:
             if isinstance(data, pd.DataFrame):
                 # Remove 'format' and 'index' from kwargs as they're not valid for to_dict()
@@ -175,7 +188,7 @@ class TableVisualizer(BaseVisualizer):
             else:
                 return {"data": str(data)}
         except Exception as e:
-            error_msg = f"Error in JSON visualization: {e}"
+            error_msg = f"Error in JSON extraction: {e}"
             self.logger.error(error_msg)
             # Return a list format if DataFrame.to_dict() fails
             if isinstance(data, pd.DataFrame):
@@ -187,9 +200,9 @@ class TableVisualizer(BaseVisualizer):
                     return {"data": data.values.tolist(), "columns": data.columns.tolist()}
             return {"error": str(e)}
     
-    def visualize_table_structure(self, table_data: Any, **kwargs) -> str:
+    def extract_table_structure(self, table_data: Any, **kwargs) -> str:
         """
-        Visualize table structure information
+        Extract table structure information
         
         Args:
             table_data: Table data
@@ -232,7 +245,7 @@ class TableVisualizer(BaseVisualizer):
                 
             return result
         except Exception as e:
-            self.logger.error(f"Error in table structure visualization: {e}")
+            self.logger.error(f"Error in table structure extraction: {e}")
             return f"Error analyzing table structure: {e}"
     
     def get_table_summary(self, data: Any, **kwargs) -> Dict:

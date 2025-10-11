@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
 from yomitoku_client.pdf_generator import SearchablePDFGenerator, create_searchable_pdf
-from yomitoku_client.visualizers import DocumentVisualizer, TableVisualizer, ChartVisualizer
+from yomitoku_client.visualizers import DocumentVisualizer, TableExtractor, ChartVisualizer
 from yomitoku_client.renderers import RendererFactory
 from yomitoku_client.utils import (
     calc_overlap_ratio, calc_distance, is_contained, calc_intersection,
@@ -133,9 +133,9 @@ class TestVisualizers:
         except Exception as e:
             pytest.fail(f"Visualization failed: {e}")
     
-    def test_table_visualizer(self):
-        """Test table visualizer"""
-        visualizer = TableVisualizer()
+    def test_table_extractor(self):
+        """Test table extractor"""
+        visualizer = TableExtractor()
         
         # Test with DataFrame
         import pandas as pd
