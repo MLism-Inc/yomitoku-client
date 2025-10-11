@@ -1,21 +1,6 @@
 # Yomitoku Client
 
-<div align="center">
-
-[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](docs/en/README.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](docs/ja/README.md)
-
-**上記のボタンをクリックして、お好みの言語でドキュメントを表示してください**
-
-</div>
-
----
-
-## クイックリンク
-
-- 📖 **[English Documentation](docs/en/README.md)** - 英語での完全ガイド
-- 📖 **[日本語ドキュメント](docs/ja/README.md)** - 日本語での完全ガイド
-- 📓 **[Notebook Guide (English)](docs/en/NOTEBOOK_GUIDE.md)** - ステップバイステップのノートブックチュートリアル（英語）
-- 📓 **[ノートブックガイド (日本語)](docs/ja/NOTEBOOK_GUIDE.md)** - ステップバイステップのノートブックチュートリアル
+## 概要
 
 Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的なフォーマット変換と可視化機能を提供するPythonライブラリです。Yomitoku ProのOCR分析と実用的なデータ処理ワークフローを橋渡しします。
 
@@ -81,10 +66,6 @@ data = parser.parse_dict(sagemaker_result)
 print(f"ページ数: {len(data.pages)}")
 print(f"ページ1の段落数: {len(data.pages[0].paragraphs)}")
 print(f"ページ1のテーブル数: {len(data.pages[0].tables)}")
-
-# 特定のページにアクセス（page_index: 0=最初のページ）
-page_index = 0  # 最初のページ
-print(f"指定ページの段落数: {len(data.pages[page_index].paragraphs)}")
 ```
 
 ### ステップ2: データを異なる形式に変換
@@ -133,13 +114,6 @@ data.export_tables(
 data.export_tables(
     output_folder='all_tables/',
     output_format='csv'
-)
-
-# 特定のページのテーブルのみをエクスポート
-data.export_tables(
-    output_folder='page1_tables/',
-    output_format='csv',
-    page_index=0  # 最初のページ
 )
 ```
 
@@ -201,6 +175,132 @@ result_img = data.pages[0].visualize(
 )
 ```
 
+## ノートブック例
+
+### 1. Yomitoku Pro Document Analyzer (`yomitoku-pro-document-analyzer.ipynb`)
+
+このノートブックでは以下を説明しています：
+- Yomitoku Proサービスのデプロイ
+- SageMakerエンドポイントの設定
+- 文書のOCR分析の実行
+- 構造化されたJSON結果の取得
+
+**主要セクション:**
+- サービスデプロイ（CloudFormation/SageMaker Console）
+- エンドポイント設定
+- 文書処理ワークフロー
+- 結果抽出と検証
+
+### 2. Yomitoku Client Examples (`yomitoku-client-example.ipynb`)
+
+このノートブックでは以下を実演しています：
+- SageMaker出力のパース
+- フォーマット変換（CSV、HTML、Markdown、JSON）
+- 文書可視化
+- 高度な処理ワークフロー
+
+**主要セクション:**
+- クライアント初期化とセットアップ
+- サンプルデータ処理
+- マルチフォーマット変換
+- 可視化技術
+- ユーティリティ関数の使用
+
+## データ変換と可視化
+
+### フォーマット変換
+
+Yomitoku Clientは包括的なフォーマット変換機能を提供します：
+
+```python
+# 単一ページの変換（page_index: 0=最初のページ）
+data.to_csv('output.csv', page_index=0)
+data.to_html('output.html', page_index=0)
+data.to_markdown('output.md', page_index=0)
+data.to_json('output.json', page_index=0)
+
+# 複数ページドキュメントの変換（フォルダ構造を作成）
+data.to_csv_folder('csv_output/')
+data.to_html_folder('html_output/')
+data.to_markdown_folder('markdown_output/')
+data.to_json_folder('json_output/')
+```
+
+### 検索可能PDF生成
+
+OCRテキストオーバーレイを含む検索可能PDFを作成：
+
+```python
+# 画像から
+data.to_pdf(output_path='searchable.pdf', img='document.png')
+
+# PDFから（既存のPDFに検索可能テキストを追加）
+data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
+```
+
+### 可視化
+
+バウンディングボックスとレイアウト分析でOCR結果を可視化：
+
+```python
+# 単一画像の可視化
+# OCRテキスト可視化
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='ocr',
+    output_path='ocr_visualization.png'
+)
+
+# レイアウト詳細可視化（テキスト、テーブル、図）
+result_img = data.pages[0].visualize(
+    image_path='document.png',
+    viz_type='layout_detail',
+    output_path='layout_visualization.png'
+)
+
+# 複数画像の一括可視化
+# 全ページのOCR結果を一括可視化（0.png, 1.png, 2.png...として保存）
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='ocr_results/',
+    viz_type='ocr'
+)
+
+# 全ページのレイアウト詳細を一括可視化
+data.export_viz_images(
+    image_path='document.pdf',
+    folder_path='layout_results/',
+    viz_type='layout_detail'
+)
+
+# PDF可視化（ページインデックスを指定）
+result_img = data.pages[0].visualize(
+    image_path='document.pdf',
+    viz_type='layout_detail',
+    output_path='pdf_visualization.png',
+    page_index=0
+)
+```
+
+### テーブル処理
+
+複数の形式でテーブルデータを抽出・可視化：
+
+```python
+# 様々な形式でテーブルをエクスポート（page_index: 0=最初のページ）
+data.export_tables(
+    output_folder='tables/',
+    output_format='csv',    # または 'html', 'json', 'text'
+    page_index=0
+)
+
+# 複数ページドキュメントの場合
+data.export_tables(
+    output_folder='all_tables/',
+    output_format='csv'
+)
+```
+
 ## サポート形式
 
 - **CSV**: 適切なセル処理による表形式データのエクスポート
@@ -209,10 +309,49 @@ result_img = data.pages[0].visualize(
 - **JSON**: 完全な文書構造を含む構造化データエクスポート
 - **PDF**: OCRテキストオーバーレイ付きの検索可能PDF生成
 
+## コマンドラインインターフェース
+
+```bash
+# 異なる形式に変換
+yomitoku-client sagemaker_output.json --format csv --output result.csv
+yomitoku-client sagemaker_output.json --format html --output result.html
+yomitoku-client sagemaker_output.json --format markdown --output result.md
+```
+
+## アーキテクチャ
+
+ライブラリはいくつかのデザインパターンを使用しています：
+- **ファクトリーパターン**: `RendererFactory`が異なるフォーマットレンダラーを管理
+- **ストラテジーパターン**: 各フォーマットの異なる変換戦略
+- **アダプターパターン**: SageMakerからの異なる入力フォーマットを処理
+
+## 開発
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/MLism-Inc/yomitoku-client
+cd yomitoku-client
+
+# 依存関係をインストール
+uv sync
+
+# テストを実行
+uv run pytest
+```
+
+## コントリビューション
+
+1. リポジトリをフォーク
+2. フィーチャーブランチを作成
+3. 変更を加える
+4. 新機能のテストを追加
+5. すべてのテストが通ることを確認
+6. プルリクエストを送信
+
 ## ライセンス
 
 Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
 ## お問い合わせ
 
-ご質問やサポートについては: support-aws-marketplace@mlism.com
+ご質問やサポートについては：support-aws-marketplace@mlism.com
