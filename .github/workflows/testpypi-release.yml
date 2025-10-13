@@ -30,12 +30,21 @@ jobs:
     - name: Check package
       run: python -m twine check dist/*
       
+    - name: Show package info
+      run: |
+        echo "Package contents:"
+        ls -la dist/
+        echo "Package metadata:"
+        python -m twine check dist/* --verbose
+      
     - name: Upload to TestPyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
         TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
-      run: python -m twine upload dist/*
+      run: |
+        echo "Uploading to TestPyPI..."
+        python -m twine upload --verbose --skip-existing dist/*
       
     - name: Test installation from TestPyPI
       run: |
