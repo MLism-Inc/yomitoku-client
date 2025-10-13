@@ -54,6 +54,13 @@ dev = [
     "flake8>=6.0.0",
     "mypy>=1.0.0",
     "ruff>=0.7.0",
+    "isort>=5.13.0",
+    "autopep8>=2.3.0",
+    "bandit>=1.7.5",
+    "pydocstyle>=6.3.0",
+    "pre-commit>=3.6.0",
+    "build>=1.0.0",
+    "twine>=4.0.0",
 ]
 docs = [
     "sphinx>=6.0.0",
