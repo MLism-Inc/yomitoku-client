@@ -11,11 +11,12 @@ yomitoku_client = ["resource/*.ttf", "resource/*.txt", "samples/*.json", "sample
 
 [project]
 name = "yomitoku-client"
-version = "0.1.0"
+version = "0.0.1"
 authors = [{name = "Yomitoku Team", email = "support-aws-marketplace@mlism.com"}]
 description = "Yomitoku Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
 readme = "README.md"
 license = "Apache-2.0"
+urls = {Homepage = "https://github.com/MLism-Inc/yomitoku-client", Repository = "https://github.com/MLism-Inc/yomitoku-client", Issues = "https://github.com/MLism-Inc/yomitoku-client/issues"}
 requires-python = ">=3.10,<3.13"
 keywords = ["yomitoku", "sagemaker", "document-analysis", "format-conversion", "visualization"]
 dependencies = [

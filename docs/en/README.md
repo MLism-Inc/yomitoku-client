@@ -17,14 +17,12 @@ Yomitoku Client is a Python library for processing SageMaker Yomitoku API output
 
 ### Using pip
 ```bash
-# Install directly from GitHub
-pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
+pip install yomitoku-client
 ```
 
 ### Using uv (Recommended)
 ```bash
-# Install directly from GitHub
-uv add git+https://github.com/MLism-Inc/yomitoku-client.git@main
+uv add yomitoku-client
 ```
 
 > **Note**: If you don't have uv installed, you can install it with:

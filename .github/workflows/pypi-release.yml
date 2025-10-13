@@ -1,0 +1,81 @@
+name: PyPI Release
+
+on:
+  workflow_dispatch:  # allow manual trigger
+    inputs:
+      version:
+        description: 'Version to release (e.g., v0.1.0)'
+        required: true
+        default: 'latest'
+      confirm:
+        description: 'Type "RELEASE" to confirm'
+        required: true
+        default: ''
+
+jobs:
+  pypi-release:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'RELEASE'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.version == 'latest' && 'main' || github.event.inputs.version }}
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+        
+    - name: Build package
+      run: python -m build
+      
+    - name: Check package
+      run: python -m twine check dist/*
+      
+    - name: Upload to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: python -m twine upload dist/*
+      
+    - name: Test installation from PyPI
+      run: |
+        pip install yomitoku-client
+        python -c "import yomitoku_client; print('PyPI installation successful!')"
+        
+    - name: Create Release
+      if: github.event.inputs.version != 'latest'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: Release ${{ github.event.inputs.version }}
+        body: |
+          ## PyPI Release ${{ github.event.inputs.version }}
+          
+          This release has been uploaded to PyPI and is now available for installation.
+          
+          ### Installation
+          ```bash
+          pip install yomitoku-client
+          ```
+          
+          ### What's New
+          - Official PyPI release
+          - Stable version for production use
+          
+          ### Features
+          - SageMaker Yomitoku API output processing
+          - Multiple format conversion (CSV, HTML, Markdown, JSON, PDF)
+          - Document visualization and table extraction
+          - Command-line interface
+        draft: false
+        prerelease: false
