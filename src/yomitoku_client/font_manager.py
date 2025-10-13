@@ -48,12 +48,12 @@ def get_font_path(custom_font_path: Optional[str] = None) -> str:
 # Backward compatibility - keep FontManager class for existing code
 class FontManager:
     """Manages built-in fonts for the library (backward compatibility)"""
-    
+
     @staticmethod
     def get_default_font_path() -> str:
         """Get the path to the default built-in font"""
         return get_default_font_path()
-    
+
     @staticmethod
     def get_font_path(custom_font_path: Optional[str] = None) -> str:
         """Get font path, using custom path if provided, otherwise default built-in font"""
