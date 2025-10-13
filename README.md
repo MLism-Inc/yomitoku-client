@@ -32,14 +32,12 @@ Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的な�
 
 ### pipを使用
 ```bash
-# GitHubから直接インストール
-pip install git+https://github.com/MLism-Inc/yomitoku-client.git@main
+pip install yomitoku-client
 ```
 
 ### uvを使用（推奨）
 ```bash
-# GitHubから直接インストール
-uv add git+https://github.com/MLism-Inc/yomitoku-client.git@main
+uv add yomitoku-client
 ```
 
 > **注意**: uvがインストールされていない場合は、以下でインストールできます：

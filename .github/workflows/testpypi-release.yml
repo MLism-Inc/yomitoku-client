@@ -1,0 +1,70 @@
+name: TestPyPI Release
+
+on:
+  push:
+    tags:
+      - 'v*'  #when push a tag starting with v
+  workflow_dispatch:  # allow manual trigger
+
+jobs:
+  testpypi-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+        
+    - name: Build package
+      run: python -m build
+      
+    - name: Check package
+      run: python -m twine check dist/*
+      
+    - name: Upload to TestPyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
+        TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+      run: python -m twine upload dist/*
+      
+    - name: Test installation from TestPyPI
+      run: |
+        pip install --index-url https://test.pypi.org/simple/ yomitoku-client
+        python -c "import yomitoku_client; print('TestPyPI installation successful!')"
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Release ${{ github.ref_name }}
+        body: |
+          ## TestPyPI Release ${{ github.ref_name }}
+          
+          This release has been automatically uploaded to TestPyPI for testing.
+          
+          ### Installation from TestPyPI
+          ```bash
+          pip install --index-url https://test.pypi.org/simple/ yomitoku-client
+          ```
+          
+          ### What's New
+          - Automated TestPyPI deployment
+          - Package validation and testing
+          
+          ### Next Steps
+          After testing, you can manually trigger the PyPI release workflow.
+        draft: false
+        prerelease: true
