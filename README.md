@@ -14,8 +14,8 @@
 
 - 📖 **[English Documentation](docs/en/README.md)** - 英語での完全ガイド
 - 📖 **[日本語ドキュメント](docs/ja/README.md)** - 日本語での完全ガイド
-- 📓 **[Notebook Guide (English)](docs/en/NOTEBOOK_GUIDE.md)** - ステップバイステップのノートブックチュートリアル（英語）
-- 📓 **[ノートブックガイド (日本語)](docs/ja/NOTEBOOK_GUIDE.md)** - ステップバイステップのノートブックチュートリアル
+- 📓 **[AWS SageMaker接続サービス](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
+- 📓 **[結果パーサーとデータ変換](notebooks/yomitoku-client-parser.ipynb)** - SageMaker結果の解析、フォーマット変換、可視化のチュートリアル
 
 Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的なフォーマット変換と可視化機能を提供するPythonライブラリです。Yomitoku ProのOCR分析と実用的なデータ処理ワークフローを橋渡しします。
 

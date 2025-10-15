@@ -175,7 +175,7 @@ result_img = data.pages[0].visualize(
 
 ## ノートブック例
 
-### 1. Yomitoku Pro Document Analyzer (`yomitoku-pro-document-analyzer.ipynb`)
+### 1. AWS SageMaker接続サービス (`yomitoku-pro-document-analyzer.ipynb`)
 
 このノートブックでは以下を説明しています：
 - Yomitoku Proサービスのデプロイ
@@ -189,7 +189,7 @@ result_img = data.pages[0].visualize(
 - 文書処理ワークフロー
 - 結果抽出と検証
 
-### 2. Yomitoku Client Examples (`yomitoku-client-example.ipynb`)
+### 2. 結果パーサーとデータ変換 (`yomitoku-client-parser.ipynb`)
 
 このノートブックでは以下を実演しています：
 - SageMaker出力のパース
