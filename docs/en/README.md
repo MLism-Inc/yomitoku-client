@@ -192,7 +192,7 @@ result_img = data.pages[0].visualize(
 
 ## Notebook Examples
 
-### 1. Yomitoku Pro Document Analyzer (`yomitoku-pro-document-analyzer.ipynb`)
+### 1. AWS SageMaker Connection Service (`yomitoku-pro-document-analyzer.ipynb`)
 
 This notebook shows how to:
 - Deploy Yomitoku Pro service
@@ -206,7 +206,7 @@ This notebook shows how to:
 - Document processing workflow
 - Result extraction and validation
 
-### 2. Yomitoku Client Examples (`yomitoku-client-example.ipynb`)
+### 2. Result Parser and Data Transformation (`yomitoku-client-parser.ipynb`)
 
 This notebook demonstrates:
 - Parsing SageMaker outputs

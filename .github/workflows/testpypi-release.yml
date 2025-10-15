@@ -35,7 +35,7 @@ jobs:
         echo "Package contents:"
         ls -la dist/
         echo "Package metadata:"
-        python -m twine check dist/* --verbose
+        python -m twine check dist/*
       
     - name: Upload to TestPyPI
       env:
