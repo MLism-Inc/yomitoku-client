@@ -45,7 +45,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure7](images/marketplace-sagemaker-configure7.png)
 1. 非同期呼び出し設定のトグルとデータキャプチャのトグルはオフに設定します。非同期呼び出し設定は現時点ではYomiToku Proでサポートされていません。データキャプチャはここでは利用しません。
 ![marketplace sagemaker configure8](images/marketplace-sagemaker-configure8.png)
-1. インスタンスタイプやインスタンス数などを変更する際はバリアントの設定をします。インスタンスタイプによってインスタンスの性能とコストが変わります。本番環境の下にあるスクロールバーを右にスクロールします。
+1. インスタンスタイプやインスタンス数などを変更する際はバリアントの設定をします。インスタンスタイプによってインスタンスの性能とコストが変わります。本番稼働の下にあるスクロールバーを右にスクロールします。
 ![marketplace sagemaker configure9](images/marketplace-sagemaker-configure9.png)
 アクションの欄にある「編集」をクリックします。
 ![marketplace sagemaker configure9-2](images/marketplace-sagemaker-configure9-2.png)
