@@ -161,13 +161,11 @@ class DocumentVisualizer(BaseVisualizer):
                                     final_scale_y = target_height / actual_height
 
                                     # Use uniform scaling to maintain aspect ratio
-                                    final_scale = min(
-                                        final_scale_x, final_scale_y)
+                                    final_scale = min(final_scale_x, final_scale_y)
 
                                     # Calculate new size
                                     new_width = int(actual_width * final_scale)
-                                    new_height = int(
-                                        actual_height * final_scale)
+                                    new_height = int(actual_height * final_scale)
 
                                     # Resize the image
                                     pil_image = pil_image.resize(
@@ -188,10 +186,8 @@ class DocumentVisualizer(BaseVisualizer):
                                         )
 
                                         # Calculate position to center the image
-                                        x_offset = (
-                                            target_width - new_width) // 2
-                                        y_offset = (
-                                            target_height - new_height) // 2
+                                        x_offset = (target_width - new_width) // 2
+                                        y_offset = (target_height - new_height) // 2
 
                                         # Paste the resized image onto the final image
                                         final_image.paste(
@@ -206,8 +202,7 @@ class DocumentVisualizer(BaseVisualizer):
                                 self.logger.info(
                                     f"Scale factor: {scale:.4f}, Final scale: {final_scale if 'final_scale' in locals() else 1.0:.4f}"
                                 )
-                                self.logger.info(
-                                    f"Final image size: {pil_image.size}")
+                                self.logger.info(f"Final image size: {pil_image.size}")
 
                             except Exception as e:
                                 self.logger.warning(
@@ -217,7 +212,6 @@ class DocumentVisualizer(BaseVisualizer):
 
             # If target_size is None (either not provided or failed), use DPI-based conversion
             if target_size is None:
-
                 renderer = doc.render(
                     pypdfium2.PdfBitmap.to_pil,
                     scale=dpi / 72,
@@ -294,17 +288,14 @@ class DocumentVisualizer(BaseVisualizer):
                                 and isinstance(point[0], (int, float))
                                 and isinstance(point[1], (int, float))
                             ):
-                                all_coords.append(
-                                    (float(point[0]), float(point[1])))
+                                all_coords.append((float(point[0]), float(point[1])))
                     elif hasattr(word, "box") and word.box:
                         # Fallback to box coordinates
                         if len(word.box) >= 4:
                             all_coords.extend(
                                 [
-                                    (float(word.box[0]), float(
-                                        word.box[1])),  # x1, y1
-                                    (float(word.box[2]), float(
-                                        word.box[3])),  # x2, y2
+                                    (float(word.box[0]), float(word.box[1])),  # x1, y1
+                                    (float(word.box[2]), float(word.box[3])),  # x2, y2
                                 ]
                             )
 
@@ -314,10 +305,8 @@ class DocumentVisualizer(BaseVisualizer):
                     if hasattr(para, "box") and para.box and len(para.box) >= 4:
                         all_coords.extend(
                             [
-                                (float(para.box[0]), float(
-                                    para.box[1])),  # x1, y1
-                                (float(para.box[2]), float(
-                                    para.box[3])),  # x2, y2
+                                (float(para.box[0]), float(para.box[1])),  # x1, y1
+                                (float(para.box[2]), float(para.box[3])),  # x2, y2
                             ]
                         )
 
@@ -327,10 +316,8 @@ class DocumentVisualizer(BaseVisualizer):
                     if hasattr(table, "box") and table.box and len(table.box) >= 4:
                         all_coords.extend(
                             [
-                                (float(table.box[0]), float(
-                                    table.box[1])),  # x1, y1
-                                (float(table.box[2]), float(
-                                    table.box[3])),  # x2, y2
+                                (float(table.box[0]), float(table.box[1])),  # x1, y1
+                                (float(table.box[2]), float(table.box[3])),  # x2, y2
                             ]
                         )
 
@@ -340,10 +327,8 @@ class DocumentVisualizer(BaseVisualizer):
                     if hasattr(figure, "box") and figure.box and len(figure.box) >= 4:
                         all_coords.extend(
                             [
-                                (float(figure.box[0]), float(
-                                    figure.box[1])),  # x1, y1
-                                (float(figure.box[2]), float(
-                                    figure.box[3])),  # x2, y2
+                                (float(figure.box[0]), float(figure.box[1])),  # x1, y1
+                                (float(figure.box[2]), float(figure.box[3])),  # x2, y2
                             ]
                         )
 
@@ -404,242 +389,30 @@ class DocumentVisualizer(BaseVisualizer):
             )
             return None
 
-    def visualize(self, data: Any, **kwargs) -> np.ndarray:
+    def visualize(
+        self,
+        img,
+        results,
+        mode="ocr",
+    ) -> np.ndarray:
         """
         Main visualization method
 
         Args:
+            img: Input image
             data: Document analysis results or image with results
-            **kwargs: Visualization parameters including:
-                - image_path: Path to image or PDF file
-                - page_index: Page index for PDF files (0-based, default: 0)
-                - dpi: DPI for PDF to image conversion (default: 300)
-                - results: Analysis results for visualization
-                - type: Visualization type (ocr, layout_detail, etc.)
-
+            mode: Visualization mode - "reading_order", "layout_detail", "layout_rough", "ocr", "confidence"
         Returns:
             Visualized image as numpy array
         """
-        if isinstance(data, tuple) and len(data) == 2:
-            img, results = data
-        else:
-            img = data
-            results = kwargs.get("results")
-
-        # Get parameters
-        image_path = kwargs.get("image_path")
-        page_index = kwargs.get("page_index", 0)
-        dpi = kwargs.get("dpi", 200)
-        target_size = kwargs.get("target_size")  # Allow manual override
-
-        # For PDF visualization, we should NOT try to match original image size
-        # The OCR coordinates are already in the correct coordinate system
-        if target_size is None and results is not None:
-            # Check if we're dealing with a PDF file
-            is_pdf = False
-            if image_path and self._is_pdf_file(image_path):
-                is_pdf = True
-            elif isinstance(img, str) and self._is_pdf_file(img):
-                is_pdf = True
-
-            if is_pdf:
-                self.logger.info(
-                    "PDF file detected, using DPI-based conversion")
-                target_size = None
-            else:
-                # Only try to detect target size for non-PDF images
-                try:
-                    target_size = self._get_original_image_size(results)
-                    if target_size is not None:
-                        self.logger.info(
-                            f"Using detected target size: {target_size}")
-                    else:
-                        self.logger.info(
-                            "Could not detect target size, using DPI-based conversion"
-                        )
-                except Exception as e:
-                    self.logger.warning(
-                        f"Error detecting target size: {e}, using DPI-based conversion"
-                    )
-                    target_size = None
-
-        # Handle image input - convert string path to numpy array
-        if isinstance(img, str):
-            try:
-                # Check if it is a PDF file
-                if self._is_pdf_file(img):
-                    self.logger.info(
-                        f"Detected PDF file: {img}, converting page {page_index} to image"
-                    )
-                    if target_size:
-                        self.logger.info(
-                            f"Using target size {target_size} to match original parsing dimensions"
-                        )
-                    img = self._convert_pdf_page_to_image(
-                        img, page_index, dpi, target_size
-                    )
-                else:
-                    # Normal image file
-                    img = cv2.imread(img)
-                    if img is None:
-                        self.logger.error(
-                            f"Failed to load image from path: {img}")
-                        return np.zeros((400, 600, 3), dtype=np.uint8)
-            except Exception as e:
-                self.logger.error(f"Error loading image from path {img}: {e}")
-                return np.zeros((400, 600, 3), dtype=np.uint8)
-        elif not isinstance(img, np.ndarray):
-            self.logger.error(
-                f"Invalid image type: {type(img)}. Expected string path or numpy array."
-            )
-            return np.zeros((400, 600, 3), dtype=np.uint8)
-
-        # If image_path parameter is provided, also try to process it
-        if image_path and isinstance(image_path, str):
-            try:
-                if self._is_pdf_file(image_path):
-                    self.logger.info(
-                        f"Processing PDF file from image_path: {image_path}, page {page_index}"
-                    )
-                    if target_size:
-                        self.logger.info(
-                            f"Using target size {target_size} to match original parsing dimensions"
-                        )
-                    img = self._convert_pdf_page_to_image(
-                        image_path, page_index, dpi, target_size
-                    )
-                else:
-                    # If img is not a numpy array, try to load from image_path
-                    if not isinstance(img, np.ndarray):
-                        img = cv2.imread(image_path)
-                        if img is None:
-                            self.logger.error(
-                                f"Failed to load image from image_path: {image_path}"
-                            )
-                            return np.zeros((400, 600, 3), dtype=np.uint8)
-            except Exception as e:
-                self.logger.error(
-                    f"Error processing image_path {image_path}: {e}")
-                return np.zeros((400, 600, 3), dtype=np.uint8)
-
-        if results is None:
-            return img
-        # Handle results - if it's a list, take the first element
-        if isinstance(results, list) and len(results) > 0:
-            results = results[0]
-            self.logger.info(
-                "Results is a list, using first element for visualization")
-        elif isinstance(results, list) and len(results) == 0:
-            self.logger.warning(
-                "Results is an empty list, returning original image")
-            return img
-
-        visualization_type = kwargs.get("type", "layout_detail")
-
-        if visualization_type == "reading_order":
-            # Filter out non-reading order parameters
-            reading_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["type", "page_index", "dpi", "image_path", "target_size"]
-            }
-            return self.visualize_reading_order(img, results, **reading_kwargs)
-        elif visualization_type == "layout_detail":
-            return self.visualize_layout_detail(img, results)
-        elif visualization_type == "layout_rough":
-            return self.visualize_layout_rough(img, results)
-        elif visualization_type == "ocr":
-            # Filter out non-ocr parameters
-            ocr_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["type", "page_index", "dpi", "image_path", "target_size"]
-            }
-            return self.visualize_ocr(img, results, **ocr_kwargs)
-        elif visualization_type == "detection":
-            # Filter out non-detection parameters
-            detection_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["type", "page_index", "dpi", "image_path", "target_size"]
-            }
-            return self.visualize_detection(img, results, **detection_kwargs)
-        elif visualization_type == "recognition":
-            # Filter out non-recognition parameters
-            recognition_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k not in ["type", "page_index", "dpi", "image_path", "target_size"]
-            }
-            return self.visualize_recognition(img, results, **recognition_kwargs)
-        elif visualization_type == "relationships":
-            # Filter out non-relationships parameters
-            relationships_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k
-                not in [
-                    "type",
-                    "results",
-                    "page_index",
-                    "dpi",
-                    "image_path",
-                    "target_size",
-                ]
-            }
-            return self.visualize_element_relationships(
-                img, results, **relationships_kwargs
-            )
-        elif visualization_type == "hierarchy":
-            # Filter out non-hierarchy parameters
-            hierarchy_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k
-                not in [
-                    "type",
-                    "results",
-                    "page_index",
-                    "dpi",
-                    "image_path",
-                    "target_size",
-                ]
-            }
-            return self.visualize_element_hierarchy(img, results, **hierarchy_kwargs)
-        elif visualization_type == "confidence":
-            # Filter out non-confidence parameters
-            confidence_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k
-                not in [
-                    "type",
-                    "results",
-                    "page_index",
-                    "dpi",
-                    "image_path",
-                    "target_size",
-                ]
-            }
-            return self.visualize_confidence_scores(img, results, **confidence_kwargs)
-        elif visualization_type == "captions":
-            # Filter out non-caption parameters
-            caption_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k
-                not in [
-                    "type",
-                    "results",
-                    "page_index",
-                    "dpi",
-                    "image_path",
-                    "target_size",
-                ]
-            }
-            return self.visualize_captions(img, results, **caption_kwargs)
-        else:
-            return self.visualize_layout_detail(img, results)
+        if mode == "layout":
+            out = self.visualize_layout_detail(img, results)
+            out = self.visualize_captions(out, results)
+            return self.visualize_reading_order(out, results)
+        elif mode == "ocr":
+            return self.visualize_ocr(img, results)
+        elif mode == "confidence":
+            return self.visualize_confidence_scores(img, results)
 
     def visualize_reading_order(
         self,
@@ -685,23 +458,6 @@ class DocumentVisualizer(BaseVisualizer):
             return self.layout_visualizer_detail(results, img)
         except Exception as e:
             self.logger.error(f"Error in layout detail visualization: {e}")
-            return img
-
-    def visualize_layout_rough(self, img: np.ndarray, results: Any) -> np.ndarray:
-        """
-        Rough layout visualization
-
-        Args:
-            img: Input image
-            results: Document analysis results
-
-        Returns:
-            Image with rough layout visualization
-        """
-        try:
-            return self.layout_visualizer_rough(results, img)
-        except Exception as e:
-            self.logger.error(f"Error in layout rough visualization: {e}")
             return img
 
     def visualize_ocr(
@@ -753,8 +509,7 @@ class DocumentVisualizer(BaseVisualizer):
                 # If results has texts instead of words, convert them
                 words = results.texts
             else:
-                self.logger.warning(
-                    "No words found in results for OCR visualization")
+                self.logger.warning("No words found in results for OCR visualization")
                 return img
 
             return self.ocr_visualizer(
@@ -769,62 +524,6 @@ class DocumentVisualizer(BaseVisualizer):
             )
         except Exception as e:
             self.logger.error(f"Error in OCR visualization: {e}")
-            return img
-
-    def visualize_detection(
-        self,
-        img: np.ndarray,
-        quads: List[List],
-        preds: Optional[Dict] = None,
-        vis_heatmap: bool = False,
-        line_color: Tuple[int, int, int] = (0, 255, 0),
-    ) -> np.ndarray:
-        """
-        Detection visualization
-
-        Args:
-            img: Input image
-            quads: Detected quadrangles
-            preds: Prediction results
-            vis_heatmap: Whether to visualize heatmap
-            line_color: Line color
-
-        Returns:
-            Image with detection visualization
-        """
-        try:
-            return self.det_visualizer(img, quads, preds, vis_heatmap, line_color)
-        except Exception as e:
-            self.logger.error(f"Error in detection visualization: {e}")
-            return img
-
-    def visualize_recognition(
-        self,
-        img: np.ndarray,
-        outputs: Any,
-        font_path: str = None,
-        font_size: int = 12,
-        font_color: Tuple[int, int, int] = (255, 0, 0),
-    ) -> np.ndarray:
-        """
-        Recognition visualization
-
-        Args:
-            img: Input image
-            outputs: Recognition outputs
-            font_path: Path to font file
-            font_size: Font size
-            font_color: Font color
-
-        Returns:
-            Image with recognition visualization
-        """
-        try:
-            if not font_path:
-                return img
-            return self.rec_visualizer(img, outputs, font_path, font_size, font_color)
-        except Exception as e:
-            self.logger.error(f"Error in recognition visualization: {e}")
             return img
 
     def _draw_reading_order_arrows(
@@ -854,8 +553,7 @@ class DocumentVisualizer(BaseVisualizer):
                 prev_y1 + (prev_y2 - prev_y1) / 2,
             )
 
-            arrow_length = np.linalg.norm(
-                np.array(cur_center) - np.array(prev_center))
+            arrow_length = np.linalg.norm(np.array(cur_center) - np.array(prev_center))
 
             if arrow_length > 0:
                 tip_length = tip_size / arrow_length
@@ -955,11 +653,9 @@ class DocumentVisualizer(BaseVisualizer):
 
                         if caption_box is not None:
                             color_index = categories.index("caption")
-                            color = self.palette[color_index %
-                                                 len(self.palette)]
+                            color = self.palette[color_index % len(self.palette)]
                             x1, y1, x2, y2 = tuple(map(int, caption_box))
-                            out = cv2.rectangle(
-                                out, (x1, y1), (x2, y2), color, 2)
+                            out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
                             out = cv2.putText(
                                 out,
                                 "caption",
@@ -991,13 +687,11 @@ class DocumentVisualizer(BaseVisualizer):
                                         para_box = paragraph["box"]
 
                                     if para_box is not None:
-                                        color_index = categories.index(
-                                            "paragraphs")
+                                        color_index = categories.index("paragraphs")
                                         color = self.palette[
                                             color_index % len(self.palette)
                                         ]
-                                        x1, y1, x2, y2 = tuple(
-                                            map(int, para_box))
+                                        x1, y1, x2, y2 = tuple(map(int, para_box))
                                         out = cv2.rectangle(
                                             out, (x1, y1), (x2, y2), color, 2
                                         )
@@ -1016,8 +710,7 @@ class DocumentVisualizer(BaseVisualizer):
                                     )
                                     continue
             except Exception as e:
-                self.logger.warning(
-                    f"Error processing element in {category}: {e}")
+                self.logger.warning(f"Error processing element in {category}: {e}")
                 continue
 
         return out
@@ -1048,237 +741,6 @@ class DocumentVisualizer(BaseVisualizer):
             )
 
         return out
-
-    def visualize_element_relationships(
-        self,
-        img: np.ndarray,
-        results: Any,
-        show_overlaps: bool = True,
-        show_distances: bool = False,
-        overlap_threshold: float = 0.1,
-    ) -> np.ndarray:
-        """
-        Visualize relationships between document elements
-
-        Args:
-            img: Input image
-            results: Document analysis results
-            show_overlaps: Whether to show overlapping elements
-            show_distances: Whether to show distances between elements
-            overlap_threshold: Threshold for overlap detection
-
-        Returns:
-            Image with element relationships visualization
-        """
-        try:
-            out = img.copy()
-
-            # Get all elements including captions
-            all_elements = []
-            if hasattr(results, "paragraphs") and results.paragraphs:
-                all_elements.extend([(p, "paragraph")
-                                    for p in results.paragraphs])
-            if hasattr(results, "tables") and results.tables:
-                all_elements.extend([(t, "table") for t in results.tables])
-                # Add table captions as separate elements
-                for table in results.tables:
-                    if hasattr(table, "caption") and table.caption:
-                        # Handle caption as dict or object
-                        if isinstance(table.caption, dict) and "box" in table.caption:
-                            caption_obj = type(
-                                "Caption", (), table.caption
-                            )()  # Convert dict to object
-                            all_elements.append((caption_obj, "caption"))
-                        elif hasattr(table.caption, "box"):
-                            all_elements.append((table.caption, "caption"))
-            if hasattr(results, "figures") and results.figures:
-                all_elements.extend([(f, "figure") for f in results.figures])
-                # Add figure captions as separate elements
-                for figure in results.figures:
-                    if hasattr(figure, "caption") and figure.caption:
-                        # Handle caption as dict or object
-                        if isinstance(figure.caption, dict) and "box" in figure.caption:
-                            caption_obj = type(
-                                "Caption", (), figure.caption
-                            )()  # Convert dict to object
-                            all_elements.append((caption_obj, "caption"))
-                        elif hasattr(figure.caption, "box"):
-                            all_elements.append((figure.caption, "caption"))
-
-            # Visualize all elements including captions
-            if len(all_elements) > 0:
-                # Draw bounding boxes for all elements with different colors
-                color_map = {
-                    "paragraph": (255, 0, 0),  # Red
-                    "table": (0, 255, 0),  # Green
-                    "figure": (0, 0, 255),  # Blue
-                    "caption": (255, 128, 0),  # Orange for captions
-                }
-                for element, elem_type in all_elements:
-                    if hasattr(element, "box"):
-                        box = element.box
-                        color = color_map.get(elem_type, (128, 128, 128))
-                        cv2.rectangle(
-                            out, (box[0], box[1]), (box[2], box[3]), color, 2)
-
-                        # Add label - just show element type name for consistency
-                        cv2.putText(
-                            out,
-                            elem_type,
-                            (box[0], box[1] - 5),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.5,
-                            color,
-                            2,
-                        )
-
-            # Check relationships between elements
-            for i, (element1, type1) in enumerate(all_elements):
-                for j, (element2, type2) in enumerate(all_elements[i + 1:], i + 1):
-                    if not hasattr(element1, "box") or not hasattr(element2, "box"):
-                        continue
-
-                    box1 = element1.box
-                    box2 = element2.box
-
-                    if show_overlaps:
-                        # Check for overlaps
-                        overlap_ratio, intersection = calc_overlap_ratio(
-                            box1, box2)
-                        if overlap_ratio > overlap_threshold:
-                            # Draw overlap region
-                            if intersection:
-                                x1, y1, x2, y2 = intersection
-                                cv2.rectangle(
-                                    out, (x1, y1), (x2, y2), (255, 0, 255), 2)
-                                cv2.putText(
-                                    out,
-                                    f"Overlap: {overlap_ratio:.2f}",
-                                    (x1, y1 - 10),
-                                    cv2.FONT_HERSHEY_SIMPLEX,
-                                    0.5,
-                                    (255, 0, 255),
-                                    1,
-                                )
-
-                    if show_distances:
-                        # Calculate and show distance
-                        distance = calc_distance(box1, box2)
-                        center1 = ((box1[0] + box1[2]) // 2,
-                                   (box1[1] + box1[3]) // 2)
-                        center2 = ((box2[0] + box2[2]) // 2,
-                                   (box2[1] + box2[3]) // 2)
-
-                        # Draw line between centers
-                        cv2.line(out, center1, center2, (0, 255, 255), 1)
-
-                        # Draw distance text
-                        mid_point = (
-                            (center1[0] + center2[0]) // 2,
-                            (center1[1] + center2[1]) // 2,
-                        )
-                        cv2.putText(
-                            out,
-                            f"{distance:.1f}px",
-                            mid_point,
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.4,
-                            (0, 255, 255),
-                            1,
-                        )
-
-            return out
-        except Exception as e:
-            self.logger.error(
-                f"Error in element relationships visualization: {e}")
-            return img
-
-    def visualize_element_hierarchy(
-        self,
-        img: np.ndarray,
-        results: Any,
-        show_containment: bool = True,
-        containment_threshold: float = 0.8,
-    ) -> np.ndarray:
-        """
-        Visualize hierarchical relationships between elements
-
-        Args:
-            img: Input image
-            results: Document analysis results
-            show_containment: Whether to show containment relationships
-            containment_threshold: Threshold for containment detection
-
-        Returns:
-            Image with element hierarchy visualization
-        """
-        try:
-            out = img.copy()
-
-            # Get all elements including captions
-            all_elements = []
-            if hasattr(results, "paragraphs") and results.paragraphs:
-                all_elements.extend([(p, "paragraph")
-                                    for p in results.paragraphs])
-            if hasattr(results, "tables") and results.tables:
-                all_elements.extend([(t, "table") for t in results.tables])
-                # Add table captions
-                for table in results.tables:
-                    if hasattr(table, "caption") and table.caption:
-                        if isinstance(table.caption, dict) and "box" in table.caption:
-                            caption_obj = type("Caption", (), table.caption)()
-                            all_elements.append((caption_obj, "caption"))
-                        elif hasattr(table.caption, "box"):
-                            all_elements.append((table.caption, "caption"))
-            if hasattr(results, "figures") and results.figures:
-                all_elements.extend([(f, "figure") for f in results.figures])
-                # Add figure captions
-                for figure in results.figures:
-                    if hasattr(figure, "caption") and figure.caption:
-                        if isinstance(figure.caption, dict) and "box" in figure.caption:
-                            caption_obj = type("Caption", (), figure.caption)()
-                            all_elements.append((caption_obj, "caption"))
-                        elif hasattr(figure.caption, "box"):
-                            all_elements.append((figure.caption, "caption"))
-
-            # If no high-level elements, visualize what we have
-            if not all_elements and hasattr(results, "texts") and results.texts:
-                all_elements.extend([(t, "text") for t in results.texts[:30]])
-
-            if show_containment:
-                # Check for containment relationships
-                for i, (element1, type1) in enumerate(all_elements):
-                    for j, (element2, type2) in enumerate(all_elements):
-                        if (
-                            i == j
-                            or not hasattr(element1, "box")
-                            or not hasattr(element2, "box")
-                        ):
-                            continue
-
-                        box1 = element1.box
-                        box2 = element2.box
-
-                        # Check if element2 is contained in element1
-                        if is_contained(box1, box2, containment_threshold):
-                            # Draw containment indicator
-                            x1, y1, x2, y2 = map(int, box2)
-                            cv2.rectangle(
-                                out, (x1, y1), (x2, y2), (0, 255, 0), 3)
-                            cv2.putText(
-                                out,
-                                f"{type2} in {type1}",
-                                (x1, y1 - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX,
-                                0.5,
-                                (0, 255, 0),
-                                2,
-                            )
-
-            return out
-        except Exception as e:
-            self.logger.error(f"Error in element hierarchy visualization: {e}")
-            return img
 
     def visualize_captions(
         self,
@@ -1440,8 +902,7 @@ class DocumentVisualizer(BaseVisualizer):
             if isinstance(img_or_path, str):
                 img = cv2.imread(img_or_path)
                 if img is None:
-                    raise ValueError(
-                        f"Could not load image from path: {img_or_path}")
+                    raise ValueError(f"Could not load image from path: {img_or_path}")
             else:
                 img = img_or_path
 
@@ -1518,8 +979,7 @@ class DocumentVisualizer(BaseVisualizer):
 
                             # Draw detection confidence with different line style
                             cv2.rectangle(
-                                out, (x1 + 2, y1 + 2), (x2 -
-                                                        2, y2 - 2), color, 1
+                                out, (x1 + 2, y1 + 2), (x2 - 2, y2 - 2), color, 1
                             )
                             cv2.putText(
                                 out,
@@ -1560,8 +1020,7 @@ class DocumentVisualizer(BaseVisualizer):
                 prev_y1 + (prev_y2 - prev_y1) / 2,
             )
 
-            arrow_length = np.linalg.norm(
-                np.array(cur_center) - np.array(prev_center))
+            arrow_length = np.linalg.norm(np.array(cur_center) - np.array(prev_center))
 
             # tipLength を計算（矢印長さに対する固定サイズの割合）
             if arrow_length > 0:
@@ -1591,8 +1050,7 @@ class DocumentVisualizer(BaseVisualizer):
         elements = results.paragraphs + results.tables + results.figures
         elements = sorted(elements, key=lambda x: x.order)
 
-        out = self._reading_order_visualizer(
-            img, elements, line_color, tip_size)
+        out = self._reading_order_visualizer(img, elements, line_color, tip_size)
 
         if visualize_figure_letter:
             for figure in results.figures:
@@ -1638,8 +1096,7 @@ class DocumentVisualizer(BaseVisualizer):
         if vis_heatmap and det_score is not None:
             w, h = img.shape[1], img.shape[0]
             det_score = (det_score * 255).astype(np.uint8)
-            det_score = cv2.resize(
-                det_score, (w, h), interpolation=cv2.INTER_LINEAR)
+            det_score = cv2.resize(det_score, (w, h), interpolation=cv2.INTER_LINEAR)
             heatmap = cv2.applyColorMap(det_score, cv2.COLORMAP_JET)
             out = cv2.addWeighted(out, 0.5, heatmap, 0.5, 0)
 
@@ -1783,8 +1240,7 @@ class DocumentVisualizer(BaseVisualizer):
                                     para_box = paragraph["box"]
 
                                 if para_box is not None:
-                                    color_index = categories.index(
-                                        "paragraphs")
+                                    color_index = categories.index("paragraphs")
                                     color = self.palette[
                                         color_index % len(self.palette)
                                     ]

@@ -6,20 +6,27 @@ __version__ = "0.1.0"
 __author__ = "Yomitoku Team"
 __email__ = "support-aws-marketplace@mlism.com"
 
-from .client import YomitokuClient
+# from .client import YomitokuClient
 # Import font manager and PDF functions
 from .font_manager import FontManager, get_font_path
+
 # Import main classes for easy access
-from .parsers.sagemaker_parser import (DocumentResult, MultiPageDocumentResult,
-                                       SageMakerParser)
+from .parsers.sagemaker_parser import (
+    DocumentResult,
+    MultiPageDocumentResult,
+)
 from .renderers.csv_renderer import CSVRenderer
 from .renderers.html_renderer import HTMLRenderer
 from .renderers.json_renderer import JSONRenderer
+
 # Import renderers
 from .renderers.markdown_renderer import MarkdownRenderer
 from .renderers.pdf_renderer import PDFRenderer
-from .renderers.searchable_pdf import (create_searchable_pdf,
-                                       create_searchable_pdf_from_pdf)
+from .renderers.searchable_pdf import (
+    create_searchable_pdf,
+    create_searchable_pdf_from_pdf,
+)
+
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
 from .visualizers.table_exporter import TableExtractor
@@ -28,7 +35,7 @@ __all__ = [
     "DocumentResult",
     "MultiPageDocumentResult",
     "SageMakerParser",
-    "YomitokuClient",
+    # "YomitokuClient",
     "MarkdownRenderer",
     "HTMLRenderer",
     "CSVRenderer",

@@ -10,8 +10,7 @@ import numpy as np
 
 from ..exceptions import FormatConversionError
 from ..parsers.sagemaker_parser import DocumentResult, Figure, Paragraph, Table
-from ..utils import (escape_markdown_special_chars, remove_dot_prefix,
-                     save_image)
+from ..utils import escape_markdown_special_chars, remove_dot_prefix, save_image
 from .base import BaseRenderer
 
 
@@ -103,14 +102,11 @@ class MarkdownRenderer(BaseRenderer):
             and output_path
             and hasattr(data, "figures")
         ):
-            figure_elements = self._figures_to_markdown(
-                data.figures, img, output_path)
+            figure_elements = self._figures_to_markdown(data.figures, img, output_path)
             elements.extend(figure_elements)
 
         # Sort by order
         elements.sort(key=lambda x: x["order"])
-
-        # Convert to markdown string
         return self._elements_to_markdown_string(elements)
 
     def save(
@@ -129,8 +125,7 @@ class MarkdownRenderer(BaseRenderer):
             img: Optional image array for figure extraction
             **kwargs: Additional rendering options
         """
-        md_content = self.render(
-            data, img=img, output_path=output_path, **kwargs)
+        md_content = self.render(data, img=img, output_path=output_path, **kwargs)
 
         try:
             with open(output_path, "w", encoding="utf-8") as f:
@@ -401,7 +396,7 @@ class MarkdownRenderer(BaseRenderer):
             elif element["type"] == "figure":
                 output.append(element["element"])
 
-        return "".join(output)
+        return "\n".join(output)
 
     def get_supported_formats(self) -> list:
         """Get supported formats"""

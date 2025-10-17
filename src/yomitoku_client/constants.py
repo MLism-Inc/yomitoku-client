@@ -32,6 +32,8 @@ ROOT_DIR = "."
 # Supported output formats
 SUPPORT_OUTPUT_FORMAT = ["html", "markdown", "csv", "json", "pdf"]
 
+SUPPORT_INPUT_FORMAT = ["jpg", "jpeg", "png", "bmp", "tiff", "tif", "pdf"]
+
 # Default font size
 DEFAULT_FONT_SIZE = 12
 

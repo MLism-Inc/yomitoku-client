@@ -4,23 +4,25 @@ SageMaker Parser - For parsing SageMaker Yomitoku API outputs
 
 import json
 import os
+import cv2
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from pydantic import BaseModel, Field
 
+from ..visualizers.document_visualizer import DocumentVisualizer
+
+from ..utils import load_image, load_pdf
 from ..exceptions import DocumentAnalysisError, ValidationError
 
 
 class Paragraph(BaseModel):
     """Paragraph data model"""
 
-    box: List[int] = Field(
-        description="Bounding box coordinates [x1, y1, x2, y2]")
+    box: List[int] = Field(description="Bounding box coordinates [x1, y1, x2, y2]")
     contents: str = Field(description="Text content")
     direction: str = Field(default="horizontal", description="Text direction")
-    indent_level: Optional[int] = Field(
-        default=None, description="Indentation level")
+    indent_level: Optional[int] = Field(default=None, description="Indentation level")
     order: int = Field(description="Reading order")
     role: Optional[str] = Field(default=None, description="Paragraph role")
 
@@ -40,8 +42,7 @@ class Table(BaseModel):
     """Table data model"""
 
     box: List[int] = Field(description="Table bounding box")
-    caption: Optional[Dict[str, Any]] = Field(
-        default=None, description="Table caption")
+    caption: Optional[Dict[str, Any]] = Field(default=None, description="Table caption")
     cells: List[TableCell] = Field(description="Table cells")
     cols: List[Dict[str, Any]] = Field(description="Column information")
     n_col: int = Field(description="Number of columns")
@@ -90,7 +91,6 @@ class DocumentResult(BaseModel):
         export_figure: bool = False,
         export_figure_letter: bool = False,
         table_format: str = "html",
-        output_path: Optional[str] = None,
     ) -> str:
         """
         Convert document result to Markdown format text
@@ -115,8 +115,6 @@ class DocumentResult(BaseModel):
             export_figure_letter=export_figure_letter,
             table_format=table_format,
         )
-        if output_path is not None:
-            renderer.save(self, output_path)
         return renderer.render(self)
 
     def to_html(
@@ -154,8 +152,8 @@ class DocumentResult(BaseModel):
             figure_dir=figure_dir,
         )
 
-        if output_path is not None:
-            renderer.save(self, output_path)
+        # if output_path is not None:
+        #    renderer.save(self, output_path)
         return renderer.render(self)
 
     def to_csv(
@@ -221,8 +219,6 @@ class DocumentResult(BaseModel):
             figure_dir=figure_dir,
         )
 
-        if output_path is not None:
-            renderer.save(self, output_path)
         return renderer.render(self)
 
     def to_pdf(
@@ -255,19 +251,14 @@ class DocumentResult(BaseModel):
 
     def visualize(
         self,
-        image_path: str,
-        viz_type: str = "layout_detail",
-        output_path: Optional[str] = None,
-        page_index: Optional[int] = None,
-        dpi: int = 200,
-        target_size: Optional[Tuple[int, int]] = None,
-        **kwargs,
+        img,
+        mode: str = "layout_detail",
     ) -> Any:
         """
         Visualize document layout with bounding boxes
 
         Args:
-            image_path: Path to the source image file or PDF file (string or pathlib.Path)
+            imag: Path to the source image file or PDF file (string or pathlib.Path)
             viz_type: Type of visualization:
                 - 'layout_detail': Detailed layout with all elements
                 - 'layout_rough': Rough layout overview
@@ -280,21 +271,9 @@ class DocumentResult(BaseModel):
                 - 'confidence': Confidence scores
                 - 'captions': Caption visualization
             output_path: Optional path to save the visualization image
-            page_index: Page index for PDF files (0-based, default: 0)
-            dpi: DPI for PDF to image conversion (default: 200)
-            target_size: Manual target size (width, height) for PDF conversion to ensure alignment
-            **kwargs: Additional parameters for specific visualization types
-
         Returns:
             Any: Visualized image with bounding boxes drawn
         """
-        # Dynamic import to avoid circular imports
-        from ..visualizers.document_visualizer import DocumentVisualizer
-
-        # Convert pathlib.Path to string if needed
-        if hasattr(image_path, "__fspath__"):
-            image_path = str(image_path)
-
         # Create DocumentVisualizer instance
         visualizer = DocumentVisualizer()
 
@@ -302,7 +281,7 @@ class DocumentResult(BaseModel):
         # Use types.SimpleNamespace for a cleaner approach
         from types import SimpleNamespace
 
-        doc_data = SimpleNamespace(
+        results = SimpleNamespace(
             paragraphs=self.paragraphs,
             tables=self.tables,
             figures=self.figures,
@@ -311,69 +290,12 @@ class DocumentResult(BaseModel):
 
         # Call the appropriate visualization method with PDF support
         result_img = visualizer.visualize(
-            (image_path, doc_data),
-            type=viz_type,
-            page_index=page_index,
-            dpi=dpi,
-            target_size=target_size,
-            **kwargs,
+            img,
+            results,
+            mode=mode,
         )
-
-        # Save if output path is provided
-        if output_path is not None:
-            import cv2
-
-            # Ensure output path has a valid image extension
-            if not any(
-                output_path.lower().endswith(ext)
-                for ext in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
-            ):
-                output_path += ".png"  # Default to PNG if no extension
-            cv2.imwrite(output_path, result_img)
 
         return result_img
-
-    def export_viz_image(
-        self,
-        folder_path: str,
-        output_filename: str = "0.png",
-        viz_type: str = "layout_detail",
-        dpi: int = 200,
-        target_size: Optional[Tuple[int, int]] = None,
-        **kwargs,
-    ) -> str:
-        """
-        Export visualized image to a folder with numbered filename
-
-        Args:
-            folder_path: Path to the folder to save image
-            viz_type: Type of visualization ('layout_detail', 'ocr', etc.)
-            dpi: DPI for PDF to image conversion
-            target_size: Manual target size for PDF conversion
-            **kwargs: Additional parameters for visualization
-
-        Returns:
-            str: Path to generated image file
-        """
-        import os
-
-        # Create folder if it doesn't exist
-        os.makedirs(folder_path, exist_ok=True)
-
-        # Use filename "0.png" for single page
-        output_path = os.path.join(folder_path, output_filename)
-
-        # Visualize the page
-        result_img = self.visualize(
-            image_path=kwargs.get("image_path", ""),
-            viz_type=viz_type,
-            output_path=output_path,
-            dpi=dpi,
-            target_size=target_size,
-            **{k: v for k, v in kwargs.items() if k != "image_path"},
-        )
-
-        return output_path
 
     def export_tables(
         self, output_folder: Optional[str] = None, output_format: str = "text"
@@ -418,7 +340,7 @@ class DocumentResult(BaseModel):
 
             # Convert to DataFrame
             df = pd.DataFrame(
-                table_array, columns=[f"Column_{i+1}" for i in range(max_col)]
+                table_array, columns=[f"Column_{i + 1}" for i in range(max_col)]
             )
 
             # Extract the table with specified format
@@ -439,7 +361,7 @@ class DocumentResult(BaseModel):
                 else:
                     ext = "txt"
 
-                output_filename = f"table_{i+1}.{ext}"
+                output_filename = f"table_{i + 1}.{ext}"
                 output_path = os.path.join(output_folder, output_filename)
 
                 # Save the table
@@ -526,8 +448,7 @@ class MultiPageDocumentResult(BaseModel):
                     with tempfile.TemporaryDirectory() as temp_dir:
                         # Generate PDF for each page
                         for i, page in enumerate(self.pages, 1):
-                            temp_pdf_path = os.path.join(
-                                temp_dir, f"page_{i}.pdf")
+                            temp_pdf_path = os.path.join(temp_dir, f"page_{i}.pdf")
                             # Pass page index (0-based) for PDF processing
                             page_index = i - 1 if pdf is not None else None
                             renderer.save(
@@ -544,8 +465,7 @@ class MultiPageDocumentResult(BaseModel):
 
                 except Exception as e:
                     # If combining fails, try to save as individual pages
-                    print(
-                        f"Warning: Could not combine PDFs into single file: {e}")
+                    print(f"Warning: Could not combine PDFs into single file: {e}")
                     print("Saving as individual page PDFs instead...")
 
                     # Save each page as separate PDF
@@ -572,53 +492,177 @@ class MultiPageDocumentResult(BaseModel):
 
         return output_path
 
-    def to_csv(self, output_path: str, page_index: Optional[int] = None) -> None:
+    def export_file(
+        self,
+        results,
+        output_path: str,
+        mode: str,
+        encoding: str,
+        page_index: list,
+    ) -> None:
+        base_name, ext = os.path.splitext(output_path)
+        base_dir = os.path.dirname(output_path)
+
+        if base_dir:
+            os.makedirs(base_dir, exist_ok=True)
+
+        if mode == "combine":
+            if ext == ".json":
+                with open(output_path, "w", encoding=encoding) as f:
+                    json.dump(
+                        results,
+                        f,
+                        ensure_ascii=False,
+                        indent=2,
+                    )
+            else:
+                combined_content = "\n".join(results)
+                with open(output_path, "w", encoding=encoding) as f:
+                    f.write(combined_content)
+
+        elif mode == "separate":
+            for i, content in zip(page_index, results):
+                page_output_path = f"{base_name}_page_{i + 1}{ext}"
+
+                if ext == ".json":
+                    with open(page_output_path, "w", encoding=encoding) as f:
+                        json.dump(
+                            content,
+                            f,
+                            ensure_ascii=False,
+                            indent=2,
+                        )
+                else:
+                    with open(page_output_path, "w", encoding=encoding) as f:
+                        f.write(content)
+
+    def to_csv(
+        self,
+        output_path: str,
+        encoding: str = "utf-8",
+        mode="combine",
+        page_index: list = None,
+        **kwargs,
+    ) -> None:
         """
         Convert multi-page document result to CSV format
 
         Args:
-            output_path: Path to save the CSV file
+            output_path: Path to save the Markdown file
             page_index: Page index to convert
+            encoding: File encoding
+            mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
         if page_index is None:
-            page_index = 0
-        self.pages[page_index].to_csv(output_path=output_path)
+            page_index = range(len(self.pages))
 
-    def to_html(self, output_path: str, page_index: Optional[int] = None) -> None:
+        results = []
+        for idx in page_index:
+            results.append(self.pages[idx].to_csv(**kwargs))
+
+        self.export_file(
+            results,
+            output_path=output_path,
+            mode=mode,
+            encoding=encoding,
+            page_index=page_index,
+        )
+
+    def to_html(
+        self,
+        output_path: str,
+        encoding: str = "utf-8",
+        mode="combine",
+        page_index: list = None,
+        **kwargs,
+    ) -> None:
         """
         Convert multi-page document result to HTML format
 
         Args:
-            output_path: Path to save the HTML file
+            output_path: Path to save the Markdown file
             page_index: Page index to convert
+            encoding: File encoding
+            mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
         if page_index is None:
-            page_index = 0
-        self.pages[page_index].to_html(output_path=output_path)
+            page_index = range(len(self.pages))
 
-    def to_markdown(self, output_path: str, page_index: Optional[int] = None) -> None:
+        results = []
+        for idx in page_index:
+            results.append(self.pages[idx].to_html(**kwargs))
+
+        self.export_file(
+            results,
+            output_path=output_path,
+            mode=mode,
+            encoding=encoding,
+            page_index=page_index,
+        )
+
+    def to_markdown(
+        self,
+        output_path: str,
+        encoding: str = "utf-8",
+        mode="combine",
+        page_index: list = None,
+        **kwargs,
+    ) -> None:
         """
         Convert multi-page document result to Markdown format
 
         Args:
             output_path: Path to save the Markdown file
             page_index: Page index to convert
+            encoding: File encoding
+            mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
         if page_index is None:
-            page_index = 0
-        self.pages[page_index].to_markdown(output_path=output_path)
+            page_index = range(len(self.pages))
 
-    def to_json(self, output_path: str, page_index: Optional[int] = None) -> None:
+        results = []
+        for idx in page_index:
+            results.append(self.pages[idx].to_markdown(**kwargs))
+
+        self.export_file(
+            results,
+            output_path=output_path,
+            mode=mode,
+            encoding=encoding,
+            page_index=page_index,
+        )
+
+    def to_json(
+        self,
+        output_path: str,
+        encoding: str = "utf-8",
+        mode="combine",
+        page_index: list = None,
+        **kwargs,
+    ) -> None:
         """
         Convert multi-page document result to JSON format
 
         Args:
-            output_path: Path to save the JSON file
+            output_path: Path to save the Markdown file
             page_index: Page index to convert
+            encoding: File encoding
+            mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
         if page_index is None:
-            page_index = 0
-        self.pages[page_index].to_json(output_path=output_path)
+            page_index = range(len(self.pages))
+
+        results = []
+        for idx in page_index:
+            results.append(self.pages[idx].to_json(**kwargs))
+
+        self.export_file(
+            results,
+            output_path=output_path,
+            mode=mode,
+            encoding=encoding,
+            page_index=page_index,
+        )
 
     def export_tables(
         self,
@@ -643,8 +687,7 @@ class MultiPageDocumentResult(BaseModel):
         if page_index is None:
             # Count total tables across all pages
             total_tables = sum(len(page.tables) for page in self.pages)
-            print(
-                f"Found {total_tables} tables across {len(self.pages)} pages")
+            print(f"Found {total_tables} tables across {len(self.pages)} pages")
 
             all_output_paths = []
             table_counter = 1
@@ -654,7 +697,7 @@ class MultiPageDocumentResult(BaseModel):
                 # Print table count for this page
                 page_table_count = len(page.tables)
                 if page_table_count > 0:
-                    print(f"Page {i+1}: {page_table_count} tables")
+                    print(f"Page {i + 1}: {page_table_count} tables")
 
                 # Process each table in this page
                 for j, table in enumerate(page.tables):
@@ -676,8 +719,7 @@ class MultiPageDocumentResult(BaseModel):
 
                     # Convert to DataFrame
                     df = pd.DataFrame(
-                        table_array, columns=[
-                            f"Column_{k+1}" for k in range(max_col)]
+                        table_array, columns=[f"Column_{k + 1}" for k in range(max_col)]
                     )
 
                     # Extract the table with specified format
@@ -717,376 +759,45 @@ class MultiPageDocumentResult(BaseModel):
                 output_folder=output_folder, output_format=output_format
             )
 
-    def _create_text_pdf(
-        self, output_path: str, font_path: Optional[str] = None
-    ) -> None:
-        """
-        Create a simple text-based PDF from document content
-
-        Args:
-            output_path: Path to save the PDF file
-            font_path: Path to font file
-        """
-        try:
-            from reportlab.lib import colors
-            from reportlab.lib.pagesizes import A4, letter
-            from reportlab.lib.styles import (ParagraphStyle,
-                                              getSampleStyleSheet)
-            from reportlab.lib.units import inch
-            from reportlab.platypus import (Paragraph, SimpleDocTemplate,
-                                            Spacer, Table, TableStyle)
-
-            # Create PDF document
-            doc = SimpleDocTemplate(output_path, pagesize=A4)
-            styles = getSampleStyleSheet()
-            story = []
-
-            # Create custom style for content
-            content_style = ParagraphStyle(
-                "CustomContent",
-                parent=styles["Normal"],
-                fontSize=12,
-                spaceAfter=12,
-            )
-
-            # Process each page
-            for page_num, page in enumerate(self.pages, 1):
-                if page_num > 1:
-                    story.append(Spacer(1, 0.5 * inch))
-
-                # Add page header
-                story.append(
-                    Paragraph(f"<b>Page {page_num}</b>", styles["Heading2"]))
-                story.append(Spacer(1, 0.2 * inch))
-
-                # Add paragraphs
-                for paragraph in page.paragraphs:
-                    if paragraph.role == "section_headings":
-                        story.append(
-                            Paragraph(
-                                f"<b>{paragraph.contents}</b>", styles["Heading3"]
-                            )
-                        )
-                    else:
-                        story.append(
-                            Paragraph(paragraph.contents, content_style))
-                    story.append(Spacer(1, 0.1 * inch))
-
-                # Add tables
-                for table in page.tables:
-                    if table.cells:
-                        # Create table data
-                        table_data = []
-                        max_row = max(cell.row for cell in table.cells)
-                        max_col = max(cell.col for cell in table.cells)
-
-                        # Initialize table structure
-                        for row in range(1, max_row + 1):
-                            table_row = []
-                            for col in range(1, max_col + 1):
-                                table_row.append("")
-                            table_data.append(table_row)
-
-                        # Fill table data
-                        for cell in table.cells:
-                            if cell.row <= max_row and cell.col <= max_col:
-                                table_data[cell.row -
-                                           1][cell.col - 1] = cell.contents
-
-                        # Create table
-                        if table_data:
-                            pdf_table = Table(table_data)
-                            pdf_table.setStyle(
-                                TableStyle(
-                                    [
-                                        ("BACKGROUND", (0, 0),
-                                         (-1, 0), colors.grey),
-                                        (
-                                            "TEXTCOLOR",
-                                            (0, 0),
-                                            (-1, 0),
-                                            colors.whitesmoke,
-                                        ),
-                                        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                                        ("FONTNAME", (0, 0),
-                                         (-1, 0), "Helvetica-Bold"),
-                                        ("FONTSIZE", (0, 0), (-1, 0), 14),
-                                        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                                        ("BACKGROUND", (0, 1),
-                                         (-1, -1), colors.beige),
-                                        ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                                    ]
-                                )
-                            )
-                            story.append(pdf_table)
-                            story.append(Spacer(1, 0.2 * inch))
-
-            # Build PDF
-            doc.build(story)
-
-        except ImportError:
-            raise ImportError(
-                "Text PDF generation requires reportlab library. "
-                "Please install it: pip install reportlab"
-            )
-
-    def _combine_pdfs(self, pdf_files: List[str], output_path: str) -> None:
-        """
-        Combine multiple PDF files into a single PDF
-
-        Args:
-            pdf_files: List of paths to PDF files to combine
-            output_path: Path for the combined PDF file
-        """
-        try:
-            # Try to use PyPDF2 if available
-            from PyPDF2 import PdfMerger
-
-            merger = PdfMerger()
-            for pdf_file in pdf_files:
-                if os.path.exists(pdf_file):
-                    merger.append(pdf_file)
-
-            with open(output_path, "wb") as output_file:
-                merger.write(output_file)
-            merger.close()
-
-        except ImportError:
-            # Fallback: try to use pypdf if PyPDF2 is not available
-            try:
-                import pypdf
-
-                merger = pypdf.PdfMerger()
-                for pdf_file in pdf_files:
-                    if os.path.exists(pdf_file):
-                        merger.append(pdf_file)
-
-                with open(output_path, "wb") as output_file:
-                    merger.write(output_file)
-                merger.close()
-
-            except ImportError:
-                # If neither library is available, raise an error
-                raise ImportError(
-                    "PDF combining requires either PyPDF2 or pypdf library. "
-                    "Please install one of them: pip install PyPDF2 or pip install pypdf"
-                )
-
-    def to_csv_folder(
-        self,
-        folder_path: str,
-        ignore_line_break: bool = False,
-        export_figure: bool = True,
-        export_figure_letter: bool = False,
-        figure_dir: str = "figures",
-    ) -> List[str]:
-        """
-        Convert multi-page document result to CSV files in a folder
-
-        Args:
-            folder_path: Path to the folder to save CSV files
-            ignore_line_break: Whether to ignore line breaks in text
-            export_figure: Whether to export figures
-            export_figure_letter: Whether to export figure letters/text
-            figure_dir: Directory to save figures
-
-        Returns:
-            List[str]: List of paths to generated CSV files
-        """
-        import os
-
-        # Create folder if it doesn't exist
-        os.makedirs(folder_path, exist_ok=True)
-
-        csv_files = []
-
-        for i, page in enumerate(self.pages, 1):
-            # Generate CSV content for this page
-            csv_content = page.to_csv(
-                ignore_line_break=ignore_line_break,
-                export_figure=export_figure,
-                export_figure_letter=export_figure_letter,
-                figure_dir=figure_dir,
-            )
-
-            # Save to file
-            csv_filename = f"page{i}.csv"
-            csv_path = os.path.join(folder_path, csv_filename)
-
-            with open(csv_path, "w", encoding="utf-8") as f:
-                f.write(csv_content)
-
-            csv_files.append(csv_path)
-
-        return csv_files
-
-    def to_html_folder(
-        self,
-        folder_path: str,
-        ignore_line_break: bool = False,
-        export_figure: bool = True,
-        export_figure_letter: bool = False,
-        figure_width: int = 200,
-        figure_dir: str = "figures",
-    ) -> List[str]:
-        """
-        Convert multi-page document result to HTML files in a folder
-
-        Args:
-            folder_path: Path to the folder to save HTML files
-            ignore_line_break: Whether to ignore line breaks in text
-            export_figure: Whether to export figures
-            export_figure_letter: Whether to export figure letters/text
-            figure_width: Width of figures in pixels
-            figure_dir: Directory to save figures
-
-        Returns:
-            List[str]: List of paths to generated HTML files
-        """
-        import os
-
-        # Create folder if it doesn't exist
-        os.makedirs(folder_path, exist_ok=True)
-
-        html_files = []
-
-        for i, page in enumerate(self.pages, 1):
-            # Generate HTML content for this page
-            html_content = page.to_html(
-                ignore_line_break=ignore_line_break,
-                export_figure=export_figure,
-                export_figure_letter=export_figure_letter,
-                figure_width=figure_width,
-                figure_dir=figure_dir,
-            )
-
-            # Save to file
-            html_filename = f"page{i}.html"
-            html_path = os.path.join(folder_path, html_filename)
-
-            with open(html_path, "w", encoding="utf-8") as f:
-                f.write(html_content)
-
-            html_files.append(html_path)
-
-        return html_files
-
-    def to_markdown_folder(
-        self,
-        folder_path: str,
-        ignore_line_break: bool = False,
-        export_figure: bool = False,
-        export_figure_letter: bool = False,
-        table_format: str = "html",
-    ) -> List[str]:
-        """
-        Convert multi-page document result to Markdown files in a folder
-
-        Args:
-            folder_path: Path to the folder to save Markdown files
-            ignore_line_break: Whether to ignore line breaks in text
-            export_figure: Whether to export figures
-            export_figure_letter: Whether to export figure letters/text
-            table_format: Table format ("html" or "md")
-
-        Returns:
-            List[str]: List of paths to generated Markdown files
-        """
-        import os
-
-        # Create folder if it doesn't exist
-        os.makedirs(folder_path, exist_ok=True)
-
-        markdown_files = []
-
-        for i, page in enumerate(self.pages, 1):
-            # Generate Markdown content for this page
-            markdown_content = page.to_markdown(
-                ignore_line_break=ignore_line_break,
-                export_figure=export_figure,
-                export_figure_letter=export_figure_letter,
-                table_format=table_format,
-            )
-
-            # Save to file
-            markdown_filename = f"page{i}.md"
-            markdown_path = os.path.join(folder_path, markdown_filename)
-
-            with open(markdown_path, "w", encoding="utf-8") as f:
-                f.write(markdown_content)
-
-            markdown_files.append(markdown_path)
-
-        return markdown_files
-
-    def to_json_folder(
-        self,
-        folder_path: str,
-        ignore_line_break: bool = False,
-        export_figure: bool = False,
-        figure_dir: str = "figures",
-    ) -> List[str]:
-        """
-        Convert multi-page document result to JSON files in a folder
-
-        Args:
-            folder_path: Path to the folder to save JSON files
-            ignore_line_break: Whether to ignore line breaks in text
-            export_figure: Whether to export figures
-            figure_dir: Directory to save figures
-
-        Returns:
-            List[str]: List of paths to generated JSON files
-        """
-        import os
-
-        # Create folder if it doesn't exist
-        os.makedirs(folder_path, exist_ok=True)
-
-        json_files = []
-
-        for i, page in enumerate(self.pages, 1):
-            # Generate JSON content for this page
-            json_content = page.to_json(
-                ignore_line_break=ignore_line_break,
-                export_figure=export_figure,
-                figure_dir=figure_dir,
-            )
-
-            # Save to file
-            json_filename = f"page{i}.json"
-            json_path = os.path.join(folder_path, json_filename)
-
-            with open(json_path, "w", encoding="utf-8") as f:
-                f.write(json_content)
-
-            json_files.append(json_path)
-
-        return json_files
-
     def visualize(
         self,
         image_path: str,
-        viz_type: str = "layout_detail",
-        output_path: Optional[str] = None,
-        page_index: Optional[int] = None,
+        mode: str = "layout",
+        output_directory: Optional[str] = None,
+        page_index: list = None,
         dpi: int = 200,
-        target_size: Optional[Tuple[int, int]] = None,
-        **kwargs,
     ) -> Any:
         """
         Visualize the document result
         """
 
-        return self.pages[page_index].visualize(
-            image_path=image_path,
-            viz_type=viz_type,
-            output_path=output_path,
-            page_index=page_index,
-            dpi=dpi,
-            target_size=target_size,
-            **kwargs,
-        )
+        if page_index is None:
+            page_index = range(len(self.pages))
+
+        basename, ext = os.path.splitext(os.path.basename(image_path))
+
+        if output_directory is not None:
+            os.makedirs(output_directory, exist_ok=True)
+
+        if ext.lower() == ".pdf":
+            images = load_pdf(image_path, dpi=dpi)
+        else:
+            images = load_image(image_path)
+
+        basename, _ext = os.path.splitext(os.path.basename(image_path))
+
+        for index in page_index:
+            visualize_img = self.pages[index].visualize(
+                images[index],
+                mode=mode,
+            )
+
+            path_output = basename + f"_{mode}_page_{index + 1}.jpg"
+
+            if output_directory is not None:
+                path_output = os.path.join(output_directory, path_output)
+
+            cv2.imwrite(path_output, visualize_img)
 
     def export_viz_images(
         self,
@@ -1158,109 +869,36 @@ class MultiPageDocumentResult(BaseModel):
         return output_paths
 
 
-class SageMakerParser:
-    """Parser for SageMaker Yomitoku API outputs"""
+def parse_pydantic_model(data: Dict[str, Any]) -> MultiPageDocumentResult:
+    """
+    Parse dictionary data from SageMaker output
 
-    def __init__(self):
-        """Initialize the parser"""
-        pass
+    Args:
+        data: Dictionary from SageMaker
 
-    def parse_dict(self, data: Dict[str, Any]) -> MultiPageDocumentResult:
-        """
-        Parse dictionary data from SageMaker output
+    Returns:
+        MultiPageDocumentResult: Multi-page document result containing all pages
 
-        Args:
-            data: Dictionary from SageMaker
+    Raises:
+        ValidationError: If data format is invalid
+        DocumentAnalysisError: If parsing fails
+    """
+    try:
+        if "result" not in data or not data["result"]:
+            raise ValidationError(
+                "Invalid SageMaker output format: missing 'result' field"
+            )
 
-        Returns:
-            MultiPageDocumentResult: Multi-page document result containing all pages
+        # Handle both single result and multiple results
+        if isinstance(data["result"], list):
+            if len(data["result"]) == 0:
+                raise ValidationError("Empty result list")
+            # Create pages from all results
+            pages = [DocumentResult(**result_data) for result_data in data["result"]]
+        else:
+            # Single result, create single page
+            pages = [DocumentResult(**data["result"])]
 
-        Raises:
-            ValidationError: If data format is invalid
-            DocumentAnalysisError: If parsing fails
-        """
-        try:
-            if "result" not in data or not data["result"]:
-                raise ValidationError(
-                    "Invalid SageMaker output format: missing 'result' field"
-                )
-
-            # Handle both single result and multiple results
-            if isinstance(data["result"], list):
-                if len(data["result"]) == 0:
-                    raise ValidationError("Empty result list")
-                # Create pages from all results
-                pages = [
-                    DocumentResult(**result_data) for result_data in data["result"]
-                ]
-            else:
-                # Single result, create single page
-                pages = [DocumentResult(**data["result"])]
-
-            return MultiPageDocumentResult(pages=pages)
-        except Exception as e:
-            raise DocumentAnalysisError(f"Failed to parse document: {e}")
-
-    def parse_json(self, json_data: str) -> MultiPageDocumentResult:
-        """
-        Parse JSON data from SageMaker output
-
-        Args:
-            json_data: JSON string from SageMaker
-
-        Returns:
-            MultiPageDocumentResult: Multi-page document result containing all pages
-
-        Raises:
-            ValidationError: If JSON format is invalid
-            DocumentAnalysisError: If parsing fails
-        """
-        try:
-            data = json.loads(json_data)
-            return self.parse_dict(data)
-
-        except json.JSONDecodeError as e:
-            raise ValidationError(f"Invalid JSON format: {e}")
-        except Exception as e:
-            raise DocumentAnalysisError(f"Failed to parse document: {e}")
-
-    def parse_file(self, file_path: str) -> MultiPageDocumentResult:
-        """
-        Parse JSON file from SageMaker output
-
-        Args:
-            file_path: Path to JSON file
-
-        Returns:
-            MultiPageDocumentResult: Multi-page document result containing all pages
-        """
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                json_data = f.read()
-            return self.parse_json(json_data)
-        except FileNotFoundError:
-            raise DocumentAnalysisError(f"File not found: {file_path}")
-        except Exception as e:
-            raise DocumentAnalysisError(f"Failed to read file: {e}")
-
-    def validate_result(self, result: DocumentResult) -> bool:
-        """
-        Validate parsed result
-
-        Args:
-            result: Parsed document result
-
-        Returns:
-            bool: True if valid
-        """
-        # Basic validation checks
-        if not result.paragraphs and not result.tables and not result.figures:
-            return False
-
-        # Validate paragraph orders
-        if result.paragraphs:
-            orders = [p.order for p in result.paragraphs]
-            if len(orders) != len(set(orders)):
-                return False
-
-        return True
+        return MultiPageDocumentResult(pages=pages)
+    except Exception as e:
+        raise DocumentAnalysisError(f"Failed to parse document: {e}")

@@ -156,8 +156,7 @@ def _detect_pdf_dpi(pdf_path):
 
                 # Round to common DPI values
                 common_dpis = [72, 96, 150, 200, 300, 600]
-                closest_dpi = min(
-                    common_dpis, key=lambda x: abs(x - detected_dpi))
+                closest_dpi = min(common_dpis, key=lambda x: abs(x - detected_dpi))
 
                 doc.close()
                 return closest_dpi
@@ -293,8 +292,7 @@ def create_searchable_pdf_from_pdf(
             )
 
         # Use the pypdfium2-based PDF processing
-        images, page_dimensions, actual_dpi = _pdf_to_images_pypdfium2(
-            pdf_path, dpi)
+        images, page_dimensions, actual_dpi = _pdf_to_images_pypdfium2(pdf_path, dpi)
 
         # Create searchable PDF using the images
         create_searchable_pdf(
@@ -375,8 +373,7 @@ def create_searchable_pdf_from_pdf(
                             overlay=False,
                         )
                     except Exception as e:
-                        print(
-                            f"Warning: Could not insert text '{word.content}': {e}")
+                        print(f"Warning: Could not insert text '{word.content}': {e}")
 
     # Save the modified PDF
     doc.save(output_path)
@@ -444,8 +441,7 @@ def create_searchable_pdf(
         # Set page size to match the original dimensions exactly
         c.setPageSize((w, h))
         # Draw image with exact dimensions to maintain quality
-        c.drawImage(image_path, 0, 0, width=w,
-                    height=h, preserveAspectRatio=True)
+        c.drawImage(image_path, 0, 0, width=w, height=h, preserveAspectRatio=True)
         os.remove(image_path)  # Clean up temporary image file
 
         # Add OCR text
@@ -473,8 +469,7 @@ def create_searchable_pdf(
                 base_y = h - y2 + (bbox_height - font_size)
                 for j, ch in enumerate(text):
                     c.saveState()
-                    c.translate(x1 + font_size * 0.5,
-                                base_y - (j - 1) * font_size)
+                    c.translate(x1 + font_size * 0.5, base_y - (j - 1) * font_size)
                     c.rotate(-90)
                     c.drawString(0, 0, ch)
                     c.restoreState()

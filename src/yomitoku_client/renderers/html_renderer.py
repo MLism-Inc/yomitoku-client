@@ -81,8 +81,7 @@ class HTMLRenderer(BaseRenderer):
             and output_path
             and hasattr(data, "figures")
         ):
-            figure_elements = self._figures_to_html(
-                data.figures, img, output_path)
+            figure_elements = self._figures_to_html(data.figures, img, output_path)
             elements.extend(figure_elements)
 
         # Sort by order
@@ -115,8 +114,7 @@ class HTMLRenderer(BaseRenderer):
             img: Optional image array for figure extraction
             **kwargs: Additional rendering options
         """
-        html_content = self.render(
-            data, img=img, output_path=output_path, **kwargs)
+        html_content = self.render(data, img=img, output_path=output_path, **kwargs)
 
         try:
             with open(output_path, "w", encoding="utf-8") as f:

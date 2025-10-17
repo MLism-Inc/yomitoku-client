@@ -55,17 +55,18 @@ class JSONRenderer(BaseRenderer):
             # Process paragraphs
             for paragraph in data_dict.get("paragraphs", []):
                 if "contents" in paragraph:
-                    paragraph["contents"] = paragraph["contents"].replace(
-                        "\n", "")
+                    paragraph["contents"] = paragraph["contents"].replace("\n", "")
 
         # Format JSON with proper settings (matching original)
-        return json.dumps(
-            data_dict,
-            ensure_ascii=False,
-            indent=4,
-            sort_keys=True,
-            separators=(",", ": "),
-        )
+        return data_dict
+
+        # return json.dumps(
+        #    data_dict,
+        #    ensure_ascii=False,
+        #    indent=4,
+        #    sort_keys=True,
+        #    separators=(",", ": "),
+        # )
 
     def save(
         self,

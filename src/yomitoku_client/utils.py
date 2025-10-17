@@ -8,6 +8,104 @@ from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 
+from pathlib import Path
+
+from PIL import Image
+import numpy as np
+import pypdfium2
+
+from .constants import (
+    SUPPORT_INPUT_FORMAT,
+)
+
+
+def load_image(image_path: str) -> np.ndarray:
+    """
+    Open an image file.
+
+    Args:
+        image_path (str): path to the image file
+
+    Returns:
+        np.ndarray: image data(BGR)
+    """
+    image_path = Path(image_path)
+    if not image_path.exists():
+        raise FileNotFoundError(f"File not found: {image_path}")
+
+    ext = image_path.suffix[1:].lower()
+    if ext not in SUPPORT_INPUT_FORMAT:
+        raise ValueError(
+            f"Unsupported image format. Supported formats are {SUPPORT_INPUT_FORMAT}"
+        )
+
+    if ext == "pdf":
+        raise ValueError(
+            "PDF file is not supported by load_image(). Use load_pdf() instead."
+        )
+
+    try:
+        img = Image.open(image_path)
+    except Exception:
+        raise ValueError("Invalid image data.")
+
+    pages = []
+    if ext in ["tif", "tiff"]:
+        try:
+            while True:
+                img_arr = np.array(img.copy().convert("RGB"))
+                pages.append(img_arr[:, :, ::-1])
+                img.seek(img.tell() + 1)
+        except EOFError:
+            pass
+    else:
+        img_arr = np.array(img.convert("RGB"))
+        pages.append(img_arr[:, :, ::-1])
+
+    return pages
+
+
+def load_pdf(pdf_path: str, dpi=200) -> list[np.ndarray]:
+    """
+    Open a PDF file.
+
+    Args:
+        pdf_path (str): path to the PDF file
+
+    Returns:
+        list[np.ndarray]: list of image data(BGR)
+    """
+
+    pdf_path = Path(pdf_path)
+    if not pdf_path.exists():
+        raise FileNotFoundError(f"File not found: {pdf_path}")
+
+    ext = pdf_path.suffix[1:].lower()
+    if ext not in SUPPORT_INPUT_FORMAT:
+        raise ValueError(
+            f"Unsupported image format. Supported formats are {SUPPORT_INPUT_FORMAT}"
+        )
+
+    if ext != "pdf":
+        raise ValueError(
+            "image file is not supported by load_pdf(). Use load_image() instead."
+        )
+
+    try:
+        doc = pypdfium2.PdfDocument(pdf_path)
+        renderer = doc.render(
+            pypdfium2.PdfBitmap.to_pil,
+            scale=dpi / 72,
+        )
+        images = list(renderer)
+        images = [np.array(image.convert("RGB"))[:, :, ::-1] for image in images]
+
+        doc.close()
+    except Exception as e:
+        raise ValueError(f"Failed to open the PDF file: {pdf_path}") from e
+
+    return images
+
 
 def escape_markdown_special_chars(text: str) -> str:
     """
@@ -199,8 +297,7 @@ def filter_by_flag(elements: List[Any], flags: List[bool]) -> List[Any]:
     Raises:
         AssertionError: If lengths don't match
     """
-    assert len(elements) == len(
-        flags), "Elements and flags must have the same length"
+    assert len(elements) == len(flags), "Elements and flags must have the same length"
     return [element for element, flag in zip(elements, flags) if flag]
 
 
@@ -256,8 +353,7 @@ def calc_distance(rect_a: List[float], rect_b: List[float]) -> float:
     center_b_y = (by1 + by2) / 2
 
     # Calculate distance between centers
-    distance = ((center_a_x - center_b_x) ** 2 +
-                (center_a_y - center_b_y) ** 2) ** 0.5
+    distance = ((center_a_x - center_b_x) ** 2 + (center_a_y - center_b_y) ** 2) ** 0.5
 
     return distance
 
@@ -411,8 +507,7 @@ def convert_table_array(
 
     if drop_empty:
         # Drop empty rows
-        table_array = [row for row in table_array if any(
-            cell != "" for cell in row)]
+        table_array = [row for row in table_array if any(cell != "" for cell in row)]
 
         # Drop empty columns
         if table_array:
@@ -438,8 +533,7 @@ def table_to_csv(table: Any, padding: bool = False, drop_empty: bool = False) ->
     Returns:
         str: CSV string representation of the table
     """
-    table_array = convert_table_array(
-        table, padding=padding, drop_empty=drop_empty)
+    table_array = convert_table_array(table, padding=padding, drop_empty=drop_empty)
     csv_lines = []
 
     for row in table_array:
