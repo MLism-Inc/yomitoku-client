@@ -568,6 +568,8 @@ class MultiPageDocumentResult(BaseModel):
             page_index=page_index,
         )
 
+        return results
+
     def to_html(
         self,
         output_path: str,
@@ -599,6 +601,8 @@ class MultiPageDocumentResult(BaseModel):
             encoding=encoding,
             page_index=page_index,
         )
+
+        return results
 
     def to_markdown(
         self,
@@ -632,6 +636,8 @@ class MultiPageDocumentResult(BaseModel):
             page_index=page_index,
         )
 
+        return results
+
     def to_json(
         self,
         output_path: str,
@@ -663,6 +669,8 @@ class MultiPageDocumentResult(BaseModel):
             encoding=encoding,
             page_index=page_index,
         )
+
+        return results
 
     def export_tables(
         self,
