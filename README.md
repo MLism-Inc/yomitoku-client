@@ -59,14 +59,11 @@ import json
 sagemaker_runtime = boto3.client('sagemaker-runtime')
 ENDPOINT_NAME = 'your-yomitoku-endpoint'
 
-# パーサーを初期化
-parser = SageMakerParser()
-
 # 文書でSageMakerエンドポイントを呼び出し
 with open('document.png', 'rb') as f:
     response = sagemaker_runtime.invoke_endpoint(
         EndpointName=ENDPOINT_NAME,
-        ContentType='image/png',  # または 'image/png', 'image/jpeg'
+        ContentType='image/png',
         Body=f.read(),
     )
 
@@ -90,6 +87,12 @@ data.to_csv(output_path='output.csv')
 data.to_html(output_path='output.html')
 data.to_markdown(output_path='output.md')
 data.to_json(output_path='output.json')
+
+# 出力オプションの指定(フォルダ出力、ページ分割, ページ指定、段落の改行を無視)
+data.to_csv(output_path="outdir/output.csv", mode="separate", page_index=[0,1], ignore_line_break=True)
+data.to_html(output_path="outdir/output.html", mode="separate", page_index=[0,1], ignore_line_break=True)
+data.to_markdown(output_path="outdir/output.md", mode="separate", page_index=[0,1], ignore_line_break=True)
+data.to_json(output_path="outdir/output.json", mode="separate", page_index=[0,1], ignore_line_break=True)
 ```
 
 ### ステップ3: 結果を可視化
@@ -102,13 +105,13 @@ data.visualize(
     image_path='document.png',
     mode='ocr',
     page_index=None,
-     utput_directory='demo'
+    output_directory='demo'
 )
 
 # レイアウト詳細の可視化（テキスト、テーブル、図）
 data.visualize(
     image_path='document.png',
-    viz_type='layout',
+    mode='layout',
     page_index=None,
     output_directory='demo'
 )

@@ -16,6 +16,17 @@ from ..utils import load_image, load_pdf
 from ..exceptions import DocumentAnalysisError, ValidationError
 
 
+def make_page_index(page_index: Union[int, List[int], None], num_pages) -> List[int]:
+    if page_index is None:
+        return range(len(num_pages))
+    elif isinstance(page_index, int):
+        return [page_index]
+    elif not isinstance(page_index, list):
+        raise ValueError("page_index must be None, int, or list of int")
+
+    return page_index
+
+
 class Paragraph(BaseModel):
     """Paragraph data model"""
 
@@ -553,8 +564,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        if page_index is None:
-            page_index = range(len(self.pages))
+        page_index = make_page_index(page_index, self.pages)
 
         results = []
         for idx in page_index:
@@ -587,8 +597,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        if page_index is None:
-            page_index = range(len(self.pages))
+        page_index = make_page_index(page_index, self.pages)
 
         results = []
         for idx in page_index:
@@ -621,8 +630,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        if page_index is None:
-            page_index = range(len(self.pages))
+        page_index = make_page_index(page_index, self.pages)
 
         results = []
         for idx in page_index:
@@ -655,8 +663,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        if page_index is None:
-            page_index = range(len(self.pages))
+        page_index = make_page_index(page_index, self.pages)
 
         results = []
         for idx in page_index:
@@ -779,9 +786,7 @@ class MultiPageDocumentResult(BaseModel):
         Visualize the document result
         """
 
-        if page_index is None:
-            page_index = range(len(self.pages))
-
+        page_index = make_page_index(page_index, self.pages)
         basename, ext = os.path.splitext(os.path.basename(image_path))
 
         if output_directory is not None:
