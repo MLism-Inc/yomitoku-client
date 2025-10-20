@@ -77,7 +77,7 @@ result.visualize(
     output_directory="demo",
 )
 
-data.visualize(
+result.visualize(
     image_path=target_file,
     mode='layout',
     page_index=None,
