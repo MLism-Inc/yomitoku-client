@@ -78,7 +78,7 @@ result.visualize(
 )
 
 data.visualize(
-    image_path="sample/image.pdf",
+    image_path=target_file,
     mode='layout',
     page_index=None,
     output_directory="demo",
