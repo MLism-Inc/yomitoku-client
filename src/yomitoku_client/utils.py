@@ -4,6 +4,7 @@ Utility functions for Yomitoku Client
 
 import os
 import re
+import io
 from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
@@ -73,7 +74,7 @@ def load_pdf(pdf_path: str, dpi=200) -> list[np.ndarray]:
         pdf_path (str): path to the PDF file
 
     Returns:
-        list[np.ndarray]: list of image data(BGR)
+        list[np.ndarray]: list[:, :, ::-1 of image data(BGR)
     """
 
     pdf_path = Path(pdf_path)
@@ -105,6 +106,42 @@ def load_pdf(pdf_path: str, dpi=200) -> list[np.ndarray]:
         raise ValueError(f"Failed to open the PDF file: {pdf_path}") from e
 
     return images
+
+
+def load_pdf_to_bytes(pdf_path: str, dpi=200) -> list[bytes]:
+    """
+    Convert each page of a PDF into image bytes (PNG format).
+
+    Args:
+        pdf_path (str): path to the PDF file
+        dpi (int): rendering DPI
+
+    Returns:
+        list[bytes]: list of byte data (one per page)
+    """
+
+    pdf_path = Path(pdf_path)
+    if not pdf_path.exists():
+        raise FileNotFoundError(f"File not found: {pdf_path}")
+
+    if pdf_path.suffix.lower() != ".pdf":
+        raise ValueError("Only PDF files are supported.")
+
+    try:
+        doc = pypdfium2.PdfDocument(pdf_path)
+        images_bytes = []
+
+        # 各ページをPIL画像としてレンダリング
+        for page in doc.render(scale=dpi / 72, converter=pypdfium2.PdfBitmap.to_pil):
+            buf = io.BytesIO()
+            page.save(buf, format="PNG")  # PNGとして保存（非破壊圧縮）
+            images_bytes.append(buf.getvalue())  # バイト列を追加
+
+        doc.close()
+        return images_bytes
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to convert PDF to images: {e}")
 
 
 def escape_markdown_special_chars(text: str) -> str:
