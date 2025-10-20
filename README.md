@@ -10,7 +10,7 @@
 
 ## クイックリンク
 - 📓 **[AWS SageMakerの利用に関するサンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
-- 📓 **[結果のフォーマット変換と可視化に関するサンプルNotebook](notebooks/yomitoku-client-parser.ipynb)** - SageMaker結果の解析、フォーマット変換、可視化のチュートリアル
+- 📓 **[結果のフォーマット変換と可視化に関するサンプルNotebook](notebooks/yomitoku-client-parser.ipynb)** - 処理結果の解析、フォーマット変換、可視化のチュートリアル
 
 Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的なフォーマット変換と可視化機能を提供するPythonライブラリです。Yomitoku ProのOCR分析と実用的なデータ処理ワークフローを橋渡しを行います。
 
@@ -63,10 +63,10 @@ ENDPOINT_NAME = 'your-yomitoku-endpoint'
 parser = SageMakerParser()
 
 # 文書でSageMakerエンドポイントを呼び出し
-with open('document.pdf', 'rb') as f:
+with open('document.png', 'rb') as f:
     response = sagemaker_runtime.invoke_endpoint(
         EndpointName=ENDPOINT_NAME,
-        ContentType='application/pdf',  # または 'image/png', 'image/jpeg'
+        ContentType='image/png',  # または 'image/png', 'image/jpeg'
         Body=f.read(),
     )
 

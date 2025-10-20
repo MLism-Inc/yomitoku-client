@@ -80,7 +80,7 @@ parser = SageMakerParser()
 with open('document.pdf', 'rb') as f:
     response = sagemaker_runtime.invoke_endpoint(
         EndpointName=ENDPOINT_NAME,
-        ContentType='application/pdf',  # or 'image/png', 'image/jpeg'
+        ContentType='image/png',
         Body=f.read(),
     )
 
