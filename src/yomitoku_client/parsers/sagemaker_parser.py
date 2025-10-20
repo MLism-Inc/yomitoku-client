@@ -12,19 +12,8 @@ from pydantic import BaseModel, Field
 
 from ..visualizers.document_visualizer import DocumentVisualizer
 
-from ..utils import load_image, load_pdf
+from ..utils import load_image, load_pdf, make_page_index
 from ..exceptions import DocumentAnalysisError, ValidationError
-
-
-def make_page_index(page_index: Union[int, List[int], None], num_pages) -> List[int]:
-    if page_index is None:
-        return range(len(num_pages))
-    elif isinstance(page_index, int):
-        return [page_index]
-    elif not isinstance(page_index, list):
-        raise ValueError("page_index must be None, int, or list of int")
-
-    return page_index
 
 
 class Paragraph(BaseModel):
@@ -564,7 +553,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        page_index = make_page_index(page_index, self.pages)
+        page_index = make_page_index(page_index, len(self.pages))
 
         results = []
         for idx in page_index:
@@ -597,7 +586,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        page_index = make_page_index(page_index, self.pages)
+        page_index = make_page_index(page_index, len(self.pages))
 
         results = []
         for idx in page_index:
@@ -630,7 +619,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        page_index = make_page_index(page_index, self.pages)
+        page_index = make_page_index(page_index, len(self.pages))
 
         results = []
         for idx in page_index:
@@ -663,7 +652,7 @@ class MultiPageDocumentResult(BaseModel):
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
-        page_index = make_page_index(page_index, self.pages)
+        page_index = make_page_index(page_index, len(self.pages))
 
         results = []
         for idx in page_index:
@@ -786,7 +775,7 @@ class MultiPageDocumentResult(BaseModel):
         Visualize the document result
         """
 
-        page_index = make_page_index(page_index, self.pages)
+        page_index = make_page_index(page_index, len(self.pages))
         basename, ext = os.path.splitext(os.path.basename(image_path))
 
         if output_directory is not None:
@@ -799,6 +788,7 @@ class MultiPageDocumentResult(BaseModel):
 
         basename, _ext = os.path.splitext(os.path.basename(image_path))
 
+        visualize_imgs = []
         for index in page_index:
             visualize_img = self.pages[index].visualize(
                 images[index],
@@ -811,6 +801,9 @@ class MultiPageDocumentResult(BaseModel):
                 path_output = os.path.join(output_directory, path_output)
 
             cv2.imwrite(path_output, visualize_img)
+            visualize_imgs.append(visualize_img)
+
+        return visualize_imgs
 
     def export_viz_images(
         self,

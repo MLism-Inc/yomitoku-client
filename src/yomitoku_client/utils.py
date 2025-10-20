@@ -1,7 +1,3 @@
-"""
-Utility functions for Yomitoku Client
-"""
-
 import os
 import re
 import io
@@ -18,6 +14,17 @@ import pypdfium2
 from .constants import (
     SUPPORT_INPUT_FORMAT,
 )
+
+
+def make_page_index(page_index: Union[int, List[int], None], num_pages) -> List[int]:
+    if page_index is None:
+        return range(num_pages)
+    elif isinstance(page_index, int):
+        return [page_index]
+    elif not isinstance(page_index, list):
+        raise ValueError("page_index must be None, int, or list of int")
+
+    return page_index
 
 
 def load_image(image_path: str) -> np.ndarray:
@@ -142,6 +149,23 @@ def load_pdf_to_bytes(pdf_path: str, dpi=200) -> list[bytes]:
 
     except Exception as e:
         raise RuntimeError(f"Failed to convert PDF to images: {e}")
+
+
+def load_tiff_to_bytes(tiff_path: str) -> list[bytes]:
+    im = Image.open(tiff_path)
+    pages = []
+    try:
+        n = 0
+        while True:
+            im.seek(n)
+            buf = io.BytesIO()
+            im.save(buf, format="TIFF")
+            pages.append(buf.getvalue())
+            n += 1
+    except EOFError:
+        pass
+
+    return pages
 
 
 def escape_markdown_special_chars(text: str) -> str:

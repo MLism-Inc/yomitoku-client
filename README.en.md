@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge\&logo=github)](docs/en/README.md) [![Language](https://img.shields.io/badge/🌐_Japanese-red?style=for-the-badge\&logo=github)](README.md)
+[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge\&logo=github)](README.en.md) [![Language](https://img.shields.io/badge/🌐_Japanese-red?style=for-the-badge\&logo=github)](README.md)
 
 </div>
 
@@ -10,31 +10,26 @@
 
 ## Quick Links
 
-* 📓 **[Sample Notebook: Using AWS SageMaker](notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial on connecting to an AWS SageMaker endpoint and performing document analysis
-* 📓 **[Sample Notebook: Result Conversion & Visualization](notebooks/yomitoku-client-parser.ipynb)** – Tutorial on parsing, converting, and visualizing SageMaker results
+* 📓 **[Sample Notebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial on connecting to an AWS SageMaker endpoint and performing document analysis
 
-**Yomitoku Client** is a Python library that processes the output from the **SageMaker Yomitoku API**, providing comprehensive format conversion and visualization tools.
-It bridges the gap between **Yomitoku Pro OCR analysis** and practical data-processing workflows.
+**Yomitoku Client** is a Python library that processes the output from the **SageMaker Yomitoku API**, providing comprehensive format conversion and visualization capabilities.
+It bridges **Yomitoku Pro OCR analysis** with practical data-processing workflows.
 
 ---
 
 ## Key Features
 
-* **SageMaker Integration**: Seamless processing of Yomitoku Pro OCR results
-* **Multi-Format Conversion**: Export results as CSV, Markdown, HTML, JSON, or PDF
-* **Searchable PDF Generation**: Create searchable PDFs with OCR text overlays
-* **Visualization Tools**: Render document layouts and OCR recognition results
-* **Jupyter Notebook Support**: Ready-to-use sample code and workflows
-
----
-
-## Supported Conversion Formats
-
-* **CSV**: Export structured tabular data with accurate cell mapping
-* **Markdown**: Structured document format including tables and headings
-* **HTML**: Web-ready output with styling
-* **JSON**: Full document structure in structured data form
-* **PDF**: Generate searchable PDFs with OCR text overlays
+* **Automatic Content-Type Detection**: Automatically recognizes PDF, TIFF, PNG, and JPEG and processes them in the optimal format.
+* **Page Splitting & Asynchronous Parallel Processing**: Automatically splits multi-page PDF/TIFF files and runs inference for each page in parallel.
+* **Timeout Control**: Safely manages communication and total processing time with `connect_timeout`, `read_timeout`, and `total_timeout`.
+* **Retry & Circuit-Breaker Mechanism**: Automatically retries transient failures and temporarily pauses requests after consecutive failures to protect the endpoint.
+* **Robust Error Handling**: Unified handling of AWS communication errors, JSON decoding issues, and timeouts.
+* **Secure AWS Authentication with MFA**: Supports temporary session tokens for secure endpoint connections.
+* **Simple Interface**: Execute `client("document.pdf")` to automatically perform page splitting, inference, and result aggregation.
+* **Multi-Format Conversion**: Export results to CSV, Markdown, HTML, JSON, or PDF.
+* **Searchable PDF Generation**: Create searchable PDFs with OCR text overlays.
+* **Visualization Tools**: Render document layouts and OCR reading results.
+* **Jupyter Notebook Support**: Ready-to-use sample code and workflows for rapid prototyping.
 
 ---
 
@@ -53,7 +48,7 @@ uv add yomitoku-client
 ```
 
 > **Note:**
-> If you don’t have **uv** installed, you can install it as follows:
+> If `uv` is not installed, you can install it as follows:
 >
 > ```bash
 > curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -63,105 +58,50 @@ uv add yomitoku-client
 
 ## Quick Start
 
-### Step 1: Connect to the SageMaker Endpoint
+### Calling a SageMaker Endpoint
 
 ```python
-import boto3
-import json
+from yomitoku_client import YomitokuClient
 
-# Initialize the SageMaker runtime client
-sagemaker_runtime = boto3.client('sagemaker-runtime')
-ENDPOINT_NAME = 'your-yomitoku-endpoint'
+target_file = TARGET_FILE
 
-# Initialize the parser
-parser = SageMakerParser()
-
-# Invoke the SageMaker endpoint with a document
-with open('document.pdf', 'rb') as f:
-    response = sagemaker_runtime.invoke_endpoint(
-        EndpointName=ENDPOINT_NAME,
-        ContentType='image/png',
-        Body=f.read(),
-    )
-
-# Parse the response
-body_bytes = response['Body'].read()
-sagemaker_result = json.loads(body_bytes)
+with YomitokuClient(
+    endpoint=ENDPOINT_NAME,
+    region=AWS_REGION,
+    mfa_serial=MFA_SERIAL,
+    mfa_token=MFA_TOKEN,
+) as client:
+    result = client(target_file)
 ```
 
 ---
 
-### Step 2: Convert Data into Different Formats
-
-#### For Single-Page Documents (Images)
+### Converting OCR Results to Various Formats
 
 ```python
-from yomitoku_client.parsers import parse_pydantic_model
-
-# Convert to structured data
-data = parse_pydantic_model(sagemaker_result)
-
-# Export to various formats
-data.to_csv(output_path='output.csv')
-data.to_html(output_path='output.html')
-data.to_markdown(output_path='output.md')
-data.to_json(output_path='output.json')
+result.to_markdown(output_path="output.md")
+result.to_csv(output_path="output.csv")
+result.to_json(output_path="output.json")
+result.to_html(output_path="output.html")
 ```
 
 ---
 
-### Step 3: Visualize the Results
-
-#### Visualizing a Single Image
+### Visualizing Analysis Results
 
 ```python
-# Visualize OCR text
-data.visualize(
-    image_path='document.png',
-    mode='ocr',
-    page_index=None,
-    output_directory='demo'
-)
-
-# Visualize layout details (text, tables, figures)
-data.visualize(
-    image_path='document.png',
-    viz_type='layout',
-    page_index=None,
-    output_directory='demo'
-)
-```
-
----
-
-#### Batch Visualization for Multi-Page PDFs
-
-```python
-# Visualize OCR results for all pages
-data.visualize(
-    image_path="sample/image.pdf",
+result.visualize(
+    image_path=target_file,
     mode='ocr',
     page_index=None,
     output_directory="demo",
-    dpi=200
 )
 
-# Visualize layout analysis for all pages
 data.visualize(
     image_path="sample/image.pdf",
     mode='layout',
     page_index=None,
     output_directory="demo",
-    dpi=200
-)
-
-# Visualize specific pages only
-data.visualize(
-    image_path="sample/image.pdf",
-    mode='ocr',
-    page_index=[0, 1],
-    output_directory="demo",
-    dpi=200
 )
 ```
 
@@ -176,5 +116,5 @@ See the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-For questions or support:
+For questions or support, please contact:
 📧 **[support-aws-marketplace@mlism.com](mailto:support-aws-marketplace@mlism.com)**

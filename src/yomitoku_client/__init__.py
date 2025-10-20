@@ -6,7 +6,8 @@ __version__ = "0.1.0"
 __author__ = "Yomitoku Team"
 __email__ = "support-aws-marketplace@mlism.com"
 
-# from .client import YomitokuClient
+from .client import YomitokuClient
+
 # Import font manager and PDF functions
 from .font_manager import FontManager, get_font_path
 
@@ -35,7 +36,7 @@ __all__ = [
     "DocumentResult",
     "MultiPageDocumentResult",
     "SageMakerParser",
-    # "YomitokuClient",
+    "YomitokuClient",
     "MarkdownRenderer",
     "HTMLRenderer",
     "CSVRenderer",

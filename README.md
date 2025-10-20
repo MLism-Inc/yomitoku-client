@@ -9,26 +9,22 @@
 ---
 
 ## クイックリンク
-- 📓 **[AWS SageMakerの利用に関するサンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
-- 📓 **[結果のフォーマット変換と可視化に関するサンプルNotebook](notebooks/yomitoku-client-parser.ipynb)** - 処理結果の解析、フォーマット変換、可視化のチュートリアル
+- 📓 **[サンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
 Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的なフォーマット変換と可視化機能を提供するPythonライブラリです。Yomitoku ProのOCR分析と実用的なデータ処理ワークフローを橋渡しを行います。
 
 ## 主な機能
-
-- **SageMaker統合**: Yomitoku Pro OCR結果のシームレスな処理
-- **複数フォーマット対応**: CSV、Markdown、HTML、JSON、PDF形式への変換
+- **自動コンテンツタイプ判定**: PDF / TIFF / PNG / JPEG を自動認識し、最適な形式で処理。
+- **ページ分割と非同期並列処理**: 複数ページで構成されるPDF・TIFFを自動でページ分割し、各ページを並列で推論。
+- **タイムアウト制御**: connect_timeout, read_timeout, total_timeout により通信・処理全体を安全に制御。
+- **再試行 & サーキットブレーカー機能**: 一時的な失敗を自動リトライし、連続失敗時は一時停止してエンドポイントを保護。
+- **堅牢なエラーハンドリング**: AWS通信エラー・JSONデコードエラー・タイムアウトなどを一元管理。
+- **MFA対応の安全なAWS認証** : 一時セッショントークンによる安全なエンドポイント接続。
+- **シンプルなインターフェース**: client("document.pdf") だけでページ分割・推論・結果統合を自動実行。
+- **複数フォーマットへの変換対応**: CSV、Markdown、HTML、JSON、PDF形式への変換
 - **検索可能PDF生成**: OCRテキストオーバーレイ付きの検索可能PDFの作成
 - **可視化機能**: 文書レイアウト分析、OCRの読み取り結果のレンダリング
 - **Jupyter Notebook対応**: 迅速に使えるサンプルコードとワークフロー
-
-## 変換のサポート形式
-
-- **CSV**: 適切なセル処理による表形式データのエクスポート
-- **Markdown**: テーブルと見出しを含む構造化文書形式
-- **HTML**: 適切なスタイリングを含むWeb対応形式
-- **JSON**: 完全な文書構造を含む構造化データエクスポート
-- **PDF**: OCRテキストオーバーレイ付きの検索可能PDF生成
 
 ## インストール
 
@@ -49,105 +45,45 @@ uv add yomitoku-client
 
 ## クイックスタート
 
-### ステップ1: SageMakerエンドポイントに接続
-
+### Sagemaker Endpointの呼び出し
 ```python
-import boto3
-import json
+from yomitoku_client import YomitokuClient
 
-# SageMakerランタイムクライアントを初期化
-sagemaker_runtime = boto3.client('sagemaker-runtime')
-ENDPOINT_NAME = 'your-yomitoku-endpoint'
+target_file = TARGET_FILE
 
-# 文書でSageMakerエンドポイントを呼び出し
-with open('document.png', 'rb') as f:
-    response = sagemaker_runtime.invoke_endpoint(
-        EndpointName=ENDPOINT_NAME,
-        ContentType='image/png',
-        Body=f.read(),
-    )
-
-# レスポンスをパース
-body_bytes = response['Body'].read()
-sagemaker_result = json.loads(body_bytes)
+with YomitokuClient(
+    endpoint=ENDPOINT_NAME,
+    region=AWS_REGION,
+    mfa_serial=MFA_SERIAL,
+    mfa_token=MFA_TOKEN,
+) as client:
+    result = client(target_file)
 ```
 
-### ステップ2: データを異なる形式に変換
-
-#### 単一ページ文書（画像）
-
+### 読み取り結果のフォーマット変換
 ```python
-from yomitoku_client.parsers import parse_pydantic_model
-
-# 構造化データに変換
-data = parse_pydantic_model(sagemaker_result)
-
-# 指定したファイル形式に変換
-data.to_csv(output_path='output.csv')
-data.to_html(output_path='output.html')
-data.to_markdown(output_path='output.md')
-data.to_json(output_path='output.json')
-
-# 出力オプションの指定(フォルダ出力、ページ分割, ページ指定、段落の改行を無視)
-data.to_csv(output_path="outdir/output.csv", mode="separate", page_index=[0,1], ignore_line_break=True)
-data.to_html(output_path="outdir/output.html", mode="separate", page_index=[0,1], ignore_line_break=True)
-data.to_markdown(output_path="outdir/output.md", mode="separate", page_index=[0,1], ignore_line_break=True)
-data.to_json(output_path="outdir/output.json", mode="separate", page_index=[0,1], ignore_line_break=True)
+result.to_markdown(output_path="output.md")
+result.to_csv(output_path="output.csv")
+result.to_json(output_path='output.json')
+result.to_html(output_path='output.html')
 ```
 
-### ステップ3: 結果を可視化
-
-#### 単一画像の可視化
-
+### 解析結果の可視化
 ```python
-# OCRテキストの可視化
-data.visualize(
-    image_path='document.png',
-    mode='ocr',
-    page_index=None,
-    output_directory='demo'
-)
-
-# レイアウト詳細の可視化（テキスト、テーブル、図）
-data.visualize(
-    image_path='document.png',
-    mode='layout',
-    page_index=None,
-    output_directory='demo'
-)
-```
-
-#### 複数ページで構成されるPDFの一括可視化
-
-```python
-# 全ページのOCR結果を一括可視化
-data.visualize(
-    image_path="sample/image.pdf",
+result.visualize(
+    image_path=target_file,
     mode='ocr',
     page_index=None,
     output_directory="demo",
-    dpi=200
 )
 
-# 全ページのレイアウト解析情報を一括可視化
 data.visualize(
     image_path="sample/image.pdf",
     mode='layout',
     page_index=None,
     output_directory="demo",
-    dpi=200
-)
-
-# 特定のページのみ可視化
-data.visualize(
-    image_path="sample/image.pdf",
-    mode='ocr',
-    page_index=[0,1],
-    output_directory="demo",
-    dpi=200
 )
 ```
-
 ## ライセンス
 
 Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
