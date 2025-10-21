@@ -34,14 +34,14 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure2](images/marketplace-sagemaker-configure2.png)
 1. モデルの設定をします。モデル名を設定し、ロールを設定します。「新しいロールの作成」を選択した際に自動作成されるロールを利用することを推奨します。「ロール作成ウィザードを使用してロールを作成」を選択するとロール名やロールに与える権限をより詳細に設定してロールを作成できます。エンドポイントの作成の2回目以降など、既にロールが存在している場合は新しくロールを作成する必要はありません。ロールの削除がしたいなどの理由でロールの設定画面を開きたい場合は本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
 ![marketplace sagemaker configure3](images/marketplace-sagemaker-configure3.png)
-1. コンテナの定義1のコンテナ入力オプションで「AWS Marketplaceからのモデルパッケージサブスクリプションを使用する」を選択します。(デフォルト設定)
+1. コンテナの定義1のコンテナ入力オプションで「AWS Marketplaceからのモデルパッケージサブスクリプションを使用する」を選択します。（デフォルト設定）
 ![marketplace sagemaker configure4](images/marketplace-sagemaker-configure4.png)
 1. VPCはAWS上に構築する仮想的なプライベートネットワークです。AWS上の他のサービスから接続する際にVPCを用いることでセキュアな通信経路を構築できます。VPCの設定は必要に応じて設定します。（VPCの設定は必須ではありません。）詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/host-vpc.html)をご確認ください。タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html)をご確認ください。
 ![marketplace sagemaker configure5](images/marketplace-sagemaker-configure5.png)
 1. 右下の「次へ」をクリックしてモデルの作成を完了します。
 1. エンドポイント名を設定し、エンドポイント設定のアタッチの項目の選択をします。既存のエンドポイント設定を使用する場合は「既存のエンドポイント設定の使用」を、新しくエンドポイント設定を作成する場合は「新しいエンドポイント設定の作成」を選択します。「既存のエンドポイント設定の使用」を選択した場合は使用するエンドポイント設定を選択して、バリアントの設定まで移ってください。「新しいエンドポイントの作成」を選択した場合について説明します。
 ![marketplace sagemaker configure6](images/marketplace-sagemaker-configure6.png)
-1. エンドポイント設定名を設定します。エンドポイントのタイプはプロビジョン済みを選択します。暗号化キーを設定することでSageMakerがS3にデータを保存する際に用いられるAWS KMSキーを、お客様が管理・指定できます。暗号化キーは適宜設定します。（暗号化キーの設定は必須ではありません。）暗号化キーについては詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/encryption-at-rest.html)をご確認ください。プロビジョン済みのタイプではエンドポイントを作成してから削除するまでモデルをホストするコンテナが起動し続けます。サーバーレス推論では、API呼び出しが来たときにのみモデルをホストするコンテナが起動し、処理が完了すると終了します。サーバーレス推論はGPUをサポートしていないのでYomiToku Proでサポートされていません。
+1. エンドポイント設定名を設定します。エンドポイントのタイプはプロビジョン済みを選択します。暗号化キーを設定することでSageMakerがS3にデータを保存する際に用いられるAWS KMSキーを、お客様が管理・指定できます。暗号化キーは適宜設定します。（暗号化キーの設定は必須ではありません。）暗号化キーについては詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/encryption-at-rest.html)をご確認ください。プロビジョン済みのタイプではエンドポイントを作成してから削除するまでモデルをホストするコンテナが起動し続けます。サーバーレス推論はGPUをサポートしていないのでYomiToku Proでサポートされていません。
 ![marketplace sagemaker configure7](images/marketplace-sagemaker-configure7.png)
 1. 非同期呼び出し設定のトグルとデータキャプチャのトグルはオフに設定します。非同期呼び出し設定は現時点ではYomiToku Proでサポートされていません。データキャプチャはここでは利用しません。
 ![marketplace sagemaker configure8](images/marketplace-sagemaker-configure8.png)
@@ -82,19 +82,19 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 
 既存のモデルやエンドポイント設定からエンドポイントを作成する際は、それぞれの設定画面（モデル設定画面、エンドポイント設定画面など）を開いて操作します。
 
-## AWS CloudFormationでデプロイする場合
+## AWS CloudFormationでデプロイする場合（準備中）
 
 ## 付録:各種設定画面の開き方
 
 ### ロール
 
-ロールの設定画面はIAMもしくはIAM Identity Centerから開くことができます。ロールの削除をしたい場合などはそちらをご利用ください。
+ロールの設定画面はIAMから開くことができます。ロールの削除をしたい場合などはそちらをご利用ください。
 
 次の手順でIAMの設定画面を開くことができます。
 
 1. [AWS マネジメントコンソール](https://aws.amazon.com/jp/console/)にサインインします。
 1. 左上の検索ウィンドウからIAMを検索します。
-1. IAMもしくはIAM Identity Centerを選択します。
+1. IAMを選択します。
 ![iam search](images/iam-search.png)
 1. 左側のメニューでロールを選択します。
 
