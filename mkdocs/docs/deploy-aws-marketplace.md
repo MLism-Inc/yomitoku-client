@@ -1,6 +1,7 @@
-# AWS Marketplaceを用いてデプロイ
+# YomiToku Proのデプロイ
 
-AWS Marketplaceを用いてデプロイする場合は、AWS SageMakerを用いる方法とAWS CloudFormationを用いる方法があります。
+YomiToku ProをAWS Marketplaceを用いてデプロイします。
+AWS SageMakerを用いる方法とAWS CloudFormationを用いる方法があります。
 
 ## 準備
 
