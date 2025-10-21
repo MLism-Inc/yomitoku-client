@@ -105,14 +105,95 @@ data.visualize(
 )
 ```
 
----
+## Batch Processing
+
+**YomiTokuClient** also supports batch processing, enabling safe and efficient analysis of a large number of documents.
+
+### Key Features
+
+* **Folder-level batch analysis**: Automatically detects PDF and image files in the specified directory and performs parallel processing.
+* **Intermediate log output (`process_log.jsonl`)**: Records processing results, success/failure status, elapsed time, and errors for each file as JSON Lines.
+  The log file can be reused for post-processing or reruns.
+* **Overwrite control**: Skips already processed files when `overwrite=False`, improving efficiency.
+* **File name collision prevention**: Files with the same name but different extensions are saved as `_pdf.json`, `_png.json`, etc., to avoid overwriting.
+* **Rerun support**: Failed files can be easily reprocessed based on the log records.
+* **Post-processing via logs**: By reading `process_log.jsonl`, you can automatically export Markdown files or visualize results only for successful items.
+
+### Example
+
+```python
+import asyncio
+import json
+import os
+
+from yomitoku_client import YomitokuClient
+from yomitoku_client.parsers.sagemaker_parser import parse_pydantic_model
+
+# Input / output settings
+target_dir = "notebooks/sample"
+outdir = "output"
+
+# SageMaker endpoint settings
+ENDPOINT_NAME = "my-endpoint"
+AWS_REGION = "ap-northeast-1"
+
+async def main():
+    # Run batch analysis
+    async with YomitokuClient(
+        endpoint=ENDPOINT_NAME,
+        region=AWS_REGION,
+    ) as client:
+        await client.analyze_batch_async(
+            input_dir=target_dir,
+            output_dir=outdir,
+        )
+
+    # Process successful files based on logs
+    with open(os.path.join(outdir, "process_log.jsonl"), "r", encoding="utf-8") as f:
+        logs = [json.loads(line) for line in f if line.strip()]
+
+    out_markdown = os.path.join(outdir, "markdown")
+    out_visualize = os.path.join(outdir, "visualization")
+    os.makedirs(out_markdown, exist_ok=True)
+    os.makedirs(out_visualize, exist_ok=True)
+
+    for log in logs:
+        if not log.get("success"):
+            continue
+
+        # Load the analysis result
+        with open(log["output_path"], "r", encoding="utf-8") as rf:
+            result = json.load(rf)
+
+        doc = parse_pydantic_model(result)
+
+        # Export as Markdown
+        base = os.path.splitext(os.path.basename(log["file_path"]))[0]
+        doc.to_markdown(output_path=os.path.join(out_markdown, f"{base}.md"))
+
+        # Visualize OCR results
+        doc.visualize(
+            image_path=log["file_path"],
+            mode="ocr",
+            output_directory=out_visualize,
+            dpi=log.get("dpi", 200),
+        )
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+> 💡 *Tip:*
+> The batch mode is ideal for large-scale offline document processing.
+> The `process_log.jsonl` file provides a complete record of the batch run and can be reused for monitoring, recovery, or post-processing.
+
 
 ## License
 
 Licensed under the **Apache License 2.0**.
 See the [LICENSE](LICENSE) file for details.
 
----
+
 
 ## Contact
 

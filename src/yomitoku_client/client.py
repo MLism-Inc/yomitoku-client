@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from botocore.exceptions import BotoCoreError, ClientError
 from botocore.config import Config
 
+from pathlib import Path
+
 from concurrent.futures import ThreadPoolExecutor
 from typing import Union, Optional, Tuple
 
@@ -19,6 +21,10 @@ from yomitoku_client.utils import (
 )
 from yomitoku_client.parsers import parse_pydantic_model
 from yomitoku_client.logger import set_logger
+
+from datetime import datetime
+
+from .constants import SUPPORT_INPUT_FORMAT
 
 
 logger = set_logger(__name__, "INFO")
@@ -109,7 +115,7 @@ def now_ms() -> int:
     return int(time.time() * 1000)
 
 
-def _merge_results(self, results: list[InvokeResult]) -> dict:
+def _merge_results(results: list[InvokeResult]) -> dict:
     base = dict(results[0].raw_dict)
     key = "result"
     if not isinstance(base.get(key), list):
@@ -311,8 +317,89 @@ class YomitokuClient:
 
         # ページ順に整列
         results.sort(key=lambda r: r.index)
-        merged_dict = _merge_results(self, results)
-        return parse_pydantic_model(merged_dict)
+        merged_dict = _merge_results(results)
+        return merged_dict
+
+    async def analyze_batch_async(
+        self,
+        input_dir: str,
+        output_dir: str,
+        dpi: int = 200,
+        page_index: Union[None, int, list] = None,
+        request_timeout: Optional[float] = None,
+        total_timeout: Optional[float] = None,
+        overwrite: bool = False,
+        log_path: Optional[str] = None,
+    ):
+        os.makedirs(output_dir, exist_ok=True)
+
+        if log_path is None:
+            log_path = Path(output_dir) / "process_log.jsonl"
+
+        path_imgs = [
+            str(p)
+            for p in Path(input_dir).iterdir()
+            if p.suffix.lower()[1:] in SUPPORT_INPUT_FORMAT
+        ]
+
+        log_lock = asyncio.Lock()  # ログ書き込みの衝突防止
+
+        async def log_record(record: dict):
+            """ログをJSON Lines形式で追記"""
+            async with log_lock:
+                with open(log_path, "a", encoding="utf-8") as lf:
+                    lf.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+        async def process_one(path_img: str):
+            ext = Path(path_img).suffix.lower().replace(".", "")
+            stem = Path(path_img).stem
+            output_path = Path(output_dir) / f"{stem}_{ext}.json"
+
+            record = {
+                "timestamp": datetime.now().isoformat(),
+                "file_path": path_img,
+                "output_path": str(output_path),
+                "dpi": dpi,
+                "executed": False,
+                "success": False,
+                "error": None,
+            }
+
+            if output_path.exists() and not overwrite:
+                logger.info(f"Skipped (exists): {output_path.name}")
+                record["executed"] = False
+                record["success"] = True
+                await log_record(record)
+                return
+
+            record["executed"] = True
+
+            try:
+                result = await self.analyze_async(
+                    path_img,
+                    dpi=dpi,
+                    page_index=page_index,
+                    request_timeout=request_timeout,
+                    total_timeout=total_timeout,
+                )
+                with open(output_path, "w", encoding="utf-8") as f:
+                    json.dump(result, f, ensure_ascii=False, indent=2)
+                logger.info(f"Saved: {output_path.name}")
+                record["success"] = True
+            except Exception as e:
+                logger.error(f"Failed: {path_img} ({e})")
+                record["success"] = False
+                record["error"] = f"{type(e).__name__}: {e}"
+            finally:
+                await log_record(record)
+
+        sem = asyncio.Semaphore(self._pool._max_workers)
+
+        async def run_with_limit(path_img):
+            async with sem:
+                await process_one(path_img)
+
+        await asyncio.gather(*(run_with_limit(p) for p in path_imgs))
 
     def __call__(
         self,
@@ -323,12 +410,14 @@ class YomitokuClient:
         total_timeout: Optional[float] = None,
     ):
         return self._loop.run_until_complete(
-            self.analyze_async(
-                path_img,
-                dpi,
-                page_index,
-                request_timeout,
-                total_timeout,
+            parse_pydantic_model(
+                self.analyze_async(
+                    path_img,
+                    dpi,
+                    page_index,
+                    request_timeout,
+                    total_timeout,
+                )
             )
         )
 
@@ -338,6 +427,13 @@ class YomitokuClient:
 
     def __enter__(self):
         return self
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        self.close()
+        return False
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
