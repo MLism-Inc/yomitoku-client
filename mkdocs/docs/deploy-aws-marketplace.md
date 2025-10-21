@@ -2,6 +2,10 @@
 
 AWS Marketplaceを用いてデプロイする場合は、AWS SageMakerを用いる方法とAWS CloudFormationを用いる方法があります。
 
+AWS CloudFormationではAWS SageMakerのリソースなどをまとめてスタックで管理します。
+
+AWS SageMakerの方が詳細に設定・管理できますが、AWS CloudFormationの方が簡単に設定・管理できます。
+
 ## 準備
 
 ### AWS IAMユーザーの作成
@@ -12,7 +16,7 @@ YomiToku Proを利用するためのAWS IAMユーザーを作成していない�
 
 ## AWS SageMakerでデプロイをする場合
 
-### デプロイ
+### AWS SageMakerでデプロイ
 
 AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 次の流れでデプロイをします。
@@ -61,7 +65,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure10](images/marketplace-sagemaker-configure10.png)
 ![marketplace sagemaker configure11](images/marketplace-sagemaker-configure11.png)
 
-### アンデプロイ
+### AWS SageMakerでアンデプロイ
 
 次の順番でアンデプロイをします。
 
@@ -83,6 +87,48 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 既存のモデルやエンドポイント設定からエンドポイントを作成する際は、それぞれの設定画面（モデル設定画面、エンドポイント設定画面など）を開いて操作します。
 
 ## AWS CloudFormationでデプロイする場合
+
+CloudFormationでは、AWSリソースのセット全体をスタックという単位で一元管理します。
+スタックには、AWS SageMakerのモデル・エンドポイント設定・エンドポイントのリソースなどが含まれています。
+デプロイの際はスタックを作成し、アンデプロイの際はスタックを削除します。
+スタックが作成されてからスタックが削除されるまで料金が発生し続けます。
+
+### AWS CloudFormationでデプロイ
+
+1. [AWS マネジメントコンソール](https://aws.amazon.com/jp/console/)にサインインします。
+1. 左上の検索ウィンドウからYomiToku Proを検索し、選択します。
+![marketplace search](images/yomitoku-search.png)
+1. 右上のContinue to Subscribeを選択し、次のページでも右上のContinue to configurationを選択します。
+![yomitoku marketplace screen](images/yomitoku-marketplace-screen.png)
+1. launch methodでAWS CloudFormationを選択します。
+![marketplace cloudformation configuration1](images/marketplace-cloudformation-configure1.png)
+1.Software Versionは、特別な理由がない限り、最新版を選択します。Regionは、使用するものを選択します。
+![marketplace cloudformation configuration2](images/marketplace-cloudformation-configure2.png)
+1.YomiToku Proの2回目以降のデプロイの場合など、既にロールが存在している場合は「Use an existing service role」を選択し、そのロールを選択します。初めての場合は「Create and use a new service role」を選択します。AmazonSagemaker-ExecutionRoleから始まる名前のロールが作成されます。CloudFormationのスタック内で既存のS3バケットを利用（参照）したい場合や、その設定をスタックで管理したい場合には、バケット名を指定します。
+![marketplace cloudformation configuration3](images/marketplace-cloudformation-configure3.png)
+![marketplace cloudformation configuration4](images/marketplace-cloudformation-configure4.png)
+1.スタック名を設定します。
+![marketplace cloudformation configuration5](images/marketplace-cloudformation-configure5.png)
+1.エンドポイント名、インスタンス数、インスタンスタイプを設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。インスタンスタイプは検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを入力します。その他の項目については変更しません。
+![marketplace cloudformation configuration6](images/marketplace-cloudformation-configure6.png)
+1.タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html)をご確認ください。
+![marketplace cloudformation configuration7](images/marketplace-cloudformation-configure7.png)
+1. アクセス許可を必要に応じて設定します。デフォルトではユーザーの権限で実行されますが、IAMロールを指定してCloudFormationを実行したい場合は設定します。
+![marketplace cloudformation configuration8](images/marketplace-cloudformation-configure8.png)
+1. 「その他の設定」については特に理由が無ければデフォルト設定で構いません。詳細については[こちらのドキュメント](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html?icmpid=docs_cfn_console#configure-stack-options)をご確認ください。
+1. 右下の「スタックの作成」を選択します。
+1. スタックの作成には時間がかかります。作成したスタックのステータスがCREATE_IN_PROGRESSからCREATE_COMPLETEになるまで待ちます。論理IDがスタック名、ステータスがCREATE_COMPLETEのイベントが発生したかどうかなどでスタックの作成が完了したかどうかを確認することができます。
+![marketplace cloudformation configuration9](images/marketplace-cloudformation-configure9.png)
+![marketplace cloudformation configuration10](images/marketplace-cloudformation-configure10.png)
+
+### AWS CloudFormationでアンデプロイ
+
+1. [AWS マネジメントコンソール](https://aws.amazon.com/jp/console/)にサインインします。
+1. 左上の検索ウィンドウからCloudFormationを検索します。
+![cloudformation-search](images/cloudformation-search.png)
+1. デプロイしたスタック名の左側の円形のチェックボックスを選択します。
+![marketplace-cloudformation-undeploy](images/marketplace-cloudformation-undeploy.png)
+1. 上部にある「削除」を選択します。
 
 ## 付録:各種設定画面の開き方
 
@@ -110,3 +156,12 @@ AWS SageMakerのモデル・エンドポイント設定・エンドポイント�
 1. 左側のメニューをスクロールし、左側のトグルで推論の項目を開きます。
 ![sagemaker ai screen](images/sagemaker-ai-screen.png)
 1. 設定したい項目に応じて左側のメニューで推論>モデル、推論>エンドポイント設定、推論>エンドポイントを選択します。
+
+### AWS CloudFormationのスタック
+
+AWS CloudFormationのスタックの設定画面はCloudFormationを検索すると開くことができます。
+
+1. [AWS マネジメントコンソール](https://aws.amazon.com/jp/console/)にサインインします。
+1. 左上の検索ウィンドウからCloudFormationを検索します。
+![cloudformation-search](images/cloudformation-search.png)
+1. CloudFormationを選択すると、スタックの設定画面が開くことができます。
