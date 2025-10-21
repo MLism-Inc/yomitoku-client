@@ -31,7 +31,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![yomitoku marketplace screen](images/yomitoku-marketplace-screen.png)
 1. launch methodでSageMaker Consoleを選択します。
 ![marketplace sagemaker configure1](images/marketplace-sagemaker-configure1.png)
-1. Software Versionは、特別な理由がない限り、最新版を選択します。Regionは、使用するものを選択します。Amazon SageMaker optionsでCreate a real-time inference endpointを選択します。多数の画像をまとめて処理をしたい場合はCreate a batch transform jobを選択しますが、現時点ではYomiToku Proではサポートされていません。
+1. Software Versionは、特別な理由がない限り、最新版を選択します。Regionは、使用するものを選択します。Amazon SageMaker optionsでCreate a real-time inference endpointを選択します。多数の画像をまとめて処理をしたい場合はCreate a batch transform jobを選択しますが、現時点ではYomiToku Clientではサポートされていません。
 ![marketplace sagemaker configure2](images/marketplace-sagemaker-configure2.png)
 1. モデルの設定をします。モデル名を設定し、ロールを設定します。「新しいロールの作成」を選択した際に自動作成されるロールを利用することを推奨します。「ロール作成ウィザードを使用してロールを作成」を選択するとロール名やロールに与える権限をより詳細に設定してロールを作成できます。エンドポイントの作成の2回目以降など、既にロールが存在している場合は新しくロールを作成する必要はありません。ロールの削除がしたいなどの理由でロールの設定画面を開きたい場合は本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
 ![marketplace sagemaker configure3](images/marketplace-sagemaker-configure3.png)
