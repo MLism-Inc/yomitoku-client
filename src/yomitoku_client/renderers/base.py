@@ -5,7 +5,7 @@ Base renderer class - Defines the interface for all renderers
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
-from ..parsers.sagemaker_parser import DocumentResult
+from ..parser import DocumentResult
 
 
 class BaseRenderer(ABC):

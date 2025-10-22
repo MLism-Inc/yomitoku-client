@@ -12,10 +12,13 @@ from .client import YomitokuClient
 from .font_manager import FontManager, get_font_path
 
 # Import main classes for easy access
-from .parsers.sagemaker_parser import (
+from .models import (
     DocumentResult,
     MultiPageDocumentResult,
 )
+
+from .parser import parse_pydantic_model
+
 from .renderers.csv_renderer import CSVRenderer
 from .renderers.html_renderer import HTMLRenderer
 from .renderers.json_renderer import JSONRenderer
@@ -25,7 +28,6 @@ from .renderers.markdown_renderer import MarkdownRenderer
 from .renderers.pdf_renderer import PDFRenderer
 from .renderers.searchable_pdf import (
     create_searchable_pdf,
-    create_searchable_pdf_from_pdf,
 )
 
 # Import visualizers
@@ -47,6 +49,7 @@ __all__ = [
     "FontManager",
     "create_searchable_pdf",
     "create_searchable_pdf_from_pdf",
+    "parse_pydantic_model",
 ]
 
 

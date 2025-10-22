@@ -407,7 +407,6 @@ class DocumentVisualizer(BaseVisualizer):
         """
         if mode == "layout":
             out = self.visualize_layout_detail(img, results)
-            out = self.visualize_captions(out, results)
             return self.visualize_reading_order(out, results)
         elif mode == "ocr":
             return self.visualize_ocr(img, results)

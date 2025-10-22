@@ -12,7 +12,7 @@ from yomitoku_client.exceptions import (
     FormatConversionError,
     ValidationError,
 )
-from yomitoku_client.parsers.sagemaker_parser import DocumentResult, Paragraph
+from yomitoku_client.parser import DocumentResult, Paragraph
 
 
 class TestUtilityFunctions:

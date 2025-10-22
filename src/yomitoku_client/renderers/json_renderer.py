@@ -8,7 +8,7 @@ from typing import Optional
 import numpy as np
 
 from ..exceptions import FormatConversionError
-from ..parsers.sagemaker_parser import DocumentResult
+from ..models import DocumentResult
 from ..utils import save_figure
 from .base import BaseRenderer
 

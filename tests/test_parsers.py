@@ -5,7 +5,7 @@ Tests for Parsers
 import pytest
 
 from yomitoku_client.exceptions import DocumentAnalysisError, ValidationError
-from yomitoku_client.parsers.sagemaker_parser import (
+from yomitoku_client.parser import (
     DocumentResult,
     Figure,
     Paragraph,

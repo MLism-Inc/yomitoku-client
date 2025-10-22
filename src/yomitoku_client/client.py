@@ -19,7 +19,7 @@ from yomitoku_client.utils import (
     load_tiff_to_bytes,
     make_page_index,
 )
-from yomitoku_client.parsers import parse_pydantic_model
+
 from yomitoku_client.logger import set_logger
 
 from datetime import datetime
@@ -208,7 +208,7 @@ class YomitokuClient:
     def _invoke_one(self, payload):
         attempt = 0
         last_err: Optional[Exception] = None
-        while attempt < 5:
+        while attempt < self.max_attempts:
             self._check_circuit()
             try:
                 resp = self.sagemaker_runtime.invoke_endpoint(
@@ -410,15 +410,13 @@ class YomitokuClient:
         total_timeout: Optional[float] = None,
     ):
         return self._loop.run_until_complete(
-            parse_pydantic_model(
-                self.analyze_async(
-                    path_img,
-                    dpi,
-                    page_index,
-                    request_timeout,
-                    total_timeout,
-                )
-            )
+            self.analyze_async(
+                path_img,
+                dpi,
+                page_index,
+                request_timeout,
+                total_timeout,
+            ),
         )
 
     def close(self):

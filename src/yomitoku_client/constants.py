@@ -2,6 +2,8 @@
 Constants for yomitoku-client
 """
 
+import os
+
 # Color palette for visualization
 PALETTE = [
     (255, 0, 0),  # Red
@@ -27,7 +29,7 @@ PALETTE = [
 ]
 
 # Root directory
-ROOT_DIR = "."
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Supported output formats
 SUPPORT_OUTPUT_FORMAT = ["html", "markdown", "csv", "json", "pdf"]
