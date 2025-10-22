@@ -401,7 +401,7 @@ class YomitokuClient:
 
         await asyncio.gather(*(run_with_limit(p) for p in path_imgs))
 
-    def __call__(
+    def analyze(
         self,
         path_img: str,
         dpi: int = 200,

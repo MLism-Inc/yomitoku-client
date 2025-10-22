@@ -18,28 +18,16 @@ Yomitoku Proの高精度OCRと、業務アプリケーションを結びつけ�
 ## クイックリンク
 - 📓 **[サンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
-## クイックスタート
+## クイックスタート(同期版)
 最もシンプルな実行例です。PDFを入力し、Markdownとして保存します。
 ```python
-import asyncio
 from yomitoku_client import YomitokuClient, parse_pydantic_model
 
-ENDPOINT_NAME = "my-endpoint"
-AWS_REGION = "ap-northeast-1"
-target_file = "notebooks/sample/image.pdf"
+with YomitokuClient(endpoint="my-endpoint", region="ap-northeast-1") as client:
+    result = client.analyze("notebooks/sample/image.pdf")
 
-async def main():
-    async with YomitokuClient(
-        endpoint=ENDPOINT_NAME,
-        region=AWS_REGION,
-    ) as client:
-        result = await client.analyze_async(target_file)
-
-    model = parse_pydantic_model(result)
-    model.to_markdown(output_path="output.md", image_path=target_file)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+model = parse_pydantic_model(result)
+model.to_markdown(output_path="output.md")
 ```
 
 ## YomiToku-Pro Document Analyzer とは
@@ -67,14 +55,15 @@ uv add yomitoku-client
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
-## 単一ファイル解析（詳細版）
-搭載している機能の詳細
+## 単一ファイル解析（非同期版）
+搭載している機能の詳細：
 - 複数ページの自動分割と並列推論
 - タイムアウト＋指数バックオフによる自動リトライ
 - サーキットブレーカーでエンドポイント保護
 - 代表的な通信・JSONデコード・タイムアウト例外の集約処理
 
 ```python
+import asyncio
 from yomitoku_client import YomitokuClient
 from yomitoku_client import parse_pydantic_model
 
@@ -93,9 +82,9 @@ async def main():
     # フォーマットの変換
     model = parse_pydantic_model(result)
     model.to_csv(output_path="output.csv")     # CSVでの保存
-    model.to_markdown(output_path="output.md", image_path=target_file) #Markdownフォーマットでの保存
+    model.to_markdown(output_path="output.md", image_path=target_file) #Markdownフォーマットでの保存(図・画像出力)
     model.to_json(output_path='output.json', mode="separate")   # ページ分割での保存(mode="separate")
-    model.to_html(output_path='output.html', image_path=target_file, page_index=[0,2]) #出力ページの指定 (page_index=[0,2])
+    model.to_html(output_path='output.html', image_path=target_file, page_index=[0, 2]) #出力ページの指定 (page_index=[0,2])
     model.to_pdf(output_path='output.pdf', image_path=target_file) # Searchable-PDFの出力
 
     # 解析結果の可視化
