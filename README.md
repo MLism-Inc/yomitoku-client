@@ -8,30 +8,46 @@
 Yomitoku Clientは、AWS SageMaker上で提供されるYomitoku Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。
 Yomitoku Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
 
-## 主な機能
-- **自動コンテンツタイプ判定**: PDF / TIFF / PNG / JPEG を自動認識し、最適な形式で処理。
-- **ページ分割と非同期並列処理**: 複数ページで構成されるPDF・TIFFを自動でページ分割し、各ページを並列で推論。
-- **タイムアウト・リトライ制御**: connect_timeout, read_timeout, total_timeout により通信・処理全体を安全に制御。一時的な失敗時は指数バックオフで自動リトライ。
-- **サーキットブレーカー機能**: 連続失敗時は一時停止してエンドポイントを保護。
-- **堅牢なエラーハンドリング**: AWS通信エラー・JSONデコードエラー・タイムアウトなどを一元管理。
-- **MFA対応の安全なAWS認証** : 一時セッショントークンによる安全なエンドポイント接続。
-- **シンプルなインターフェース**: client("document.pdf") だけでページ分割・推論・結果統合を自動実行。
-- **多様な出力形式のサポート**: CSV / JSON / Markdown / HTML / PDF形式への変換
-- **検索可能PDF生成**: OCRテキストオーバーレイ付きの検索可能PDFの作成
-- **可視化機能**: 文書レイアウト分析、OCRの読み取り結果のレンダリング
-- **Jupyter Notebook対応**: 迅速に使えるサンプルコードとワークフロー
+## 主な機能 
+- AWS SageMakerで作成されたエンドポイントを簡単、安全かつ効率的に呼び出せます。
+- 読み取り結果を多様な出力形式(CSV / JSON / Markdown / HTML / PDF)への変換をサポートします。
+- 読み取り結果を可視化し、内容をすぐに確認できます。
+- バッチ処理機能で大量の文書を効率的に処理できます。
 
 
 ## クイックリンク
 - 📓 **[サンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
+## クイックスタート
+最もシンプルな実行例です。PDFを入力し、Markdownとして保存します。
+```python
+import asyncio
+from yomitoku_client import YomitokuClient, parse_pydantic_model
+
+ENDPOINT_NAME = "my-endpoint"
+AWS_REGION = "ap-northeast-1"
+target_file = "notebooks/sample/image.pdf"
+
+async def main():
+    async with YomitokuClient(
+        endpoint=ENDPOINT_NAME,
+        region=AWS_REGION,
+    ) as client:
+        result = await client.analyze_async(target_file)
+
+    model = parse_pydantic_model(result)
+    model.to_markdown(output_path="output.md", image_path=target_file)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 
 ## YomiToku-Pro Document Analyzer とは
-YomiToku-Pro Document AnalyzerはAWSのMarketplaceで提供されるSageMakerエンドポイントです。
+YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエンドポイントです。
 - 日本語文書に対して、文字の読み取り、文書のレイアウトの解析を高速・高精度に推論します。
-- 各モデルは日本語の文書画像に特化して学習されており、7000 文字を超える日本語文字の認識をサーポート、手書き文字、縦書きなど日本語特有のレイアウト構造の文書画像の解析も可能です。（日本語以外にも英語の文書に対しても対応しています）。
-- レイアウト解析、表の構造解析, 読み順推定機能により、文書画像のレイアウトの意味的構造を壊さずに情報を抽出することが可能です。
-- ページの回転補正：ページの回転の向きを推定し、自動で正しい向きの補正し、文書を解析します。
+- 各モデルは日本語の文書画像に特化して学習されており、7000文字を超える日本語文字の認識をサポート、手書き文字、縦書きなど日本語特有のレイアウト構造の文書画像の解析も可能です。（日本語以外に、英語文書にも対応しています）。
+- レイアウト解析・表の構造解析・読み順推定機能により、文書画像のレイアウトの意味的構造を壊さずに情報を抽出することが可能です。
+- ページの回転補正：ページの回転の向きを推定し、自動で正しい向きに補正してから解析します。
 - 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。外部サーバーや第三者に送信されることはなく、高いセキュリティとコンプライアンスを維持したまま文書解析が可能です。
 
 ## インストール
@@ -51,16 +67,18 @@ uv add yomitoku-client
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
-## クイックスタート
+## 単一ファイル解析（詳細版）
+- 複数ページの自動分割と並列推論
+- タイムアウト＋指数バックオフによる自動リトライ
+- サーキットブレーカーでエンドポイント保護
+- 代表的な通信・JSONデコード・タイムアウト例外の集約処理
 
-### SageMaker Endpointの呼び出し
 ```python
 from yomitoku_client import YomitokuClient
+from yomitoku_client import parse_pydantic_model
 
 ENDPOINT_NAME = "my-endpoint"
 AWS_REGION = "ap-northeast-1"
-MFA_SERIAL = None
-MFA_TOKEN = input("MFA Token: ") if MFA_SERIAL is not None else None
 
 target_file = "notebooks/sample/image.pdf"
 
@@ -68,49 +86,40 @@ async def main():
     async with YomitokuClient(
         endpoint=ENDPOINT_NAME,
         region=AWS_REGION,
-        mfa_serial=MFA_SERIAL,
-        mfa_token=MFA_TOKEN,
     ) as client:
         result = await client.analyze_async(target_file)
+
+    # フォーマットの変換
+    model = parse_pydantic_model(result)
+    model.to_csv(output_path="output.csv")     # CSVでの保存
+    model.to_markdown(output_path="output.md", image_path=target_file) #Markdownフォーマットでの保存
+    model.to_json(output_path='output.json', mode="separate")   # ページ分割での保存(mode="separate")
+    model.to_html(output_path='output.html', image_path=target_file, page_index=[0,2]) #出力ページの指定 (page_index=[0,2])
+    model.to_pdf(output_path='output.pdf', image_path=target_file) # Searchable-PDFの出力
+
+    # 解析結果の可視化
+    model.visualize(
+        image_path=target_file,
+        mode='ocr',
+        page_index=None,
+        output_directory="demo",
+    )
+
+    # レイアウト解析結果の保存
+    model.visualize(
+        image_path=target_file,
+        mode='layout',
+        page_index=None,
+        output_directory="demo",
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
-
-### 読み取り結果のフォーマット変換
-```python
-from yomitoku_client import parse_pydantic_model
-
-model = parse_pydantic_model(result)
-
-model.to_csv(output_path="output.csv")     # CSVでの保存
-model.to_markdown(output_path="output.md", image_path=target_file) #Markdownフォーマットでの保存
-model.to_json(output_path='output.json', mode="separate")   # ページ分割での保存(mode="separate")
-model.to_html(output_path='output.html', image_path=target_file, page_index=[0,2]) #出力ページの指定 (page_index=[0,2])
-model.to_pdf(output_path='output.pdf', image_path=target_file) # Searchable-PDFの出力
-```
-
-### 解析結果の可視化
-```python
-# OCRの解析結果の保存
-model.visualize(
-    image_path=target_file,
-    mode='ocr',
-    page_index=None,
-    output_directory="demo",
-)
-
-# レイアウト解析結果の保存
-model.visualize(
-    image_path=target_file,
-    mode='layout',
-    page_index=None,
-    output_directory="demo",
-)
-```
-
 ## バッチ処理機能
 
 YomiTokuClientはバッチ処理機能もサポートしており、安全かつ効率的に大量の文書を解析可能です。
 
-### 機能の特長
 - **フォルダ単位での一括解析** : 指定ディレクトリ内のPDF・画像ファイルを自動で検出し、並列処理を実行。
 - **中間ログ出力（process_log.jsonl）**: 各ファイルの処理結果・成功可否・処理時間・エラー内容を1行ごとに記録。（JSON Lines形式で出力され、後続処理や再実行管理に利用可能）
 - **上書き制御**: 既に解析済みのファイルはスキップ（overwrite=False）設定で効率化。

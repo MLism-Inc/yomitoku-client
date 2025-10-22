@@ -6,36 +6,73 @@
 
 </div>
 
-**Yomitoku Client** is a Python client library for handling outputs from the **Yomitoku Pro API** on **AWS SageMaker**. It converts OCR results into structured data and makes it easy to save and visualize them in formats such as CSV, JSON, Markdown, and PDF.
-It serves as a “bridge” between Yomitoku Pro’s high-accuracy OCR and your business applications.
+**Yomitoku Client** is a Python library designed to handle the output of the **Yomitoku Pro API** provided on **AWS SageMaker**.
+It converts OCR analysis results into structured data, making it easy to save or visualize them in various formats such as **CSV**, **JSON**, **Markdown**, and **PDF**.
+This library serves as a “bridge” between Yomitoku Pro’s high-accuracy OCR engine and your business applications.
+
+---
 
 ## Key Features
 
-* **Automatic content-type detection**: Automatically recognizes PDF / TIFF / PNG / JPEG and processes them with optimal settings.
-* **Page splitting & async parallelization**: Automatically splits multi-page PDF/TIFF and runs inference on each page in parallel.
-* **Timeouts & retries**: `connect_timeout`, `read_timeout`, and `total_timeout` safely control network/overall processing. Temporary failures are retried with exponential backoff.
-* **Circuit breaker**: Pauses requests after consecutive failures to protect the endpoint.
-* **Robust error handling**: Centralized handling for AWS communication errors, JSON decode errors, timeouts, and more.
-* **MFA-enabled AWS authentication**: Secure endpoint access via temporary session tokens.
-* **Simple interface**: `client("document.pdf")` performs page splitting, inference, and result aggregation automatically.
-* **Multiple output formats**: Convert to CSV / JSON / Markdown / HTML / PDF.
-* **Searchable PDF generation**: Produce searchable PDFs with OCR text overlays.
-* **Visualization**: Render document layout analysis and OCR reading results.
-* **Jupyter Notebook support**: Quick-start sample code and workflows included.
+* Simple, secure, and efficient integration with your own AWS SageMaker endpoint.
+* Support for multiple output formats: **CSV / JSON / Markdown / HTML / PDF**.
+* Built-in visualization to quickly review OCR and layout results.
+* Batch processing for efficient large-scale document analysis.
+
+---
 
 ## Quick Links
 
-* 📓 **[Sample Notebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** — Tutorial on connecting to an AWS SageMaker endpoint and analyzing documents
+* 📓 **[Sample Notebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial for connecting to an AWS SageMaker endpoint and running document analysis.
+
+---
+
+## Quick Start
+
+A minimal example — analyze a PDF and export the result as Markdown.
+
+```python
+import asyncio
+from yomitoku_client import YomitokuClient, parse_pydantic_model
+
+ENDPOINT_NAME = "my-endpoint"
+AWS_REGION = "ap-northeast-1"
+target_file = "notebooks/sample/image.pdf"
+
+async def main():
+    async with YomitokuClient(
+        endpoint=ENDPOINT_NAME,
+        region=AWS_REGION,
+    ) as client:
+        result = await client.analyze_async(target_file)
+
+    model = parse_pydantic_model(result)
+    model.to_markdown(output_path="output.md", image_path=target_file)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+> **Note:**
+> When running in Jupyter Notebook, you may need to add:
+>
+> ```python
+> import nest_asyncio; nest_asyncio.apply()
+> ```
+
+---
 
 ## What is YomiToku-Pro Document Analyzer?
 
-**YomiToku-Pro Document Analyzer** is a SageMaker endpoint offered on the AWS Marketplace.
+**YomiToku-Pro Document Analyzer** is an AWS Marketplace offering that provides an OCR and layout-analysis endpoint on SageMaker.
 
-* Performs fast and accurate text recognition and document layout analysis for Japanese documents.
-* Models are trained specifically for Japanese document images, supporting recognition of over 7,000 Japanese characters. They can also handle handwriting, vertical writing, and other Japanese-specific layouts. (English documents are also supported.)
-* With layout analysis, table structure analysis, and reading-order estimation, it extracts information while preserving the semantic layout of documents.
-* **Page rotation correction**: Estimates page rotation and automatically corrects orientation before analysis.
-* A dedicated SageMaker endpoint is created within each customer’s AWS account, and data is processed entirely within the AWS region. Nothing is sent to external servers or third parties, enabling highly secure and compliant document analysis.
+* Performs high-speed, high-accuracy recognition and layout analysis for Japanese documents.
+* Each model is trained specifically for Japanese document images and supports recognition of over **7,000 characters**, including handwritten and vertical text layouts. (English documents are also supported.)
+* Layout analysis, table structure extraction, and reading-order estimation allow information to be extracted without breaking the document’s logical structure.
+* **Automatic rotation correction:** Detects page orientation and automatically adjusts before analysis.
+* Each user runs their own dedicated SageMaker endpoint within their AWS account, ensuring all data is processed **securely within the AWS region** — never sent to external servers or third parties.
+
+---
 
 ## Installation
 
@@ -51,97 +88,85 @@ pip install yomitoku-client
 uv add yomitoku-client
 ```
 
-> **Note**: If `uv` is not installed:
+> **Note:** If `uv` is not installed, you can install it with:
 >
 > ```bash
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
-## Quick Start
+---
 
-### Calling a SageMaker Endpoint
+## Single-File Analysis (Detailed Example)
+
+* Automatic page splitting and parallel inference for multi-page documents
+* Automatic retries with exponential backoff
+* Circuit breaker for endpoint protection
+* Unified handling of communication, JSON-decode, and timeout errors
 
 ```python
-from yomitoku_client import YomitokuClient
+from yomitoku_client import YomitokuClient, parse_pydantic_model
 
 ENDPOINT_NAME = "my-endpoint"
 AWS_REGION = "ap-northeast-1"
-MFA_SERIAL = None
-MFA_TOKEN = input("MFA Token: ") if MFA_SERIAL is not None else None
-
 target_file = "notebooks/sample/image.pdf"
 
 async def main():
     async with YomitokuClient(
         endpoint=ENDPOINT_NAME,
         region=AWS_REGION,
-        mfa_serial=MFA_SERIAL,
-        mfa_token=MFA_TOKEN,
     ) as client:
         result = await client.analyze_async(target_file)
+
+    # Format conversion
+    model = parse_pydantic_model(result)
+    model.to_csv(output_path="output.csv")     # Save as CSV
+    model.to_markdown(output_path="output.md", image_path=target_file)  # Save as Markdown
+    model.to_json(output_path="output.json", mode="separate")  # Save per page (mode="separate")
+    model.to_html(output_path="output.html", image_path=target_file, page_index=[0, 2])  # Export selected pages
+    model.to_pdf(output_path="output.pdf", image_path=target_file)  # Generate searchable PDF
+
+    # Visualization
+    model.visualize(
+        image_path=target_file,
+        mode="ocr",
+        page_index=None,
+        output_directory="demo",
+    )
+
+    model.visualize(
+        image_path=target_file,
+        mode="layout",
+        page_index=None,
+        output_directory="demo",
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
 
-### Converting OCR Results
-
-```python
-from yomitoku_client import parse_pydantic_model
-
-model = parse_pydantic_model(result)
-
-model.to_csv(output_path="output.csv")  # Save as CSV
-model.to_markdown(output_path="output.md", image_path=target_file)  # Save as Markdown
-model.to_json(output_path="output.json", mode="separate")  # Save per page (mode="separate")
-model.to_html(output_path="output.html", image_path=target_file, page_index=[0, 2])  # Output subset of pages
-model.to_pdf(output_path="output.pdf", image_path=target_file)  # Output as Searchable PDF
-```
-
-### Visualizing Analysis Results
-
-```python
-# Save visualization of OCR results
-model.visualize(
-    image_path=target_file,
-    mode='ocr',
-    page_index=None,
-    output_directory="demo",
-)
-
-# Save visualization of layout analysis
-model.visualize(
-    image_path=target_file,
-    mode='layout',
-    page_index=None,
-    output_directory="demo",
-)
-```
+---
 
 ## Batch Processing
 
-**YomitokuClient** also supports batch processing, enabling safe and efficient analysis of large document sets.
+`YomitokuClient` also supports robust batch processing for large-scale, automated document analysis.
 
-### Highlights
+* **Folder-level batch analysis** – Automatically detects and processes PDFs and images in a given directory using parallel execution.
+* **Intermediate logging (`process_log.jsonl`)** – Logs each file’s success/failure status, processing time, and error messages in JSON Lines format, enabling post-processing and re-runs.
+* **Overwrite control** – Skip already processed files (`overwrite=False`) for efficiency.
+* **Retry support** – Easily reprocess only failed files using the log.
+* **Post-processing automation** – Load `process_log.jsonl` to automatically export Markdown and visualization results for successful files.
 
-* **Bulk analysis by folder**: Automatically discovers PDF/image files in a target directory and processes them in parallel.
-* **Intermediate log output (`process_log.jsonl`)**: Records per-file status, success/failure, processing time, and error details as JSON Lines, which is useful for post-processing and reruns.
-* **Overwrite control**: Skip already-processed files with `overwrite=False` for efficiency.
-* **Reruns**: Easily re-analyze only failed files based on the log.
-* **Log-driven post-processing**: Load `process_log.jsonl` to automatically export Markdown or visualizations for successful files.
-
-### Sample Code
+### Example
 
 ```python
 import asyncio
 import json
 import os
+from yomitoku_client import YomitokuClient, parse_pydantic_model
 
-from yomitoku_client import YomitokuClient
-from yomitoku_client import parse_pydantic_model
-
-# I/O settings
 target_dir = "notebooks/sample"
 outdir = "output"
 
-# SageMaker endpoint settings
 ENDPOINT_NAME = "my-endpoint"
 AWS_REGION = "ap-northeast-1"
 
@@ -156,7 +181,7 @@ async def main():
             output_dir=outdir,
         )
 
-    # Post-process only successful files from the log
+    # Post-process successful results
     with open(os.path.join(outdir, "process_log.jsonl"), "r", encoding="utf-8") as f:
         logs = [json.loads(line) for line in f if line.strip()]
 
@@ -170,17 +195,14 @@ async def main():
         if not log.get("success"):
             continue
 
-        # Load the JSON result produced during batch analysis
         with open(log["output_path"], "r", encoding="utf-8") as rf:
             result = json.load(rf)
 
         doc = parse_pydantic_model(result)
 
-        # Export as Markdown
         base = os.path.splitext(os.path.basename(log["file_path"]))[0]
         doc.to_markdown(output_path=os.path.join(out_markdown, f"{base}.md"))
 
-        # Save OCR visualization
         doc.visualize(
             image_path=log["file_path"],
             mode="ocr",
@@ -192,11 +214,15 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+---
+
 ## License
 
-Apache License 2.0 — see the `LICENSE` file for details.
+Apache License 2.0 — See the LICENSE file for details.
+
+---
 
 ## Contact
 
-For questions or support, feel free to reach out:
+For questions or support inquiries, please feel free to reach out:
 📧 **[support-aws-marketplace@mlism.com](mailto:support-aws-marketplace@mlism.com)**
