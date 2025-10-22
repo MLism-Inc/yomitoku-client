@@ -11,7 +11,7 @@ yomitoku_client = ["resource/*.ttf", "resource/*.txt", "samples/*.json", "sample
 
 [project]
 name = "yomitoku-client"
-version = "0.0.1"
+version = "0.0.2"
 authors = [{name = "Yomitoku Team", email = "support-aws-marketplace@mlism.com"}]
 description = "Yomitoku Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
 readme = "README.md"
