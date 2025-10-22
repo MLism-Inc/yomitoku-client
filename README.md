@@ -53,7 +53,7 @@ uv add yomitoku-client
 
 ## クイックスタート
 
-### Sagemaker Endpointの呼び出し
+### SageMaker Endpointの呼び出し
 ```python
 from yomitoku_client import YomitokuClient
 
