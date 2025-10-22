@@ -59,8 +59,8 @@ from yomitoku_client import YomitokuClient
 
 ENDPOINT_NAME = "my-endpoint"
 AWS_REGION = "ap-northeast-1"
-MFA_SERIAL = "arn:aws:iam::025897765203:mfa/iphone"
-MFA_TOKEN = input("MFA Token: ")
+MFA_SERIAL = None
+MFA_TOKEN = input("MFA Token: ") if MFA_SERIAL is not None else None
 
 target_file = "notebooks/sample/image.pdf"
 
