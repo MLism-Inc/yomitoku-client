@@ -52,6 +52,11 @@ YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marke
 * **Page rotation correction**: It estimates the page orientation and automatically corrects to the proper orientation before analysis.
 * A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. No external servers or third-party transfers are required, allowing document analysis with high security and compliance.
 
+Subscribe here:
+https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa
+
+How to use the service:
+
 ---
 
 ## Installation

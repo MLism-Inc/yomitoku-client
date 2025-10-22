@@ -38,6 +38,11 @@ YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエ�
 - ページの回転補正：ページの回転の向きを推定し、自動で正しい向きに補正してから解析します。
 - 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。外部サーバーや第三者に送信されることはなく、高いセキュリティとコンプライアンスを維持したまま文書解析が可能です。
 
+サブスクはこちらから: 
+https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa
+
+サービスの利用方法：
+
 ## インストール
 
 ### pipを使用
