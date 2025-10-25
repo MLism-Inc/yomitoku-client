@@ -80,15 +80,12 @@ uv add yomitoku-client
 > ```
 
 ---
-
 ## Single-File Analysis (Asynchronous Version)
 
-Key features included in this example:
-
-* Automatic page splitting and parallel inference for multi-page documents
-* Automatic retries with exponential backoff
-* Circuit-breaker support to protect the endpoint
-* Unified handling of typical errors such as communication failures, JSON decode errors, and timeouts
+* **Automatic Content Type Detection**: Automatically recognizes PDF, TIFF, PNG, and JPEG formats and processes them in the optimal way.
+* **Page Splitting and Asynchronous Parallel Processing**: Automatically splits multi-page PDFs and TIFFs into individual pages and performs inference in parallel.
+* **Timeout Management**: Equipped with timeout control and automatic retry mechanisms.
+* **Circuit Breaker Mechanism**: Temporarily halts requests to protect the endpoint when consecutive failures occur.
 
 ```python
 import asyncio

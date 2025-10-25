@@ -4,7 +4,6 @@ import os
 import math
 import json
 import time
-import random
 
 from dataclasses import dataclass
 from botocore.exceptions import BotoCoreError, ClientError
@@ -40,10 +39,6 @@ class YomiTokuInvokeError(YomiTokuError):
     pass
 
 
-class CircuitOpenError(YomiTokuError):
-    pass
-
-
 @dataclass
 class PagePayload:
     index: int
@@ -56,6 +51,19 @@ class PagePayload:
 class InvokeResult:
     index: int
     raw_dict: dict  # SageMaker JSON
+
+
+@dataclass
+class CircuitConfig:
+    threshold: int = 5  # サーキットブレーカーの失敗閾値
+    cooldown_sec: int = 30  # サーキットオープン後のクールダウン時間（秒）
+
+
+@dataclass
+class RequestConfig:
+    read_timeout: int = 60
+    connect_timeout: int = 10
+    max_attempts: int = 3
 
 
 def guess_content_type(path: Union[str]) -> str:
@@ -73,7 +81,9 @@ def guess_content_type(path: Union[str]) -> str:
 
 
 def load_image_bytes(
-    path_img: str, content_type: str, dpi=200
+    path_img: str,
+    content_type: str,
+    dpi=200,
 ) -> Tuple[list[bytes], str]:
     if content_type == "application/pdf":
         img_bytes = load_pdf_to_bytes(path_img, dpi=dpi)
@@ -88,7 +98,9 @@ def load_image_bytes(
 
 
 def with_mfa_session(
-    base_sess: boto3.Session, mfa_serial: str, token: str
+    base_sess: boto3.Session,
+    mfa_serial: str,
+    token: str,
 ) -> boto3.Session:
     """
     Create a session with MFA authentication.
@@ -120,12 +132,15 @@ def now_ms() -> int:
 def _merge_results(results: list[InvokeResult]) -> dict:
     base = dict(results[0].raw_dict)
     key = "result"
+    base[key][0]["num_page"] = results[0].index
     if not isinstance(base.get(key), list):
         return base
     for r in results[1:]:
         items = r.raw_dict.get(key, [])
         if isinstance(items, list):
-            base[key].extend(items)
+            for item in items:
+                item["num_page"] = r.index
+                base[key].append(item)
     return base
 
 
@@ -137,12 +152,8 @@ class YomitokuClient:
         mfa_serial: str = None,
         mfa_token: str = None,
         max_workers: int = 4,
-        read_timeout: int = 60,
-        connect_timeout: int = 10,
-        max_attempts: int = 3,
-        backoff_base: float = 0.2,
-        circuit_threshold: int = 5,
-        circuit_cooldown_sec: int = 30,
+        request_config: Optional[RequestConfig] = None,
+        circuit_config: Optional[CircuitConfig] = None,
     ):
         logger.info("YomitokuClient initialized")
         self.endpoint = endpoint
@@ -166,27 +177,30 @@ class YomitokuClient:
 
         self._pool = ThreadPoolExecutor(max_workers=max_workers)
 
-        self.read_timeout = read_timeout
-        self.connect_timeout = connect_timeout  # 接続タイムアウト（秒）
-        self.max_attempts = max_attempts  # 1リクエスト内での再試行回数
+        if request_config is None:
+            self._request_config = RequestConfig()
+        else:
+            self._request_config = request_config
+
+        if circuit_config is None:
+            self._circuit_config = CircuitConfig()
+        else:
+            self._circuit_config = circuit_config
 
         # Circuit breaker
         self._circuit_failures = 0  # 連続失敗カウント
         self._circuit_open_until = 0  # サーキットオープン中の終了時刻（ミリ秒）
-        self._backoff_base = backoff_base  # バックオフ基準値（秒）
-        self._circuit_threshold = circuit_threshold  # 失敗許容回数
-        self._circuit_cooldown_sec = (
-            circuit_cooldown_sec  # サーキットオープン時間（秒）
-        )
-
         self._connect()
 
     def _connect(self):
         # boto3の短期間再試行ポリシーを設定
         cfg = Config(
-            retries={"max_attempts": self.max_attempts, "mode": "standard"},
-            read_timeout=self.read_timeout,
-            connect_timeout=self.connect_timeout,
+            retries={
+                "max_attempts": self._request_config.max_attempts,
+                "mode": "standard",
+            },
+            read_timeout=self._request_config.read_timeout,
+            connect_timeout=self._request_config.connect_timeout,
         )
 
         self.sagemaker_runtime = self._sess.client("sagemaker-runtime", config=cfg)
@@ -212,12 +226,14 @@ class YomitokuClient:
             self._circuit_failures += 1
 
             # 失敗回数が閾値を超えたらサーキットオープン
-            if self._circuit_failures >= self._circuit_threshold:
-                self._circuit_open_until = now_ms() + self._circuit_cooldown_sec * 1000
+            if self._circuit_failures >= self._circuit_config.threshold:
+                self._circuit_open_until = (
+                    now_ms() + self._circuit_config.cooldown_sec * 1000
+                )
                 self._circuit_failures = 0
                 logger.warning(
                     "Circuit OPEN for %ss (endpoint=%s)",
-                    self._circuit_cooldown_sec,
+                    self._circuit_config.cooldown_sec,
                     self.endpoint,
                 )
 
@@ -252,10 +268,19 @@ class YomitokuClient:
                 index=payload.index,
                 raw_dict=data,
             )
-        except (BotoCoreError, ClientError) as e:
+        except BotoCoreError as e:
             self._record_failure()
             raise YomiTokuInvokeError(
                 f"AWS SDK error during invoke for page {payload.index}"
+            ) from e
+        except ClientError as e:
+            code = int(
+                e.response.get("ResponseMetadata", {}).get("HTTPStatusCode", 0) or 0
+            )
+            if code in (429, 500, 502, 503, 504):
+                self._record_failure()
+            raise YomiTokuInvokeError(
+                f"SageMaker invoke failed ({code}) for page {payload.index}: {e}"
             ) from e
         except json.JSONDecodeError as e:
             self._record_failure()
@@ -269,7 +294,9 @@ class YomitokuClient:
     ):
         fut = self._loop.run_in_executor(self._pool, self._invoke_one, payload)
         timeout = (
-            request_timeout if request_timeout is not None else (self.read_timeout + 5)
+            request_timeout
+            if request_timeout is not None
+            else (self._request_config.read_timeout + 5)
         )
 
         try:
@@ -297,7 +324,9 @@ class YomitokuClient:
         if total_timeout is None:
             par = min(len(page_index), max(1, self._pool._max_workers))
             base = (
-                request_timeout if request_timeout is not None else self.read_timeout
+                request_timeout
+                if request_timeout is not None
+                else self._request_config.read_timeout
             ) + 5
             total_timeout = base * math.ceil(len(page_index) / par) * 1.5
 

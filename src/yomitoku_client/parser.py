@@ -34,12 +34,14 @@ def parse_pydantic_model(data: Dict[str, Any]) -> MultiPageDocumentResult:
                 raise ValidationError("Empty result list")
             # Create pages from all results
             pages = [
-                DocumentResult(**result_data, num_page=i)
+                DocumentResult(**result_data)
                 for i, result_data in enumerate(data["result"])
             ]
         else:
             # Single result, create single page
-            pages = [DocumentResult(**data["result"], num_page=0)]
+            pages = [DocumentResult(**data["result"])]
+
+        pages = {page.num_page: page for page in pages}
 
         return MultiPageDocumentResult(pages=pages)
     except Exception as e:

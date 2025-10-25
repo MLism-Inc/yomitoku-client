@@ -82,7 +82,7 @@ ocr = [
 
 
 [project.scripts]
-yomitoku-client = "yomitoku_client.cli:main"
+yomitoku = "yomitoku_client.cli.analyze:main"
 
 [tool.uv]
 dev-dependencies = [

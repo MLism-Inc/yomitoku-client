@@ -436,7 +436,9 @@ class DocumentResult(BaseModel):
 class MultiPageDocumentResult(BaseModel):
     """Multi-page document result model"""
 
-    pages: List[DocumentResult] = Field(description="Pages of the document")
+    pages: Dict[int, DocumentResult] = Field(
+        description="Dictionary of page index to DocumentResult"
+    )
 
     def to_pdf(
         self,
@@ -880,7 +882,7 @@ class MultiPageDocumentResult(BaseModel):
                 mode=mode,
             )
 
-            path_output = basename + f"_{mode}_page_{index + 1}.jpg"
+            path_output = basename + f"_{mode}_page_{index}.jpg"
 
             if output_directory is not None:
                 path_output = os.path.join(output_directory, path_output)
