@@ -59,6 +59,7 @@ def get_format_ext(format: str) -> str:
     "-f",
     type=click.Choice(["json", "csv", "html", "md", "pdf"]),
     default="json",
+    help="Output format for the analysis result",
 )
 @click.option(
     "--output_dir",
@@ -108,6 +109,7 @@ def get_format_ext(format: str) -> str:
     "-s",
     default="combine",
     type=click.Choice(["combine", "separate"]),
+    help="Split mode for output files",
 )
 @click.option(
     "--ignore_line_break",
@@ -120,12 +122,14 @@ def get_format_ext(format: str) -> str:
     "-p",
     default=None,
     type=str,
+    help="Pages to analyze (e.g., '0,1,3-5')",
 )
 @click.option(
     "--intermediate_save",
     "-i",
     is_flag=True,
     default=False,
+    help="Save intermediate RAW JSON result",
 )
 def main(
     endpoint,

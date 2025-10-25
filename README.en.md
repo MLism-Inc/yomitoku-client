@@ -26,6 +26,12 @@ It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your
 
 ---
 
+## Quick Start (CLI)
+```bash
+yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md
+```
+See --help for available options.
+
 ## Quick Start (Synchronous Version)
 
 Below is the simplest usage example: you input a PDF and save the output as Markdown.

@@ -18,8 +18,14 @@ Yomitoku Proの高精度OCRと、業務アプリケーションを結びつけ�
 ## クイックリンク
 - 📓 **[サンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
+## クックスタート(CLI)
+```bash
+yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
+```
+オプションの詳細は`--help`を参照してください。
+
 ## クイックスタート(同期版)
-最もシンプルな実行例です。PDFを入力し、Markdownとして保存します。
+最もシンプルな実行プログラムの例です。PDFを入力し、Markdownとして保存します。
 ```python
 from yomitoku_client import YomitokuClient, parse_pydantic_model
 
