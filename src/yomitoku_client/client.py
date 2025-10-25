@@ -4,6 +4,7 @@ import os
 import math
 import json
 import time
+import random
 
 from dataclasses import dataclass
 from botocore.exceptions import BotoCoreError, ClientError
@@ -13,6 +14,7 @@ from pathlib import Path
 
 from concurrent.futures import ThreadPoolExecutor
 from typing import Union, Optional, Tuple
+import threading
 
 from yomitoku_client.utils import (
     load_pdf_to_bytes,
@@ -137,7 +139,7 @@ class YomitokuClient:
         max_workers: int = 4,
         read_timeout: int = 60,
         connect_timeout: int = 10,
-        max_attempts: int = 5,
+        max_attempts: int = 3,
         backoff_base: float = 0.2,
         circuit_threshold: int = 5,
         circuit_cooldown_sec: int = 30,
@@ -145,6 +147,8 @@ class YomitokuClient:
         logger.info("YomitokuClient initialized")
         self.endpoint = endpoint
         self.region = region
+
+        self._cb_lock = threading.Lock()
 
         base_session = boto3.Session(region_name=region)
         if mfa_serial and mfa_token:
@@ -163,19 +167,22 @@ class YomitokuClient:
         self._pool = ThreadPoolExecutor(max_workers=max_workers)
 
         self.read_timeout = read_timeout
-        self.connect_timeout = connect_timeout
-        self.max_attempts = max_attempts
+        self.connect_timeout = connect_timeout  # 接続タイムアウト（秒）
+        self.max_attempts = max_attempts  # 1リクエスト内での再試行回数
 
-        # Circuit breaker (超過エラー耐性)
-        self._circuit_failures = 0
-        self._circuit_open_until = 0
-        self._backoff_base = backoff_base
-        self._circuit_threshold = circuit_threshold
-        self._circuit_cooldown_sec = circuit_cooldown_sec
+        # Circuit breaker
+        self._circuit_failures = 0  # 連続失敗カウント
+        self._circuit_open_until = 0  # サーキットオープン中の終了時刻（ミリ秒）
+        self._backoff_base = backoff_base  # バックオフ基準値（秒）
+        self._circuit_threshold = circuit_threshold  # 失敗許容回数
+        self._circuit_cooldown_sec = (
+            circuit_cooldown_sec  # サーキットオープン時間（秒）
+        )
 
         self._connect()
 
     def _connect(self):
+        # boto3の短期間再試行ポリシーを設定
         cfg = Config(
             retries={"max_attempts": self.max_attempts, "mode": "standard"},
             read_timeout=self.read_timeout,
@@ -193,49 +200,69 @@ class YomitokuClient:
             raise
 
     def _record_success(self):
-        self._circuit_failures = 0
-
-    def _record_failure(self):
-        self._circuit_failures += 1
-        if self._circuit_failures >= self._circuit_threshold:
-            self._circuit_open_until = now_ms() + self._circuit_cooldown_sec * 1000
+        with self._cb_lock:
             self._circuit_failures = 0
 
+    def _record_failure(self):
+        with self._cb_lock:
+            # サーキットオープン中はカウントしない
+            if now_ms() < self._circuit_open_until:
+                return
+
+            self._circuit_failures += 1
+
+            # 失敗回数が閾値を超えたらサーキットオープン
+            if self._circuit_failures >= self._circuit_threshold:
+                self._circuit_open_until = now_ms() + self._circuit_cooldown_sec * 1000
+                self._circuit_failures = 0
+                logger.warning(
+                    "Circuit OPEN for %ss (endpoint=%s)",
+                    self._circuit_cooldown_sec,
+                    self.endpoint,
+                )
+
     def _check_circuit(self):
-        if now_ms() < self._circuit_open_until:
-            raise CircuitOpenError("Circuit is open; temporarily rejecting requests.")
+        """サーキットブレーカーの状態を確認。オープン中なら例外を投げ、リクエストを拒否する"""
+
+        with self._cb_lock:
+            if now_ms() < self._circuit_open_until:
+                remain = max(0, self._circuit_open_until - now_ms())
+                raise YomiTokuInvokeError(
+                    f"Circuit open; retry after ~{remain // 1000}s"
+                )
 
     def _invoke_one(self, payload):
-        attempt = 0
-        last_err: Optional[Exception] = None
-        while attempt < self.max_attempts:
-            self._check_circuit()
-            try:
-                resp = self.sagemaker_runtime.invoke_endpoint(
-                    EndpointName=self.endpoint,
-                    ContentType=payload.content_type,
-                    Body=payload.body,
-                )
-                raw = resp.get("Body").read()
-                text = (
-                    raw.decode("utf-8", errors="replace")
-                    if isinstance(raw, (bytes, bytearray))
-                    else raw
-                )
-                data = json.loads(text)
-                logger.info(f"{payload.source_name} [page {payload.index}] analyzed.")
-                self._record_success()
-                return InvokeResult(
-                    index=payload.index,
-                    raw_dict=data,
-                )
-            except (ClientError, BotoCoreError, json.JSONDecodeError, Exception) as e:
-                last_err = e
-                self._record_failure()
-                delay = self._backoff_base * (2**attempt) + (0.01 * (attempt + 1))
-                time.sleep(min(delay, 3.0))
-                attempt += 1
-        raise YomiTokuInvokeError(f"Invoke failed for page {payload.index}: {last_err}")
+        self._check_circuit()
+        try:
+            resp = self.sagemaker_runtime.invoke_endpoint(
+                EndpointName=self.endpoint,
+                ContentType=payload.content_type,
+                Body=payload.body,
+            )
+            raw = resp.get("Body").read()
+            text = (
+                raw.decode("utf-8", errors="replace")
+                if isinstance(raw, (bytes, bytearray))
+                else raw
+            )
+            data = json.loads(text)
+            logger.info(f"{payload.source_name} [page {payload.index}] analyzed.")
+            self._record_success()
+            return InvokeResult(
+                index=payload.index,
+                raw_dict=data,
+            )
+        except (BotoCoreError, ClientError) as e:
+            self._record_failure()
+            raise YomiTokuInvokeError(
+                f"AWS SDK error during invoke for page {payload.index}"
+            ) from e
+        except json.JSONDecodeError as e:
+            self._record_failure()
+            raise YomiTokuInvokeError("Failed to decode JSON response") from e
+        except Exception as e:
+            # 予期しない例外は即座に再スロー（ここでサーキット状態を汚さない）
+            raise e
 
     async def _ainvoke_one(
         self, payload: PagePayload, request_timeout: Optional[float] = None
