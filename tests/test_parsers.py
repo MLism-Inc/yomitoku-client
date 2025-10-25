@@ -5,11 +5,11 @@ Tests for Parsers
 import pytest
 
 from yomitoku_client.exceptions import DocumentAnalysisError, ValidationError
-from yomitoku_client.parser import (
+from yomitoku_client import parse_pydantic_model
+from yomitoku_client.models import (
     DocumentResult,
     Figure,
     Paragraph,
-    parse_pydantic_model,
     Table,
     TableCell,
     Word,
@@ -22,7 +22,7 @@ class TestDocumentResult:
     def test_document_result_creation(self):
         """Test creating DocumentResult"""
         doc = DocumentResult(
-            paragraphs=[], tables=[], figures=[], words=[], preprocess={}
+            num_page=0, paragraphs=[], tables=[], figures=[], words=[], preprocess={}
         )
         assert doc is not None
         assert doc.paragraphs == []
@@ -46,6 +46,7 @@ class TestDocumentResult:
         )
 
         doc = DocumentResult(
+            num_page=0,
             paragraphs=[paragraph],
             tables=[],
             figures=[],
@@ -144,7 +145,7 @@ class TestTable:
         )
 
         assert table.caption is not None
-        assert table.caption["contents"] == "Table caption"
+        assert table.caption.contents == "Table caption"
 
 
 class TestFigure:
@@ -169,7 +170,7 @@ class TestFigure:
         figure = Figure(box=[10, 10, 100, 50], order=1, paragraphs=[], caption=caption)
 
         assert figure.caption is not None
-        assert figure.caption["contents"] == "Figure caption"
+        assert figure.caption.contents == "Figure caption"
 
 
 class TestWord:

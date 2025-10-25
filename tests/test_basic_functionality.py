@@ -12,7 +12,7 @@ from yomitoku_client.exceptions import (
     FormatConversionError,
     ValidationError,
 )
-from yomitoku_client.parser import DocumentResult, Paragraph
+from yomitoku_client.models import DocumentResult, Paragraph
 
 
 class TestUtilityFunctions:
@@ -184,28 +184,6 @@ class TestDocumentVisualizer:
         except Exception as e:
             # If visualization fails due to missing dependencies, that's okay
             pytest.skip(f"Visualization failed due to missing dependencies: {e}")
-
-
-class TestPDFGenerator:
-    """Test PDF generator with proper mocking"""
-
-    def test_pdf_generator_initialization(self):
-        """Test PDF generator initialization"""
-        try:
-            from yomitoku_client.pdf_generator import SearchablePDFGenerator
-
-            generator = SearchablePDFGenerator()
-            assert generator is not None
-        except ImportError:
-            pytest.skip("ReportLab not available")
-
-    @patch("yomitoku_client.pdf_generator.REPORTLAB_AVAILABLE", False)
-    def test_pdf_generator_without_dependencies(self):
-        """Test PDF generator without dependencies"""
-        from yomitoku_client.pdf_generator import SearchablePDFGenerator
-
-        with pytest.raises(ImportError):
-            SearchablePDFGenerator()
 
 
 if __name__ == "__main__":

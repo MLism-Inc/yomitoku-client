@@ -4,9 +4,13 @@ Tests for Exception Classes
 
 import pytest
 
-from yomitoku_client.exceptions import (APIError, DocumentAnalysisError,
-                                        FormatConversionError, ValidationError,
-                                        YomitokuError)
+from yomitoku_client.exceptions import (
+    APIError,
+    DocumentAnalysisError,
+    FormatConversionError,
+    ValidationError,
+    YomitokuError,
+)
 
 
 class TestYomitokuError:
