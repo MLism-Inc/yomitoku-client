@@ -46,7 +46,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 1. 右下の「次へ」をクリックしてモデルの作成を完了します。
 1. エンドポイント名を設定し、エンドポイント設定のアタッチの項目の選択をします。既存のエンドポイント設定を使用する場合は「既存のエンドポイント設定の使用」を、新しくエンドポイント設定を作成する場合は「新しいエンドポイント設定の作成」を選択します。「既存のエンドポイント設定の使用」を選択した場合は使用するエンドポイント設定を選択して、バリアントの設定まで移ってください。「新しいエンドポイントの作成」を選択した場合について説明します。
 ![marketplace sagemaker configure6](images/marketplace-sagemaker-configure6.png)
-1. エンドポイント設定名を設定します。エンドポイントのタイプはプロビジョン済みを選択します。暗号化キーを設定することでSageMakerがS3にデータを保存する際に用いられるAWS KMSキーを、お客様が管理・指定できます。暗号化キーは適宜設定します。（暗号化キーの設定は必須ではありません。）暗号化キーについては詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/encryption-at-rest.html)をご確認ください。プロビジョン済みのタイプではエンドポイントを作成してから削除するまでモデルをホストするコンテナが起動し続けます。サーバーレス推論はGPUをサポートしていないのでYomiToku Proでサポートされていません。
+1. エンドポイント設定名を設定します。エンドポイントのタイプはプロビジョン済みを選択します。暗号化キーを設定することでSageMakerがS3にデータを保存する際に用いられるAWS KMSキーを、お客様が管理・指定できます。暗号化キーは適宜設定します。（暗号化キーの設定は必須ではありません。）暗号化キーについては詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/encryption-at-rest.html)をご確認ください。プロビジョン済みのタイプではエンドポイントを作成してから削除するまでモデルをホストするコンテナが起動し続けます。サーバーレス推論はGPUをサポートしていないのでYomiToku Proではご利用いただけません。
 ![marketplace sagemaker configure7](images/marketplace-sagemaker-configure7.png)
 1. 非同期呼び出し設定のトグルとデータキャプチャのトグルはオフに設定します。非同期呼び出し設定は現時点ではYomiToku Proでサポートされていません。データキャプチャはここでは利用しません。
 ![marketplace sagemaker configure8](images/marketplace-sagemaker-configure8.png)
