@@ -1,7 +1,11 @@
 # YomiToku Proのデプロイ
 
-YomiToku ProをAWS Marketplaceを用いてデプロイします。
-AWS SageMakerを用いる方法とAWS CloudFormationを用いる方法があります。
+YomiToku Clientをご利用頂くには、AWS Marketplaceを通じてYomiToku Proのサブスクリプションに加入し、デプロイする必要があります。
+
+YomiToku ProをAWS Marketplaceを通してデプロイするには、次の二つの方法があります。
+
+- AWS SageMaker単体によるデプロイ
+- AWS CloudFormationによるデプロイ
 
 AWS CloudFormationではAWS SageMakerのリソースなどをまとめてスタックで管理します。
 
@@ -103,16 +107,16 @@ CloudFormationでは、AWSリソースのセット全体をスタックという
 ![yomitoku marketplace screen](images/yomitoku-marketplace-screen.png)
 1. launch methodでAWS CloudFormationを選択します。
 ![marketplace cloudformation configuration1](images/marketplace-cloudformation-configure1.png)
-1.Software Versionは、特別な理由がない限り、最新版を選択します。Regionは、使用するものを選択します。
+1. Software Versionは、特別な理由がない限り、最新版を選択します。Regionは、使用するものを選択します。
 ![marketplace cloudformation configuration2](images/marketplace-cloudformation-configure2.png)
-1.YomiToku Proの2回目以降のデプロイの場合など、既にロールが存在している場合は「Use an existing service role」を選択し、そのロールを選択します。初めての場合は「Create and use a new service role」を選択します。AmazonSagemaker-ExecutionRoleから始まる名前のロールが作成されます。CloudFormationのスタック内で既存のS3バケットを利用（参照）したい場合や、その設定をスタックで管理したい場合には、バケット名を指定します。
+1. YomiToku Proの2回目以降のデプロイの場合など、既にロールが存在している場合は「Use an existing service role」を選択し、そのロールを選択します。初めての場合は「Create and use a new service role」を選択します。AmazonSagemaker-ExecutionRoleから始まる名前のロールが作成されます。CloudFormationのスタック内で既存のS3バケットを利用（参照）したい場合や、その設定をスタックで管理したい場合には、バケット名を指定します。
 ![marketplace cloudformation configuration3](images/marketplace-cloudformation-configure3.png)
 ![marketplace cloudformation configuration4](images/marketplace-cloudformation-configure4.png)
-1.スタック名を設定します。
+1. スタック名を設定します。
 ![marketplace cloudformation configuration5](images/marketplace-cloudformation-configure5.png)
-1.エンドポイント名、インスタンス数、インスタンスタイプを設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。インスタンスタイプは検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを入力します。その他の項目については変更しません。
+1. エンドポイント名、インスタンス数、インスタンスタイプを設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。インスタンスタイプは検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを入力します。その他の項目については変更しません。
 ![marketplace cloudformation configuration6](images/marketplace-cloudformation-configure6.png)
-1.タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html)をご確認ください。
+1. タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは[こちらの公式ドキュメント](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html)をご確認ください。
 ![marketplace cloudformation configuration7](images/marketplace-cloudformation-configure7.png)
 1. アクセス許可を必要に応じて設定します。デフォルトではユーザーの権限で実行されますが、IAMロールを指定してCloudFormationを実行したい場合は設定します。
 ![marketplace cloudformation configuration8](images/marketplace-cloudformation-configure8.png)
