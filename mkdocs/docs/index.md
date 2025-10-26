@@ -4,15 +4,16 @@
 
 YomiToku Clientとは、YomiTokuのAPIを呼び出して解析結果を可視化、フォーマット変換を行うためのPythonクライアントライブラリです。
 
-YomiToku ClientはYomiTokuの出力結果(.json)ファイルから次のデータ形式への変換に対応しています。
+YomiToku Clientは次のデータ形式でのファイル出力に対応しています。
 
-- CSV
-- Markdown
-- HTML
-- JSON
-- PDF
+- CSV: Excel等の表計算ソフトで開ける形式。データ分析に最適
+- Markdown: GitHubやドキュメント作成に便利な軽量マークアップ形式
+- HTML: ブラウザで直接表示可能。レポートやプレゼンテーションに活用
+- JSON: プログラムで処理しやすい構造化データ。API連携やデータベース保存に最適
+- PDF: 文書の管理に使われるデータ形式。OCRの結果に応じてテキストを検索可能
 
-YomiTokuの詳細については[YomiTokuのドキュメント](https://kotaro-kinoshita.github.io/yomitoku/)をご参照ください。
+YomiToku Clientを利用するためにはAWS MarketplaceでYomiToku Proのサブスクリプションが必要です。
+サブスクリプションいただいたYomitoku Proのデプロイについては[こちら](deploy-yomitoku-pro.md)
 
 ## お問い合わせ
 

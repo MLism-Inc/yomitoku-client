@@ -1,6 +1,6 @@
 # YomiToku Proのデプロイ
 
-YomiToku Clientをご利用頂くには、AWS Marketplaceを通じてYomiToku Proのサブスクリプションに加入し、デプロイする必要があります。
+YomiToku Clientをご利用いただくには、AWS Marketplaceを通じてYomiToku Proのサブスクリプションに加入し、YomiToku ProのSageMakerエンドポイントをデプロイする必要があります。
 
 YomiToku ProをAWS Marketplaceを通してデプロイするには、次の二つの方法があります。
 
