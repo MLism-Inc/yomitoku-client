@@ -9,9 +9,9 @@ AWS SageMakerの方が詳細に設定・管理できますが、AWS CloudFormati
 
 ## 準備
 
-### AWS IAMユーザーの作成
+### IAMの権限確認
 
-YomiToku Proを利用するためのAWS IAMユーザーを作成していない場合はAmazonSageMakerFullAccessの権限を持つIAMユーザーを作成します。
+Yomitoku Proのデプロイには[AmazonSageMakerFullAccess](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/AmazonSageMakerFullAccess.html)というIAM Policyの権限が必要です。利用するIAMユーザー(もしくはIAMロール)に権限の権限が十分でない場合はそちらの付与をお願いします。
 
 もし以降の手順の中で権限エラーが発生した場合はクラウド管理者にお問い合わせください。
 
