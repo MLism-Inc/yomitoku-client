@@ -1,0 +1,4 @@
+site_name: Yomitoku Client
+nav:
+  - Home: 'index.md'
+  - How To Deploy: 'deploy-yomitoku-pro.md'
