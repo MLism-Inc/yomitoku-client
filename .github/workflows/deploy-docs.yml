@@ -32,6 +32,9 @@ jobs:
 
       - name: Deploy to GitHub Pages
         run: |
-          # use temporary path "mkdocs/mkdocs.yml"
+          cd mkdocs # temporary setting
+
           # want to use "uv run -f mkdocs/mkdocs.yml --force" but use the following command because the dependency in pyproject.toml is broken
-          uv run --no-project --with mkdocs gh-deploy -f mkdocs/mkdocs.yml --force
+          uv run --no-project --with mkdocs gh-deploy --force
+
+          cd .. # temporary setting
