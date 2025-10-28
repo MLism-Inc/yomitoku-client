@@ -23,7 +23,7 @@ jobs:
         uses: astral-sh/setup-uv@v1
 
       - name: Install dependencies from pyproject.toml
-        run: uv sync --with docs
+        run: uv sync --extra docs
 
       - name: Deploy to GitHub Pages
         run: uv run mkdocs gh-deploy -f mkdocs/mkdocs.yml --force # temporary folder setting
