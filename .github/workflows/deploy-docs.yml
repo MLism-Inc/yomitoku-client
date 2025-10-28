@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - chore/docs-cicd # for debug
 
 permissions:
   contents: write
