@@ -1,0 +1,29 @@
+name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - chore/docs-cicd # for debug
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Setup uv and Python
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install dependencies from pyproject.toml
+        run: uv sync --with docs
+
+      - name: Deploy to GitHub Pages
+        run: uv run mkdocs gh-deploy -f mkdocs/mkdocs.yml --force # temporary folder setting
