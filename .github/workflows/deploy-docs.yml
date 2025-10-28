@@ -25,16 +25,12 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: |
-          # want to use "uv sync --extra docs" but the depencency in pyproject.toml is broken
-          uv venv
-          uv pip install mkdocs mkdocs-material
+        run: uv sync --extra docs
 
       - name: Deploy to GitHub Pages
         run: |
           cd mkdocs # temporary setting
 
-          # want to use "uv run mkdocs gh-deploy --force" but use the following command because the dependency in pyproject.toml is broken
-          uv run --no-project --with mkdocs --with mkdocs-material mkdocs gh-deploy --force
+          uv run mkdocs gh-deploy --force
 
           cd .. # temporary setting
