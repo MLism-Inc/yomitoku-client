@@ -35,6 +35,6 @@ jobs:
           cd mkdocs # temporary setting
 
           # want to use "uv run mkdocs gh-deploy --force" but use the following command because the dependency in pyproject.toml is broken
-          uv run --no-project --with "mkdocs mkdocs-material" mkdocs gh-deploy --force
+          uv run --no-project --with mkdocs --with mkdocs-material mkdocs gh-deploy --force
 
           cd .. # temporary setting
