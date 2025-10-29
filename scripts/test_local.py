@@ -15,8 +15,7 @@ def run_command(cmd, description):
     print(f"Running: {' '.join(cmd)}")
 
     try:
-        result = subprocess.run(
-            cmd, check=True, capture_output=True, text=True)
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
         print(f"✅ {description} - Success")
         if result.stdout:
             print(result.stdout)
@@ -44,7 +43,7 @@ def main():
     # 1. Code formatting check
     results.append(
         run_command(
-            ["python", "-m", "black", "--check", "src/", "tests/"],
+            [sys.executable, "-m", "black", "--check", "src/", "tests/"],
             "Black code formatting check",
         )
     )
@@ -52,7 +51,7 @@ def main():
     # 2. Import sorting check
     results.append(
         run_command(
-            ["python", "-m", "isort", "--check-only", "src/", "tests/"],
+            [sys.executable, "-m", "isort", "--check-only", "src/", "tests/"],
             "isort import sorting check",
         )
     )
@@ -60,19 +59,21 @@ def main():
     # 3. Code quality check
     results.append(
         run_command(
-            ["python", "-m", "flake8", "src/", "tests/"], "flake8 code quality check"
+            [sys.executable, "-m", "flake8", "src/", "tests/"],
+            "flake8 code quality check",
         )
     )
 
     # 4. Type checking
-    results.append(run_command(
-        ["python", "-m", "mypy", "src/"], "mypy type checking"))
+    results.append(
+        run_command([sys.executable, "-m", "mypy", "src/"], "mypy type checking")
+    )
 
     # 5. Run tests
     results.append(
         run_command(
             [
-                "python",
+                sys.executable,
                 "-m",
                 "pytest",
                 "tests/",
@@ -85,14 +86,13 @@ def main():
     )
 
     # 6. Build package test
-    results.append(run_command(
-        ["python", "-m", "build"], "Build package test"))
+    results.append(run_command([sys.executable, "-m", "build"], "Build package test"))
 
     # 7. Package quality check
     results.append(
         run_command(
-            ["python", "-m", "twine", "check",
-                "dist/*"], "twine package quality check"
+            [sys.executable, "-m", "twine", "check", "dist/*"],
+            "twine package quality check",
         )
     )
 

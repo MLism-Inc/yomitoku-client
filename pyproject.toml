@@ -63,6 +63,7 @@ dev = [
     "twine>=4.0.0",
 ]
 docs = [
+    "pre-commit>=3.6.0",
     "sphinx>=6.0.0",
     "sphinx-rtd-theme>=1.2.0",
     "mkdocs>=1.6.1",
