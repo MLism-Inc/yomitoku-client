@@ -66,13 +66,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Lint Markdown with markdownlint-cli2
-        uses: DavidAnson/markdownlint-cli2-action@v20
-        with:
-          globs: '**/*.md'
-
       - name: Check links with lychee
         uses: lycheeverse/lychee-action@v2
         with:
           args: --glob "**/*.md"
           fail: true
+
+      - name: Lint Markdown with markdownlint-cli2
+        uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: '**/*.md'
