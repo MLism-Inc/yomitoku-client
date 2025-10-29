@@ -66,17 +66,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install -g markdownlint-cli2
-
       - name: Lint Markdown with markdownlint-cli2
-        run: markdownlint-cli2 "**/*.md"
+        uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: '**/*.md'
 
       - name: Check links with lychee
         uses: lycheeverse/lychee-action@v2
