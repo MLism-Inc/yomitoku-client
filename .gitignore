@@ -78,3 +78,6 @@ Thumbs.db
 *.log
 output.*
 test_output.*
+
+# bandit output file
+bandit-report.json

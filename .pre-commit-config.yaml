@@ -22,10 +22,10 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
-        args: [--max-line-length=88, --extend-ignore=E203,W503]
+        args: [--max-line-length=88, '--extend-ignore=E203, W503']
 
   # Auto-fix common issues
-  - repo: https://github.com/pycqa/autopep8
+  - repo: https://github.com/hhatto/autopep8
     rev: v2.3.1
     hooks:
       - id: autopep8
@@ -41,10 +41,11 @@ repos:
 
   # Security check
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
+    rev: 1.8.6
     hooks:
       - id: bandit
-        args: [-r, src/, -f, json, -o, bandit-report.json]
+        files: ^src/.*\.py$
+        args: [-fjson, -obandit-report.json]
         exclude: tests/
 
   # Docstring check
@@ -54,9 +55,15 @@ repos:
       - id: pydocstyle
         args: [--convention=google]
 
+  # UV lock latest version check
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.5
+    hooks:
+      - id: uv-lock
+
   # General checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
