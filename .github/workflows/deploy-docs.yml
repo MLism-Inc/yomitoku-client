@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0 
 
-      - name: Setup uv and Python
+      - name: Setup uv
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true

@@ -67,6 +67,7 @@ docs = [
     "sphinx-rtd-theme>=1.2.0",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.5.44",
+    "mdformat>=1.0.0"
 ]
 notebooks = [
     "jupyter>=1.0.0",
