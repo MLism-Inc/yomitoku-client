@@ -69,7 +69,7 @@ jobs:
       - name: Check links with lychee
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --glob "**/*.md"
+          args: "**/*.md"
           fail: true
 
       - name: Lint Markdown with markdownlint-cli2
