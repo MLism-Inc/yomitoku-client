@@ -3,13 +3,12 @@ CSV Renderer - For converting document data to CSV format
 """
 
 import csv
-import os
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 from ..exceptions import FormatConversionError
-from ..parsers.sagemaker_parser import DocumentResult, Figure, Paragraph, Table
+from ..models import DocumentResult, Figure, Paragraph, Table
 from ..utils import save_figure, table_to_csv
 from .base import BaseRenderer
 

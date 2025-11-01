@@ -7,178 +7,12 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from yomitoku_client.client import YomitokuClient
-from yomitoku_client.exceptions import (DocumentAnalysisError,
-                                        FormatConversionError, ValidationError)
-from yomitoku_client.parsers.sagemaker_parser import DocumentResult, Paragraph
-
-
-class TestBasicClientFunctionality:
-    """Test basic client functionality with proper mocking"""
-
-    def test_client_initialization(self):
-        """Test client initialization"""
-        client = YomitokuClient()
-        assert client is not None
-        assert client.parser is not None
-
-    def test_get_supported_formats(self):
-        """Test getting supported formats"""
-        client = YomitokuClient()
-        formats = client.get_supported_formats()
-        assert "csv" in formats
-        assert "markdown" in formats
-        assert "html" in formats
-        assert "json" in formats
-        assert "pdf" in formats
-
-    def test_parse_valid_json(self):
-        """Test parsing valid JSON"""
-        client = YomitokuClient()
-
-        valid_json = """
-        {
-            "result": [
-                {
-                    "paragraphs": [
-                        {
-                            "contents": "Sample paragraph",
-                            "box": [10, 10, 100, 30],
-                            "order": 1,
-                            "role": "paragraph"
-                        }
-                    ],
-                    "tables": [],
-                    "figures": [],
-                    "words": [],
-                    "preprocess": {}
-                }
-            ]
-        }
-        """
-
-        result = client.parse_json(valid_json)
-        assert hasattr(result, 'pages')
-        assert len(result.pages) > 0
-        assert isinstance(result.pages[0], DocumentResult)
-
-    def test_parse_invalid_json(self):
-        """Test parsing invalid JSON"""
-        client = YomitokuClient()
-        with pytest.raises(ValidationError):
-            client.parse_json("invalid json")
-
-    def test_parse_empty_result(self):
-        """Test parsing empty result"""
-        client = YomitokuClient()
-        with pytest.raises(DocumentAnalysisError):
-            client.parse_json('{"result": []}')
-
-    def test_convert_to_csv(self):
-        """Test converting to CSV format"""
-        client = YomitokuClient()
-
-        paragraph = Paragraph(
-            contents="Sample paragraph",
-            box=[10, 10, 100, 30],
-            order=1,
-            role="paragraph",
-        )
-
-        data = DocumentResult(
-            paragraphs=[paragraph], tables=[
-            ], figures=[], words=[], preprocess={}
-        )
-
-        result = client.convert_to_format([data], "csv")
-        assert isinstance(result, str)
-        assert len(result) > 0
-
-    def test_convert_to_html(self):
-        """Test converting to HTML format"""
-        client = YomitokuClient()
-
-        paragraph = Paragraph(
-            contents="Sample paragraph",
-            box=[10, 10, 100, 30],
-            order=1,
-            role="paragraph",
-        )
-
-        data = DocumentResult(
-            paragraphs=[paragraph], tables=[
-            ], figures=[], words=[], preprocess={}
-        )
-
-        result = client.convert_to_format([data], "html")
-        assert isinstance(result, str)
-        assert len(result) > 0
-        # HTML renderer outputs paragraph tags
-        assert "<p>" in result.lower()
-
-    def test_convert_to_json(self):
-        """Test converting to JSON format"""
-        client = YomitokuClient()
-
-        paragraph = Paragraph(
-            contents="Sample paragraph",
-            box=[10, 10, 100, 30],
-            order=1,
-            role="paragraph",
-        )
-
-        data = DocumentResult(
-            paragraphs=[paragraph], tables=[
-            ], figures=[], words=[], preprocess={}
-        )
-
-        result = client.convert_to_format([data], "json")
-        assert isinstance(result, str)
-        assert len(result) > 0
-        # JSON renderer outputs with document headers, need to extract JSON part
-        import json
-        import re
-
-        # Extract JSON part after the document header
-        json_match = re.search(r"\{.*\}", result, re.DOTALL)
-        if json_match:
-            json_str = json_match.group()
-            parsed = json.loads(json_str)
-            assert isinstance(parsed, (dict, list))
-        else:
-            # If no JSON found, just check it's a string
-            assert len(result) > 0
-
-    def test_convert_to_markdown(self):
-        """Test converting to Markdown format"""
-        client = YomitokuClient()
-
-        paragraph = Paragraph(
-            contents="Sample paragraph",
-            box=[10, 10, 100, 30],
-            order=1,
-            role="paragraph",
-        )
-
-        data = DocumentResult(
-            paragraphs=[paragraph], tables=[
-            ], figures=[], words=[], preprocess={}
-        )
-
-        result = client.convert_to_format([data], "markdown")
-        assert isinstance(result, str)
-        assert len(result) > 0
-
-    def test_convert_to_unsupported_format(self):
-        """Test converting to unsupported format"""
-        client = YomitokuClient()
-
-        data = DocumentResult(
-            figures=[], paragraphs=[], preprocess={}, tables=[], words=[]
-        )
-
-        with pytest.raises(FormatConversionError):
-            client.convert_to_format(data, "unsupported_format")
+from yomitoku_client.exceptions import (
+    DocumentAnalysisError,
+    FormatConversionError,
+    ValidationError,
+)
+from yomitoku_client.models import DocumentResult, Paragraph
 
 
 class TestUtilityFunctions:
@@ -186,8 +20,11 @@ class TestUtilityFunctions:
 
     def test_rectangle_calculations(self):
         """Test rectangle calculation functions"""
-        from yomitoku_client.utils import (calc_distance, calc_overlap_ratio,
-                                           is_contained)
+        from yomitoku_client.utils import (
+            calc_distance,
+            calc_overlap_ratio,
+            is_contained,
+        )
 
         rect1 = [100, 100, 200, 200]
         rect2 = [150, 150, 250, 250]
@@ -215,11 +52,13 @@ class TestUtilityFunctions:
 
     def test_text_processing_functions(self):
         """Test text processing utility functions"""
-        from yomitoku_client.utils import (escape_markdown_special_chars,
-                                           is_dot_list_item,
-                                           is_numeric_list_item,
-                                           remove_dot_prefix,
-                                           remove_numeric_prefix)
+        from yomitoku_client.utils import (
+            escape_markdown_special_chars,
+            is_dot_list_item,
+            is_numeric_list_item,
+            remove_dot_prefix,
+            remove_numeric_prefix,
+        )
 
         # Test markdown escaping
         text = "This has *bold* and `code`"
@@ -256,8 +95,7 @@ class TestRendererFactory:
         from yomitoku_client.renderers.factory import RendererFactory
 
         formats = RendererFactory.get_supported_formats()
-        expected_formats = ["csv", "markdown",
-                            "md", "html", "htm", "json", "pdf"]
+        expected_formats = ["csv", "markdown", "md", "html", "htm", "json", "pdf"]
         for fmt in expected_formats:
             assert fmt in formats
 
@@ -332,8 +170,7 @@ class TestDocumentVisualizer:
 
         class MockResults:
             def __init__(self):
-                self.paragraphs = [MockElement(
-                    [10, 10, 50, 30], 1, "paragraph")]
+                self.paragraphs = [MockElement([10, 10, 50, 30], 1, "paragraph")]
                 self.tables = [MockElement([60, 10, 100, 50], 2, "table")]
                 self.figures = [MockElement([110, 10, 150, 50], 3, "figure")]
 
@@ -346,30 +183,7 @@ class TestDocumentVisualizer:
             assert output.shape == img.shape
         except Exception as e:
             # If visualization fails due to missing dependencies, that's okay
-            pytest.skip(
-                f"Visualization failed due to missing dependencies: {e}")
-
-
-class TestPDFGenerator:
-    """Test PDF generator with proper mocking"""
-
-    def test_pdf_generator_initialization(self):
-        """Test PDF generator initialization"""
-        try:
-            from yomitoku_client.pdf_generator import SearchablePDFGenerator
-
-            generator = SearchablePDFGenerator()
-            assert generator is not None
-        except ImportError:
-            pytest.skip("ReportLab not available")
-
-    @patch("yomitoku_client.pdf_generator.REPORTLAB_AVAILABLE", False)
-    def test_pdf_generator_without_dependencies(self):
-        """Test PDF generator without dependencies"""
-        from yomitoku_client.pdf_generator import SearchablePDFGenerator
-
-        with pytest.raises(ImportError):
-            SearchablePDFGenerator()
+            pytest.skip(f"Visualization failed due to missing dependencies: {e}")
 
 
 if __name__ == "__main__":

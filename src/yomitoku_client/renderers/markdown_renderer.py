@@ -9,9 +9,8 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 
 from ..exceptions import FormatConversionError
-from ..parsers.sagemaker_parser import DocumentResult, Figure, Paragraph, Table
-from ..utils import (escape_markdown_special_chars, remove_dot_prefix,
-                     save_image)
+from ..models import DocumentResult, Figure, Paragraph, Table
+from ..utils import escape_markdown_special_chars, remove_dot_prefix, save_image
 from .base import BaseRenderer
 
 
@@ -51,6 +50,7 @@ class MarkdownRenderer(BaseRenderer):
     def render(
         self,
         data: DocumentResult,
+        page: int = 0,
         img: Optional[np.ndarray] = None,
         output_path: Optional[str] = None,
         **kwargs,
@@ -97,20 +97,17 @@ class MarkdownRenderer(BaseRenderer):
             )
 
         # Process figures if requested
-        if (
-            self.export_figure
-            and img is not None
-            and output_path
-            and hasattr(data, "figures")
-        ):
+        if self.export_figure and img is not None and hasattr(data, "figures"):
             figure_elements = self._figures_to_markdown(
-                data.figures, img, output_path)
+                data.figures,
+                img,
+                output_path=output_path,
+                page=page,
+            )
             elements.extend(figure_elements)
 
         # Sort by order
         elements.sort(key=lambda x: x["order"])
-
-        # Convert to markdown string
         return self._elements_to_markdown_string(elements)
 
     def save(
@@ -129,8 +126,7 @@ class MarkdownRenderer(BaseRenderer):
             img: Optional image array for figure extraction
             **kwargs: Additional rendering options
         """
-        md_content = self.render(
-            data, img=img, output_path=output_path, **kwargs)
+        md_content = self.render(data, img=img, output_path=output_path, **kwargs)
 
         try:
             with open(output_path, "w", encoding="utf-8") as f:
@@ -316,7 +312,11 @@ class MarkdownRenderer(BaseRenderer):
         return re.match(r"^[·\-●·・]", contents) is not None
 
     def _figures_to_markdown(
-        self, figures: List[Figure], img: np.ndarray, output_path: str
+        self,
+        figures: List[Figure],
+        img: np.ndarray,
+        output_path: str,
+        page: int = 0,
     ) -> List[Dict[str, Any]]:
         """
         Convert figures to Markdown with image files
@@ -336,12 +336,12 @@ class MarkdownRenderer(BaseRenderer):
             x1, y1, x2, y2 = map(int, figure.box)
             figure_img = img[y1:y2, x1:x2, :]
 
-            save_dir = os.path.dirname(output_path)
-            save_dir = os.path.join(save_dir, self.figure_dir)
+            outdir = os.path.dirname(output_path)
+            basename, ext = os.path.splitext(os.path.basename(output_path))
+            save_dir = os.path.join(outdir, self.figure_dir)
             os.makedirs(save_dir, exist_ok=True)
 
-            filename = os.path.splitext(os.path.basename(output_path))[0]
-            figure_name = f"{filename}_figure_{i}.png"
+            figure_name = f"{basename}_figure_{i}_p_{page}.png"
             figure_path = os.path.join(save_dir, figure_name)
             save_image(figure_img, figure_path)
 
@@ -401,7 +401,7 @@ class MarkdownRenderer(BaseRenderer):
             elif element["type"] == "figure":
                 output.append(element["element"])
 
-        return "".join(output)
+        return "\n".join(output)
 
     def get_supported_formats(self) -> list:
         """Get supported formats"""

@@ -1,32 +1,53 @@
 # Yomitoku Client
-
 <div align="center">
 
-[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](docs/en/README.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](docs/ja/README.md)
-
-**上記のボタンをクリックして、お好みの言語でドキュメントを表示してください**
+[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](README.en.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](README.md)
 
 </div>
 
----
+Yomitoku Clientは、AWS SageMaker上で提供されるYomitoku Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。
+Yomitoku Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
+
+## 主な機能 
+- AWS SageMakerで作成されたエンドポイントを簡単、安全かつ効率的に呼び出せます。
+- 読み取り結果を多様な出力形式(CSV / JSON / Markdown / HTML / PDF)への変換をサポートします。
+- 読み取り結果を可視化し、内容をすぐに確認できます。
+- バッチ処理機能で大量の文書を効率的に処理できます。
+
 
 ## クイックリンク
+- 📓 **[サンプルNotebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
-- 📖 **[English Documentation](docs/en/README.md)** - 英語での完全ガイド
-- 📖 **[日本語ドキュメント](docs/ja/README.md)** - 日本語での完全ガイド
-- 📓 **[AWS SageMaker接続サービス](notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
-- 📓 **[結果パーサーとデータ変換](notebooks/yomitoku-client-parser.ipynb)** - SageMaker結果の解析、フォーマット変換、可視化のチュートリアル
+## クックスタート(CLI)
+```bash
+yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
+```
+オプションの詳細は`--help`を参照してください。
 
-Yomitoku Clientは、SageMaker Yomitoku APIの出力を処理し、包括的なフォーマット変換と可視化機能を提供するPythonライブラリです。Yomitoku ProのOCR分析と実用的なデータ処理ワークフローを橋渡しします。
+## クイックスタート(同期版)
+最もシンプルな実行プログラムの例です。PDFを入力し、Markdownとして保存します。
+```python
+from yomitoku_client import YomitokuClient, parse_pydantic_model
 
-## 主な機能
+with YomitokuClient(endpoint="my-endpoint", region="ap-northeast-1") as client:
+    result = client.analyze("notebooks/sample/image.pdf")
 
-- **SageMaker統合**: Yomitoku Pro OCR結果のシームレスな処理
-- **複数フォーマット対応**: CSV、Markdown、HTML、JSON、PDF形式への変換
-- **検索可能PDF生成**: OCRテキストオーバーレイ付きの検索可能PDFの作成
-- **高度な可視化**: 文書レイアウト分析、要素関係、信頼度スコア
-- **ユーティリティ関数**: 矩形計算、テキスト処理、画像操作
-- **Jupyter Notebook対応**: すぐに使える例とワークフロー
+model = parse_pydantic_model(result)
+model.to_markdown(output_path="output.md")
+```
+
+## YomiToku-Pro Document Analyzer とは
+YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエンドポイントです。
+- 日本語文書に対して、文字の読み取り、文書のレイアウトの解析を高速・高精度に推論します。
+- 各モデルは日本語の文書画像に特化して学習されており、7000文字を超える日本語文字の認識をサポート、手書き文字、縦書きなど日本語特有のレイアウト構造の文書画像の解析も可能です。（日本語以外に、英語文書にも対応しています）。
+- レイアウト解析・表の構造解析・読み順推定機能により、文書画像のレイアウトの意味的構造を壊さずに情報を抽出することが可能です。
+- ページの回転補正：ページの回転の向きを推定し、自動で正しい向きに補正してから解析します。
+- 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。外部サーバーや第三者に送信されることはなく、高いセキュリティとコンプライアンスを維持したまま文書解析が可能です。
+
+サブスクはこちらから: 
+https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa
+
+サービスの利用方法：
 
 ## インストール
 
@@ -45,172 +66,134 @@ uv add yomitoku-client
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
-## クイックスタート
-
-### ステップ1: SageMakerエンドポイントに接続
+## 単一ファイル解析（非同期版）
+- **自動コンテンツタイプ判定**: PDF / TIFF / PNG / JPEG を自動認識し、最適な形式で処理
+- **ページ分割と非同期並列処理**: 複数ページで構成されるPDF・TIFFを自動でページ分割し、各ページを並列で推論
+- **タイムアウト制御**: タイムアウトと自動リトライ機能搭載
+- **サーキットブレーカー機能**: 連続失敗時は一時停止してエンドポイントを保護
 
 ```python
-import boto3
-import json
-from yomitoku_client.parsers.sagemaker_parser import SageMakerParser
+import asyncio
+from yomitoku_client import YomitokuClient
+from yomitoku_client import parse_pydantic_model
 
-# SageMakerランタイムクライアントを初期化
-sagemaker_runtime = boto3.client('sagemaker-runtime')
-ENDPOINT_NAME = 'your-yomitoku-endpoint'
+ENDPOINT_NAME = "my-endpoint"
+AWS_REGION = "ap-northeast-1"
 
-# パーサーを初期化
-parser = SageMakerParser()
+target_file = "notebooks/sample/image.pdf"
 
-# 文書でSageMakerエンドポイントを呼び出し
-with open('document.pdf', 'rb') as f:
-    response = sagemaker_runtime.invoke_endpoint(
-        EndpointName=ENDPOINT_NAME,
-        ContentType='application/pdf',  # または 'image/png', 'image/jpeg'
-        Body=f.read(),
+async def main():
+    async with YomitokuClient(
+        endpoint=ENDPOINT_NAME,
+        region=AWS_REGION,
+    ) as client:
+        result = await client.analyze_async(target_file)
+
+    # フォーマットの変換
+    model = parse_pydantic_model(result)
+    model.to_csv(output_path="output.csv")     # CSVでの保存
+    model.to_markdown(output_path="output.md", image_path=target_file) #Markdownフォーマットでの保存(図・画像出力)
+    model.to_json(output_path='output.json', mode="separate")   # ページ分割での保存(mode="separate")
+    model.to_html(output_path='output.html', image_path=target_file, page_index=[0, 2]) #出力ページの指定 (page_index=[0,2])
+    model.to_pdf(output_path='output.pdf', image_path=target_file) # Searchable-PDFの出力
+
+    # 解析結果の可視化
+    model.visualize(
+        image_path=target_file,
+        mode='ocr',
+        page_index=None,
+        output_directory="demo",
     )
 
-# レスポンスをパース
-body_bytes = response['Body'].read()
-sagemaker_result = json.loads(body_bytes)
+    # レイアウト解析結果の保存
+    model.visualize(
+        image_path=target_file,
+        mode='layout',
+        page_index=None,
+        output_directory="demo",
+    )
 
-# 構造化データに変換
-data = parser.parse_dict(sagemaker_result)
-
-print(f"ページ数: {len(data.pages)}")
-print(f"ページ1の段落数: {len(data.pages[0].paragraphs)}")
-print(f"ページ1のテーブル数: {len(data.pages[0].tables)}")
-
-# 特定のページにアクセス（page_index: 0=最初のページ）
-page_index = 0  # 最初のページ
-print(f"指定ページの段落数: {len(data.pages[page_index].paragraphs)}")
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
+## バッチ処理機能
 
-### ステップ2: データを異なる形式に変換
+YomiTokuClientはバッチ処理機能もサポートしており、安全かつ効率的に大量の文書を解析可能です。
 
-#### 単一ページ文書（画像）
+- **フォルダ単位での一括解析** : 指定ディレクトリ内のPDF・画像ファイルを自動で検出し、並列処理を実行。
+- **中間ログ出力（process_log.jsonl）**: 各ファイルの処理結果・成功可否・処理時間・エラー内容を1行ごとに記録。（JSON Lines形式で出力され、後続処理や再実行管理に利用可能）
+- **上書き制御**: 既に解析済みのファイルはスキップ（overwrite=False）設定で効率化。
+- **再実行対応**:  ログをもとに、失敗したファイルのみを再解析する運用が容易。
+- **ログを利用した後処理**: process_log.jsonl を読み込み、成功ファイルのみMarkdown出力や可視化を自動実行可能
 
+### サンプルコード
 ```python
-# 異なる形式に変換（page_index: 0=最初のページ）
-data.to_csv('output.csv', page_index=0)
-data.to_html('output.html', page_index=0)
-data.to_markdown('output.md', page_index=0)
-data.to_json('output.json', page_index=0)
+import asyncio
+import json
+import os
 
-# 画像から検索可能PDFを作成
-data.to_pdf(output_path='searchable.pdf', img='document.png')
+from yomitoku_client import YomitokuClient
+from yomitoku_client import parse_pydantic_model
+
+# 入出力設定
+target_dir = "notebooks/sample"
+outdir = "output"
+
+# SageMakerエンドポイント設定
+ENDPOINT_NAME = "my-endpoint"
+AWS_REGION = "ap-northeast-1"
+
+async def main():
+    # バッチ解析の実行
+    async with YomitokuClient(
+        endpoint=ENDPOINT_NAME,
+        region=AWS_REGION,
+    ) as client:
+        await client.analyze_batch_async(
+            input_dir=target_dir,
+            output_dir=outdir,
+        )
+
+    # ログから成功したファイルを処理
+    with open(os.path.join(outdir, "process_log.jsonl"), "r", encoding="utf-8") as f:
+        logs = [json.loads(line) for line in f if line.strip()]
+
+    out_markdown = os.path.join(outdir, "markdown")
+    out_visualize = os.path.join(outdir, "visualization")
+
+    os.makedirs(out_markdown, exist_ok=True)
+    os.makedirs(out_visualize, exist_ok=True)
+
+    for log in logs:
+        if not log.get("success"):
+            continue
+
+        # 解析結果のJSONを読み込み
+        with open(log["output_path"], "r", encoding="utf-8") as rf:
+            result = json.load(rf)
+
+        doc = parse_pydantic_model(result)
+
+        # Markdown出力
+        base = os.path.splitext(os.path.basename(log["file_path"]))[0]
+        doc.to_markdown(output_path=os.path.join(out_markdown, f"{base}.md"))
+
+        # 解析結果の可視化
+        doc.visualize(
+            image_path=log["file_path"],
+            mode="ocr",
+            output_directory=out_visualize,
+            dpi=log.get("dpi", 200),
+        )
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
-
-#### 複数ページ文書（PDF）
-
-```python
-# 全ページを変換（フォルダ構造を作成）
-data.to_csv_folder('csv_output/')
-data.to_html_folder('html_output/')
-data.to_markdown_folder('markdown_output/')
-data.to_json_folder('json_output/')
-
-# 検索可能PDFを作成（既存のPDFに検索可能テキストを追加）
-data.to_pdf(output_path='enhanced.pdf', pdf='original.pdf')
-
-# または個別のページを変換（page_index: 0=最初のページ、1=2番目のページ）
-data.to_csv('page1.csv', page_index=0)  # 最初のページ
-data.to_html('page2.html', page_index=1)  # 2番目のページ
-```
-
-#### テーブルデータ抽出
-
-```python
-# 様々な形式でテーブルをエクスポート（page_index: 0=最初のページ）
-data.export_tables(
-    output_folder='tables/',
-    output_format='csv',    # または 'html', 'json', 'text'
-    page_index=0
-)
-
-# 複数ページ文書の場合
-data.export_tables(
-    output_folder='all_tables/',
-    output_format='csv'
-)
-
-# 特定のページのテーブルのみをエクスポート
-data.export_tables(
-    output_folder='page1_tables/',
-    output_format='csv',
-    page_index=0  # 最初のページ
-)
-```
-
-### ステップ3: 結果を可視化
-
-#### 単一画像の可視化
-
-```python
-# OCRテキストの可視化
-result_img = data.pages[0].visualize(
-    image_path='document.png',
-    viz_type='ocr',
-    output_path='ocr_visualization.png'
-)
-
-# レイアウト詳細の可視化（テキスト、テーブル、図）
-result_img = data.pages[0].visualize(
-    image_path='document.png',
-    viz_type='layout_detail',
-    output_path='layout_visualization.png'
-)
-```
-
-#### 複数画像の一括可視化
-
-```python
-# 全ページのOCR結果を一括可視化（0.png, 1.png, 2.png...として保存）
-data.export_viz_images(
-    image_path='document.pdf',
-    folder_path='ocr_results/',
-    viz_type='ocr'
-)
-
-# 全ページのレイアウト詳細を一括可視化
-data.export_viz_images(
-    image_path='document.pdf',
-    folder_path='layout_results/',
-    viz_type='layout_detail'
-)
-
-# 特定のページのみ可視化
-data.export_viz_images(
-    image_path='document.pdf',
-    folder_path='page1_results/',
-    viz_type='layout_detail',
-    page_index=0  # 最初のページのみ
-)
-```
-
-#### PDF可視化
-
-```python
-# PDFの特定ページを可視化
-result_img = data.pages[0].visualize(
-    image_path='document.pdf',
-    viz_type='layout_detail',
-    output_path='pdf_visualization.png',
-    page_index=0  # 可視化するページを指定
-)
-```
-
-## サポート形式
-
-- **CSV**: 適切なセル処理による表形式データのエクスポート
-- **Markdown**: テーブルと見出しを含む構造化文書形式
-- **HTML**: 適切なスタイリングを含むWeb対応形式
-- **JSON**: 完全な文書構造を含む構造化データエクスポート
-- **PDF**: OCRテキストオーバーレイ付きの検索可能PDF生成
 
 ## ライセンス
 
 Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
 ## お問い合わせ
-
-ご質問やサポートについては: support-aws-marketplace@mlism.com
+ご質問やサポートのご依頼は、以下までお気軽にご連絡ください。  
+📧 **support-aws-marketplace@mlism.com**

@@ -5,226 +5,15 @@ Tests for Parsers
 import pytest
 
 from yomitoku_client.exceptions import DocumentAnalysisError, ValidationError
-from yomitoku_client.parsers.sagemaker_parser import (DocumentResult, Figure,
-                                                      Paragraph,
-                                                      SageMakerParser, Table,
-                                                      TableCell, Word)
-
-
-class TestSageMakerParser:
-    """Test cases for SageMakerParser"""
-
-    def test_parser_initialization(self):
-        """Test parser initialization"""
-        parser = SageMakerParser()
-        assert parser is not None
-
-    def test_parse_valid_json(self):
-        """Test parsing valid JSON"""
-        parser = SageMakerParser()
-
-        # Create valid JSON structure
-        valid_json = """
-        {
-            "result": [
-                {
-                    "paragraphs": [
-                        {
-                            "contents": "Sample paragraph",
-                            "box": [10, 10, 100, 30],
-                            "order": 1,
-                            "role": "paragraph"
-                        }
-                    ],
-                    "tables": [],
-                    "figures": [],
-                    "words": [],
-                    "preprocess": {}
-                }
-            ]
-        }
-        """
-
-        result = parser.parse_json(valid_json)
-        assert hasattr(result, 'pages')
-        assert len(result.pages) > 0
-        assert isinstance(result.pages[0], DocumentResult)
-
-    def test_parse_dict(self):
-        """Test parsing dictionary data"""
-        parser = SageMakerParser()
-
-        # Create valid dictionary structure
-        valid_dict = {
-            "result": [
-                {
-                    "paragraphs": [
-                        {
-                            "contents": "Sample paragraph",
-                            "box": [10, 10, 100, 30],
-                            "order": 1,
-                            "role": "paragraph",
-                        }
-                    ],
-                    "tables": [],
-                    "figures": [],
-                    "words": [],
-                    "preprocess": {},
-                }
-            ]
-        }
-
-        result = parser.parse_dict(valid_dict)
-        assert hasattr(result, 'pages')
-        assert len(result.pages) > 0
-        assert isinstance(result.pages[0], DocumentResult)
-
-    def test_parse_invalid_json(self):
-        """Test parsing invalid JSON"""
-        parser = SageMakerParser()
-
-        with pytest.raises(ValidationError):
-            parser.parse_json("invalid json")
-
-    def test_parse_empty_result(self):
-        """Test parsing empty result"""
-        parser = SageMakerParser()
-
-        with pytest.raises(DocumentAnalysisError):
-            parser.parse_json('{"result": []}')
-
-    def test_parse_missing_result_key(self):
-        """Test parsing data without result key"""
-        parser = SageMakerParser()
-
-        with pytest.raises(DocumentAnalysisError):
-            parser.parse_json('{"data": []}')
-
-    def test_parse_complex_document(self):
-        """Test parsing complex document with all elements"""
-        parser = SageMakerParser()
-
-        complex_json = """
-        {
-            "result": [
-                {
-                    "paragraphs": [
-                        {
-                            "contents": "First paragraph",
-                            "box": [10, 10, 100, 30],
-                            "order": 1,
-                            "role": "paragraph"
-                        },
-                        {
-                            "contents": "Section heading",
-                            "box": [10, 40, 100, 60],
-                            "order": 2,
-                            "role": "section_headings"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "contents": "Header 1",
-                                    "box": [10, 70, 50, 90],
-                                    "row": 1,
-                                    "col": 1,
-                                    "row_span": 1,
-                                    "col_span": 1
-                                },
-                                {
-                                    "contents": "Header 2",
-                                    "box": [60, 70, 100, 90],
-                                    "row": 1,
-                                    "col": 2,
-                                    "row_span": 1,
-                                    "col_span": 1
-                                }
-                            ],
-                            "box": [10, 70, 100, 110],
-                            "order": 3,
-                            "n_row": 2,
-                            "n_col": 2,
-                            "cols": [{"col": 1}, {"col": 2}],
-                            "rows": [{"row": 1}, {"row": 2}]
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "box": [10, 120, 100, 160],
-                            "order": 4,
-                            "paragraphs": [],
-                            "caption": {
-                                "contents": "Figure caption",
-                                "box": [10, 160, 100, 180]
-                            }
-                        }
-                    ],
-                    "words": [
-                        {
-                            "content": "sample",
-                            "points": [[10, 10], [50, 10], [50, 20], [10, 20]],
-                            "direction": "horizontal",
-                            "det_score": 0.95,
-                            "rec_score": 0.90
-                        }
-                    ],
-                    "preprocess": {
-                        "image_size": [200, 200],
-                        "rotation": 0
-                    }
-                }
-            ]
-        }
-        """
-
-        result = parser.parse_json(complex_json)
-        assert hasattr(result, 'pages')
-        assert len(result.pages) > 0
-
-        doc = result.pages[0]
-        assert isinstance(doc, DocumentResult)
-        assert len(doc.paragraphs) == 2
-        assert len(doc.tables) == 1
-        assert len(doc.figures) == 1
-        assert len(doc.words) == 1
-
-        # Test paragraph parsing
-        para = doc.paragraphs[0]
-        assert isinstance(para, Paragraph)
-        assert para.contents == "First paragraph"
-        assert para.box == [10, 10, 100, 30]
-        assert para.order == 1
-        assert para.role == "paragraph"
-
-        # Test table parsing
-        table = doc.tables[0]
-        assert isinstance(table, Table)
-        assert len(table.cells) == 2
-        assert table.n_row == 2
-        assert table.n_col == 2
-
-        # Test cell parsing
-        cell = table.cells[0]
-        assert isinstance(cell, TableCell)
-        assert cell.contents == "Header 1"
-        assert cell.row == 1
-        assert cell.col == 1
-
-        # Test figure parsing
-        figure = doc.figures[0]
-        assert isinstance(figure, Figure)
-        assert figure.box == [10, 120, 100, 160]
-        assert figure.caption is not None
-        assert figure.caption["contents"] == "Figure caption"
-
-        # Test word parsing
-        word = doc.words[0]
-        assert isinstance(word, Word)
-        assert word.content == "sample"
-        assert word.points == [[10, 10], [50, 10], [50, 20], [10, 20]]
-        assert word.direction == "horizontal"
+from yomitoku_client import parse_pydantic_model
+from yomitoku_client.models import (
+    DocumentResult,
+    Figure,
+    Paragraph,
+    Table,
+    TableCell,
+    Word,
+)
 
 
 class TestDocumentResult:
@@ -233,7 +22,7 @@ class TestDocumentResult:
     def test_document_result_creation(self):
         """Test creating DocumentResult"""
         doc = DocumentResult(
-            paragraphs=[], tables=[], figures=[], words=[], preprocess={}
+            num_page=0, paragraphs=[], tables=[], figures=[], words=[], preprocess={}
         )
         assert doc is not None
         assert doc.paragraphs == []
@@ -257,6 +46,7 @@ class TestDocumentResult:
         )
 
         doc = DocumentResult(
+            num_page=0,
             paragraphs=[paragraph],
             tables=[],
             figures=[],
@@ -355,7 +145,7 @@ class TestTable:
         )
 
         assert table.caption is not None
-        assert table.caption["contents"] == "Table caption"
+        assert table.caption.contents == "Table caption"
 
 
 class TestFigure:
@@ -377,11 +167,10 @@ class TestFigure:
             "role": "caption",
         }
 
-        figure = Figure(box=[10, 10, 100, 50], order=1,
-                        paragraphs=[], caption=caption)
+        figure = Figure(box=[10, 10, 100, 50], order=1, paragraphs=[], caption=caption)
 
         assert figure.caption is not None
-        assert figure.caption["contents"] == "Figure caption"
+        assert figure.caption.contents == "Figure caption"
 
 
 class TestWord:

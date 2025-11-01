@@ -9,73 +9,27 @@ import numpy as np
 import pytest
 
 from yomitoku_client.exceptions import FormatConversionError
-from yomitoku_client.pdf_generator import (SearchablePDFGenerator,
-                                           create_searchable_pdf)
+from yomitoku_client import create_searchable_pdf
 from yomitoku_client.renderers import RendererFactory
-from yomitoku_client.utils import (calc_distance, calc_intersection,
-                                   calc_overlap_ratio, convert_table_array,
-                                   convert_table_array_to_dict,
-                                   escape_markdown_special_chars, is_contained,
-                                   is_dot_list_item, is_intersected_horizontal,
-                                   is_intersected_vertical,
-                                   is_numeric_list_item, quad_to_xyxy,
-                                   remove_dot_prefix, remove_numeric_prefix,
-                                   save_image, table_to_csv)
+from yomitoku_client.utils import (
+    calc_distance,
+    calc_intersection,
+    calc_overlap_ratio,
+    convert_table_array,
+    convert_table_array_to_dict,
+    escape_markdown_special_chars,
+    is_contained,
+    is_dot_list_item,
+    is_intersected_horizontal,
+    is_intersected_vertical,
+    is_numeric_list_item,
+    quad_to_xyxy,
+    remove_dot_prefix,
+    remove_numeric_prefix,
+    save_image,
+    table_to_csv,
+)
 from yomitoku_client.visualizers import DocumentVisualizer, TableExtractor
-
-
-class TestPDFGenerator:
-    """Test cases for PDF Generator"""
-
-    def test_pdf_generator_initialization(self):
-        """Test PDF generator initialization"""
-        try:
-            generator = SearchablePDFGenerator()
-            assert generator is not None
-            assert generator.font_name is not None
-        except ImportError:
-            pytest.skip("ReportLab not available")
-
-    def test_pdf_generator_with_custom_font(self):
-        """Test PDF generator with custom font"""
-        try:
-            # Test with non-existent font (should fall back to default)
-            generator = SearchablePDFGenerator(
-                font_path="non_existent_font.ttf")
-            assert generator is not None
-        except ImportError:
-            pytest.skip("ReportLab not available")
-
-    def test_create_searchable_pdf_function(self):
-        """Test convenience function for PDF creation"""
-        try:
-            # Mock data
-            images = [np.ones((100, 100, 3), dtype=np.uint8) * 255]
-
-            class MockWord:
-                def __init__(self):
-                    self.content = "test"
-                    self.points = [[10, 10], [50, 10], [50, 30], [10, 30]]
-                    self.direction = "horizontal"
-
-            class MockOCRResult:
-                def __init__(self):
-                    self.words = [MockWord()]
-
-            ocr_results = [MockOCRResult()]
-
-            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-                output_path = tmp.name
-
-            try:
-                create_searchable_pdf(images, ocr_results, output_path)
-                assert os.path.exists(output_path)
-                assert os.path.getsize(output_path) > 0
-            finally:
-                if os.path.exists(output_path):
-                    os.unlink(output_path)
-        except ImportError:
-            pytest.skip("ReportLab not available")
 
 
 class TestVisualizers:
@@ -104,8 +58,7 @@ class TestVisualizers:
 
         class MockResults:
             def __init__(self):
-                self.paragraphs = [MockElement(
-                    [10, 10, 50, 30], 1, "paragraph")]
+                self.paragraphs = [MockElement([10, 10, 50, 30], 1, "paragraph")]
                 self.tables = [MockElement([60, 10, 100, 50], 2, "table")]
                 self.figures = [MockElement([110, 10, 150, 50], 3, "figure")]
 
@@ -114,24 +67,12 @@ class TestVisualizers:
         # Test different visualization types
         try:
             # Layout detail
-            output = visualizer.visualize((img, results), type="layout_detail")
+            output = visualizer.visualize(img, results, mode="layout")
             assert output is not None
             assert output.shape == img.shape
 
             # Reading order
-            output = visualizer.visualize((img, results), type="reading_order")
-            assert output is not None
-
-            # Element relationships
-            output = visualizer.visualize_element_relationships(
-                img, results, show_overlaps=True, show_distances=True
-            )
-            assert output is not None
-
-            # Element hierarchy
-            output = visualizer.visualize_element_hierarchy(
-                img, results, show_containment=True
-            )
+            output = visualizer.visualize(img, results, mode="ocr")
             assert output is not None
 
         except Exception as e:
@@ -278,8 +219,7 @@ class TestRenderers:
         """Test renderer factory"""
         # Test getting supported formats
         formats = RendererFactory.get_supported_formats()
-        expected_formats = ["csv", "markdown",
-                            "md", "html", "htm", "json", "pdf"]
+        expected_formats = ["csv", "markdown", "md", "html", "htm", "json", "pdf"]
         for fmt in expected_formats:
             assert fmt in formats
 
@@ -339,50 +279,6 @@ class TestImageProcessing:
 class TestIntegration:
     """Integration tests"""
 
-    def test_full_workflow(self):
-        """Test complete workflow from parsing to rendering"""
-        from yomitoku_client.client import YomitokuClient
-        from yomitoku_client.parsers.sagemaker_parser import (DocumentResult,
-                                                              Paragraph, Word)
-
-        # Create mock document result
-        paragraph = Paragraph(
-            contents="Sample paragraph",
-            box=[10, 10, 100, 30],
-            order=1,
-            role="paragraph",
-        )
-
-        word = Word(
-            content="sample",
-            points=[[10, 10], [50, 10], [50, 20], [10, 20]],
-            direction="horizontal",
-            det_score=0.95,
-            rec_score=0.90,
-        )
-
-        document_result = DocumentResult(
-            paragraphs=[paragraph], tables=[], figures=[
-            ], words=[word], preprocess={}
-        )
-
-        # Test client workflow
-        client = YomitokuClient()
-
-        # Test format conversion
-        csv_result = client.convert_to_format([document_result], "csv")
-        assert isinstance(csv_result, str)
-
-        html_result = client.convert_to_format([document_result], "html")
-        assert isinstance(html_result, str)
-
-        json_result = client.convert_to_format([document_result], "json")
-        assert isinstance(json_result, str)
-
-        markdown_result = client.convert_to_format(
-            [document_result], "markdown")
-        assert isinstance(markdown_result, str)
-
     def test_visualization_workflow(self):
         """Test visualization workflow"""
         visualizer = DocumentVisualizer()
@@ -398,15 +294,14 @@ class TestIntegration:
 
         class MockResults:
             def __init__(self):
-                self.paragraphs = [MockElement(
-                    [10, 10, 50, 30], 1, "paragraph")]
+                self.paragraphs = [MockElement([10, 10, 50, 30], 1, "paragraph")]
                 self.tables = []
                 self.figures = []
 
         results = MockResults()
 
         # Test visualization
-        output = visualizer.visualize((img, results))
+        output = visualizer.visualize(img, results, mode="ocr")
         assert output is not None
         assert output.shape == img.shape
 

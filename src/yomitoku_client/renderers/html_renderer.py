@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 
 from ..exceptions import FormatConversionError
-from ..parsers.sagemaker_parser import DocumentResult, Figure, Paragraph, Table
+from ..models import DocumentResult, Figure, Paragraph, Table
 from ..utils import remove_dot_prefix, save_image
 from .base import BaseRenderer
 
@@ -48,6 +48,7 @@ class HTMLRenderer(BaseRenderer):
     def render(
         self,
         data: DocumentResult,
+        page: int = 0,
         img: Optional[np.ndarray] = None,
         output_path: Optional[str] = None,
         **kwargs,
@@ -75,14 +76,13 @@ class HTMLRenderer(BaseRenderer):
             elements.append(self._paragraph_to_html(paragraph))
 
         # Process figures if requested
-        if (
-            self.export_figure
-            and img is not None
-            and output_path
-            and hasattr(data, "figures")
-        ):
+        if self.export_figure and img is not None and hasattr(data, "figures"):
             figure_elements = self._figures_to_html(
-                data.figures, img, output_path)
+                data.figures,
+                img,
+                output_path,
+                page,
+            )
             elements.extend(figure_elements)
 
         # Sort by order
@@ -115,8 +115,7 @@ class HTMLRenderer(BaseRenderer):
             img: Optional image array for figure extraction
             **kwargs: Additional rendering options
         """
-        html_content = self.render(
-            data, img=img, output_path=output_path, **kwargs)
+        html_content = self.render(data, img=img, output_path=output_path, **kwargs)
 
         try:
             with open(output_path, "w", encoding="utf-8") as f:
@@ -236,7 +235,7 @@ class HTMLRenderer(BaseRenderer):
         }
 
     def _figures_to_html(
-        self, figures: List[Figure], img: np.ndarray, output_path: str
+        self, figures: List[Figure], img: np.ndarray, output_path: str, page: int
     ) -> List[Dict[str, Any]]:
         """
         Convert figures to HTML with image files
@@ -256,12 +255,13 @@ class HTMLRenderer(BaseRenderer):
             x1, y1, x2, y2 = map(int, figure.box)
             figure_img = img[y1:y2, x1:x2, :]
 
-            save_dir = os.path.dirname(output_path)
-            save_dir = os.path.join(save_dir, self.figure_dir)
+            outdir = os.path.dirname(output_path)
+            basename, ext = os.path.splitext(os.path.basename(output_path))
+
+            save_dir = os.path.join(outdir, self.figure_dir)
             os.makedirs(save_dir, exist_ok=True)
 
-            filename = os.path.splitext(os.path.basename(output_path))[0]
-            figure_name = f"{filename}_figure_{i}.png"
+            figure_name = f"{basename}_figure_{i}_page_{page}.png"
             figure_path = os.path.join(save_dir, figure_name)
             save_image(figure_img, figure_path)
 
