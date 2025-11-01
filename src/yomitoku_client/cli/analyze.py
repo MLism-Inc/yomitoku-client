@@ -51,7 +51,7 @@ def get_format_ext(format: str) -> str:
     "--region",
     "-r",
     type=str,
-    default=None,
+    required=True,
     help="AWS region name",
 )
 @click.option(
@@ -74,10 +74,16 @@ def get_format_ext(format: str) -> str:
     help="DPI for image processing",
 )
 @click.option(
-    "--profile",
+    "--mfa_serial",
     default=None,
     type=str,
-    help="AWS Profile",
+    help="MFA serial number",
+)
+@click.option(
+    "--mfa_token",
+    default=None,
+    type=str,
+    help="MFA token code",
 )
 @click.option(
     "--request_timeout",
@@ -131,7 +137,8 @@ def main(
     input_path,
     output_dir,
     dpi,
-    profile,
+    mfa_serial,
+    mfa_token,
     request_timeout,
     total_timeout,
     split_mode,
@@ -149,7 +156,8 @@ def main(
     with YomitokuClient(
         endpoint=endpoint,
         region=region,
-        profile=profile,
+        mfa_serial=mfa_serial,
+        mfa_token=mfa_token,
     ) as client:
         result = client.analyze(
             path_img=input_path,

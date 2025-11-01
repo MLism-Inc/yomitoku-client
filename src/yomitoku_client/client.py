@@ -97,6 +97,34 @@ def load_image_bytes(
     return img_bytes, content_type
 
 
+def with_mfa_session(
+    base_sess: boto3.Session,
+    mfa_serial: str,
+    token: str,
+) -> boto3.Session:
+    """
+    Create a session with MFA authentication.
+
+    Args:
+        base_sess: Base boto3 session (default creds / profile)
+        mfa_serial: MFA device ARN (e.g. arn:aws:iam::...:mfa/xxxx)
+        token: 6-digit MFA code
+    """
+    sts = base_sess.client("sts")
+    resp = sts.get_session_token(
+        SerialNumber=mfa_serial,
+        TokenCode=token,
+        DurationSeconds=43200,
+    )
+    c = resp["Credentials"]
+    return boto3.Session(
+        region_name=base_sess.region_name,
+        aws_access_key_id=c["AccessKeyId"],
+        aws_secret_access_key=c["SecretAccessKey"],
+        aws_session_token=c["SessionToken"],
+    )
+
+
 def now_ms() -> int:
     return int(time.time() * 1000)
 
@@ -120,8 +148,9 @@ class YomitokuClient:
     def __init__(
         self,
         endpoint: str,
-        region: str | None = None,
-        profile: str | None = None,
+        region: str,
+        mfa_serial: str = None,
+        mfa_token: str = None,
         max_workers: int = 4,
         request_config: Optional[RequestConfig] = None,
         circuit_config: Optional[CircuitConfig] = None,
@@ -132,7 +161,13 @@ class YomitokuClient:
 
         self._cb_lock = threading.Lock()
 
-        self._sess = boto3.Session(region_name=region, profile_name=profile)
+        base_session = boto3.Session(region_name=region)
+        if mfa_serial and mfa_token:
+            logger.info("Using MFA authentication for AWS session")
+            base_sess = boto3.Session(region_name=region)
+            self._sess = with_mfa_session(base_sess, mfa_serial, mfa_token)
+        else:
+            self._sess = base_session
 
         try:
             self._loop = asyncio.get_running_loop()
