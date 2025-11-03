@@ -22,6 +22,7 @@ It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your
 
 ## Quick Links
 * 📓 **[Sample Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial on connecting to an AWS SageMaker endpoint and performing document analysis.
+* 📖 **[Documentation](https://mlism-inc.github.io/yomitoku-client/)** – Detailed guide on how to use **YomiToku-Client**.
 
 ---
 
