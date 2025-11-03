@@ -4,12 +4,17 @@ YomiToku Clientをご利用いただくには、AWS Marketplaceを通じてYomiT
 
 YomiToku ProをAWS Marketplaceを通してデプロイするには、次の二つの方法があります。
 
-- AWS SageMaker単体によるデプロイ
-- AWS CloudFormationによるデプロイ
+- [AWS SageMaker単体によるデプロイ](#aws-sagemaker)
+- [AWS CloudFormationによるデプロイ](#aws-cloudformation)
 
 AWS CloudFormationではAWS SageMakerのリソースなどをまとめてスタックで管理します。
 
 AWS SageMakerの方が詳細に設定・管理できますが、AWS CloudFormationの方が簡単に設定・管理できます。
+
+!!! warning
+    サービスはエンドポイントをデプロイしてから、エンドポイントポイントを削除するまで、従量課金で料金が発生します。サービスの利用を終了する場合は、必ずエンドポイントを削除してください。
+
+---
 
 ## 準備
 
@@ -18,6 +23,8 @@ AWS SageMakerの方が詳細に設定・管理できますが、AWS CloudFormati
 Yomitoku Proのデプロイには[AmazonSageMakerFullAccess](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/AmazonSageMakerFullAccess.html)というIAM Policyの権限が必要です。利用するIAMユーザー(もしくはIAMロール)に権限の権限が十分でない場合はそちらの付与をお願いします。
 
 もし以降の手順の中で権限エラーが発生した場合はクラウド管理者にお問い合わせください。
+
+---
 
 ## AWS SageMakerでデプロイをする場合
 
@@ -78,7 +85,8 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 1. エンドポイント設定の削除
 1. モデルの削除
 
-同じモデルやエンドポイント設定でエンドポイントをデプロイしたい場合はモデルやエンドポイント設定を削除する必要はありません。これらの情報を保持しても料金は発生しませんが、デプロイされたエンドポイントは削除が完了するまで料金が発生し続けます。
+!!! warning
+    同じモデルやエンドポイント設定でエンドポイントをデプロイしたい場合はモデルやエンドポイント設定を削除する必要はありません。これらの情報を保持しても料金は発生しませんが、デプロイされたエンドポイントは削除が完了するまで料金が発生し続けます。
 
 1. [AWS マネジメントコンソール](https://aws.amazon.com/jp/console/)にサインインします。
 1. 左上の検索ウィンドウからAmazon SageMaker AIを検索します。
@@ -90,6 +98,8 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 1. 左側のメニューから推論>モデルを開きます。作成したモデル名をクリックします。作成したモデルの設定画面の右上のアクションボタンをクリックし、削除をクリックします。
 
 既存のモデルやエンドポイント設定からエンドポイントを作成する際は、それぞれの設定画面（モデル設定画面、エンドポイント設定画面など）を開いて操作します。
+
+---
 
 ## AWS CloudFormationでデプロイする場合
 
@@ -134,6 +144,11 @@ CloudFormationでは、AWSリソースのセット全体をスタックという
 1. デプロイしたスタック名の左側の円形のチェックボックスを選択します。
 ![marketplace-cloudformation-undeploy](images/marketplace-cloudformation-undeploy.png)
 1. 上部にある「削除」を選択します。
+
+!!! warning
+    サービスはエンドポイントをデプロイしてから、エンドポイントポイントを削除するまで、従量課金で料金が発生します。サービスの利用を終了する場合は、必ずエンドポイントを削除してください。
+
+---
 
 ## 付録:各種設定画面の開き方
 

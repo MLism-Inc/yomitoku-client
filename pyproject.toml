@@ -85,7 +85,7 @@ commands =
     pytest tests
 
 [testenv:format]
-description = Run ruff format + lint
+description = Run ruff format
 deps = ruff>=0.7
 commands =
     ruff format .
@@ -93,7 +93,7 @@ commands =
 [testenv:lint]
 deps = ruff>=0.7
 commands = 
-    ruff check --fix
+    ruff check --fix .
 
 [testenv:type]
 description = Run mypy strict type checks
@@ -111,5 +111,5 @@ deps =
     mkdocs-static-i18n
     mkdocs-codeinclude-plugin
 commands = 
-    mkdocs gh-deploy -f mkdocs/mkdocs.yml --force
+    mkdocs gh-deploy --force
 """

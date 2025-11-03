@@ -22,7 +22,7 @@ It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your
 
 ## Quick Links
 
-* 📓 **[Sample Notebook](notebooks/yomitoku-pro-document-analyzer.ipynb)** – A tutorial for connecting to a SageMaker endpoint and analyzing documents.
+* 📓 **[Sample Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb))** – A tutorial for connecting to a SageMaker endpoint and analyzing documents.
 
 ---
 
