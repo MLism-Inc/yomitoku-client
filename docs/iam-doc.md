@@ -116,6 +116,25 @@
 
 上記で設定したプロファイルを使って、Yomitoku-Clientを実行する方法です。
 
+### CLIでプロファイルを指定する場合
+
+コマンドのオプションとして `--profile` でプロファイル名を指定します。
+
+```bash
+yomitoku-client notebooks/sample/image.pdf \
+  --endpoint your-endpoint-name \
+  --profile yomitoku-client
+```
+
+### 環境変数でプロファイルを指定する場合
+
+`AWS_PROFILE` 環境変数にプロファイル名を設定しておくと、コマンド実行のたびに `--profile` を指定する必要がなくなり便利です。
+
+```bash
+export AWS_PROFILE=yomitoku-client
+yomitoku-client notebooks/sample/image.pdf --endpoint your-endpoint-name
+```
+
 ### コードでプロファイルを指定する場合
 
 `YomitokuClient` の初期化時に `profile` 引数でプロファイル名を指定します。以下は非同期で実行するコード例です。
@@ -139,25 +158,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-```
-
-### CLIでプロファイルを指定する場合
-
-コマンドのオプションとして `--profile` でプロファイル名を指定します。
-
-```bash
-yomitoku-client notebooks/sample/image.pdf \
-  --endpoint your-endpoint-name \
-  --profile yomitoku-client
-```
-
-### 環境変数でプロファイルを指定する場合
-
-`AWS_PROFILE` 環境変数にプロファイル名を設定しておくと、コマンド実行のたびに `--profile` を指定する必要がなくなり便利です。
-
-```bash
-export AWS_PROFILE=yomitoku-client
-yomitoku-client notebooks/sample/image.pdf --endpoint your-endpoint-name
 ```
 
 ---
