@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - main
-  paths:
-    - "mkdocs/**"
+    paths:
+      - "mkdocs/**"
 
 permissions:
   contents: write
