@@ -16,6 +16,8 @@ Yomitoku Proの高精度OCRと、業務アプリケーションを結びつけ�
 
 
 ## クイックリンク
+- 🔒 **[認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/) - AWSの認証の設定ガイド
+- 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/) - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
 - 📓 **[サンプルNotebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
 ## クックスタート(CLI)
@@ -190,15 +192,13 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+## ドキュメント
+YomiToku-Clientの詳細の利用方法は[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)を参照してください。
+
 ## ライセンス
 
 Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
-## 開発者向け
-Linterの設定
-```
-uvx pre-commit install
-```
 
 ## お問い合わせ
 ご質問やサポートのご依頼は、以下までお気軽にご連絡ください。  

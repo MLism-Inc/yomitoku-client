@@ -22,7 +22,9 @@ It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your
 
 ## Quick Links
 
-* 📓 **[Sample Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb))** – A tutorial for connecting to a SageMaker endpoint and analyzing documents.
+* 🔒 **[Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide to configuring AWS authentication.
+* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Step-by-step guide for deploying the *YomiToku-Pro Document Analyzer* endpoint.
+* 📓 **[Sample Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial on connecting to an AWS SageMaker endpoint and performing document analysis.
 
 ---
 
@@ -219,6 +221,11 @@ if __name__ == "__main__":
 Apache License 2.0 – See the `LICENSE` file for details.
 
 ---
+
+## Documentation
+
+For detailed usage instructions of **YomiToku-Client**, please refer to the [official documentation](https://mlism-inc.github.io/yomitoku-client/).
+
 
 ## Contact
 
