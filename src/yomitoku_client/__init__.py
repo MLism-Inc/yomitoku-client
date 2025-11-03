@@ -30,7 +30,6 @@ from .renderers.searchable_pdf import (
 
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
-from .visualizers.table_exporter import TableExtractor
 
 __all__ = [
     "DocumentResult",
@@ -43,7 +42,6 @@ __all__ = [
     "JSONRenderer",
     "PDFRenderer",
     "DocumentVisualizer",
-    "TableExtractor",
     "FontManager",
     "create_searchable_pdf",
     "create_searchable_pdf_from_pdf",

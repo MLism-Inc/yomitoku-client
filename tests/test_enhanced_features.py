@@ -28,7 +28,7 @@ from yomitoku_client.utils import (
     save_image,
     table_to_csv,
 )
-from yomitoku_client.visualizers import DocumentVisualizer, TableExtractor
+from yomitoku_client.visualizers import DocumentVisualizer
 
 
 class TestVisualizers:
@@ -76,26 +76,6 @@ class TestVisualizers:
 
         except Exception as e:
             pytest.fail(f"Visualization failed: {e}")
-
-    def test_table_extractor(self):
-        """Test table extractor"""
-        visualizer = TableExtractor()
-
-        # Test with DataFrame
-        import pandas as pd
-
-        df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
-
-        result = visualizer.visualize(df, format="text")
-        assert isinstance(result, str)
-        assert "A" in result
-        assert "B" in result
-
-        # Test with list
-        data = [["Header1", "Header2"], ["Data1", "Data2"]]
-        result = visualizer.visualize(data, format="html")
-        assert isinstance(result, str)
-        assert "<table" in result
 
 
 class TestUtils:

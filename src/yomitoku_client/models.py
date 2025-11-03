@@ -132,12 +132,12 @@ class DocumentResult(BaseModel):
             ignore_line_break: Whether to ignore line breaks in text
             export_figure: Whether to export figures
             export_figure_letter: Whether to export figure letters/text
-            table_format: Table format ("html" or "md")
+            table_format: Format for tables ('html' or 'markdown')
             output_path: Path to save the Markdown file
-
         Returns:
             str: Markdown formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.markdown_renderer import MarkdownRenderer
 
@@ -172,13 +172,13 @@ class DocumentResult(BaseModel):
             ignore_line_break: Whether to ignore line breaks in text
             export_figure: Whether to export figures
             export_figure_letter: Whether to export figure letters/text
-            figure_width: Width of figures in pixels
+            figure_width: Width of exported figures
             figure_dir: Directory to save figures
             output_path: Path to save the HTML file
-
         Returns:
             str: HTML formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.html_renderer import HTMLRenderer
 
@@ -220,6 +220,7 @@ class DocumentResult(BaseModel):
         Returns:
             str: CSV formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.csv_renderer import CSVRenderer
 
@@ -249,10 +250,10 @@ class DocumentResult(BaseModel):
             ignore_line_break: Whether to ignore line breaks in text
             export_figure: Whether to export figures
             figure_dir: Directory to save figures
-
         Returns:
             str: JSON formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.json_renderer import JSONRenderer
 
@@ -271,17 +272,15 @@ class DocumentResult(BaseModel):
         img: Any | None = None,
     ) -> str:
         """
-        Convert document result to PDF format (returns path to generated PDF)
+        Convert document result to PDF format (returns PDF byte stream)
 
         Args:
             font_path: Path to font file. If None, uses default MPLUS1p-Medium.ttf from resource
-            output_path: Path to save the PDF file. If None, uses default name
-            img: Optional image array, PIL Image, or image path for PDF generation
-            pdf: Optional PDF path for PDF generation (alternative to img)
-
+            img: Optional image array for PDF generation (required for searchable PDF)
         Returns:
             str: Path to generated PDF file
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.pdf_renderer import PDFRenderer
 
@@ -301,21 +300,12 @@ class DocumentResult(BaseModel):
         Visualize document layout with bounding boxes
 
         Args:
-            imag: Path to the source image file or PDF file (string or pathlib.Path)
-            viz_type: Type of visualization:
+            img: Image array to draw bounding boxes on
+            mode: Type of visualization:
                 - 'layout_detail': Detailed layout with all elements
-                - 'layout_rough': Rough layout overview
-                - 'reading_order': Show reading order arrows
                 - 'ocr': OCR text visualization
-                - 'detection': Detection bounding boxes
-                - 'recognition': Recognition results
-                - 'relationships': Element relationships
-                - 'hierarchy': Element hierarchy
-                - 'confidence': Confidence scores
-                - 'captions': Caption visualization
-            output_path: Optional path to save the visualization image
         Returns:
-            Any: Visualized image with bounding boxes drawn
+            np.ndarray: Image array with visualizations
         """
         # Create DocumentVisualizer instance
         visualizer = DocumentVisualizer()
@@ -455,18 +445,17 @@ class MultiPageDocumentResult(BaseModel):
         mode="combine",
     ) -> str:
         """
-        Convert multi-page document result to PDF format (returns path to generated PDF)
+        Convert multi-page document result to PDF format
 
         Args:
-            font_path: Path to font file. If None, uses default MPLUS1p-Medium.ttf from resource
             output_path: Path to save the PDF file
-            img: Optional image array for PDF generation (required for searchable PDF)
-            pdf: Optional PDF array for PDF generation (required for searchable PDF)
-            create_text_pdf: If True, creates a simple text-based PDF when image is not available
-
-        Returns:
-            str: Path to generated PDF file
+            page_index: Page index to convert
+            font_path: Path to font file. If None, uses default MPLUS1p-Medium.ttf from resource
+            image_path: Path to the original image/PDF file for searchable PDF generation
+            dpi: DPI for loading PDF pages as images
+            mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
+
         page_index = make_page_index(page_index, len(self.pages))
 
         base_dir = os.path.dirname(output_path)
@@ -516,6 +505,17 @@ class MultiPageDocumentResult(BaseModel):
         encoding: str,
         page_index: list,
     ) -> None:
+        """
+        Export results to file based on mode
+
+        Args:
+            results: List of results for each page
+            output_path: Path to save the file
+            mode: 'combine' or 'separate'
+            encoding: File encoding
+            page_index: List of page indices
+        """
+
         base_name, ext = os.path.splitext(output_path)
         if mode == "combine":
             if ext == ".json":
@@ -559,7 +559,7 @@ class MultiPageDocumentResult(BaseModel):
         Convert multi-page document result to CSV format
 
         Args:
-            output_path: Path to save the Markdown file
+            output_path: Path to save the CSV file
             page_index: Page index to convert
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
@@ -599,9 +599,11 @@ class MultiPageDocumentResult(BaseModel):
 
         Args:
             output_path: Path to save the Markdown file
-            page_index: Page index to convert
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
+            page_index: List of page indices to process
+            image_path: Path to the original image/PDF file for image extraction
+            dpi: DPI for loading PDF pages as images
         """
         page_index = make_page_index(page_index, len(self.pages))
 
@@ -659,10 +661,13 @@ class MultiPageDocumentResult(BaseModel):
 
         Args:
             output_path: Path to save the Markdown file
-            page_index: Page index to convert
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
+            page_index: List of page indices to process
+            image_path: Path to the original image/PDF file for image extraction
+            dpi: DPI for loading PDF pages as images
         """
+
         page_index = make_page_index(page_index, len(self.pages))
 
         base_dir = os.path.dirname(output_path)
@@ -717,11 +722,14 @@ class MultiPageDocumentResult(BaseModel):
         Convert multi-page document result to JSON format
 
         Args:
-            output_path: Path to save the Markdown file
-            page_index: Page index to convert
+            output_path: Path to save the JSON file
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
+            page_index: List of page indices to process
+            image_path: Path to the original image/PDF file for image extraction
+            dpi: DPI for loading PDF pages as images
         """
+
         base_dir = os.path.dirname(output_path)
         if base_dir:
             os.makedirs(base_dir, exist_ok=True)
@@ -863,6 +871,13 @@ class MultiPageDocumentResult(BaseModel):
     ) -> Any:
         """
         Visualize the document result
+
+        Args:
+            image_path: Path to the original image/PDF file
+            mode: Type of visualization ('layout', 'ocr', etc.)
+            output_directory: Directory to save visualized images
+            page_index: List of page indices to visualize
+            dpi: DPI for loading PDF pages as images
         """
 
         page_index = make_page_index(page_index, len(self.pages))
