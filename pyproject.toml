@@ -1,13 +1,9 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-[tool.setuptools]
-packages = { find = { where = ["src"] } }
-include-package-data = true
-
-[tool.setuptools.package-data]
-yomitoku_client = ["resource/*.ttf", "resource/*.txt", "samples/*.json", "samples/*.png", "samples/*.pdf"]
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
 
 [project]
 name = "yomitoku-client"
@@ -36,86 +32,31 @@ dependencies = [
     "botocore>=1.29.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.3.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.0.0",
-    "black>=23.0.0",
-    "flake8>=6.0.0",
-    "mypy>=1.0.0",
-    "ruff>=0.7.0",
-    "isort>=5.13.0",
-    "autopep8>=2.3.0",
-    "bandit>=1.7.5",
-    "pydocstyle>=6.3.0",
-    "pre-commit>=3.6.0",
-    "build>=1.0.0",
-    "twine>=4.0.0",
-]
-docs = [
-    "sphinx>=6.0.0",
-    "sphinx-rtd-theme>=1.2.0",
-    "mkdocs>=1.6.1",
-    "mkdocs-material>=9.5.44",
-]
-notebooks = [
-    "jupyter>=1.0.0",
-    "ipykernel>=6.20.0",
-]
-sagemaker = [
-    "boto3>=1.26.0",
-    "botocore>=1.29.0",
-]
-ocr = [
-    "Pillow[raqm]>=9.5.0",
-]
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "semver"
+format = "{base}"
 
+[tool.uv]
+dev-dependencies = [
+    "json-schema-for-humans>=1.4.1",
+    "mkdocs-codeinclude-plugin>=0.2.1",
+    "mkdocs-include-markdown-plugin>=7.1.6",
+    "mkdocs-material>=9.5.44",
+    "mkdocs-static-i18n",
+    "mkdocs>=1.6.1",
+    "plantuml-markdown",
+    "pygments",
+    "pytest-cov>=5.0.0",
+    "pytest>=8.3.3",
+    "ruff>=0.7.0",
+]
 
 [project.scripts]
 yomitoku_client = "yomitoku_client.cli.analyze:main"
 
-[tool.uv]
-dev-dependencies = [
-    "pytest>=7.3.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.0.0",
-    "black>=23.0.0",
-    "flake8>=6.0.0",
-    "mypy>=1.0.0",
-    "ruff>=0.7.0",
-    "sphinx>=6.0.0",
-    "sphinx-rtd-theme>=1.2.0",
-    "mkdocs>=1.6.1",
-    "mkdocs-material>=9.5.44",
-    "jupyter>=1.0.0",
-    "boto3>=1.26.0",
-    "botocore>=1.29.0",
-    "yomitoku-client",
-    "reportlab>=4.4.3",
-]
-
 [tool.uv.sources]
 yomitoku-client = { workspace = true }
-
-[tool.uv.workspace]
-members = [
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-    ".",
-]
-
-[tool.black]
-line-length = 88
-target-version = ['py310']
 
 [tool.ruff]
 line-length = 88
@@ -125,9 +66,31 @@ select = [
 ]
 ignore = ["E501", "B008", "C901"]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --cov=src --cov-report=term-missing --cov-report=html"
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = lint, py310, py311, py312, docs
+
+[testenv]
+deps = pytest
+commands = 
+    pytest tests
+
+[testenv:lint]
+basepython = python3.12
+deps = ruff
+commands = 
+    ruff check
+
+[testenv:docs]
+basepython = python3.12
+deps = 
+    mkdocs-material
+    pygments 
+    plantuml_markdown 
+    mkdocs-include-markdown-plugin
+    mkdocs-static-i18n
+    mkdocs-codeinclude-plugin
+commands = 
+    mkdocs gh-deploy --force
+"""
