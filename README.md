@@ -194,6 +194,12 @@ if __name__ == "__main__":
 
 Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
+## 開発者向け
+Linterの設定
+```
+uvx pre-commit install
+```
+
 ## お問い合わせ
 ご質問やサポートのご依頼は、以下までお気軽にご連絡ください。  
 📧 **support-aws-marketplace@mlism.com**
