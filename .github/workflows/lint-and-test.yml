@@ -1,0 +1,44 @@
+name: Python Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    if: "! startsWith(github.head_ref, 'chore/changelog-')"
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cleanup disk space
+        run: |
+          sudo apt-get clean
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          df -h
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: pin python version
+        run: uv python pin 3.12
+      - name: Update apt
+        run: sudo apt update
+      - name: Install dependencies
+        run: sudo apt install -y libopencv-dev poppler-utils
+      - name: Install tox-uv
+        run: uv tool install tox==4.28.4 --with tox-uv==1.27.0
+      - name: Run linter
+        run: tox -e lint
+      - name: Run tests
+        run: tox -p -e py310,py311,py312

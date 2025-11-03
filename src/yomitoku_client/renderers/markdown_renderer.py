@@ -4,7 +4,7 @@ Markdown Renderer - For converting document data to Markdown format
 
 import os
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -51,9 +51,8 @@ class MarkdownRenderer(BaseRenderer):
         self,
         data: DocumentResult,
         page: int = 0,
-        img: Optional[np.ndarray] = None,
-        output_path: Optional[str] = None,
-        **kwargs,
+        img: np.ndarray | None = None,
+        output_path: str | None = None,
     ) -> str:
         """
         Render document data to Markdown format
@@ -81,7 +80,7 @@ class MarkdownRenderer(BaseRenderer):
                     "box": table.box,
                     "element": table_md,
                     "order": table.order,
-                }
+                },
             )
 
         # Process paragraphs
@@ -93,7 +92,7 @@ class MarkdownRenderer(BaseRenderer):
                     "box": paragraph.box,
                     "element": md_content,
                     "order": paragraph.order,
-                }
+                },
             )
 
         # Process figures if requested
@@ -114,7 +113,7 @@ class MarkdownRenderer(BaseRenderer):
         self,
         data: DocumentResult,
         output_path: str,
-        img: Optional[np.ndarray] = None,
+        img: np.ndarray | None = None,
         **kwargs,
     ) -> None:
         """
@@ -132,7 +131,7 @@ class MarkdownRenderer(BaseRenderer):
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(md_content)
         except Exception as e:
-            raise FormatConversionError(f"Failed to save Markdown file: {e}")
+            raise FormatConversionError(f"Failed to save Markdown file: {e}") from e
 
     def _paragraph_to_markdown(self, paragraph: Paragraph) -> str:
         """
@@ -313,11 +312,11 @@ class MarkdownRenderer(BaseRenderer):
 
     def _figures_to_markdown(
         self,
-        figures: List[Figure],
+        figures: list[Figure],
         img: np.ndarray,
         output_path: str,
         page: int = 0,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Convert figures to Markdown with image files
 
@@ -348,7 +347,7 @@ class MarkdownRenderer(BaseRenderer):
             relative_path = os.path.join(self.figure_dir, figure_name)
 
             # Create HTML figure tag
-            fig_html = f"<figure>\n"
+            fig_html = "<figure>\n"
             fig_html += f'\t<img src="{relative_path}" width="{self.figure_width}px">\n'
 
             # Add caption if available
@@ -364,7 +363,7 @@ class MarkdownRenderer(BaseRenderer):
             fig_html += "</figure>\n"
 
             elements.append(
-                {"type": "figure", "element": fig_html, "order": figure.order}
+                {"type": "figure", "element": fig_html, "order": figure.order},
             )
 
             # Process figure letters if requested
@@ -376,12 +375,12 @@ class MarkdownRenderer(BaseRenderer):
                             "type": "paragraph",
                             "element": md_content,
                             "order": figure.order,
-                        }
+                        },
                     )
 
         return elements
 
-    def _elements_to_markdown_string(self, elements: List[Dict[str, Any]]) -> str:
+    def _elements_to_markdown_string(self, elements: list[dict[str, Any]]) -> str:
         """
         Convert elements to markdown string
 
@@ -394,11 +393,11 @@ class MarkdownRenderer(BaseRenderer):
         output = []
 
         for element in elements:
-            if element["type"] == "table":
-                output.append(element["element"])
-            elif element["type"] == "paragraph":
-                output.append(element["element"])
-            elif element["type"] == "figure":
+            if (
+                element["type"] == "table"
+                or element["type"] == "paragraph"
+                or element["type"] == "figure"
+            ):
                 output.append(element["element"])
 
         return "\n".join(output)

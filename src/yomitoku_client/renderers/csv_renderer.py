@@ -3,12 +3,12 @@ CSV Renderer - For converting document data to CSV format
 """
 
 import csv
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
 from ..exceptions import FormatConversionError
-from ..models import DocumentResult, Figure, Paragraph, Table
+from ..models import DocumentResult, Paragraph, Table
 from ..utils import save_figure, table_to_csv
 from .base import BaseRenderer
 
@@ -41,7 +41,8 @@ class CSVRenderer(BaseRenderer):
         self.figure_dir = figure_dir
 
     def render(
-        self, data: DocumentResult, img: Optional[np.ndarray] = None, **kwargs
+        self,
+        data: DocumentResult,
     ) -> str:
         """
         Render document data to CSV format
@@ -65,7 +66,7 @@ class CSVRenderer(BaseRenderer):
                     "box": table.box,
                     "element": table_csv,
                     "order": table.order,
-                }
+                },
             )
 
         # Process paragraphs
@@ -77,7 +78,7 @@ class CSVRenderer(BaseRenderer):
                     "box": paragraph.box,
                     "element": contents,
                     "order": paragraph.order,
-                }
+                },
             )
 
         # Process figure letters if requested
@@ -92,7 +93,7 @@ class CSVRenderer(BaseRenderer):
                                 "box": paragraph.box,
                                 "element": contents,
                                 "order": figure.order,
-                            }
+                            },
                         )
 
         # Sort by order
@@ -105,7 +106,7 @@ class CSVRenderer(BaseRenderer):
         self,
         data: DocumentResult,
         output_path: str,
-        img: Optional[np.ndarray] = None,
+        img: np.ndarray | None = None,
         **kwargs,
     ) -> None:
         """
@@ -128,7 +129,7 @@ class CSVRenderer(BaseRenderer):
             with open(output_path, "w", newline="", encoding="utf-8") as f:
                 f.write(csv_content)
         except Exception as e:
-            raise FormatConversionError(f"Failed to save CSV file: {e}")
+            raise FormatConversionError(f"Failed to save CSV file: {e}") from e
 
     def _table_to_csv(self, table: Table) -> str:
         """
@@ -160,7 +161,7 @@ class CSVRenderer(BaseRenderer):
 
         return contents
 
-    def _elements_to_csv_string(self, elements: List[Dict[str, Any]]) -> str:
+    def _elements_to_csv_string(self, elements: list[dict[str, Any]]) -> str:
         """
         Convert elements to CSV string using proper CSV writer
 

@@ -7,8 +7,8 @@ def set_logger(name, level="INFO"):
     logger.setLevel(level)
     handler = StreamHandler()
     handler.setLevel(level)
-    format = Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(format)
+    logformat = Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    handler.setFormatter(logformat)
     logger.addHandler(handler)
 
     warnings.filterwarnings("ignore")

@@ -2,8 +2,6 @@
 Renderer factory - Factory pattern for managing different renderers
 """
 
-from typing import Dict, Optional, Type
-
 from ..exceptions import FormatConversionError
 from .base import BaseRenderer
 from .csv_renderer import CSVRenderer
@@ -16,7 +14,7 @@ from .pdf_renderer import PDFRenderer
 class RendererFactory:
     """Factory class for creating renderers"""
 
-    _renderers: Dict[str, Type[BaseRenderer]] = {
+    _renderers: dict[str, type[BaseRenderer]] = {
         "csv": CSVRenderer,
         "markdown": MarkdownRenderer,
         "md": MarkdownRenderer,
@@ -28,7 +26,9 @@ class RendererFactory:
 
     @classmethod
     def register_renderer(
-        cls, format_name: str, renderer_class: Type[BaseRenderer]
+        cls,
+        format_name: str,
+        renderer_class: type[BaseRenderer],
     ) -> None:
         """
         Register a new renderer
@@ -69,7 +69,7 @@ class RendererFactory:
         if format_type not in cls._renderers:
             supported = ", ".join(cls.get_supported_formats())
             raise FormatConversionError(
-                f"Unsupported format: {format_type}. Supported formats: {supported}"
+                f"Unsupported format: {format_type}. Supported formats: {supported}",
             )
 
         renderer_class = cls._renderers[format_type]

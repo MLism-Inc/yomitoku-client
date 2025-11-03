@@ -9,16 +9,14 @@ __email__ = "support-aws-marketplace@mlism.com"
 from .client import YomitokuClient
 
 # Import font manager and PDF functions
-from .font_manager import FontManager, get_font_path
+from .font_manager import FontManager
 
 # Import main classes for easy access
 from .models import (
     DocumentResult,
     MultiPageDocumentResult,
 )
-
 from .parser import parse_pydantic_model
-
 from .renderers.csv_renderer import CSVRenderer
 from .renderers.html_renderer import HTMLRenderer
 from .renderers.json_renderer import JSONRenderer
@@ -32,7 +30,6 @@ from .renderers.searchable_pdf import (
 
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
-from .visualizers.table_exporter import TableExtractor
 
 __all__ = [
     "DocumentResult",
@@ -45,7 +42,6 @@ __all__ = [
     "JSONRenderer",
     "PDFRenderer",
     "DocumentVisualizer",
-    "TableExtractor",
     "FontManager",
     "create_searchable_pdf",
     "create_searchable_pdf_from_pdf",
@@ -73,11 +69,3 @@ def _ensure_font_available():
 
 # Check font availability on import
 _font_path = _ensure_font_available()
-if _font_path is None:
-    import warnings
-
-    warnings.warn(
-        "MPLUS1p-Medium font not found in resource directory. PDF generation may not work properly. "
-        "Please ensure the font file is present in src/yomitoku_client/resource/",
-        UserWarning,
-    )

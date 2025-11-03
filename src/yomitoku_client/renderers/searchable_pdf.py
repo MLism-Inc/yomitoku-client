@@ -11,28 +11,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from ..constants import ROOT_DIR
-
 from ..models import DocumentResult
 
 FONT_PATH = ROOT_DIR + "/resource/MPLUS1p-Medium.ttf"
-
-
-def calc_overlap_ratio(rect_a, rect_b):
-    intersection = calc_intersection(rect_a, rect_b)
-    if intersection is None:
-        return 0, None
-
-    ix1, iy1, ix2, iy2 = intersection
-
-    overlap_width = ix2 - ix1
-    overlap_height = iy2 - iy1
-    bx1, by1, bx2, by2 = rect_b
-
-    b_area = (bx2 - bx1) * (by2 - by1)
-    overlap_area = overlap_width * overlap_height
-
-    overlap_ratio = overlap_area / b_area
-    return overlap_ratio, intersection
 
 
 def calc_intersection(rect_a, rect_b):
@@ -88,10 +69,7 @@ def is_contained(rect_a, rect_b, threshold=0.8):
 
     overlap_ratio, _ = calc_overlap_ratio(rect_a, rect_b)
 
-    if overlap_ratio > threshold:
-        return True
-
-    return False
+    return overlap_ratio > threshold
 
 
 def _poly2rect(points):
@@ -139,13 +117,10 @@ def to_full_width(text):
     return jaconv_text
 
 
-from typing import List, Optional
-
-
 def create_searchable_pdf(
-    docs: List[DocumentResult],
-    images: List[Image.Image],
-    font_path: Optional[str] = None,
+    docs: list[DocumentResult],
+    images: list[Image.Image],
+    font_path: str | None = None,
 ):
     """
     Create a searchable PDF from an image and OCR results.
@@ -164,7 +139,7 @@ def create_searchable_pdf(
     packet = BytesIO()
     c = canvas.Canvas(packet)
 
-    for i, (image, doc) in enumerate(zip(images, docs)):
+    for i, (image, doc) in enumerate(zip(images, docs, strict=True)):
         image_path = f"tmp_{i}.png"
         image.save(image_path, format="JPEG", quality=90)
         w, h = image.size
@@ -183,7 +158,7 @@ def create_searchable_pdf(
                     "sub_order": 0,
                     "direction": p.direction,
                     "type": "paragraph",
-                }
+                },
             )
         for t in doc.tables:
             for cell in t.cells:
@@ -194,7 +169,7 @@ def create_searchable_pdf(
                         "sub_order": (cell.row, cell.col),
                         "direction": "horizontal",  # Assuming table text is horizontal
                         "type": "table_cell",
-                    }
+                    },
                 )
 
             if t.caption is not None:
@@ -205,7 +180,7 @@ def create_searchable_pdf(
                         "sub_order": (-1, -1),
                         "direction": t.caption.direction,
                         "type": "table_caption",
-                    }
+                    },
                 )
 
         for f in doc.figures:
@@ -217,7 +192,7 @@ def create_searchable_pdf(
                         "sub_order": para_idx,
                         "direction": p.direction,
                         "type": "figure_paragraph",
-                    }
+                    },
                 )
 
             if f.caption is not None:
@@ -228,7 +203,7 @@ def create_searchable_pdf(
                         "sub_order": 0,
                         "direction": f.caption.direction,
                         "type": "figure_caption",
-                    }
+                    },
                 )
 
         # Sort containers by reading order
@@ -249,7 +224,7 @@ def create_searchable_pdf(
                     key=lambda w: (
                         -_poly2rect(w.points)[0],
                         _poly2rect(w.points)[1],
-                    )
+                    ),
                 )
             else:
                 # Top-to-bottom, then left-to-right
@@ -257,7 +232,7 @@ def create_searchable_pdf(
                     key=lambda w: (
                         _poly2rect(w.points)[1],
                         _poly2rect(w.points)[0],
-                    )
+                    ),
                 )
             all_words.extend(container_words)
 

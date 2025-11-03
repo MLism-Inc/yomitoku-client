@@ -3,7 +3,7 @@ Base visualizer class for document visualization
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import numpy as np
 from PIL import Image
@@ -16,7 +16,7 @@ class BaseVisualizer(ABC):
         self.logger = None
 
     @abstractmethod
-    def visualize(self, data: Any, **kwargs) -> Union[np.ndarray, Image.Image]:
+    def visualize(self, data: Any, **kwargs) -> np.ndarray | Image.Image:
         """
         Main visualization method
 
@@ -27,7 +27,6 @@ class BaseVisualizer(ABC):
         Returns:
             Visualized image as numpy array or PIL Image
         """
-        pass
 
     def _validate_input(self, data: Any) -> bool:
         """

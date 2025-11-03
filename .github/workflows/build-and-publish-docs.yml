@@ -1,0 +1,25 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'CHANGELOG.md'  
+
+permissions:
+  contents: write
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # pull_requests[0].head.sha = PR ブランチの最新コミット
+          ref: ${{ github.event.workflow_run.pull_requests[0].head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - run: | 
+          pip install tox
+          tox -e docs

@@ -1,8 +1,9 @@
-import click
 import json
 import os
-
 from pathlib import Path
+
+import click
+
 from yomitoku_client import YomitokuClient, parse_pydantic_model
 
 
@@ -22,20 +23,20 @@ def cli():
     pass
 
 
-def get_format_ext(format: str) -> str:
-    format = format.lower()
-    if format in ["json"]:
+def get_format_ext(file_format: str) -> str:
+    file_format = file_format.lower()
+    if file_format in ["json"]:
         return "json"
-    elif format in ["csv"]:
+    elif file_format in ["csv"]:
         return "csv"
-    elif format in ["html", "htm"]:
+    elif file_format in ["html", "htm"]:
         return "html"
-    elif format in ["markdown", "md"]:
+    elif file_format in ["markdown", "md"]:
         return "md"
-    elif format in ["pdf"]:
+    elif file_format in ["pdf"]:
         return "pdf"
     else:
-        raise ValueError(f"Unsupported format: {format}")
+        raise ValueError(f"Unsupported format: {file_format}")
 
 
 @cli.command()
@@ -55,7 +56,7 @@ def get_format_ext(format: str) -> str:
     help="AWS region name",
 )
 @click.option(
-    "--format",
+    "--file_format",
     "-f",
     type=click.Choice(["json", "csv", "html", "md", "pdf"]),
     default="json",
@@ -135,7 +136,7 @@ def main(
     request_timeout,
     total_timeout,
     split_mode,
-    format,
+    file_format,
     ignore_line_break,
     pages,
     vis_mode,
@@ -159,7 +160,7 @@ def main(
             total_timeout=total_timeout,
         )
 
-    ext = get_format_ext(format)
+    ext = get_format_ext(file_format)
     base_file_name = Path(input_path).stem
     base_ext = Path(input_path).suffix.lstrip(".")
 

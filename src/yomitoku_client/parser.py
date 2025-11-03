@@ -2,13 +2,13 @@
 SageMaker Parser - For parsing SageMaker Yomitoku API outputs
 """
 
-from typing import Any, Dict
+from typing import Any
 
 from .exceptions import DocumentAnalysisError, ValidationError
 from .models import DocumentResult, MultiPageDocumentResult
 
 
-def parse_pydantic_model(data: Dict[str, Any]) -> MultiPageDocumentResult:
+def parse_pydantic_model(data: dict[str, Any]) -> MultiPageDocumentResult:
     """
     Parse dictionary data from SageMaker output
 
@@ -25,7 +25,7 @@ def parse_pydantic_model(data: Dict[str, Any]) -> MultiPageDocumentResult:
     try:
         if "result" not in data or not data["result"]:
             raise ValidationError(
-                "Invalid SageMaker output format: missing 'result' field"
+                "Invalid SageMaker output format: missing 'result' field",
             )
 
         # Handle both single result and multiple results
@@ -45,4 +45,4 @@ def parse_pydantic_model(data: Dict[str, Any]) -> MultiPageDocumentResult:
 
         return MultiPageDocumentResult(pages=pages)
     except Exception as e:
-        raise DocumentAnalysisError(f"Failed to parse document: {e}")
+        raise DocumentAnalysisError(f"Failed to parse document: {e}") from e

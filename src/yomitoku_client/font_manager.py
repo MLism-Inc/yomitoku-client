@@ -4,7 +4,6 @@ Font Manager - Manages built-in fonts for PDF generation
 
 import os
 from pathlib import Path
-from typing import Optional
 
 
 def get_default_font_path() -> str:
@@ -22,13 +21,13 @@ def get_default_font_path() -> str:
     if not font_path.exists():
         raise FileNotFoundError(
             f"Built-in font not found at {font_path}. "
-            "Please ensure the font file is properly installed with the package."
+            "Please ensure the font file is properly installed with the package.",
         )
 
     return str(font_path)
 
 
-def get_font_path(custom_font_path: Optional[str] = None) -> str:
+def get_font_path(custom_font_path: str | None = None) -> str:
     """
     Get font path, using custom path if provided, otherwise default built-in font
 
@@ -55,6 +54,6 @@ class FontManager:
         return get_default_font_path()
 
     @staticmethod
-    def get_font_path(custom_font_path: Optional[str] = None) -> str:
+    def get_font_path(custom_font_path: str | None = None) -> str:
         """Get font path, using custom path if provided, otherwise default built-in font"""
         return get_font_path(custom_font_path)

@@ -1,12 +1,12 @@
 import json
 import os
-import cv2
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-from pydantic import BaseModel, Field
-import pypdfium2 as pdfium
+from typing import Any
 
+import cv2
+import pypdfium2 as pdfium
 from PIL import Image
+from pydantic import BaseModel, Field
 
 from .utils import load_image, load_pdf, make_page_index
 from .visualizers.document_visualizer import DocumentVisualizer
@@ -45,18 +45,18 @@ def correct_rotation_image(
 class Paragraph(BaseModel):
     """Paragraph data model"""
 
-    box: List[int] = Field(description="Bounding box coordinates [x1, y1, x2, y2]")
+    box: list[int] = Field(description="Bounding box coordinates [x1, y1, x2, y2]")
     contents: str = Field(description="Text content")
     direction: str = Field(default="horizontal", description="Text direction")
-    indent_level: Optional[int] = Field(default=None, description="Indentation level")
+    indent_level: int | None = Field(default=None, description="Indentation level")
     order: int = Field(description="Reading order")
-    role: Optional[str] = Field(default=None, description="Paragraph role")
+    role: str | None = Field(default=None, description="Paragraph role")
 
 
 class TableCell(BaseModel):
     """Table cell data model"""
 
-    box: List[int] = Field(description="Bounding box coordinates")
+    box: list[int] = Field(description="Bounding box coordinates")
     contents: str = Field(description="Cell content")
     col: int = Field(description="Column index")
     row: int = Field(description="Row index")
@@ -67,31 +67,33 @@ class TableCell(BaseModel):
 class Table(BaseModel):
     """Table data model"""
 
-    box: List[int] = Field(description="Table bounding box")
-    caption: Optional[Union[Paragraph, None]] = Field(
-        default=None, description="Table caption"
+    box: list[int] = Field(description="Table bounding box")
+    caption: Paragraph | None = Field(
+        default=None,
+        description="Table caption",
     )
-    cells: List[TableCell] = Field(description="Table cells")
-    cols: List[Dict[str, Any]] = Field(description="Column information")
+    cells: list[TableCell] = Field(description="Table cells")
+    cols: list[dict[str, Any]] = Field(description="Column information")
     n_col: int = Field(description="Number of columns")
     n_row: int = Field(description="Number of rows")
     order: int = Field(description="Reading order")
-    rows: List[Dict[str, Any]] = Field(description="Row information")
-    spans: List[Any] = Field(default_factory=list, description="Cell spans")
+    rows: list[dict[str, Any]] = Field(description="Row information")
+    spans: list[Any] = Field(default_factory=list, description="Cell spans")
 
 
 class Figure(BaseModel):
     """Figure data model"""
 
-    box: List[int] = Field(description="Bounding box coordinates")
-    caption: Optional[Union[Paragraph, None]] = Field(
-        default=None, description="Table caption"
+    box: list[int] = Field(description="Bounding box coordinates")
+    caption: Paragraph | None = Field(
+        default=None,
+        description="Table caption",
     )
-    decode: Optional[str] = Field(default=None, description="Decoded content")
+    decode: str | None = Field(default=None, description="Decoded content")
     direction: str = Field(default="horizontal", description="Text direction")
     order: int = Field(description="Reading order")
-    paragraphs: List[Paragraph] = Field(description="Figure paragraphs")
-    role: Optional[str] = Field(default=None, description="Figure role")
+    paragraphs: list[Paragraph] = Field(description="Figure paragraphs")
+    role: str | None = Field(default=None, description="Figure role")
 
 
 class Word(BaseModel):
@@ -100,7 +102,7 @@ class Word(BaseModel):
     content: str = Field(description="Word content")
     det_score: float = Field(description="Detection score")
     direction: str = Field(description="Text direction")
-    points: List[List[int]] = Field(description="Word polygon points")
+    points: list[list[int]] = Field(description="Word polygon points")
     rec_score: float = Field(description="Recognition score")
 
 
@@ -108,16 +110,16 @@ class DocumentResult(BaseModel):
     """Document analysis result model"""
 
     num_page: int = Field(description="Page index in the original document")
-    figures: List[Figure] = Field(description="Detected figures")
-    paragraphs: List[Paragraph] = Field(description="Detected paragraphs")
-    preprocess: Dict[str, Any] = Field(description="Preprocessing information")
-    tables: List[Table] = Field(description="Detected tables")
-    words: List[Word] = Field(description="Detected words")
+    figures: list[Figure] = Field(description="Detected figures")
+    paragraphs: list[Paragraph] = Field(description="Detected paragraphs")
+    preprocess: dict[str, Any] = Field(description="Preprocessing information")
+    tables: list[Table] = Field(description="Detected tables")
+    words: list[Word] = Field(description="Detected words")
 
     def to_markdown(
         self,
         img=None,
-        output_path: Optional[Union[str, Path]] = None,
+        output_path: str | Path | None = None,
         ignore_line_break: bool = False,
         export_figure: bool = True,
         export_figure_letter: bool = False,
@@ -130,12 +132,12 @@ class DocumentResult(BaseModel):
             ignore_line_break: Whether to ignore line breaks in text
             export_figure: Whether to export figures
             export_figure_letter: Whether to export figure letters/text
-            table_format: Table format ("html" or "md")
+            table_format: Format for tables ('html' or 'markdown')
             output_path: Path to save the Markdown file
-
         Returns:
             str: Markdown formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.markdown_renderer import MarkdownRenderer
 
@@ -155,8 +157,8 @@ class DocumentResult(BaseModel):
 
     def to_html(
         self,
-        img: Optional[Union[str, Path]] = None,
-        output_path: Optional[Union[str, Path]] = None,
+        img: str | Path | None = None,
+        output_path: str | Path | None = None,
         ignore_line_break: bool = False,
         export_figure: bool = True,
         export_figure_letter: bool = False,
@@ -170,13 +172,13 @@ class DocumentResult(BaseModel):
             ignore_line_break: Whether to ignore line breaks in text
             export_figure: Whether to export figures
             export_figure_letter: Whether to export figure letters/text
-            figure_width: Width of figures in pixels
+            figure_width: Width of exported figures
             figure_dir: Directory to save figures
             output_path: Path to save the HTML file
-
         Returns:
             str: HTML formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.html_renderer import HTMLRenderer
 
@@ -204,7 +206,7 @@ class DocumentResult(BaseModel):
         export_figure: bool = True,
         export_figure_letter: bool = False,
         figure_dir: str = "figures",
-        output_path: Optional[str] = None,
+        output_path: str | None = None,
     ) -> str:
         """
         Convert document result to CSV format text
@@ -218,6 +220,7 @@ class DocumentResult(BaseModel):
         Returns:
             str: CSV formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.csv_renderer import CSVRenderer
 
@@ -247,10 +250,10 @@ class DocumentResult(BaseModel):
             ignore_line_break: Whether to ignore line breaks in text
             export_figure: Whether to export figures
             figure_dir: Directory to save figures
-
         Returns:
             str: JSON formatted text
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.json_renderer import JSONRenderer
 
@@ -265,21 +268,19 @@ class DocumentResult(BaseModel):
 
     def to_pdf(
         self,
-        font_path: Optional[str] = None,
-        img: Optional[Any] = None,
+        font_path: str | None = None,
+        img: Any | None = None,
     ) -> str:
         """
-        Convert document result to PDF format (returns path to generated PDF)
+        Convert document result to PDF format (returns PDF byte stream)
 
         Args:
             font_path: Path to font file. If None, uses default MPLUS1p-Medium.ttf from resource
-            output_path: Path to save the PDF file. If None, uses default name
-            img: Optional image array, PIL Image, or image path for PDF generation
-            pdf: Optional PDF path for PDF generation (alternative to img)
-
+            img: Optional image array for PDF generation (required for searchable PDF)
         Returns:
             str: Path to generated PDF file
         """
+
         # Dynamic import to avoid circular imports
         from .renderers.pdf_renderer import PDFRenderer
 
@@ -299,21 +300,12 @@ class DocumentResult(BaseModel):
         Visualize document layout with bounding boxes
 
         Args:
-            imag: Path to the source image file or PDF file (string or pathlib.Path)
-            viz_type: Type of visualization:
+            img: Image array to draw bounding boxes on
+            mode: Type of visualization:
                 - 'layout_detail': Detailed layout with all elements
-                - 'layout_rough': Rough layout overview
-                - 'reading_order': Show reading order arrows
                 - 'ocr': OCR text visualization
-                - 'detection': Detection bounding boxes
-                - 'recognition': Recognition results
-                - 'relationships': Element relationships
-                - 'hierarchy': Element hierarchy
-                - 'confidence': Confidence scores
-                - 'captions': Caption visualization
-            output_path: Optional path to save the visualization image
         Returns:
-            Any: Visualized image with bounding boxes drawn
+            np.ndarray: Image array with visualizations
         """
         # Create DocumentVisualizer instance
         visualizer = DocumentVisualizer()
@@ -339,8 +331,10 @@ class DocumentResult(BaseModel):
         return result_img
 
     def export_tables(
-        self, output_folder: Optional[str] = None, output_format: str = "text"
-    ) -> List[str]:
+        self,
+        output_folder: str | None = None,
+        output_format: str = "text",
+    ) -> list[str]:
         """
         Extract table structures using TableExtractor
 
@@ -381,7 +375,8 @@ class DocumentResult(BaseModel):
 
             # Convert to DataFrame
             df = pd.DataFrame(
-                table_array, columns=[f"Column_{i + 1}" for i in range(max_col)]
+                table_array,
+                columns=[f"Column_{i + 1}" for i in range(max_col)],
             )
 
             # Extract the table with specified format
@@ -436,32 +431,31 @@ class DocumentResult(BaseModel):
 class MultiPageDocumentResult(BaseModel):
     """Multi-page document result model"""
 
-    pages: Dict[int, DocumentResult] = Field(
-        description="Dictionary of page index to DocumentResult"
+    pages: dict[int, DocumentResult] = Field(
+        description="Dictionary of page index to DocumentResult",
     )
 
     def to_pdf(
         self,
-        image_path: Union[str, Path],
+        image_path: str | Path,
         output_path,
         page_index: list = None,
-        font_path: Optional[str] = None,
+        font_path: str | None = None,
         dpi: int = 200,
         mode="combine",
     ) -> str:
         """
-        Convert multi-page document result to PDF format (returns path to generated PDF)
+        Convert multi-page document result to PDF format
 
         Args:
-            font_path: Path to font file. If None, uses default MPLUS1p-Medium.ttf from resource
             output_path: Path to save the PDF file
-            img: Optional image array for PDF generation (required for searchable PDF)
-            pdf: Optional PDF array for PDF generation (required for searchable PDF)
-            create_text_pdf: If True, creates a simple text-based PDF when image is not available
-
-        Returns:
-            str: Path to generated PDF file
+            page_index: Page index to convert
+            font_path: Path to font file. If None, uses default MPLUS1p-Medium.ttf from resource
+            image_path: Path to the original image/PDF file for searchable PDF generation
+            dpi: DPI for loading PDF pages as images
+            mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
         """
+
         page_index = make_page_index(page_index, len(self.pages))
 
         base_dir = os.path.dirname(output_path)
@@ -487,7 +481,8 @@ class MultiPageDocumentResult(BaseModel):
             results.append(
                 self.pages[idx].to_pdf(
                     img=Image.fromarray(corrected_img[:, :, ::-1]),
-                )
+                    font_path=font_path,
+                ),
             )
 
         base_name, ext = os.path.splitext(output_path)
@@ -497,7 +492,7 @@ class MultiPageDocumentResult(BaseModel):
                 out_path=output_path,
             )
         elif mode == "separate":
-            for i, content in zip(page_index, results):
+            for i, content in zip(page_index, results, strict=True):
                 page_output_path = f"{base_name}_page_{i + 1}{ext}"
                 with open(page_output_path, "wb") as f:
                     f.write(content.getvalue())
@@ -510,6 +505,17 @@ class MultiPageDocumentResult(BaseModel):
         encoding: str,
         page_index: list,
     ) -> None:
+        """
+        Export results to file based on mode
+
+        Args:
+            results: List of results for each page
+            output_path: Path to save the file
+            mode: 'combine' or 'separate'
+            encoding: File encoding
+            page_index: List of page indices
+        """
+
         base_name, ext = os.path.splitext(output_path)
         if mode == "combine":
             if ext == ".json":
@@ -526,7 +532,7 @@ class MultiPageDocumentResult(BaseModel):
                     f.write(combined_content)
 
         elif mode == "separate":
-            for i, content in zip(page_index, results):
+            for i, content in zip(page_index, results, strict=True):
                 page_output_path = f"{base_name}_page_{i}{ext}"
 
                 if ext == ".json":
@@ -553,7 +559,7 @@ class MultiPageDocumentResult(BaseModel):
         Convert multi-page document result to CSV format
 
         Args:
-            output_path: Path to save the Markdown file
+            output_path: Path to save the CSV file
             page_index: Page index to convert
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
@@ -584,7 +590,7 @@ class MultiPageDocumentResult(BaseModel):
         encoding: str = "utf-8",
         mode="combine",
         page_index: list = None,
-        image_path: Optional[Union[str, Path]] = None,
+        image_path: str | Path | None = None,
         dpi: int = 200,
         **kwargs,
     ) -> None:
@@ -593,9 +599,11 @@ class MultiPageDocumentResult(BaseModel):
 
         Args:
             output_path: Path to save the Markdown file
-            page_index: Page index to convert
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
+            page_index: List of page indices to process
+            image_path: Path to the original image/PDF file for image extraction
+            dpi: DPI for loading PDF pages as images
         """
         page_index = make_page_index(page_index, len(self.pages))
 
@@ -625,7 +633,7 @@ class MultiPageDocumentResult(BaseModel):
                     **kwargs,
                     img=corrected_img,
                     output_path=output_path,
-                )
+                ),
             )
 
         self.export_file(
@@ -644,7 +652,7 @@ class MultiPageDocumentResult(BaseModel):
         encoding: str = "utf-8",
         mode="combine",
         page_index: list = None,
-        image_path: Optional[Union[str, Path]] = None,
+        image_path: str | Path | None = None,
         dpi: int = 200,
         **kwargs,
     ) -> None:
@@ -653,10 +661,13 @@ class MultiPageDocumentResult(BaseModel):
 
         Args:
             output_path: Path to save the Markdown file
-            page_index: Page index to convert
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
+            page_index: List of page indices to process
+            image_path: Path to the original image/PDF file for image extraction
+            dpi: DPI for loading PDF pages as images
         """
+
         page_index = make_page_index(page_index, len(self.pages))
 
         base_dir = os.path.dirname(output_path)
@@ -684,7 +695,7 @@ class MultiPageDocumentResult(BaseModel):
                     img=corrected_img,
                     output_path=output_path,
                     **kwargs,
-                )
+                ),
             )
 
         self.export_file(
@@ -703,7 +714,7 @@ class MultiPageDocumentResult(BaseModel):
         encoding: str = "utf-8",
         mode="combine",
         page_index: list = None,
-        image_path: Optional[Union[str, Path]] = None,
+        image_path: str | Path | None = None,
         dpi: int = 200,
         **kwargs,
     ) -> None:
@@ -711,11 +722,14 @@ class MultiPageDocumentResult(BaseModel):
         Convert multi-page document result to JSON format
 
         Args:
-            output_path: Path to save the Markdown file
-            page_index: Page index to convert
+            output_path: Path to save the JSON file
             encoding: File encoding
             mode: 'combine' to combine all pages into one file, 'separate' to save each page separately
+            page_index: List of page indices to process
+            image_path: Path to the original image/PDF file for image extraction
+            dpi: DPI for loading PDF pages as images
         """
+
         base_dir = os.path.dirname(output_path)
         if base_dir:
             os.makedirs(base_dir, exist_ok=True)
@@ -754,8 +768,8 @@ class MultiPageDocumentResult(BaseModel):
         self,
         output_folder: str = "table_visualizations",
         output_format: str = "text",
-        page_index: Optional[int] = None,
-    ) -> List[str]:
+        page_index: int | None = None,
+    ) -> list[str]:
         """
         Export table structures for multi-page document using TableExtractor
 
@@ -786,7 +800,7 @@ class MultiPageDocumentResult(BaseModel):
                     print(f"Page {i + 1}: {page_table_count} tables")
 
                 # Process each table in this page
-                for j, table in enumerate(page.tables):
+                for table in page.tables:
                     # Convert table to DataFrame for extraction
                     import pandas as pd
 
@@ -805,7 +819,8 @@ class MultiPageDocumentResult(BaseModel):
 
                     # Convert to DataFrame
                     df = pd.DataFrame(
-                        table_array, columns=[f"Column_{k + 1}" for k in range(max_col)]
+                        table_array,
+                        columns=[f"Column_{k + 1}" for k in range(max_col)],
                     )
 
                     # Extract the table with specified format
@@ -842,19 +857,27 @@ class MultiPageDocumentResult(BaseModel):
             return all_output_paths
         else:
             return self.pages[page_index].export_tables(
-                output_folder=output_folder, output_format=output_format
+                output_folder=output_folder,
+                output_format=output_format,
             )
 
     def visualize(
         self,
         image_path: str,
         mode: str = "layout",
-        output_directory: Optional[str] = None,
+        output_directory: str | None = None,
         page_index: list = None,
         dpi: int = 200,
     ) -> Any:
         """
         Visualize the document result
+
+        Args:
+            image_path: Path to the original image/PDF file
+            mode: Type of visualization ('layout', 'ocr', etc.)
+            output_directory: Directory to save visualized images
+            page_index: List of page indices to visualize
+            dpi: DPI for loading PDF pages as images
         """
 
         page_index = make_page_index(page_index, len(self.pages))
@@ -897,11 +920,11 @@ class MultiPageDocumentResult(BaseModel):
         image_path: str,
         folder_path: str,
         viz_type: str = "layout_detail",
-        page_index: Optional[int] = None,
+        page_index: int | None = None,
         dpi: int = 200,
-        target_size: Optional[Tuple[int, int]] = None,
+        target_size: tuple[int, int] | None = None,
         **kwargs,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Export visualized images to a folder with numbered filenames
 
@@ -933,6 +956,7 @@ class MultiPageDocumentResult(BaseModel):
             # Use export_viz_image method
             output_path = page_data.export_viz_image(
                 image_path=image_path,
+                output_filename=output_filename,
                 folder_path=folder_path,
                 viz_type=viz_type,
                 dpi=dpi,
@@ -944,7 +968,6 @@ class MultiPageDocumentResult(BaseModel):
         else:
             # Visualize all pages
             for i, page_data in enumerate(self.pages):
-                output_filename = f"{i}.png"
                 # Use export_viz_image method
                 output_path = page_data.export_viz_image(
                     image_path=image_path,

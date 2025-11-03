@@ -4,8 +4,6 @@ Tests for Parsers
 
 import pytest
 
-from yomitoku_client.exceptions import DocumentAnalysisError, ValidationError
-from yomitoku_client import parse_pydantic_model
 from yomitoku_client.models import (
     DocumentResult,
     Figure,
@@ -22,7 +20,12 @@ class TestDocumentResult:
     def test_document_result_creation(self):
         """Test creating DocumentResult"""
         doc = DocumentResult(
-            num_page=0, paragraphs=[], tables=[], figures=[], words=[], preprocess={}
+            num_page=0,
+            paragraphs=[],
+            tables=[],
+            figures=[],
+            words=[],
+            preprocess={},
         )
         assert doc is not None
         assert doc.paragraphs == []
@@ -34,7 +37,10 @@ class TestDocumentResult:
     def test_document_result_with_data(self):
         """Test DocumentResult with actual data"""
         paragraph = Paragraph(
-            contents="Test paragraph", box=[10, 10, 100, 30], order=1, role="paragraph"
+            contents="Test paragraph",
+            box=[10, 10, 100, 30],
+            order=1,
+            role="paragraph",
         )
 
         word = Word(
@@ -65,7 +71,10 @@ class TestParagraph:
     def test_paragraph_creation(self):
         """Test creating Paragraph"""
         para = Paragraph(
-            contents="Sample text", box=[10, 10, 100, 30], order=1, role="paragraph"
+            contents="Sample text",
+            box=[10, 10, 100, 30],
+            order=1,
+            role="paragraph",
         )
 
         assert para.contents == "Sample text"

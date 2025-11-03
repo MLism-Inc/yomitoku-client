@@ -8,11 +8,8 @@ import numpy as np
 import pytest
 
 from yomitoku_client.exceptions import (
-    DocumentAnalysisError,
     FormatConversionError,
-    ValidationError,
 )
-from yomitoku_client.models import DocumentResult, Paragraph
 
 
 class TestUtilityFunctions:

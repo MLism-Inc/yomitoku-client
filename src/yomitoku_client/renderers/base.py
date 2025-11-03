@@ -3,7 +3,6 @@ Base renderer class - Defines the interface for all renderers
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
 
 from ..parser import DocumentResult
 
@@ -27,7 +26,6 @@ class BaseRenderer(ABC):
         Returns:
             str: Rendered content
         """
-        pass
 
     @abstractmethod
     def save(self, data: DocumentResult, output_path: str, **kwargs) -> None:
@@ -39,7 +37,6 @@ class BaseRenderer(ABC):
             output_path: Path to save the output
             **kwargs: Additional rendering options
         """
-        pass
 
     def get_supported_formats(self) -> list:
         """
@@ -50,7 +47,7 @@ class BaseRenderer(ABC):
         """
         return []
 
-    def validate_options(self, **kwargs) -> bool:
+    def validate_options(self) -> bool:
         """
         Validate renderer options
 

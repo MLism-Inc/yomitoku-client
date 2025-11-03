@@ -5,7 +5,7 @@ HTML Renderer - For converting document data to HTML format
 import os
 import re
 from html import escape
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import numpy as np
 
@@ -49,9 +49,8 @@ class HTMLRenderer(BaseRenderer):
         self,
         data: DocumentResult,
         page: int = 0,
-        img: Optional[np.ndarray] = None,
-        output_path: Optional[str] = None,
-        **kwargs,
+        img: np.ndarray | None = None,
+        output_path: str | None = None,
     ) -> str:
         """
         Render document data to HTML format
@@ -103,7 +102,7 @@ class HTMLRenderer(BaseRenderer):
         self,
         data: DocumentResult,
         output_path: str,
-        img: Optional[np.ndarray] = None,
+        img: np.ndarray | None = None,
         **kwargs,
     ) -> None:
         """
@@ -121,7 +120,7 @@ class HTMLRenderer(BaseRenderer):
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(html_content)
         except Exception as e:
-            raise FormatConversionError(f"Failed to save HTML file: {e}")
+            raise FormatConversionError(f"Failed to save HTML file: {e}") from e
 
     def _convert_text_to_html(self, text: str) -> str:
         """
@@ -142,7 +141,7 @@ class HTMLRenderer(BaseRenderer):
 
         return url_regex.sub(replace_url, escape(text))
 
-    def _table_to_html(self, table: Table) -> Dict[str, Any]:
+    def _table_to_html(self, table: Table) -> dict[str, Any]:
         """
         Convert table to HTML
 
@@ -200,7 +199,7 @@ class HTMLRenderer(BaseRenderer):
             "role": None,
         }
 
-    def _paragraph_to_html(self, paragraph: Paragraph) -> Dict[str, Any]:
+    def _paragraph_to_html(self, paragraph: Paragraph) -> dict[str, Any]:
         """
         Convert paragraph to HTML
 
@@ -235,8 +234,12 @@ class HTMLRenderer(BaseRenderer):
         }
 
     def _figures_to_html(
-        self, figures: List[Figure], img: np.ndarray, output_path: str, page: int
-    ) -> List[Dict[str, Any]]:
+        self,
+        figures: list[Figure],
+        img: np.ndarray,
+        output_path: str,
+        page: int,
+    ) -> list[dict[str, Any]]:
         """
         Convert figures to HTML with image files
 
@@ -269,7 +272,9 @@ class HTMLRenderer(BaseRenderer):
 
             # Create HTML figure
             html = self._figure_to_html(
-                relative_path, self.figure_width, figure.caption
+                relative_path,
+                self.figure_width,
+                figure.caption,
             )
 
             elements.append(
@@ -277,7 +282,7 @@ class HTMLRenderer(BaseRenderer):
                     "order": figure.order,
                     "html": html,
                     "role": figure.role if hasattr(figure, "role") else None,
-                }
+                },
             )
 
             # Process figure letters if requested
@@ -289,7 +294,7 @@ class HTMLRenderer(BaseRenderer):
                             "order": figure.order,
                             "html": contents["html"],
                             "role": None,
-                        }
+                        },
                     )
 
         return elements
@@ -320,7 +325,7 @@ class HTMLRenderer(BaseRenderer):
 
         return f"<figure>\n{img_tag}{caption_tag}</figure>\n"
 
-    def _list_to_html(self, elements: List[Dict[str, Any]]) -> None:
+    def _list_to_html(self, elements: list[dict[str, Any]]) -> None:
         """
         Convert list items to proper HTML list structure
 
