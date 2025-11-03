@@ -1,5 +1,11 @@
 # Yomitoku-ClientのAWS認証設定ガイド
 
+!!!note
+
+    ここではYomiToku-ClientのAWS認証の方法と各認証方法でのYomiToku-Clientの実行方法を解説しますが、[Yomitoku-Proのデプロイ](./deploy-yomitoku-pro.md)が終わるまではYomiToku-Clientの実行はできません。    
+
+---
+
 このドキュメントは、Yomitoku-Clientを利用するために必要なAWSの認証設定について、初心者の方にも分かりやすく解説します。
 
 ## はじめに：どの認証方法を選べばいい？
