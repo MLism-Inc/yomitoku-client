@@ -1,5 +1,5 @@
 """
-Yomitoku Client - A Python library for processing SageMaker Yomitoku API outputs
+Yomitoku-Client - A Python library for processing SageMaker Yomitoku API outputs
 """
 
 __version__ = "0.1.0"

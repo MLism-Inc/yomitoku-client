@@ -3,8 +3,10 @@
 YomiToku-Client は、Python コードから直接利用することができます。
 
 ## サンプルNoteBook
+
 以下のリンクからGoogle Colab上ですぐに試せます
-- https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb
+
+<https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb>
 
 ## クイックスタート
 

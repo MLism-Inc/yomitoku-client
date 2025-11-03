@@ -9,7 +9,7 @@ source = "uv-dynamic-versioning"
 name = "yomitoku-client"
 version = "0.0.2"
 authors = [{name = "Yomitoku Team", email = "support-aws-marketplace@mlism.com"}]
-description = "Yomitoku Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
+description = "Yomitoku-Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
 readme = "README.md"
 license = "Apache-2.0"
 urls = {Homepage = "https://github.com/MLism-Inc/yomitoku-client", Repository = "https://github.com/MLism-Inc/yomitoku-client", Issues = "https://github.com/MLism-Inc/yomitoku-client/issues"}
