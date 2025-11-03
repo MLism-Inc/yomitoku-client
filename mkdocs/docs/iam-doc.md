@@ -79,7 +79,7 @@
 
 最後に、お使いのPCに、取得したアクセスキーを「プロファイル」として設定します。プロファイルとは、認証情報につける「名前」のようなものです。ここでは `yomitoku-client` という名前で設定します。
 
-**前提:** PCに [AWS CLI](https://aws.amazon.com/jp/cli/) がインストールされている必要があります。(Yomitoku Clientをインストールすると自動でインストールされます。)
+**前提:** PCに [AWS CLI](https://aws.amazon.com/jp/cli/) がインストールされている必要があります。[AWS公式ドキュメント](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html)にある手順に従ってインストールしてください。
 
 1.  ターミナル（コマンドプロンプト）を開きます。
 2.  以下のコマンドを実行します。
