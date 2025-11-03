@@ -111,5 +111,5 @@ deps =
     mkdocs-static-i18n
     mkdocs-codeinclude-plugin
 commands = 
-    mkdocs gh-deploy --force
+    mkdocs gh-deploy -f mkdocs/mkdocs.yml --force
 """
