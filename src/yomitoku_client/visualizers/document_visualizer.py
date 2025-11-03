@@ -4,25 +4,14 @@ Document visualizer for layout analysis and OCR results
 
 import logging
 import os
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, features
 
 from ..constants import PALETTE
-from ..utils import calc_distance, calc_overlap_ratio, is_contained
 from .base import BaseVisualizer
-
-try:
-    import pypdfium2
-
-    PYPDFIUM2_AVAILABLE = True
-except ImportError:
-    PYPDFIUM2_AVAILABLE = False
-    raise ImportError(
-        "pypdfium2 is required for PDF processing. Install with: pip install pypdfium2"
-    )
 
 
 class DocumentVisualizer(BaseVisualizer):
@@ -57,7 +46,7 @@ class DocumentVisualizer(BaseVisualizer):
         pdf_path: str,
         page_index: int = 0,
         dpi: int = 200,
-        target_size: Optional[Tuple[int, int]] = None,
+        target_size: tuple[int, int] | None = None,
     ) -> np.ndarray:
         """
         Convert specified PDF page to image using pypdfium2
@@ -86,7 +75,7 @@ class DocumentVisualizer(BaseVisualizer):
             if page_index < 0 or page_index >= len(doc):
                 doc.close()
                 raise ValueError(
-                    f"Page index {page_index} is out of range. PDF has {len(doc)} pages."
+                    f"Page index {page_index} is out of range. PDF has {len(doc)} pages.",
                 )
 
             if target_size is not None:
@@ -103,7 +92,8 @@ class DocumentVisualizer(BaseVisualizer):
                     or target_height > 20000
                 ):
                     self.logger.warning(
-                        f"Invalid target size: {target_size}, falling back to DPI-based conversion"
+                        "Invalid target size: %s, falling back to DPI-based conversion",
+                        target_size,
                     )
                     target_size = None
                 else:
@@ -122,7 +112,9 @@ class DocumentVisualizer(BaseVisualizer):
                         or original_height <= 0
                     ):
                         self.logger.warning(
-                            f"Invalid original page dimensions: {original_width}x{original_height}"
+                            "Invalid original page dimensions: %s x %s",
+                            original_width,
+                            original_height,
                         )
                         target_size = None
                     else:
@@ -137,7 +129,8 @@ class DocumentVisualizer(BaseVisualizer):
                         # Validate scale factor
                         if scale <= 0 or scale > 10:  # Reasonable scale range
                             self.logger.warning(
-                                f"Invalid scale factor: {scale}, falling back to DPI-based conversion"
+                                "Invalid scale factor: %s, falling back to DPI-based conversion",
+                                scale,
                             )
                             target_size = None
                         else:
@@ -191,22 +184,30 @@ class DocumentVisualizer(BaseVisualizer):
 
                                         # Paste the resized image onto the final image
                                         final_image.paste(
-                                            pil_image, (x_offset, y_offset)
+                                            pil_image,
+                                            (x_offset, y_offset),
                                         )
                                         pil_image = final_image
 
                                 # Log the coordinate mapping for debugging
                                 self.logger.info(
-                                    f"PDF coordinate mapping: original({original_width}x{original_height}) -> target({target_width}x{target_height})"
+                                    "PDF coordinate mapping: original(%dx%d) -> target(%dx%d)",
+                                    original_width,
+                                    original_height,
+                                    target_width,
+                                    target_height,
                                 )
                                 self.logger.info(
-                                    f"Scale factor: {scale:.4f}, Final scale: {final_scale if 'final_scale' in locals() else 1.0:.4f}"
+                                    "Scale factor: %.4f, Final scale: %.4f",
+                                    scale,
+                                    final_scale if "final_scale" in locals() else 1.0,
                                 )
-                                self.logger.info(f"Final image size: {pil_image.size}")
+                                self.logger.info("Final image size: %s", pil_image.size)
 
                             except Exception as e:
                                 self.logger.warning(
-                                    f"Error in target size conversion: {e}, falling back to DPI-based conversion"
+                                    "Error in target size conversion: %s, falling back to DPI-based conversion",
+                                    e,
                                 )
                                 target_size = None
 
@@ -222,7 +223,7 @@ class DocumentVisualizer(BaseVisualizer):
                 if page_index >= len(images):
                     doc.close()
                     raise ValueError(
-                        f"Page index {page_index} is out of range. PDF has {len(images)} pages."
+                        f"Page index {page_index} is out of range. PDF has {len(images)} pages.",
                     )
 
                 pil_image = images[page_index]
@@ -236,7 +237,7 @@ class DocumentVisualizer(BaseVisualizer):
         except Exception as e:
             if "doc" in locals():
                 doc.close()
-            raise ValueError(f"Failed to convert PDF page to image: {e}")
+            raise ValueError(f"Failed to convert PDF page to image: {e}") from e
 
     def _is_pdf_file(self, file_path: str) -> bool:
         """
@@ -261,10 +262,10 @@ class DocumentVisualizer(BaseVisualizer):
             with open(file_path, "rb") as f:
                 header = f.read(4)
                 return header == b"%PDF"
-        except:
+        except Exception:
             return False
 
-    def _get_original_image_size(self, results: Any) -> Optional[Tuple[int, int]]:
+    def _get_original_image_size(self, results: Any) -> tuple[int, int] | None:
         """
         Extract original image size from parsing results with improved accuracy and stability
 
@@ -289,15 +290,13 @@ class DocumentVisualizer(BaseVisualizer):
                                 and isinstance(point[1], (int, float))
                             ):
                                 all_coords.append((float(point[0]), float(point[1])))
-                    elif hasattr(word, "box") and word.box:
-                        # Fallback to box coordinates
-                        if len(word.box) >= 4:
-                            all_coords.extend(
-                                [
-                                    (float(word.box[0]), float(word.box[1])),  # x1, y1
-                                    (float(word.box[2]), float(word.box[3])),  # x2, y2
-                                ]
-                            )
+                    elif hasattr(word, "box") and word.box and len(word.box) >= 4:
+                        all_coords.extend(
+                            [
+                                (float(word.box[0]), float(word.box[1])),  # x1, y1
+                                (float(word.box[2]), float(word.box[3])),  # x2, y2
+                            ],
+                        )
 
             # Paragraphs
             if hasattr(results, "paragraphs") and results.paragraphs:
@@ -307,7 +306,7 @@ class DocumentVisualizer(BaseVisualizer):
                             [
                                 (float(para.box[0]), float(para.box[1])),  # x1, y1
                                 (float(para.box[2]), float(para.box[3])),  # x2, y2
-                            ]
+                            ],
                         )
 
             # Tables
@@ -318,7 +317,7 @@ class DocumentVisualizer(BaseVisualizer):
                             [
                                 (float(table.box[0]), float(table.box[1])),  # x1, y1
                                 (float(table.box[2]), float(table.box[3])),  # x2, y2
-                            ]
+                            ],
                         )
 
             # Figures
@@ -329,7 +328,7 @@ class DocumentVisualizer(BaseVisualizer):
                             [
                                 (float(figure.box[0]), float(figure.box[1])),  # x1, y1
                                 (float(figure.box[2]), float(figure.box[3])),  # x2, y2
-                            ]
+                            ],
                         )
 
             if all_coords:
@@ -354,7 +353,8 @@ class DocumentVisualizer(BaseVisualizer):
                 # The max coordinates should represent the full image dimensions
                 # Add a small margin to ensure we capture the full image
                 margin = max(
-                    10, (max_x - min_x + max_y - min_y) * 0.01
+                    10,
+                    (max_x - min_x + max_y - min_y) * 0.01,
                 )  # Dynamic margin
                 final_width = int(max_x + margin)
                 final_height = int(max_y + margin)
@@ -367,25 +367,36 @@ class DocumentVisualizer(BaseVisualizer):
                     and final_height < 20000
                 ):
                     self.logger.info(
-                        f"Detected original image size: {final_width}x{final_height} from coordinates"
+                        "Detected original image size: %dx%d from coordinates",
+                        final_width,
+                        final_height,
                     )
                     self.logger.info(
-                        f"Coordinate range: x=[{min_x:.1f}, {max_x:.1f}], y=[{min_y:.1f}, {max_y:.1f}]"
+                        "Coordinate range: x=[%.1f, %.1f], y=[%.1f, %.1f]",
+                        min_x,
+                        max_x,
+                        min_y,
+                        max_y,
                     )
                     self.logger.info(
-                        f"Valid coordinates: {len(valid_coords)}/{len(all_coords)}"
+                        "Valid coordinates: %d/%d",
+                        len(valid_coords),
+                        len(all_coords),
                     )
                     return (final_width, final_height)
                 else:
                     self.logger.warning(
-                        f"Detected size seems invalid: {final_width}x{final_height}"
+                        "Detected size seems invalid: %s x %s",
+                        final_width,
+                        final_height,
                     )
 
             return None
 
         except Exception as e:
             self.logger.warning(
-                f"Could not extract original image size from results: {e}"
+                "Could not extract original image size from results: %s",
+                e,
             )
             return None
 
@@ -417,7 +428,7 @@ class DocumentVisualizer(BaseVisualizer):
         self,
         img: np.ndarray,
         results: Any,
-        line_color: Tuple[int, int, int] = (0, 0, 255),
+        line_color: tuple[int, int, int] = (0, 0, 255),
         tip_size: int = 10,
         visualize_figure_letter: bool = False,
     ) -> np.ndarray:
@@ -436,10 +447,17 @@ class DocumentVisualizer(BaseVisualizer):
         """
         try:
             return self.reading_order_visualizer(
-                img, results, line_color, tip_size, visualize_figure_letter
+                img,
+                results,
+                line_color,
+                tip_size,
+                visualize_figure_letter,
             )
         except Exception as e:
-            self.logger.error(f"Error in reading order visualization: {e}")
+            self.logger.error(
+                "Error in reading order visualization: %s",
+                e,
+            )
             return img
 
     def visualize_layout_detail(self, img: np.ndarray, results: Any) -> np.ndarray:
@@ -456,7 +474,10 @@ class DocumentVisualizer(BaseVisualizer):
         try:
             return self.layout_visualizer_detail(results, img)
         except Exception as e:
-            self.logger.error(f"Error in layout detail visualization: {e}")
+            self.logger.error(
+                "Error in layout detail visualization: %s",
+                e,
+            )
             return img
 
     def visualize_ocr(
@@ -467,8 +488,8 @@ class DocumentVisualizer(BaseVisualizer):
         det_score: np.ndarray = None,
         vis_heatmap: bool = False,
         font_size: int = 12,
-        font_color: Tuple[int, int, int] = (255, 0, 0),
-        line_color: Tuple[int, int, int] = (0, 255, 0),
+        font_color: tuple[int, int, int] = (255, 0, 0),
+        line_color: tuple[int, int, int] = (0, 255, 0),
     ) -> np.ndarray:
         """
         OCR visualization
@@ -493,10 +514,11 @@ class DocumentVisualizer(BaseVisualizer):
                     from ..font_manager import get_font_path
 
                     font_path = get_font_path()
-                    self.logger.info(f"Using default font: {font_path}")
+                    self.logger.info("Using default font: %s", font_path)
                 except Exception as e:
                     self.logger.warning(
-                        f"No font path provided and default font not available: {e}"
+                        "No font path provided and default font not available: %s",
+                        e,
                     )
                     return img
 
@@ -522,14 +544,17 @@ class DocumentVisualizer(BaseVisualizer):
                 line_color,
             )
         except Exception as e:
-            self.logger.error(f"Error in OCR visualization: {e}")
+            self.logger.error(
+                "Error in OCR visualization: %s",
+                e,
+            )
             return img
 
     def _draw_reading_order_arrows(
         self,
         img: np.ndarray,
-        elements: List[Any],
-        line_color: Tuple[int, int, int],
+        elements: list[Any],
+        line_color: tuple[int, int, int],
         tip_size: int,
     ) -> np.ndarray:
         """Draw reading order arrows between elements"""
@@ -553,11 +578,7 @@ class DocumentVisualizer(BaseVisualizer):
             )
 
             arrow_length = np.linalg.norm(np.array(cur_center) - np.array(prev_center))
-
-            if arrow_length > 0:
-                tip_length = tip_size / arrow_length
-            else:
-                tip_length = 0
+            tip_length = tip_size / arrow_length if arrow_length > 0 else 0
 
             cv2.arrowedLine(
                 out,
@@ -571,7 +592,10 @@ class DocumentVisualizer(BaseVisualizer):
         return out
 
     def _visualize_element(
-        self, img: np.ndarray, category: str, elements: List[Any]
+        self,
+        img: np.ndarray,
+        category: str,
+        elements: list[Any],
     ) -> np.ndarray:
         """Visualize specific element category  visualize_element"""
         out = img.copy()
@@ -593,7 +617,7 @@ class DocumentVisualizer(BaseVisualizer):
             "index",
         ]
 
-        for i, element in enumerate(elements):
+        for element in elements:
             try:
                 # Extract box - handle both object and dict formats
                 if hasattr(element, "box"):
@@ -602,7 +626,8 @@ class DocumentVisualizer(BaseVisualizer):
                     box = element["box"]
                 else:
                     self.logger.warning(
-                        f"Element has no box attribute: {type(element)}"
+                        "Element has no box attribute: %s",
+                        type(element),
                     )
                     continue
 
@@ -692,7 +717,11 @@ class DocumentVisualizer(BaseVisualizer):
                                         ]
                                         x1, y1, x2, y2 = tuple(map(int, para_box))
                                         out = cv2.rectangle(
-                                            out, (x1, y1), (x2, y2), color, 2
+                                            out,
+                                            (x1, y1),
+                                            (x2, y2),
+                                            color,
+                                            2,
                                         )
                                         out = cv2.putText(
                                             out,
@@ -705,11 +734,16 @@ class DocumentVisualizer(BaseVisualizer):
                                         )
                                 except Exception as e:
                                     self.logger.warning(
-                                        f"Error processing figure paragraph: {e}"
+                                        "Error processing figure paragraph: %s",
+                                        e,
                                     )
                                     continue
             except Exception as e:
-                self.logger.warning(f"Error processing element in {category}: {e}")
+                self.logger.warning(
+                    "Error processing element in %s: %s",
+                    category,
+                    e,
+                )
                 continue
 
         return out
@@ -747,8 +781,8 @@ class DocumentVisualizer(BaseVisualizer):
         results: Any,
         show_text: bool = True,
         font_size: float = 0.5,
-        box_color: Tuple[int, int, int] = (255, 128, 0),
-        text_color: Tuple[int, int, int] = (255, 128, 0),
+        box_color: tuple[int, int, int] = (255, 128, 0),
+        text_color: tuple[int, int, int] = (255, 128, 0),
     ) -> np.ndarray:
         """
         Visualize captions for tables and figures
@@ -795,7 +829,10 @@ class DocumentVisualizer(BaseVisualizer):
 
             return out
         except Exception as e:
-            self.logger.error(f"Error in caption visualization: {e}")
+            self.logger.error(
+                "Error in caption visualization: %s",
+                e,
+            )
             return img
 
     def _draw_caption(
@@ -804,8 +841,8 @@ class DocumentVisualizer(BaseVisualizer):
         caption: Any,
         show_text: bool,
         font_size: float,
-        box_color: Tuple[int, int, int],
-        text_color: Tuple[int, int, int],
+        box_color: tuple[int, int, int],
+        text_color: tuple[int, int, int],
     ) -> np.ndarray:
         """Draw a single caption"""
         out = img.copy()
@@ -843,7 +880,10 @@ class DocumentVisualizer(BaseVisualizer):
                 for word in words:
                     test_line = " ".join(current_line + [word])
                     text_size = cv2.getTextSize(
-                        test_line, cv2.FONT_HERSHEY_SIMPLEX, font_size, 1
+                        test_line,
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        font_size,
+                        1,
                     )[0]
 
                     if text_size[0] <= max_width or not current_line:
@@ -860,7 +900,7 @@ class DocumentVisualizer(BaseVisualizer):
                     cv2.getTextSize("Test", cv2.FONT_HERSHEY_SIMPLEX, font_size, 1)[0][
                         1
                     ]
-                    * 1.5
+                    * 1.5,
                 )
                 for i, line in enumerate(lines[:3]):  # Limit to 3 lines
                     y_pos = y1 + (i + 1) * line_height
@@ -879,7 +919,7 @@ class DocumentVisualizer(BaseVisualizer):
 
     def visualize_confidence_scores(
         self,
-        img_or_path: Union[np.ndarray, str],
+        img_or_path: np.ndarray | str,
         results: Any,
         show_ocr_confidence: bool = True,
         show_detection_confidence: bool = False,
@@ -978,7 +1018,11 @@ class DocumentVisualizer(BaseVisualizer):
 
                             # Draw detection confidence with different line style
                             cv2.rectangle(
-                                out, (x1 + 2, y1 + 2), (x2 - 2, y2 - 2), color, 1
+                                out,
+                                (x1 + 2, y1 + 2),
+                                (x2 - 2, y2 - 2),
+                                color,
+                                1,
                             )
                             cv2.putText(
                                 out,
@@ -992,7 +1036,10 @@ class DocumentVisualizer(BaseVisualizer):
 
             return out
         except Exception as e:
-            self.logger.error(f"Error in confidence scores visualization: {e}")
+            self.logger.error(
+                "Error in confidence scores visualization: %s",
+                e,
+            )
             return img
 
     # =============================================================================
@@ -1022,10 +1069,7 @@ class DocumentVisualizer(BaseVisualizer):
             arrow_length = np.linalg.norm(np.array(cur_center) - np.array(prev_center))
 
             # tipLength を計算（矢印長さに対する固定サイズの割合）
-            if arrow_length > 0:
-                tip_length = tip_size / arrow_length
-            else:
-                tip_length = 0  # 長さが0なら矢じりもゼロ
+            tip_length = tip_size / arrow_length if arrow_length > 0 else 0
 
             cv2.arrowedLine(
                 out,
@@ -1054,13 +1098,21 @@ class DocumentVisualizer(BaseVisualizer):
         if visualize_figure_letter:
             for figure in results.figures:
                 out = self._reading_order_visualizer(
-                    out, figure.paragraphs, line_color=(0, 255, 0), tip_size=5
+                    out,
+                    figure.paragraphs,
+                    line_color=(0, 255, 0),
+                    tip_size=5,
                 )
 
         return out
 
     def det_visualizer(
-        self, img, quads, preds=None, vis_heatmap=False, line_color=(0, 255, 0)
+        self,
+        img,
+        quads,
+        preds=None,
+        vis_heatmap=False,
+        line_color=(0, 255, 0),
     ):
         """Detection visualizer"""
         out = img.copy()
@@ -1106,7 +1158,7 @@ class DocumentVisualizer(BaseVisualizer):
         has_raqm = features.check_feature(feature="raqm")
         if not has_raqm:
             self.logger.warning(
-                "libraqm is not installed. Vertical text rendering is not supported. Rendering horizontally instead."
+                "libraqm is not installed. Vertical text rendering is not supported. Rendering horizontally instead.",
             )
 
         for word in words:
@@ -1166,7 +1218,7 @@ class DocumentVisualizer(BaseVisualizer):
             "index",
         ]
 
-        for i, element in enumerate(elements):
+        for element in elements:
             box = element.box
             role = None
 
@@ -1245,7 +1297,11 @@ class DocumentVisualizer(BaseVisualizer):
                                     ]
                                     x1, y1, x2, y2 = tuple(map(int, para_box))
                                     out = cv2.rectangle(
-                                        out, (x1, y1), (x2, y2), color, 2
+                                        out,
+                                        (x1, y1),
+                                        (x2, y2),
+                                        color,
+                                        2,
                                     )
                                     out = cv2.putText(
                                         out,
@@ -1258,7 +1314,8 @@ class DocumentVisualizer(BaseVisualizer):
                                     )
                             except Exception as e:
                                 self.logger.warning(
-                                    f"Error processing figure paragraph: {e}"
+                                    "Error processing figure paragraph: %s",
+                                    e,
                                 )
                                 continue
 
@@ -1281,17 +1338,13 @@ class DocumentVisualizer(BaseVisualizer):
         """Rough layout visualizer"""
         out = img.copy()
         results_dict = results.dict()
-        for id, (category, preds) in enumerate(results_dict.items()):
+        for idx, (category, preds) in enumerate(results_dict.items()):
             for element in preds:
                 box = element["box"]
                 role = element["role"]
+                role = "" if role is None else f"({role})"
 
-                if role is None:
-                    role = ""
-                else:
-                    role = f"({role})"
-
-                color = self.palette[id % len(self.palette)]
+                color = self.palette[idx % len(self.palette)]
                 x1, y1, x2, y2 = tuple(map(int, box))
                 out = cv2.rectangle(out, (x1, y1), (x2, y2), color, 2)
                 out = cv2.putText(
@@ -1334,7 +1387,12 @@ class DocumentVisualizer(BaseVisualizer):
         return out
 
     def rec_visualizer(
-        self, img, outputs, font_path, font_size=12, font_color=(255, 0, 0)
+        self,
+        img,
+        outputs,
+        font_path,
+        font_size=12,
+        font_color=(255, 0, 0),
     ):
         """Recognition visualizer"""
         out = img.copy()
@@ -1343,11 +1401,15 @@ class DocumentVisualizer(BaseVisualizer):
         has_raqm = features.check_feature(feature="raqm")
         if not has_raqm:
             self.logger.warning(
-                "libraqm is not installed. Vertical text rendering is not supported. Rendering horizontally instead."
+                "libraqm is not installed. Vertical text rendering is not supported. Rendering horizontally instead.",
             )
 
         for pred, quad, direction, score in zip(
-            outputs.contents, outputs.points, outputs.directions, outputs.scores
+            outputs.contents,
+            outputs.points,
+            outputs.directions,
+            outputs.scores,
+            strict=True,
         ):
             quad = np.array(quad).astype(np.int32)
             font = ImageFont.truetype(font_path, font_size)

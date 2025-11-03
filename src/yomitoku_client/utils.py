@@ -1,22 +1,19 @@
+import io
 import os
 import re
-import io
-from typing import Any, List, Optional, Tuple, Union
-
-import numpy as np
-
 from pathlib import Path
+from typing import Any
 
-from PIL import Image
 import numpy as np
 import pypdfium2
+from PIL import Image
 
 from .constants import (
     SUPPORT_INPUT_FORMAT,
 )
 
 
-def make_page_index(page_index: Union[int, List[int], None], num_pages) -> List[int]:
+def make_page_index(page_index: int | list[int] | None, num_pages) -> list[int]:
     if page_index is None:
         return range(num_pages)
     elif isinstance(page_index, int):
@@ -44,18 +41,18 @@ def load_image(image_path: str) -> np.ndarray:
     ext = image_path.suffix[1:].lower()
     if ext not in SUPPORT_INPUT_FORMAT:
         raise ValueError(
-            f"Unsupported image format. Supported formats are {SUPPORT_INPUT_FORMAT}"
+            f"Unsupported image format. Supported formats are {SUPPORT_INPUT_FORMAT}",
         )
 
     if ext == "pdf":
         raise ValueError(
-            "PDF file is not supported by load_image(). Use load_pdf() instead."
+            "PDF file is not supported by load_image(). Use load_pdf() instead.",
         )
 
     try:
         img = Image.open(image_path)
-    except Exception:
-        raise ValueError("Invalid image data.")
+    except Exception as e:
+        raise ValueError("Invalid image data.") from e
 
     pages = []
     if ext in ["tif", "tiff"]:
@@ -91,12 +88,12 @@ def load_pdf(pdf_path: str, dpi=200) -> list[np.ndarray]:
     ext = pdf_path.suffix[1:].lower()
     if ext not in SUPPORT_INPUT_FORMAT:
         raise ValueError(
-            f"Unsupported image format. Supported formats are {SUPPORT_INPUT_FORMAT}"
+            f"Unsupported image format. Supported formats are {SUPPORT_INPUT_FORMAT}",
         )
 
     if ext != "pdf":
         raise ValueError(
-            "image file is not supported by load_pdf(). Use load_image() instead."
+            "image file is not supported by load_pdf(). Use load_image() instead.",
         )
 
     try:
@@ -148,7 +145,7 @@ def load_pdf_to_bytes(pdf_path: str, dpi=200) -> list[bytes]:
         return images_bytes
 
     except Exception as e:
-        raise RuntimeError(f"Failed to convert PDF to images: {e}")
+        raise RuntimeError(f"Failed to convert PDF to images: {e}") from e
 
 
 def load_tiff_to_bytes(tiff_path: str) -> list[bytes]:
@@ -209,10 +206,10 @@ def save_image(img: np.ndarray, path: str) -> None:
     """
     try:
         import cv2
-    except ImportError:
+    except ImportError as e:
         raise ImportError(
-            "OpenCV is required for image saving. Install with: pip install opencv-python"
-        )
+            "OpenCV is required for image saving. Install with: pip install opencv-python",
+        ) from e
 
     basedir = os.path.dirname(path)
     if basedir:
@@ -228,11 +225,11 @@ def save_image(img: np.ndarray, path: str) -> None:
 
 
 def save_figure(
-    figures: List[Any],
-    img: Optional[np.ndarray],
+    figures: list[Any],
+    img: np.ndarray | None,
     out_path: str,
     figure_dir: str = "figures",
-) -> List[str]:
+) -> list[str]:
     """
     Save figures from document to separate files
 
@@ -339,12 +336,12 @@ def load_charset(charset_path: str) -> str:
     Returns:
         str: Character set content
     """
-    with open(charset_path, "r", encoding="utf-8") as f:
+    with open(charset_path, encoding="utf-8") as f:
         charset = f.read()
     return charset
 
 
-def filter_by_flag(elements: List[Any], flags: List[bool]) -> List[Any]:
+def filter_by_flag(elements: list[Any], flags: list[bool]) -> list[Any]:
     """
     Filter elements by boolean flags
 
@@ -359,12 +356,13 @@ def filter_by_flag(elements: List[Any], flags: List[bool]) -> List[Any]:
         AssertionError: If lengths don't match
     """
     assert len(elements) == len(flags), "Elements and flags must have the same length"
-    return [element for element, flag in zip(elements, flags) if flag]
+    return [element for element, flag in zip(elements, flags, strict=True) if flag]
 
 
 def calc_overlap_ratio(
-    rect_a: List[float], rect_b: List[float]
-) -> Tuple[float, Optional[List[int]]]:
+    rect_a: list[float],
+    rect_b: list[float],
+) -> tuple[float, list[int] | None]:
     """
     Calculate overlap ratio between two rectangles
 
@@ -391,7 +389,7 @@ def calc_overlap_ratio(
     return overlap_ratio, intersection
 
 
-def calc_distance(rect_a: List[float], rect_b: List[float]) -> float:
+def calc_distance(rect_a: list[float], rect_b: list[float]) -> float:
     """
     Calculate distance between centers of two rectangles
 
@@ -420,7 +418,9 @@ def calc_distance(rect_a: List[float], rect_b: List[float]) -> float:
 
 
 def is_contained(
-    rect_a: List[float], rect_b: List[float], threshold: float = 0.8
+    rect_a: list[float],
+    rect_b: list[float],
+    threshold: float = 0.8,
 ) -> bool:
     """
     Check if rectangle B is contained in rectangle A
@@ -437,7 +437,7 @@ def is_contained(
     return overlap_ratio > threshold
 
 
-def calc_intersection(rect_a: List[float], rect_b: List[float]) -> Optional[List[int]]:
+def calc_intersection(rect_a: list[float], rect_b: list[float]) -> list[int] | None:
     """
     Calculate intersection of two rectangles
 
@@ -467,7 +467,9 @@ def calc_intersection(rect_a: List[float], rect_b: List[float]) -> Optional[List
 
 
 def is_intersected_horizontal(
-    rect_a: List[float], rect_b: List[float], threshold: float = 0.5
+    rect_a: list[float],
+    rect_b: list[float],
+    threshold: float = 0.5,
 ) -> bool:
     """
     Check if two rectangles intersect horizontally
@@ -493,7 +495,7 @@ def is_intersected_horizontal(
     return (overlap_height / min_height) >= threshold
 
 
-def is_intersected_vertical(rect_a: List[float], rect_b: List[float]) -> bool:
+def is_intersected_vertical(rect_a: list[float], rect_b: list[float]) -> bool:
     """
     Check if two rectangles intersect vertically
 
@@ -515,7 +517,7 @@ def is_intersected_vertical(rect_a: List[float], rect_b: List[float]) -> bool:
     return overlap_width > 0
 
 
-def quad_to_xyxy(quad: List[List[float]]) -> Tuple[float, float, float, float]:
+def quad_to_xyxy(quad: list[list[float]]) -> tuple[float, float, float, float]:
     """
     Convert quadrilateral to bounding box rectangle
 
@@ -534,8 +536,10 @@ def quad_to_xyxy(quad: List[List[float]]) -> Tuple[float, float, float, float]:
 
 
 def convert_table_array(
-    table: Any, padding: bool = False, drop_empty: bool = False
-) -> List[List[str]]:
+    table: Any,
+    padding: bool = False,
+    drop_empty: bool = False,
+) -> list[list[str]]:
     """
     Convert table object to 2D array
 
@@ -604,8 +608,9 @@ def table_to_csv(table: Any, padding: bool = False, drop_empty: bool = False) ->
 
 
 def convert_table_array_to_dict(
-    table_array: List[List[str]], header_row: int = 1
-) -> List[dict]:
+    table_array: list[list[str]],
+    header_row: int = 1,
+) -> list[dict]:
     """
     Convert table array to list of dictionaries
 

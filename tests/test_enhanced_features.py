@@ -9,7 +9,6 @@ import numpy as np
 import pytest
 
 from yomitoku_client.exceptions import FormatConversionError
-from yomitoku_client import create_searchable_pdf
 from yomitoku_client.renderers import RendererFactory
 from yomitoku_client.utils import (
     calc_distance,

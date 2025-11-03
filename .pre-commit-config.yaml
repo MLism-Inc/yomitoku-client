@@ -2,18 +2,12 @@ repos:
   - repo: local
     hooks:
       - id: lint
-        name: lint
-        entry: bash -c '.tox/lint/bin/ruff check --fix'
+        name: ruff lint (via tox)
+        entry: tox -q -e lint
         language: system
-        types: [python]
-      - id: format
-        name: format
-        entry: bash -c '.tox/lint/bin/ruff format'
-        language: system
-        types: [python]
-      - id: mypy
-        name: mypy
-        entry: bash -c '.tox/mypy/bin/mypy src tests --ignore-missing-imports --strict-optional --disallow-untyped-defs '
         pass_filenames: false
+      - id: format
+        name: ruff format
+        entry: tox -q -e format
         language: system
-        types: [python]
+        pass_filenames: false

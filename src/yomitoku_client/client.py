@@ -1,34 +1,29 @@
 import asyncio
-import boto3
-import os
-import math
 import json
+import math
+import os
+import threading
 import time
-
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from botocore.exceptions import BotoCoreError, ClientError
-from botocore.config import Config
-
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from concurrent.futures import ThreadPoolExecutor
-from typing import Union, Optional, Tuple
-import threading
+import boto3
+from botocore.config import Config
+from botocore.exceptions import BotoCoreError, ClientError
 
+from yomitoku_client.logger import set_logger
 from yomitoku_client.utils import (
     load_pdf_to_bytes,
     load_tiff_to_bytes,
     make_page_index,
 )
 
-from yomitoku_client.logger import set_logger
-
-from datetime import datetime
-
 from .constants import SUPPORT_INPUT_FORMAT
 
-
 logger = set_logger(__name__, "INFO")
+JST = timezone(timedelta(hours=9), name="Asia/Tokyo")
 
 
 class YomiTokuError(Exception):
@@ -66,7 +61,7 @@ class RequestConfig:
     max_attempts: int = 3
 
 
-def guess_content_type(path: Union[str]) -> str:
+def guess_content_type(path: str) -> str:
     _, ext = os.path.splitext(path)
     ext = ext.lower()
     if ext == ".pdf":
@@ -84,7 +79,7 @@ def load_image_bytes(
     path_img: str,
     content_type: str,
     dpi=200,
-) -> Tuple[list[bytes], str]:
+) -> tuple[list[bytes], str]:
     if content_type == "application/pdf":
         img_bytes = load_pdf_to_bytes(path_img, dpi=dpi)
         # NOTE: PDFはページ分割・ラスター化してPNG化。以降のinvokeはimage/pngで送る
@@ -123,8 +118,8 @@ class YomitokuClient:
         region: str | None = None,
         profile: str | None = None,
         max_workers: int = 4,
-        request_config: Optional[RequestConfig] = None,
-        circuit_config: Optional[CircuitConfig] = None,
+        request_config: RequestConfig | None = None,
+        circuit_config: CircuitConfig | None = None,
     ):
         logger.info("YomitokuClient initialized")
         self.endpoint = endpoint
@@ -175,7 +170,7 @@ class YomitokuClient:
                 "EndpointStatus"
             ]
         except Exception as e:
-            logger.error(f"Failed to describe endpoint {self.endpoint}: {e}")
+            logger.error("Failed to describe endpoint %s: %s", self.endpoint, e)
             raise
 
     def _record_success(self):
@@ -209,7 +204,7 @@ class YomitokuClient:
             if now_ms() < self._circuit_open_until:
                 remain = max(0, self._circuit_open_until - now_ms())
                 raise YomiTokuInvokeError(
-                    f"Circuit open; retry after ~{remain // 1000}s"
+                    f"Circuit open; retry after ~{remain // 1000}s",
                 )
 
     def _invoke_one(self, payload):
@@ -227,7 +222,11 @@ class YomitokuClient:
                 else raw
             )
             data = json.loads(text)
-            logger.info(f"{payload.source_name} [page {payload.index}] analyzed.")
+            logger.info(
+                "%s [page %s] analyzed.",
+                payload.source_name,
+                payload.index,
+            )
             self._record_success()
             return InvokeResult(
                 index=payload.index,
@@ -236,16 +235,16 @@ class YomitokuClient:
         except BotoCoreError as e:
             self._record_failure()
             raise YomiTokuInvokeError(
-                f"AWS SDK error during invoke for page {payload.index}"
+                f"AWS SDK error during invoke for page {payload.index}",
             ) from e
         except ClientError as e:
             code = int(
-                e.response.get("ResponseMetadata", {}).get("HTTPStatusCode", 0) or 0
+                e.response.get("ResponseMetadata", {}).get("HTTPStatusCode", 0) or 0,
             )
             if code in (429, 500, 502, 503, 504):
                 self._record_failure()
             raise YomiTokuInvokeError(
-                f"SageMaker invoke failed ({code}) for page {payload.index}: {e}"
+                f"SageMaker invoke failed ({code}) for page {payload.index}: {e}",
             ) from e
         except json.JSONDecodeError as e:
             self._record_failure()
@@ -255,7 +254,9 @@ class YomitokuClient:
             raise e
 
     async def _ainvoke_one(
-        self, payload: PagePayload, request_timeout: Optional[float] = None
+        self,
+        payload: PagePayload,
+        request_timeout: float | None = None,
     ):
         fut = self._loop.run_in_executor(self._pool, self._invoke_one, payload)
         timeout = (
@@ -266,19 +267,19 @@ class YomitokuClient:
 
         try:
             return await asyncio.wait_for(fut, timeout=timeout)
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as e:
             self._record_failure()
             raise YomiTokuInvokeError(
-                f"Request timeout for page {payload.index} (>{timeout}s)"
-            )
+                f"Request timeout for page {payload.index} (>{timeout}s)",
+            ) from e
 
     async def analyze_async(
         self,
         path_img: str,
         dpi: int = 200,
-        page_index: Union[None, int, list] = None,
-        request_timeout: Optional[float] = None,
-        total_timeout: Optional[float] = None,
+        page_index: None | int | list = None,
+        request_timeout: float | None = None,
+        total_timeout: float | None = None,
     ):
         # 画像データ読み込み
         content_type = guess_content_type(path_img)
@@ -318,14 +319,15 @@ class YomitokuClient:
 
         try:
             results = await asyncio.wait_for(
-                asyncio.gather(*tasks), timeout=total_timeout
+                asyncio.gather(*tasks),
+                timeout=total_timeout,
             )
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as e:
             for t in tasks:
                 if not t.done():
                     t.cancel()
             self._record_failure()
-            raise YomiTokuInvokeError(f"Analyze timeout (> {total_timeout}s)")
+            raise YomiTokuInvokeError(f"Analyze timeout (> {total_timeout}s)") from e
         except Exception as e:
             for t in tasks:
                 if not t.done():
@@ -346,11 +348,11 @@ class YomitokuClient:
         input_dir: str,
         output_dir: str,
         dpi: int = 200,
-        page_index: Union[None, int, list] = None,
-        request_timeout: Optional[float] = None,
-        total_timeout: Optional[float] = None,
+        page_index: None | int | list = None,
+        request_timeout: float | None = None,
+        total_timeout: float | None = None,
         overwrite: bool = False,
-        log_path: Optional[str] = None,
+        log_path: str | None = None,
     ):
         os.makedirs(output_dir, exist_ok=True)
 
@@ -377,7 +379,7 @@ class YomitokuClient:
             output_path = Path(output_dir) / f"{stem}_{ext}.json"
 
             record = {
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(JST).isoformat(),
                 "file_path": path_img,
                 "output_path": str(output_path),
                 "dpi": dpi,
@@ -387,7 +389,7 @@ class YomitokuClient:
             }
 
             if output_path.exists() and not overwrite:
-                logger.info(f"Skipped (exists): {output_path.name}")
+                logger.info("Skipped (exists): %s", output_path.name)
                 record["executed"] = False
                 record["success"] = True
                 await log_record(record)
@@ -405,10 +407,10 @@ class YomitokuClient:
                 )
                 with open(output_path, "w", encoding="utf-8") as f:
                     json.dump(result, f, ensure_ascii=False, indent=2)
-                logger.info(f"Saved: {output_path.name}")
+                logger.info("Saved: %s", output_path.name)
                 record["success"] = True
             except Exception as e:
-                logger.error(f"Failed: {path_img} ({e})")
+                logger.error("Failed: %s (%s)", path_img, e)
                 record["success"] = False
                 record["error"] = f"{type(e).__name__}: {e}"
             finally:
@@ -426,9 +428,9 @@ class YomitokuClient:
         self,
         path_img: str,
         dpi: int = 200,
-        page_index: Union[None, int, list] = None,
-        request_timeout: Optional[float] = None,
-        total_timeout: Optional[float] = None,
+        page_index: None | int | list = None,
+        request_timeout: float | None = None,
+        total_timeout: float | None = None,
     ):
         return self._loop.run_until_complete(
             self.analyze_async(

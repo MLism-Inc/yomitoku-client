@@ -16,8 +16,8 @@ urls = {Homepage = "https://github.com/MLism-Inc/yomitoku-client", Repository = 
 requires-python = ">=3.10,<3.13"
 keywords = ["yomitoku", "sagemaker", "document-analysis", "format-conversion", "visualization"]
 dependencies = [
-    "pandas>=2.0.0,<2.3.0",
-    "numpy>=1.24.0,<2.0.0",
+    "pandas>=2.1.0",
+    "numpy>=1.26.0",
     "pydantic>=2.9.2",
     "requests>=2.28.0",
     "click>=8.1.0",
@@ -29,7 +29,6 @@ dependencies = [
     "reportlab>=4.4.1",
     "jaconv>=0.4.0",
     "boto3>=1.26.0",
-    "botocore>=1.29.0",
 ]
 
 [tool.uv-dynamic-versioning]
@@ -61,10 +60,19 @@ yomitoku-client = { workspace = true }
 [tool.ruff]
 line-length = 88
 target-version = "py310"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
 select = [
-    "E", "F", "W", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "EM", "EXE", "FA", "ICN", "INP", "ISC", "G", "SIM", "TID", "TCH", "INT", "Q", "ARG", "PIE", "PYI", "PT", "YTT", "S", "BLE", "FBT", "COM"
+  "E","F","W","I","UP","B","SIM","ARG","A","C4","DTZ","G","Q","S","BLE","PIE"
 ]
-ignore = ["E501", "B008", "C901"]
+ignore = ["E501","C901","B008", "S101", "BLE001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["yomitoku_client"]
+combine-as-imports = true
 
 [tool.tox]
 legacy_tox_ini = """
@@ -76,11 +84,22 @@ deps = pytest
 commands = 
     pytest tests
 
+[testenv:format]
+description = Run ruff format + lint
+deps = ruff>=0.7
+commands =
+    ruff format .
+
 [testenv:lint]
-basepython = python3.12
-deps = ruff
+deps = ruff>=0.7
 commands = 
-    ruff check
+    ruff check --fix
+
+[testenv:type]
+description = Run mypy strict type checks
+deps = mypy>=1.10
+commands =
+    mypy src tests --ignore-missing-imports --disallow-untyped-defs
 
 [testenv:docs]
 basepython = python3.12

@@ -2,8 +2,6 @@
 PDF Renderer - For converting document data to searchable PDF format
 """
 
-from typing import Any, Optional
-
 import numpy as np
 
 from ..models import DocumentResult
@@ -14,7 +12,7 @@ from .searchable_pdf import create_searchable_pdf
 class PDFRenderer(BaseRenderer):
     """PDF format renderer for creating searchable PDFs"""
 
-    def __init__(self, font_path: Optional[str] = None, **kwargs):
+    def __init__(self, font_path: str | None = None, **kwargs):
         """
         Initialize PDF renderer
         Args:
@@ -26,7 +24,9 @@ class PDFRenderer(BaseRenderer):
         self.font_path = font_path
 
     def render(
-        self, data: DocumentResult, img: Optional[np.ndarray] = None, **kwargs
+        self,
+        data: DocumentResult,
+        img: np.ndarray | None = None,
     ) -> str:
         """
         Render document data to PDF format (returns path to generated PDF)
