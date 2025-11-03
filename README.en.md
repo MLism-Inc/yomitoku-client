@@ -21,9 +21,6 @@ It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your
 ---
 
 ## Quick Links
-
-* 🔒 **[Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide to configuring AWS authentication.
-* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Step-by-step guide for deploying the *YomiToku-Pro Document Analyzer* endpoint.
 * 📓 **[Sample Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial on connecting to an AWS SageMaker endpoint and performing document analysis.
 
 ---
@@ -58,12 +55,12 @@ YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marke
 * Each model is trained specifically on Japanese document images, supports recognition of over 7,000 Japanese characters, and can also handle handwritten text or vertical layouts common in Japanese. (It also supports English document images.)
 * With layout analysis, table-structure extraction, and reading-order estimation, it enables extraction of information while preserving the semantic structure of the document image.
 * **Page rotation correction**: It estimates the page orientation and automatically corrects to the proper orientation before analysis.
-* A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. No external servers or third-party transfers are required, allowing document analysis with high security and compliance.
+* A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. **No external servers or third-party transfers are required**, allowing document analysis with high security and compliance.
 
-Subscribe here:
-https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa
 
-How to use the service:
+### 利用方法
+* 🔒 **[Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide to configuring AWS authentication.
+* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Step-by-step guide for deploying the *YomiToku-Pro Document Analyzer* endpoint.
 
 ---
 

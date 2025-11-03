@@ -16,8 +16,6 @@ Yomitoku Proの高精度OCRと、業務アプリケーションを結びつけ�
 
 
 ## クイックリンク
-- 🔒 **[認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/) - AWSの認証の設定ガイド
-- 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/) - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
 - 📓 **[サンプルNotebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 
 ## クックスタート(CLI)
@@ -44,12 +42,11 @@ YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエ�
 - 各モデルは日本語の文書画像に特化して学習されており、7000文字を超える日本語文字の認識をサポート、手書き文字、縦書きなど日本語特有のレイアウト構造の文書画像の解析も可能です。（日本語以外に、英語文書にも対応しています）。
 - レイアウト解析・表の構造解析・読み順推定機能により、文書画像のレイアウトの意味的構造を壊さずに情報を抽出することが可能です。
 - ページの回転補正：ページの回転の向きを推定し、自動で正しい向きに補正してから解析します。
-- 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。外部サーバーや第三者に送信されることはなく、高いセキュリティとコンプライアンスを維持したまま文書解析が可能です。
+- 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。**データは外部サーバーや第三者に送信されることはなく**、高いセキュリティとコンプライアンスを維持したまま文書解析が可能です。
 
-サブスクはこちらから: 
-https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa
-
-サービスの利用方法：
+### 利用方法
+- 🔒 **[AWSの認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** - AWSの認証の設定ガイド
+- 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
 
 ## インストール
 
@@ -201,5 +198,5 @@ Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 
 
 ## お問い合わせ
-ご質問やサポートのご依頼は、以下までお気軽にご連絡ください。  
+ご質問やサポートのご依頼は、以下までご連絡ください。  
 📧 **support-aws-marketplace@mlism.com**
