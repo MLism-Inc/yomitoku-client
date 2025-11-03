@@ -25,6 +25,19 @@ yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
 > yomitoku_client samples/demo.pdf -e yomitoku-endpoint -r ap-northeast-1 -f md -o output/
 > ```
 
+!!! note "補足"
+
+    uv環境下でYomiToku-ClientのCLIコマンド`yomitoku_client`を実行する際は、コマンドの先頭に`uv run`を追加し、
+
+    ```bash
+     uv run yomitoku_client
+    
+    ```
+    
+    の形式で呼び出してください。
+
+---
+
 ---
 
 ## 🆘 ヘルプの参照
