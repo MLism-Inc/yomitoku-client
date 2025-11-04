@@ -22,7 +22,7 @@ Yomitoku-Proの高精度OCRと、業務アプリケーションを結びつけ�
 ## クイックスタート(CLI)
 **ファイル単体の解析**
 ```bash
-yomitoku-client single ${path_file} -e ${endpoint_name} -e ${endpoint} -p ${profile_name} -f json
+yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} -f json
 ```
 **バッチ処理**
 ```bash
