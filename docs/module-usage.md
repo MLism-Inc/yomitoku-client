@@ -2,7 +2,7 @@
 
 YomiToku-Client は、Python コードから直接利用することができます。
 
-## サンプルNoteBook
+## サンプルNotebook
 
 以下のリンクからGoogle Colab上ですぐに試せます
 
