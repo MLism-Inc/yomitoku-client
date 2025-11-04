@@ -1,5 +1,5 @@
 """
-Yomitoku Client Custom Exception Classes
+Yomitoku-Client Custom Exception Classes
 """
 
 
