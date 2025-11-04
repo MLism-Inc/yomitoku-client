@@ -1,4 +1,4 @@
-# Yomitoku Client
+# Yomitoku-Client
 
 <div align="center">  
 
@@ -6,8 +6,8 @@
 
 </div>  
 
-**Yomitoku Client** is a Python client library designed for handling the output from the Yomitoku Pro API provided on AWS SageMaker. It converts OCR analysis results into structured data and makes it easy to save or visualize them in formats such as CSV, JSON, Markdown, and PDF.
-It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your business applications.
+**Yomitoku-Client** is a Python client library designed for handling the output from the Yomitoku-Pro API provided on AWS SageMaker. It converts OCR analysis results into structured data and makes it easy to save or visualize them in formats such as CSV, JSON, Markdown, and PDF.
+It acts as the “bridge” linking Yomitoku-Pro’s high-accuracy OCR with your business applications.
 
 ---
 

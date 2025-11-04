@@ -1,6 +1,12 @@
-# YomitokuクライアントのAWS認証設定ガイド
+# Yomitoku-ClientのAWS認証設定ガイド
 
-このドキュメントは、Yomitokuクライアントを利用するために必要なAWSの認証設定について、初心者の方にも分かりやすく解説します。
+!!!note
+
+    ここではYomiToku-ClientのAWS認証の方法と各認証方法でのYomiToku-Clientの実行方法を解説しますが、[Yomitoku-Proのデプロイ](./deploy-yomitoku-pro.md)が終わるまではYomiToku-Clientの実行はできません。    
+
+---
+
+このドキュメントは、Yomitoku-Clientを利用するために必要なAWSの認証設定について、初心者の方にも分かりやすく解説します。
 
 ## はじめに：どの認証方法を選べばいい？
 
@@ -17,11 +23,11 @@
 
 ## IAMユーザーとアクセスキーを利用する
 
-個人のPCからYomitokuクライアントを実行するための、最も基本的な設定方法です。
+個人のPCからYomitoku-Clientを実行するための、最も基本的な設定方法です。
 
 ### ステップ1: 専用の権限ポリシーを作成する
 
-まず、Yomitokuクライアントに「SageMakerというAIサービスを使っても良い」という許可を与えるための権限ルール（ポリシー）を作成します。
+まず、Yomitoku-Clientに「SageMakerというAIサービスを使っても良い」という許可を与えるための権限ルール（ポリシー）を作成します。
 
 1.  AWSマネジメントコンソールにログインし、サービス検索で「**IAM**」と入力して選択します。
 2.  左側のメニューから「**ポリシー**」をクリックします。
@@ -48,7 +54,7 @@
 
 ### ステップ2: 専用のIAMユーザーを作成する
 
-次に、Yomitokuクライアントが使う専用のIAMユーザーを作成します。
+次に、Yomitoku-Clientが使う専用のIAMユーザーを作成します。
 
 1.  IAMダッシュボードの左側メニューから「**ユーザー**」をクリックします。
 2.  「**ユーザーを作成**」ボタンをクリックします。
@@ -71,9 +77,10 @@
     *   **アクセスキーID** (例: `AKIAXXXXXXXXXXXXXXX`)
     *   **シークレットアクセスキー** (例: `TEST/EXAMPLE/KEY/XXXXXXXXXXXXXXXXXX`)
 
-    > ⚠️ **注意**
-    > シークレットアクセスキーはこの画面でしか表示されません。もし紛失した場合は、再度アクセスキーを作成し直してください。
-    > この情報はパスワードと同じです。絶対に他人に教えたり、Gitなどにコミットしたりしないでください。
+    !!! warning
+        シークレットアクセスキーはこの画面でしか表示されません。もし紛失した場合は、再度アクセスキーを作成し直してください。
+        この情報はパスワードと同じです。絶対に他人に教えたり、Gitなどにコミットしたりしないでください。
+    ---
 
 ### ステップ4: PCにAWS認証情報を設定する
 
@@ -111,9 +118,28 @@
     }
     ```
 
-## クライアントの実行方法
+## YomiToku-Clientの実行方法 {id="yomitoku-execution-manual"}
 
-上記で設定したプロファイルを使って、Yomitokuクライアントを実行する方法です。
+上記で設定したプロファイルを使って、Yomitoku-Clientを実行する方法です。
+
+### CLIでプロファイルを指定する場合
+
+コマンドのオプションとして `--profile` でプロファイル名を指定します。
+
+```bash
+yomitoku-client notebooks/sample/image.pdf \
+  --endpoint your-endpoint-name \
+  --profile yomitoku-client
+```
+
+### 環境変数でプロファイルを指定する場合
+
+`AWS_PROFILE` 環境変数にプロファイル名を設定しておくと、コマンド実行のたびに `--profile` を指定する必要がなくなり便利です。
+
+```bash
+export AWS_PROFILE=yomitoku-client
+yomitoku-client notebooks/sample/image.pdf --endpoint your-endpoint-name
+```
 
 ### コードでプロファイルを指定する場合
 
@@ -140,30 +166,11 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### CLIでプロファイルを指定する場合
-
-コマンドのオプションとして `--profile` でプロファイル名を指定します。
-
-```bash
-yomitoku-client notebooks/sample/image.pdf \
-  --endpoint your-endpoint-name \
-  --profile yomitoku-client
-```
-
-### 環境変数でプロファイルを指定する場合
-
-`AWS_PROFILE` 環境変数にプロファイル名を設定しておくと、コマンド実行のたびに `--profile` を指定する必要がなくなり便利です。
-
-```bash
-export AWS_PROFILE=yomitoku-client
-yomitoku-client notebooks/sample/image.pdf --endpoint your-endpoint-name
-```
-
 ---
 
 ## IAMロールを利用する (AssumeRole)
 
-MFA（多要素認証）が必須の環境で、一時的にYomitokuクライアント用の権限を持つロールに切り替わって（AssumeRoleして）実行する方法です。
+MFA（多要素認証）が必須の環境で、一時的にYomitoku-Client用の権限を持つロールに切り替わって（AssumeRoleして）実行する方法です。
 
 ### ステップ1: スイッチ先となるIAMロールを作成する
 
@@ -250,11 +257,11 @@ PCの `~/.aws/config` ファイルに、MFAとロールの情報を追記しま�
 
 ---
 
-## MFAを利用する場合のクライアント実行方法
+## MFAを利用する場合のYomiToku-Clientの実行方法
 
 ### プロファイル名を指定して実行する
 
-[クライアントの実行方法](#クライアントの実行方法)と同様に、`--profile yomitoku-client` を指定して実行します。するとMFAコードが求められるため、MFAデバイスで生成された6桁のコードを入力してください。
+[YomiToku-Clientの実行方法](#yomitoku-execution-manual)と同様に、`--profile yomitoku-client` を指定して実行します。するとMFAコードが求められるため、MFAデバイスで生成された6桁のコードを入力してください。
 
 ```bash
 yomitoku-client notebooks/sample/image.pdf \
@@ -292,11 +299,11 @@ eval $(aws sts assume-role \
 
 ## EC2インスタンスプロファイルを利用する
 
-EC2インスタンス上でYomitokuクライアントを実行する場合、インスタンスに付与されたIAMロール（インスタンスプロファイル）の権限が自動的に使われるため、設定が最も簡単です。
+EC2インスタンス上でYomitoku-Clientを実行する場合、インスタンスに付与されたIAMロール（インスタンスプロファイル）の権限が自動的に使われるため、設定が最も簡単です。
 
 ### ステップ1: EC2のIAMロールに権限を追加する
 
-1.  Yomitokuクライアントを実行するEC2インスタンスにアタッチされているIAMロールを確認します。
+1.  Yomitoku-Clientを実行するEC2インスタンスにアタッチされているIAMロールを確認します。
 2.  そのIAMロールの「許可」タブを開き、「許可を追加」 > 「ポリシーをアタッチ」を選択します。
 3.  `YomitokuClientSageMakerInvokePolicy` を検索してチェックを入れ、アタッチします。
 
