@@ -27,9 +27,16 @@ It acts as the “bridge” linking Yomitoku Pro’s high-accuracy OCR with your
 ---
 
 ## Quick Start (CLI)
+**single file processing**
 ```bash
-yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md
+yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md
 ```
+
+**batch processing**
+```bash
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
+```
+
 See --help for available options.
 
 ## Quick Start (Synchronous Version)

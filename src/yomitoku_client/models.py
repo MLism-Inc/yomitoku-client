@@ -238,7 +238,6 @@ class DocumentResult(BaseModel):
 
     def to_json(
         self,
-        img=None,
         ignore_line_break: bool = False,
         export_figure: bool = False,
         figure_dir: str = "figures",
@@ -264,7 +263,7 @@ class DocumentResult(BaseModel):
             figure_dir=figure_dir,
         )
 
-        return renderer.render(self, img=img)
+        return renderer.render(self)
 
     def to_pdf(
         self,
@@ -714,8 +713,6 @@ class MultiPageDocumentResult(BaseModel):
         encoding: str = "utf-8",
         mode="combine",
         page_index: list = None,
-        image_path: str | Path | None = None,
-        dpi: int = 200,
         **kwargs,
     ) -> None:
         """
@@ -735,24 +732,10 @@ class MultiPageDocumentResult(BaseModel):
             os.makedirs(base_dir, exist_ok=True)
 
         page_index = make_page_index(page_index, len(self.pages))
-        if image_path is not None:
-            basename, ext = os.path.splitext(os.path.basename(image_path))
-            if ext.lower() == ".pdf":
-                images = load_pdf(image_path, dpi=dpi)
-            else:
-                images = load_image(image_path)
 
         results = []
         for idx in page_index:
-            if image_path is not None:
-                corrected_img = correct_rotation_image(
-                    images[idx],
-                    angle=self.pages[idx].preprocess.get("angle", 0),
-                )
-            else:
-                corrected_img = None
-
-            results.append(self.pages[idx].to_json(**kwargs, img=corrected_img))
+            results.append(self.pages[idx].to_json(**kwargs))
 
         self.export_file(
             results,
