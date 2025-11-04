@@ -20,7 +20,7 @@
     
     
       
-        <title>Installation - Yomitoku Client</title>
+        <title>Installation - Yomitoku-Client</title>
       
     
     
@@ -86,7 +86,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Yomitoku Client" class="md-header__button md-logo" aria-label="Yomitoku Client" data-md-component="logo">
+    <a href=".." title="Yomitoku-Client" class="md-header__button md-logo" aria-label="Yomitoku-Client" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Yomitoku Client
+            Yomitoku-Client
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -368,13 +368,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Yomitoku Client" class="md-nav__button md-logo" aria-label="Yomitoku Client" data-md-component="logo">
+    <a href=".." title="Yomitoku-Client" class="md-nav__button md-logo" aria-label="Yomitoku-Client" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Yomitoku Client
+    Yomitoku-Client
   </label>
   
     <div class="md-nav__source">
@@ -484,6 +484,30 @@
       ⚡ uv を使用したインストール
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="⚡ uv を使用したインストール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 1. コマンドラインからの単体実行
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      💻 2. Pythonプロジェクトへの組み込み
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -683,6 +707,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="⚡ uv を使用したインストール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      🚀 1. コマンドラインからの単体実行
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      💻 2. Pythonプロジェクトへの組み込み
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -747,44 +795,53 @@
 <p>PyPI から直接インストールする場合は、以下のコマンドを実行してください。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>yomitoku-client
 </span></code></pre></div>
+<p>以下のコマンドでYomiToku-Clientが実行できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>yomitoku-client<span class="w"> </span><span class="o">[</span>オプション<span class="o">]</span>
+</span></code></pre></div>
 <hr />
 <h2 id="uv">⚡ uv を使用したインストール<a class="headerlink" href="#uv" title="Permanent link">&para;</a></h2>
-<p>本リポジトリは、次世代の高速パッケージ管理ツール <a href="https://docs.astral.sh/uv/">uv</a> を採用しています。
-<code>uv</code> をインストール後、リポジトリをクローンし、以下を実行します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>sync
+<p>本リポジトリは、次世代の高速パッケージ管理ツール <a href="https://docs.astral.sh/uv/">uv</a> を採用しています。</p>
+<h3 id="1">🚀 1. コマンドラインからの単体実行<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
+<p>Yomitoku-Clientのコマンド単体で使う場合は以下のようにuvxを付けて実行できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uvx<span class="w"> </span>yomitoku-client<span class="w"> </span><span class="o">[</span>オプション<span class="o">]</span>
+</span></code></pre></div>
+<p>初回実行時にパッケージがインストールされ、二回目以降の実行時はキャッシュが利用されます。</p>
+<h3 id="2-python">💻 2. Pythonプロジェクトへの組み込み<a class="headerlink" href="#2-python" title="Permanent link">&para;</a></h3>
+<p>PythonのスクリプトにYomiToku-Clientを組み込みたい場合は<code>uv init</code>などでpyproject.tomlを作成し、以下のコマンドを実行します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>add<span class="w"> </span>yomitoku-client
 </span></code></pre></div>
 <p>依存関係が自動的に解決・インストールされます。</p>
 <hr />
 <h2 id="_1">🧑‍💻 開発者向けセットアップ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>開発環境を構築する場合は、開発用依存関係も含めて同期します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--dev
+<p>開発環境を構築する場合は、リポジトリをクローンし、開発用依存関係も含めて同期します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>uv<span class="w"> </span>sync
 </span></code></pre></div>
 <p>本プロジェクトでは、<strong>ジョブランナーとして <a href="https://tox.wiki/en/latest/">tox</a></strong> を使用しています。
 以下のコマンドで tox をインストールしてください。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>tox<span class="w"> </span>--with<span class="w"> </span>tox-uv
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>tox<span class="w"> </span>--with<span class="w"> </span>tox-uv
 </span></code></pre></div>
 <hr />
 <h2 id="tox">🔧 tox コマンド例<a class="headerlink" href="#tox" title="Permanent link">&para;</a></h2>
 <p>tox により、Lint チェック・フォーマット・テストを一元管理しています。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 各Pythonバージョンでユニットテストを実行</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>tox<span class="w"> </span>-p<span class="w"> </span>-e<span class="w"> </span>py310,py311,py312
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># コードフォーマッタの適用 (ruff format)</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>tox<span class="w"> </span>-e<span class="w"> </span>format
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Linterチェックと自動修正 (ruff check --fix)</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>tox<span class="w"> </span>-e<span class="w"> </span>lint
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 各Pythonバージョンでユニットテストを実行</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>tox<span class="w"> </span>-p<span class="w"> </span>-e<span class="w"> </span>py310,py311,py312
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># コードフォーマッタの適用 (ruff format)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>tox<span class="w"> </span>-e<span class="w"> </span>format
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Linterチェックと自動修正 (ruff check --fix)</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>tox<span class="w"> </span>-e<span class="w"> </span>lint
 </span></code></pre></div>
 <hr />
 <h2 id="pre-commit">🪄 pre-commit の設定<a class="headerlink" href="#pre-commit" title="Permanent link">&para;</a></h2>
 <p>コミット時に自動で linter / formatter を適用するために、
 <code>pre-commit</code> フックをインストールします。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uvx<span class="w"> </span>pre-commit<span class="w"> </span>install
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uvx<span class="w"> </span>pre-commit<span class="w"> </span>install
 </span></code></pre></div>
 <p>これにより、コミット前に Ruff などの静的解析・整形処理が自動実行されます。</p>
 <h2 id="_2">📄 ドキュメントのサービング<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>ドキュメントはmkdocsを利用して、作成しています。以下のコマンドを実行して、ローカルホストにサービングし、ドキュメントの内容を確認できます。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>
 </span></code></pre></div>
 
 
