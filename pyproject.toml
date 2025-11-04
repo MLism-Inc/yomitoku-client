@@ -7,9 +7,9 @@ source = "uv-dynamic-versioning"
 
 [project]
 name = "yomitoku-client"
-version = "0.0.2"
-authors = [{name = "Yomitoku Team", email = "support-aws-marketplace@mlism.com"}]
-description = "Yomitoku-Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
+dynamic = ["version"]
+authors = [{name = "MLism Inc.", email = "support-aws-marketplace@mlism.com"}]
+description = "Yomitoku Client is a Python library for processing SageMaker Yomitoku API outputs with format conversion and visualization capabilities."
 readme = "README.md"
 license = "Apache-2.0"
 urls = {Homepage = "https://github.com/MLism-Inc/yomitoku-client", Repository = "https://github.com/MLism-Inc/yomitoku-client", Issues = "https://github.com/MLism-Inc/yomitoku-client/issues"}
@@ -52,7 +52,7 @@ dev-dependencies = [
 ]
 
 [project.scripts]
-yomitoku_client = "yomitoku_client.cli.analyze:main"
+yomitoku-client = "yomitoku_client.cli.cli:main"
 
 [tool.uv.sources]
 yomitoku-client = { workspace = true }

@@ -6,40 +6,10 @@ import click
 
 from yomitoku_client import YomitokuClient, parse_pydantic_model
 
-
-def parse_pages(pages_str):
-    pages = set()
-    for part in pages_str.split(","):
-        if "-" in part:
-            start, end = map(int, part.split("-"))
-            pages.update(range(start, end + 1))
-        else:
-            pages.add(int(part))
-    return sorted(pages)
+from .utils import get_format_ext, parse_pages
 
 
-@click.group()
-def cli():
-    pass
-
-
-def get_format_ext(file_format: str) -> str:
-    file_format = file_format.lower()
-    if file_format in ["json"]:
-        return "json"
-    elif file_format in ["csv"]:
-        return "csv"
-    elif file_format in ["html", "htm"]:
-        return "html"
-    elif file_format in ["markdown", "md"]:
-        return "md"
-    elif file_format in ["pdf"]:
-        return "pdf"
-    else:
-        raise ValueError(f"Unsupported format: {file_format}")
-
-
-@cli.command()
+@click.command("single")
 @click.argument("input_path", type=click.Path(exists=True))
 @click.option(
     "--endpoint",
@@ -76,6 +46,7 @@ def get_format_ext(file_format: str) -> str:
 )
 @click.option(
     "--profile",
+    "-p",
     default=None,
     type=str,
     help="AWS Profile",
@@ -114,19 +85,17 @@ def get_format_ext(file_format: str) -> str:
 )
 @click.option(
     "--pages",
-    "-p",
     default=None,
     type=str,
     help="Pages to analyze (e.g., '0,1,3-5')",
 )
 @click.option(
     "--intermediate_save",
-    "-i",
     is_flag=True,
     default=False,
     help="Save intermediate RAW JSON result",
 )
-def main(
+def single_command(
     endpoint,
     region,
     input_path,
@@ -241,4 +210,4 @@ def main(
 
 
 if __name__ == "__main__":
-    main()
+    single_command()

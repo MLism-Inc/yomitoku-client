@@ -20,9 +20,15 @@ Yomitoku-Proの高精度OCRと、業務アプリケーションを結びつけ�
 - 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
 
 ## クイックスタート(CLI)
+**ファイル単体の解析**
 ```bash
-yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
+yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} -f json
 ```
+**バッチ処理**
+```bash
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
+```
+
 オプションの詳細は`--help`を参照してください。
 
 ## クイックスタート(同期版)
