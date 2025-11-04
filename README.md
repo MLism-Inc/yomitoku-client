@@ -19,7 +19,7 @@ Yomitoku-Proの高精度OCRと、業務アプリケーションを結びつけ�
 - 📓 **[サンプルNotebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
 - 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
 
-## クックスタート(CLI)
+## クイックスタート(CLI)
 ```bash
 yomitoku_client ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
 ```
