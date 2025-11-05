@@ -1,10 +1,9 @@
 # Yomitoku-Proのデプロイ
 
 !!! tip "前提"
-    このページは [Yomitoku-ClientのAWS認証設定ガイド](./iam-doc.md) の内容を前提にしています。
-    まだ前の手順がお済みでない場合は、まずそちらをご覧ください。
+    このページは [Yomitoku-ClientのAWS認証設定ガイド](./iam-doc.md) のIAM設定を前提にしています。
+    まだ前の手順が未完了の場合は、まずそちらをご覧ください。
 
----
 
 Yomitoku-Clientをご利用いただくには、AWS Marketplaceを通じてYomitoku-Proのサブスクリプションに加入し、Yomitoku-ProのSageMakerエンドポイントをデプロイする必要があります。
 
