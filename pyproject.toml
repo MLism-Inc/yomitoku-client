@@ -139,5 +139,5 @@ deps =
     pip-licenses
 commands =
     pip-licenses --format=markdown --with-urls \
-      --allow-only='Apache-2.0;MIT;BSD;BSD-2-Clause;BSD-3-Clause;ISC;Zlib;Python-2.0;PSF'
+      --allow-only='Apache-2.0;MIT;BSD;BSD License;BSD-2-Clause;BSD-3-Clause;ISC;Zlib;Python-2.0;PSF'
 """

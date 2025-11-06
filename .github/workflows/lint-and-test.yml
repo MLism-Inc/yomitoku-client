@@ -73,5 +73,5 @@ jobs:
           enable-cache: true
       - name: Install tox-uv
         run: uv tool install tox==4.28.4 --with tox-uv==1.27.0
-      - name: Run pip-licenses
+      - name: Run license-check
         run: tox -e license-check
