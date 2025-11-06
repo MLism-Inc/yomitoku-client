@@ -18,7 +18,7 @@
     
     
       
-        <title>Advanced - Yomitoku-Client</title>
+        <title>Advanced - YomiToku-Client</title>
       
     
     
@@ -84,7 +84,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Yomitoku-Client" class="md-header__button md-logo" aria-label="Yomitoku-Client" data-md-component="logo">
+    <a href=".." title="YomiToku-Client" class="md-header__button md-logo" aria-label="YomiToku-Client" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -98,7 +98,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Yomitoku-Client
+            YomiToku-Client
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -366,13 +366,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Yomitoku-Client" class="md-nav__button md-logo" aria-label="Yomitoku-Client" data-md-component="logo">
+    <a href=".." title="YomiToku-Client" class="md-nav__button md-logo" aria-label="YomiToku-Client" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Yomitoku-Client
+    YomiToku-Client
   </label>
   
     <div class="md-nav__source">
@@ -754,11 +754,11 @@
 <h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
 <p>SageMaker エンドポイントから取得できる API スキーマは以下のリンクより確認できます。</p>
 <ul>
-<li><a href="https://mlism-marketplace-documents.s3.ap-northeast-1.amazonaws.com/yomitoku-pro-document-analyzer-v1-3-2.html">Yomitoku-Pro Document Analyzer API Schema (v1.3.2)</a></li>
+<li><a href="https://mlism-marketplace-documents.s3.ap-northeast-1.amazonaws.com/yomitoku-pro-document-analyzer-v1-3-2.html">YomiToku-Pro Document Analyzer API Schema (v1.3.2)</a></li>
 </ul>
 <hr />
 <h2 id="_1">タイムアウト / リトライ処理<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>YomiTokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
+<p>YomitokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
 各パラメータの意味は以下のとおりです。</p>
 <table>
 <thead>
@@ -806,12 +806,12 @@
 <p>サーキットブレーカーは、連続して解析に失敗した場合にエンドポイントを保護するための仕組みです。
 これが存在しない場合、複数クライアントが無制限にリトライを行い、
 エンドポイントの負荷が過大になる恐れがあります。</p>
-<p>YomiTokuClient はこのリスクを防ぐため、<strong>連続失敗時に一時的にリクエストを停止</strong>し、
+<p>YomitokuClient はこのリスクを防ぐため、<strong>連続失敗時に一時的にリクエストを停止</strong>し、
 一定時間後に再試行を行う設計となっています。</p>
 <hr />
 <h3 id="_3">🔁 シーケンス図<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
-    participant Client as YomiTokuClient
+    participant Client as YomitokuClient
     participant Boto3 as boto3 (AWS SDK)
     participant AWS as SageMaker Endpoint
 
@@ -852,7 +852,7 @@
 <hr />
 <h2 id="_4">パラメータ設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>以下のコードは、タイムアウトおよびサーキットブレーカー設定を含む
-YomiTokuClient の使用例です。</p>
+YomitokuClient の使用例です。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestConfig</span><span class="p">,</span> <span class="n">CircuitConfig</span><span class="p">,</span> <span class="n">YomitokuClient</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">request_config</span> <span class="o">=</span> <span class="n">RequestConfig</span><span class="p">(</span>
@@ -884,7 +884,7 @@ YomiTokuClient の使用例です。</p>
 <li><strong><code>connect_timeout</code> / <code>read_timeout</code></strong>：
   Boto3 レイヤーでリクエストごとに適用されます（1 ページごとなど）。</li>
 <li><strong><code>request_timeout</code> / <code>total_timeout</code></strong>：
-  YomiTokuClient 側の高レベル制御で、ページ単位・全体単位の上限時間を定義します。</li>
+  YomitokuClient 側の高レベル制御で、ページ単位・全体単位の上限時間を定義します。</li>
 <li><strong><code>circuit_config</code></strong>：
   短時間に連続失敗が発生した場合の再試行抑止とエンドポイント保護を担います。</li>
 </ul>

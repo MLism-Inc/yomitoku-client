@@ -20,7 +20,7 @@
     
     
       
-        <title>Setting-Authentication - Yomitoku-Client</title>
+        <title>Setting-Authentication - YomiToku-Client</title>
       
     
     
@@ -86,7 +86,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Yomitoku-Client" class="md-header__button md-logo" aria-label="Yomitoku-Client" data-md-component="logo">
+    <a href=".." title="YomiToku-Client" class="md-header__button md-logo" aria-label="YomiToku-Client" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -100,7 +100,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Yomitoku-Client
+            YomiToku-Client
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -368,13 +368,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Yomitoku-Client" class="md-nav__button md-logo" aria-label="Yomitoku-Client" data-md-component="logo">
+    <a href=".." title="YomiToku-Client" class="md-nav__button md-logo" aria-label="YomiToku-Client" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Yomitoku-Client
+    YomiToku-Client
   </label>
   
     <div class="md-nav__source">
@@ -1088,13 +1088,8 @@
   
 
 
-<h1 id="yomitoku-clientaws">Yomitoku-ClientのAWS認証設定ガイド<a class="headerlink" href="#yomitoku-clientaws" title="Permanent link">&para;</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>ここではYomiToku-ClientのAWS認証の方法と各認証方法でのYomiToku-Clientの実行方法を解説しますが、<a href="../deploy-yomitoku-pro/">Yomitoku-Proのデプロイ</a>が終わるまではYomiToku-Clientの実行はできません。    </p>
-</div>
-<hr />
-<p>このドキュメントは、Yomitoku-Clientを利用するために必要なAWSの認証設定について、初心者の方にも分かりやすく解説します。</p>
+<h1 id="yomitoku-clientaws">YomiToku-ClientのAWS認証設定ガイド<a class="headerlink" href="#yomitoku-clientaws" title="Permanent link">&para;</a></h1>
+<p>このドキュメントは、YomiToku-Clientを利用するために必要なAWSの認証設定について、初心者の方にも分かりやすく解説します。</p>
 <h2 id="_1">はじめに：どの認証方法を選べばいい？<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>まず、あなたの状況に合った認証方法を選びましょう。</p>
 <table>
@@ -1125,15 +1120,16 @@
 </table>
 <hr />
 <h2 id="iam">IAMユーザーとアクセスキーを利用する<a class="headerlink" href="#iam" title="Permanent link">&para;</a></h2>
-<p>個人のPCからYomitoku-Clientを実行するための、最も基本的な設定方法です。</p>
+<p>個人のPCからYomiToku-Clientを実行するための、最も基本的な設定方法です。</p>
 <h3 id="1">ステップ1: 専用の権限ポリシーを作成する<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
-<p>まず、Yomitoku-Clientに「SageMakerというAIサービスを使っても良い」という許可を与えるための権限ルール（ポリシー）を作成します。</p>
+<p>まず、YomiToku-Clientに「SageMakerというAIサービスを使っても良い」という許可を与えるための権限ルール（ポリシー）を作成します。</p>
 <ol>
 <li>AWSマネジメントコンソールにログインし、サービス検索で「<strong>IAM</strong>」と入力して選択します。</li>
 <li>左側のメニューから「<strong>ポリシー</strong>」をクリックします。</li>
 <li>「<strong>ポリシーを作成</strong>」ボタンをクリックします。</li>
-<li>「<strong>JSON</strong>」タブを選択し、既存のテキストをすべて削除してから、以下のJSONコードを貼り付けます。
-    <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<li>
+<p>「<strong>JSON</strong>」タブを選択し、既存のテキストをすべて削除してから、以下のJSONコードを貼り付けます。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="p">{</span>
@@ -1146,13 +1142,16 @@
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p">]</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">}</span>
-</span></code></pre></div></li>
-<li>「<strong>次へ</strong>」をクリックします。</li>
+</span></code></pre></div>
+</li>
+<li>
+<p>「<strong>次へ</strong>」をクリックします。</p>
+</li>
 <li><strong>ポリシー名</strong>に <code>YomitokuClientSageMakerInvokePolicy</code> のような分かりやすい名前を付けます。</li>
 <li>「<strong>ポリシーを作成</strong>」ボタンをクリックして完了です。</li>
 </ol>
 <h3 id="2-iam">ステップ2: 専用のIAMユーザーを作成する<a class="headerlink" href="#2-iam" title="Permanent link">&para;</a></h3>
-<p>次に、Yomitoku-Clientが使う専用のIAMユーザーを作成します。</p>
+<p>次に、YomiToku-Clientが使う専用のIAMユーザーを作成します。</p>
 <ol>
 <li>IAMダッシュボードの左側メニューから「<strong>ユーザー</strong>」をクリックします。</li>
 <li>「<strong>ユーザーを作成</strong>」ボタンをクリックします。</li>
@@ -1170,29 +1169,31 @@
 <li>「<strong>アクセスキー</strong>」セクションまでスクロールし、「<strong>アクセスキーを作成</strong>」ボタンをクリックします。</li>
 <li>ユースケースで「<strong>ローカルコード</strong>」を選択し、確認のチェックボックスにチェックを入れて「<strong>次へ</strong>」をクリックします。</li>
 <li>（任意）説明タグは空欄のままで構いません。「<strong>アクセスキーを作成</strong>」をクリックします。</li>
-<li>
-<p><strong>重要:</strong> ここで表示される以下の2つの情報を、必ず安全な場所にコピーして保存してください。</p>
-<ul>
+<li><strong>重要:</strong> ここで表示される以下の2つの情報を、必ず安全な場所にコピーして保存してください。<ul>
 <li><strong>アクセスキーID</strong> (例: <code>AKIAXXXXXXXXXXXXXXX</code>)</li>
 <li><strong>シークレットアクセスキー</strong> (例: <code>TEST/EXAMPLE/KEY/XXXXXXXXXXXXXXXXXX</code>)</li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>シークレットアクセスキーはこの画面でしか表示されません。もし紛失した場合は、再度アクセスキーを作成し直してください。
-この情報はパスワードと同じです。絶対に他人に教えたり、Gitなどにコミットしたりしないでください。</p>
-</div>
-<hr />
 </li>
 </ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>シークレットアクセスキーはこの画面でしか表示されません。もし紛失した場合は、再度アクセスキーを作成し直してくだい。
+この情報はパスワードと同じです。絶対に他人に教えたり、Gitなどにコミットしたりしないでください</p>
+</div>
+<hr />
 <h3 id="4-pcaws">ステップ4: PCにAWS認証情報を設定する<a class="headerlink" href="#4-pcaws" title="Permanent link">&para;</a></h3>
 <p>最後に、お使いのPCに、取得したアクセスキーを「プロファイル」として設定します。プロファイルとは、認証情報につける「名前」のようなものです。ここでは <code>yomitoku-client</code> という名前で設定します。</p>
 <p><strong>前提:</strong> PCに <a href="https://aws.amazon.com/jp/cli/">AWS CLI</a> がインストールされている必要があります。<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html">AWS公式ドキュメント</a>にある手順に従ってインストールしてください。</p>
 <ol>
 <li>ターミナル（コマンドプロンプト）を開きます。</li>
-<li>以下のコマンドを実行します。
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>aws<span class="w"> </span>configure<span class="w"> </span>--profile<span class="w"> </span>yomitoku-client
-</span></code></pre></div></li>
-<li>コマンドを実行すると、いくつか質問されます。先ほど取得したキー情報を入力してください。<ul>
+<li>
+<p>以下のコマンドを実行します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>aws<span class="w"> </span>configure<span class="w"> </span>--profile<span class="w"> </span>yomitoku-client
+</span></code></pre></div>
+</li>
+<li>
+<p>コマンドを実行すると、いくつか質問されます。先ほど取得したキー情報を入力してください。</p>
+<ul>
 <li><strong>AWS Access Key ID:</strong> <code>[ステップ3でコピーしたアクセスキーIDを貼り付け]</code></li>
 <li><strong>AWS Secret Access Key:</strong> <code>[ステップ3でコピーしたシークレットアクセスキーを貼り付け]</code></li>
 <li><strong>Default region name:</strong> <code>[SageMakerエンドポイントがあるリージョン名を入力 (例: ap-northeast-1)]</code></li>
@@ -1204,29 +1205,40 @@
 <h3 id="5">ステップ5: 設定を確認する<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
 <p>設定が正しくできたか、以下のコマンドで確認しましょう。</p>
 <ol>
-<li>ターミナルで、<code>--profile</code>オプションを付けて以下のコマンドを実行します。
-    <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>aws<span class="w"> </span>sts<span class="w"> </span>get-caller-identity<span class="w"> </span>--profile<span class="w"> </span>yomitoku-client
-</span></code></pre></div></li>
-<li>以下のように、作成したユーザーの情報（Arn）が返ってくれば成功です。
-    <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<li>
+<p>ターミナルで、<code>--profile</code>オプションを付けて以下のコマンドを実行します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>aws<span class="w"> </span>sts<span class="w"> </span>get-caller-identity<span class="w"> </span>--profile<span class="w"> </span>yomitoku-client
+</span></code></pre></div>
+</li>
+<li>
+<p>以下のように、作成したユーザーの情報（Arn）が返ってくれば成功です。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;UserId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AIDACKCEVS45EXAMPLEUSER&quot;</span><span class="p">,</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;Account&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123456789012&quot;</span><span class="p">,</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&quot;Arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:iam::123456789012:user/yomitoku-client-user&quot;</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
-</span></code></pre></div></li>
+</span></code></pre></div>
+</li>
 </ol>
 <h2 id="yomitoku-execution-manual">YomiToku-Clientの実行方法<a class="headerlink" href="#yomitoku-execution-manual" title="Permanent link">&para;</a></h2>
-<p>上記で設定したプロファイルを使って、Yomitoku-Clientを実行する方法です。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>YomiToku-Proのデプロイがまだ完了していない場合、<a href="../deploy-yomitoku-pro/">YomiToku-Proのデプロイの手順</a>に従ってください。</p>
+</div>
+<hr />
+<p>上記で設定したプロファイルを使って、YomiToku-Clientを実行する方法です。</p>
 <h3 id="cli">CLIでプロファイルを指定する場合<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>コマンドのオプションとして <code>--profile</code> でプロファイル名を指定します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>notebooks/sample/image.pdf<span class="w"> </span><span class="se">\</span>
+<p>例</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>single<span class="w"> </span>notebooks/sample/image.pdf<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--endpoint<span class="w"> </span>your-endpoint-name<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>--profile<span class="w"> </span>yomitoku-client
 </span></code></pre></div>
 <h3 id="_2">環境変数でプロファイルを指定する場合<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p><code>AWS_PROFILE</code> 環境変数にプロファイル名を設定しておくと、コマンド実行のたびに <code>--profile</code> を指定する必要がなくなり便利です。</p>
+<p>例</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_PROFILE</span><span class="o">=</span>yomitoku-client
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>yomitoku-client<span class="w"> </span>notebooks/sample/image.pdf<span class="w"> </span>--endpoint<span class="w"> </span>your-endpoint-name
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>yomitoku-client<span class="w"> </span>single<span class="w"> </span>notebooks/sample/image.pdf<span class="w"> </span>--endpoint<span class="w"> </span>your-endpoint-name
 </span></code></pre></div>
 <h3 id="_3">コードでプロファイルを指定する場合<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p><code>YomitokuClient</code> の初期化時に <code>profile</code> 引数でプロファイル名を指定します。以下は非同期で実行するコード例です。</p>
@@ -1251,13 +1263,14 @@
 </span></code></pre></div>
 <hr />
 <h2 id="iam-assumerole">IAMロールを利用する (AssumeRole)<a class="headerlink" href="#iam-assumerole" title="Permanent link">&para;</a></h2>
-<p>MFA（多要素認証）が必須の環境で、一時的にYomitoku-Client用の権限を持つロールに切り替わって（AssumeRoleして）実行する方法です。</p>
+<p>MFA（多要素認証）が必須の環境で、一時的にYomiToku-Client用の権限を持つロールに切り替わって（AssumeRoleして）実行する方法です。</p>
 <h3 id="1-iam">ステップ1: スイッチ先となるIAMロールを作成する<a class="headerlink" href="#1-iam" title="Permanent link">&para;</a></h3>
 <ol>
 <li>IAMコンソールの左メニューから「<strong>ロール</strong>」を選択し、「<strong>ロールを作成</strong>」をクリックします。</li>
 <li><strong>信頼できるエンティティの種類</strong>で「<strong>カスタム信頼ポリシー</strong>」を選択します。</li>
-<li>JSONエディタに以下のポリシーを貼り付けます。<code>[アカウントID]</code> はご自身のAWSアカウントIDに置き換えてください。
-    <div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<li>
+<p>JSONエディタに以下のポリシーを貼り付けます。<code>[アカウントID]</code> はご自身のAWSアカウントIDに置き換えてください。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span><span class="p">,</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">        </span><span class="p">{</span>
@@ -1274,8 +1287,11 @@
 </span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">    </span><span class="p">]</span>
 </span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="p">}</span>
-</span></code></pre></div></li>
-<li>「<strong>次へ</strong>」をクリックし、許可ポリシーの選択画面で、以前作成した <code>YomitokuClientSageMakerInvokePolicy</code> を検索してチェックを入れます。</li>
+</span></code></pre></div>
+</li>
+<li>
+<p>「<strong>次へ</strong>」をクリックし、許可ポリシーの選択画面で、以前作成した <code>YomitokuClientSageMakerInvokePolicy</code> を検索してチェックを入れます。</p>
+</li>
 <li>「<strong>次へ</strong>」をクリックし、<strong>ロール名</strong>に <code>YomitokuClientRole</code> のような分かりやすい名前を付けて、「<strong>ロールを作成</strong>」をクリックします。</li>
 </ol>
 <h3 id="2">ステップ2: スイッチ元ユーザーの前提条件を確認する<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
@@ -1293,8 +1309,9 @@
 <h3 id="3_1">ステップ3: スイッチ元ユーザーに必要な許可を与える<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h3>
 <p>ご自身のIAMユーザーに、ステップ1で作成したロールへのAssumeRoleを許可します。</p>
 <ol>
-<li>ご自身のIAMユーザーの「許可」タブを開き、「インラインポリシーを作成」をクリックし、「JSON」タブに以下のポリシーを貼り付けます。<code>[アカウントID]</code> はご自身のAWSアカウントIDに置き換えてください。
-    <div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+<li>
+<p>ご自身のIAMユーザーの「許可」タブを開き、「インラインポリシーを作成」をクリックし、「JSON」タブに以下のポリシーを貼り付けます。<code>[アカウントID]</code> はご自身のAWSアカウントIDに置き換えてください。</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">&quot;Version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2012-10-17&quot;</span><span class="p">,</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;Statement&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">        </span><span class="p">{</span>
@@ -1304,8 +1321,11 @@
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="p">]</span>
 </span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">}</span>
-</span></code></pre></div></li>
-<li>ポリシーに <code>AllowAssumeYomitokuClientRole</code> のような名前を付けて保存し、ご自身のIAMユーザーにアタッチします。</li>
+</span></code></pre></div>
+</li>
+<li>
+<p>ポリシーに <code>AllowAssumeYomitokuClientRole</code> のような名前を付けて保存し、ご自身のIAMユーザーにアタッチします。</p>
+</li>
 </ol>
 <h3 id="4-pcaws_1">ステップ4: PCのAWSコンフィグファイルを編集する<a class="headerlink" href="#4-pcaws_1" title="Permanent link">&para;</a></h3>
 <p>PCの <code>~/.aws/config</code> ファイルに、MFAとロールの情報を追記します。</p>
@@ -1313,7 +1333,7 @@
 <li><code>~/.aws/config</code> ファイルを開きます。（なければ作成してください）</li>
 <li>
 <p>以下の内容を追記します。<code>[アカウントID]</code>、<code>your-name</code>、<code>your-profile-name</code> はご自身の環境に合わせて変更してください。</p>
-<p><div class="language-ini highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># [profile your-profile-name] はご自身の既存のプロファイル名に合わせる</span>
+<div class="language-ini highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># [profile your-profile-name] はご自身の既存のプロファイル名に合わせる</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">[profile your-profile-name]</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="na">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">ap-northeast-1</span>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="na">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">json</span>
@@ -1326,17 +1346,24 @@
 </span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="na">source_profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">your-profile-name</span>
 </span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="na">mfa_serial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">arn:aws:iam::[アカウントID]:mfa/your-name</span>
 </span></code></pre></div>
-*   <code>role_arn</code>: ステップ1で作成したロールのARN
-*   <code>source_profile</code>: スイッチ元のIAMユーザーのプロファイル名
-*   <code>mfa_serial</code>: ステップ2で確認したMFAデバイスのARN</p>
+<ul>
+<li><code>role_arn</code>: ステップ1で作成したロールのARN</li>
+<li><code>source_profile</code>: スイッチ元のIAMユーザーのプロファイル名</li>
+<li><code>mfa_serial</code>: ステップ2で確認したMFAデバイスのARN</li>
+</ul>
 </li>
 </ol>
 <p>これで、<code>yomitoku-client</code> プロファイルを使うと、MFA認証後に自動で <code>YomitokuClientRole</code> にスイッチするようになります。</p>
 <hr />
 <h2 id="mfayomitoku-client">MFAを利用する場合のYomiToku-Clientの実行方法<a class="headerlink" href="#mfayomitoku-client" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>YomiToku-Proのデプロイがまだ完了していない場合、<a href="../deploy-yomitoku-pro/">YomiToku-Proのデプロイの手順</a>に従ってください。</p>
+</div>
 <h3 id="_4">プロファイル名を指定して実行する<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><a href="#yomitoku-execution-manual">YomiToku-Clientの実行方法</a>と同様に、<code>--profile yomitoku-client</code> を指定して実行します。するとMFAコードが求められるため、MFAデバイスで生成された6桁のコードを入力してください。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>yomitoku-client<span class="w"> </span>notebooks/sample/image.pdf<span class="w"> </span><span class="se">\</span>
+<p>例</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>yomitoku-client<span class="w"> </span>single<span class="w"> </span>notebooks/sample/image.pdf<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>--endpoint<span class="w"> </span>your-endpoint-name<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>--profile<span class="w"> </span>yomitoku-client
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>Enter<span class="w"> </span>MFA<span class="w"> </span>code<span class="w"> </span><span class="k">for</span><span class="w"> </span>arn:aws:iam::123456789012:mfa/your-name:
@@ -1362,15 +1389,19 @@
 <p>スクリプト実行後、<code>aws sts get-caller-identity</code> コマンドで、<code>assumed-role</code> を含むARNが返ってくれば成功です。このターミナルセッション中は、<code>yomitoku-client</code>コマンド等がMFAなしで実行できます。</p>
 <hr />
 <h2 id="ec2">EC2インスタンスプロファイルを利用する<a class="headerlink" href="#ec2" title="Permanent link">&para;</a></h2>
-<p>EC2インスタンス上でYomitoku-Clientを実行する場合、インスタンスに付与されたIAMロール（インスタンスプロファイル）の権限が自動的に使われるため、設定が最も簡単です。</p>
+<p>EC2インスタンス上でYomiToku-Clientを実行する場合、インスタンスに付与されたIAMロール（インスタンスプロファイル）の権限が自動的に使われるため、設定が最も簡単です。</p>
 <h3 id="1-ec2iam">ステップ1: EC2のIAMロールに権限を追加する<a class="headerlink" href="#1-ec2iam" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Yomitoku-Clientを実行するEC2インスタンスにアタッチされているIAMロールを確認します。</li>
+<li>YomiToku-Clientを実行するEC2インスタンスにアタッチされているIAMロールを確認します。</li>
 <li>そのIAMロールの「許可」タブを開き、「許可を追加」 &gt; 「ポリシーをアタッチ」を選択します。</li>
 <li><code>YomitokuClientSageMakerInvokePolicy</code> を検索してチェックを入れ、アタッチします。</li>
 </ol>
 <p>これだけで準備は完了です。</p>
 <h3 id="2_1">ステップ2: コマンドを実行する<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>YomiToku-Proのデプロイがまだ完了していない場合、<a href="../deploy-yomitoku-pro/">YomiToku-Proのデプロイの手順</a>に従ってください。</p>
+</div>
 <p>EC2インスタンスにログインし、<code>--profile</code> などの認証情報を指定せずにコマンドを実行します。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># EC2インスタンスのターミナルで実行</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>yomitoku-client<span class="w"> </span><span class="o">[</span>引数...<span class="o">]</span>
