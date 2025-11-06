@@ -37,8 +37,8 @@ vcs = "git"
 style = "semver"
 format = "{base}"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "json-schema-for-humans>=1.4.1",
     "mkdocs-codeinclude-plugin>=0.2.1",
     "mkdocs-include-markdown-plugin>=7.1.6",
