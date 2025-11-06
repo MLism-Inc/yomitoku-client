@@ -1,10 +1,12 @@
 name: Python Lint
 
 on:
+  push:
+    branches:
+      - feature/add-ci # for debug
   pull_request:
     branches:
       - main
-      - feature/add-ci # for debug
 
 permissions:
   contents: read
