@@ -77,7 +77,7 @@ combine-as-imports = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = lint, py310, py311, py312, docs
+envlist = lint, py310, py311, py312, docs, docs-check, lock-check, sync-check, license-check
 
 [testenv]
 deps = pytest
@@ -112,4 +112,31 @@ deps =
     mkdocs-codeinclude-plugin
 commands = 
     mkdocs gh-deploy --force
+
+[testenv:docs-check]
+description = Build MkDocs site strictly to check internal link consistency
+deps =
+    mkdocs-material
+    pygments 
+    plantuml_markdown 
+    mkdocs-include-markdown-plugin
+    mkdocs-static-i18n
+    mkdocs-codeinclude-plugin
+commands =
+    mkdocs build --strict
+
+[testenv:uv-check]
+description = Check uv
+skip_install = true
+commands =
+    uv lock --check
+    uv sync --frozen
+
+[testenv:license-check]
+description = Check third-party licenses using pip-licenses
+deps =
+    pip-licenses
+commands =
+    pip-licenses --format=markdown --with-urls \
+      --allow-only='Apache-2.0;MIT;BSD;BSD-2-Clause;BSD-3-Clause;ISC;Zlib;Python-2.0;PSF'
 """

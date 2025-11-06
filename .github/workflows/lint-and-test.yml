@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/add-ci # for debug
 
 permissions:
   contents: read
@@ -42,3 +43,33 @@ jobs:
         run: tox -e lint
       - name: Run tests
         run: tox -p -e py310,py311,py312
+
+  check-uv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Install tox-uv
+        run: uv tool install tox==4.28.4 --with tox-uv==1.27.0
+      - name: Run uv-check
+        run: tox -e uv-check
+
+  check-license:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Install tox-uv
+        run: uv tool install tox==4.28.4 --with tox-uv==1.27.0
+      - name: Run pip-licenses
+        run: tox -e pip-licenses

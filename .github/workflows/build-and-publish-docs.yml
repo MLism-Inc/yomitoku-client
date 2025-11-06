@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/add-ci # for debug
     paths:
       - "docs/**"
 
@@ -21,3 +22,16 @@ jobs:
       - run: | 
           pip install tox
           tox -e docs
+
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - run: | 
+          pip install tox
+          tox -e docs-check
