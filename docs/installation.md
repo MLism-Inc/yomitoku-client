@@ -26,7 +26,7 @@ yomitoku-client [オプション]
 
 ### 🚀 1. コマンドラインからの単体実行
 
-Yomitoku-Clientのコマンド単体で使う場合は以下のようにuvxを付けて実行できます。
+YomiToku-Clientのコマンド単体で使う場合は以下のようにuvxを付けて実行できます。
 
 ```bash
 uvx yomitoku-client [オプション]

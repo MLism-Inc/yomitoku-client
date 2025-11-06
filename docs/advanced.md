@@ -4,7 +4,7 @@
 
 SageMaker エンドポイントから取得できる API スキーマは以下のリンクより確認できます。
 
-* [Yomitoku-Pro Document Analyzer API Schema (v1.3.2)](https://mlism-marketplace-documents.s3.ap-northeast-1.amazonaws.com/yomitoku-pro-document-analyzer-v1-3-2.html)
+* [YomiToku-Pro Document Analyzer API Schema (v1.3.2)](https://mlism-marketplace-documents.s3.ap-northeast-1.amazonaws.com/yomitoku-pro-document-analyzer-v1-3-2.html)
 
 ---
 

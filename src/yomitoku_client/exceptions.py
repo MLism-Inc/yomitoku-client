@@ -1,10 +1,10 @@
 """
-Yomitoku-Client Custom Exception Classes
+YomiToku-Client Custom Exception Classes
 """
 
 
 class YomitokuError(Exception):
-    """Base exception for Yomitoku API"""
+    """Base exception for YomiToku API"""
 
 
 class DocumentAnalysisError(YomitokuError):

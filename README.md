@@ -1,12 +1,12 @@
-# Yomitoku-Client
+# YomiToku-Client
 <div align="center">
 
 [![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](README.en.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](README.md)
 
 </div>
 
-Yomitoku-Clientは、AWS SageMaker上で提供されるYomitoku-Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。
-Yomitoku-Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
+YomiToku-Clientは、AWS SageMaker上で提供されるYomiToku-Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。
+YomiToku-Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
 
 ## 主な機能 
 - AWS SageMakerで作成されたエンドポイントを簡単、安全かつ効率的に呼び出せます。

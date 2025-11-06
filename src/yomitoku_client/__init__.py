@@ -1,9 +1,9 @@
 """
-Yomitoku-Client - A Python library for processing SageMaker Yomitoku API outputs
+YomiToku-Client - A Python library for processing SageMaker Yomitoku API outputs
 """
 
 __version__ = "0.1.0"
-__author__ = "Yomitoku Team"
+__author__ = "YomiToku Team"
 __email__ = "support-aws-marketplace@mlism.com"
 
 from .client import YomitokuClient

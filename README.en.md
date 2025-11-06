@@ -1,4 +1,4 @@
-# Yomitoku-Client
+# YomiToku-Client
 
 <div align="center">  
 
@@ -6,8 +6,8 @@
 
 </div>  
 
-**Yomitoku-Client** is a Python client library designed for handling the output from the Yomitoku-Pro API provided on AWS SageMaker. It converts OCR analysis results into structured data and makes it easy to save or visualize them in formats such as CSV, JSON, Markdown, and PDF.
-It acts as the “bridge” linking Yomitoku-Pro’s high-accuracy OCR with your business applications.
+**YomiToku-Client** is a Python client library designed for handling the output from the YomiToku-Pro API provided on AWS SageMaker. It converts OCR analysis results into structured data and makes it easy to save or visualize them in formats such as CSV, JSON, Markdown, and PDF.
+It acts as the “bridge” linking YomiToku-Pro’s high-accuracy OCR with your business applications.
 
 ---
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
 ## Batch-Processing Capabilities
 
-YomitokuClient also supports batch processing, enabling safe and efficient handling of large numbers of documents.
+YomiTokuClient also supports batch processing, enabling safe and efficient handling of large numbers of documents.
 
 * **Folder-level batch processing**: Automatically detects PDF/image files in a specified directory and executes parallel processing.
 * **Intermediate log output (`process_log.jsonl`)**: Records each file’s processing result, success/failure, processing time, and error details as one JSON line per record (useful for downstream processing or retry workflows).

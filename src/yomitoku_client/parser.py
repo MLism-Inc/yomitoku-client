@@ -1,5 +1,5 @@
 """
-SageMaker Parser - For parsing SageMaker Yomitoku API outputs
+SageMaker Parser - For parsing SageMaker YomiToku API outputs
 """
 
 from typing import Any

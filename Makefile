@@ -1,10 +1,10 @@
-# Yomitoku-Client Makefile
+# YomiToku-Client Makefile
 
 .PHONY: help install format test lint build clean pre-commit setup-dev
 
 # Default target
 help:
-	@echo "Yomitoku-Client Development Tools"
+	@echo "YomiToku-Client Development Tools"
 	@echo ""
 	@echo "Available commands:"
 	@echo "  setup-dev     - Set up development environment"
