@@ -1,3 +1,3 @@
 """
-Tests package for Yomitoku-Client
+Tests package for YomiToku-Client
 """
