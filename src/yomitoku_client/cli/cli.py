@@ -6,7 +6,7 @@ from .single import single_command
 
 @click.group()
 def cli():
-    """YomiToku Client CLI"""
+    """YomiToku-Client CLI"""
 
 
 cli.add_command(single_command)

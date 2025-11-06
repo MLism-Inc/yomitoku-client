@@ -26,11 +26,11 @@ logger = set_logger(__name__, "INFO")
 JST = timezone(timedelta(hours=9), name="Asia/Tokyo")
 
 
-class YomiTokuError(Exception):
+class YomitokuError(Exception):
     pass
 
 
-class YomiTokuInvokeError(YomiTokuError):
+class YomitokuInvokeError(YomitokuError):
     pass
 
 
@@ -203,7 +203,7 @@ class YomitokuClient:
         with self._cb_lock:
             if now_ms() < self._circuit_open_until:
                 remain = max(0, self._circuit_open_until - now_ms())
-                raise YomiTokuInvokeError(
+                raise YomitokuInvokeError(
                     f"Circuit open; retry after ~{remain // 1000}s",
                 )
 
@@ -234,7 +234,7 @@ class YomitokuClient:
             )
         except BotoCoreError as e:
             self._record_failure()
-            raise YomiTokuInvokeError(
+            raise YomitokuInvokeError(
                 f"AWS SDK error during invoke for page {payload.index}",
             ) from e
         except ClientError as e:
@@ -243,12 +243,12 @@ class YomitokuClient:
             )
             if code in (429, 500, 502, 503, 504):
                 self._record_failure()
-            raise YomiTokuInvokeError(
+            raise YomitokuInvokeError(
                 f"SageMaker invoke failed ({code}) for page {payload.index}: {e}",
             ) from e
         except json.JSONDecodeError as e:
             self._record_failure()
-            raise YomiTokuInvokeError("Failed to decode JSON response") from e
+            raise YomitokuInvokeError("Failed to decode JSON response") from e
         except Exception as e:
             # 予期しない例外は即座に再スロー（ここでサーキット状態を汚さない）
             raise e
@@ -269,7 +269,7 @@ class YomitokuClient:
             return await asyncio.wait_for(fut, timeout=timeout)
         except asyncio.TimeoutError as e:
             self._record_failure()
-            raise YomiTokuInvokeError(
+            raise YomitokuInvokeError(
                 f"Request timeout for page {payload.index} (>{timeout}s)",
             ) from e
 
@@ -327,16 +327,16 @@ class YomitokuClient:
                 if not t.done():
                     t.cancel()
             self._record_failure()
-            raise YomiTokuInvokeError(f"Analyze timeout (> {total_timeout}s)") from e
+            raise YomitokuInvokeError(f"Analyze timeout (> {total_timeout}s)") from e
         except Exception as e:
             for t in tasks:
                 if not t.done():
                     t.cancel()
             logger.exception("Analyze failed: %s", path_img)
-            raise YomiTokuInvokeError(f"Analyze failed for {path_img}") from e
+            raise YomitokuInvokeError(f"Analyze failed for {path_img}") from e
 
         if not results:
-            raise YomiTokuInvokeError("No page results were returned.")
+            raise YomitokuInvokeError("No page results were returned.")
 
         # ページ順に整列
         results.sort(key=lambda r: r.index)
