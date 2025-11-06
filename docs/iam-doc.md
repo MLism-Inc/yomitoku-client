@@ -132,8 +132,10 @@
 
 コマンドのオプションとして `--profile` でプロファイル名を指定します。
 
+例
+
 ```bash
-yomitoku-client notebooks/sample/image.pdf \
+yomitoku-client single notebooks/sample/image.pdf \
   --endpoint your-endpoint-name \
   --profile yomitoku-client
 ```
@@ -142,9 +144,11 @@ yomitoku-client notebooks/sample/image.pdf \
 
 `AWS_PROFILE` 環境変数にプロファイル名を設定しておくと、コマンド実行のたびに `--profile` を指定する必要がなくなり便利です。
 
+例
+
 ```bash
 export AWS_PROFILE=yomitoku-client
-yomitoku-client notebooks/sample/image.pdf --endpoint your-endpoint-name
+yomitoku-client single notebooks/sample/image.pdf --endpoint your-endpoint-name
 ```
 
 ### コードでプロファイルを指定する場合
@@ -277,8 +281,10 @@ PCの `~/.aws/config` ファイルに、MFAとロールの情報を追記しま�
 
 [YomiToku-Clientの実行方法](#yomitoku-execution-manual)と同様に、`--profile yomitoku-client` を指定して実行します。するとMFAコードが求められるため、MFAデバイスで生成された6桁のコードを入力してください。
 
+例
+
 ```bash
-yomitoku-client notebooks/sample/image.pdf \
+yomitoku-client single notebooks/sample/image.pdf \
   --endpoint your-endpoint-name \
   --profile yomitoku-client
 Enter MFA code for arn:aws:iam::123456789012:mfa/your-name:
