@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
 ## Batch-Processing Capabilities
 
-YomiTokuClient also supports batch processing, enabling safe and efficient handling of large numbers of documents.
+YomitokuClient also supports batch processing, enabling safe and efficient handling of large numbers of documents.
 
 * **Folder-level batch processing**: Automatically detects PDF/image files in a specified directory and executes parallel processing.
 * **Intermediate log output (`process_log.jsonl`)**: Records each file’s processing result, success/failure, processing time, and error details as one JSON line per record (useful for downstream processing or retry workflows).
