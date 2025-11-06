@@ -10,7 +10,7 @@ SageMaker エンドポイントから取得できる API スキーマは以下�
 
 ## タイムアウト / リトライ処理
 
-YomiTokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
+YomitokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
 各パラメータの意味は以下のとおりです。
 
 | パラメータ名            | 型               | 既定値    | 対象範囲     | 説明                                                                    |
@@ -28,7 +28,7 @@ YomiTokuClient では、Boto3 レイヤおよびクライアントレイヤの�
 これが存在しない場合、複数クライアントが無制限にリトライを行い、
 エンドポイントの負荷が過大になる恐れがあります。
 
-YomiTokuClient はこのリスクを防ぐため、**連続失敗時に一時的にリクエストを停止**し、
+YomitokuClient はこのリスクを防ぐため、**連続失敗時に一時的にリクエストを停止**し、
 一定時間後に再試行を行う設計となっています。
 
 ---
@@ -37,7 +37,7 @@ YomiTokuClient はこのリスクを防ぐため、**連続失敗時に一時的
 
 ```mermaid
 sequenceDiagram
-    participant Client as YomiTokuClient
+    participant Client as YomitokuClient
     participant Boto3 as boto3 (AWS SDK)
     participant AWS as SageMaker Endpoint
 
@@ -82,7 +82,7 @@ sequenceDiagram
 ## パラメータ設定例
 
 以下のコードは、タイムアウトおよびサーキットブレーカー設定を含む
-YomiTokuClient の使用例です。
+YomitokuClient の使用例です。
 
 ```python
 from yomitoku_client.client import RequestConfig, CircuitConfig, YomitokuClient
@@ -118,7 +118,7 @@ with YomitokuClient(
 * **`connect_timeout` / `read_timeout`**：
   Boto3 レイヤーでリクエストごとに適用されます（1 ページごとなど）。
 * **`request_timeout` / `total_timeout`**：
-  YomiTokuClient 側の高レベル制御で、ページ単位・全体単位の上限時間を定義します。
+  YomitokuClient 側の高レベル制御で、ページ単位・全体単位の上限時間を定義します。
 * **`circuit_config`**：
   短時間に連続失敗が発生した場合の再試行抑止とエンドポイント保護を担います。
 
