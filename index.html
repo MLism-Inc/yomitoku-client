@@ -723,6 +723,20 @@
 <h1 id="yomitoku-client">YomiToku-Client<a class="headerlink" href="#yomitoku-client" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>YomiToku-Clientは、AWS SageMaker上で提供されるYomiToku-Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。YomiToku-Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Local["ユーザー環境"]
+        A["解析対象データ"]
+        B["YomiToku-Client&lt;br/&gt;(Pythonライブラリ / CLI)"]
+    end
+
+    subgraph AWS["AWS アカウント内"]
+        C["Amazon SageMaker Endpoint&lt;br/&gt;YomiToku-Pro Document Analyzer"]
+    end
+
+    A --&gt;|"ドキュメント画像 / (PDF / JPG / PNG / TIFF)"| B
+    B --&gt;|"推論リクエスト"| C
+    C --&gt;|"解析結果&lt;br/&gt;(JSON)"| B
+    B --&gt;|"構造化データ(CSV / JSON / Markdown / HTML / PDF)"| A</code></pre>
 <h2 id="_2">利用の手順<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="installation/">YomiToku-Clientをインストール</a></li>
