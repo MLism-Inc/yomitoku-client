@@ -18,6 +18,42 @@ It acts as the “bridge” linking YomiToku-Pro’s high-accuracy OCR with your
 * Visualize OCR results so you can quickly review the content.
 * Batch-processing capabilities allow efficient handling of large numbers of documents.
 
+```mermaid
+flowchart LR
+    subgraph Local["User Environment"]
+        A["Input Data"]
+        B["YomiToku-Client<br/>(Python Library / CLI)"]
+    end
+
+    subgraph AWS["Within AWS Account"]
+        C["Amazon SageMaker Endpoint<br/>YomiToku-Pro Document Analyzer"]
+    end
+
+    A -->|"Document Image (PDF / JPG / PNG / TIFF)"| B
+    B -->|"Inference Request"| C
+    C -->|"Analysis Result<br/>(JSON)"| B
+    B -->|"Structured Data (CSV / JSON / Markdown / HTML / PDF)"| A
+```
+
+## What is YomiToku-Pro Document Analyzer?
+
+YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marketplace.
+
+* It performs fast and highly accurate inference of text reading and document-layout analysis on Japanese documents.
+* Each model is trained specifically on Japanese document images, supports recognition of over 7,000 Japanese characters, and can also handle handwritten text or vertical layouts common in Japanese. (It also supports English document images.)
+* With layout analysis, table-structure extraction, and reading-order estimation, it enables extraction of information while preserving the semantic structure of the document image.
+* **Page rotation correction**: It estimates the page orientation and automatically corrects to the proper orientation before analysis.
+* A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. **No external servers or third-party transfers are required**, allowing document analysis with high security and compliance.
+
+
+### 利用方法
+* 🔒 **[Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide to configuring AWS authentication.
+* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Step-by-step guide for deploying the *YomiToku-Pro Document Analyzer* endpoint.
+
+## Example of Analysis Results
+
+Please refer to [gellery.md](./gellery.md).
+
 ---
 
 ## Quick Links
@@ -52,24 +88,6 @@ with YomitokuClient(endpoint="my-endpoint", region="ap-northeast-1") as client:
 model = parse_pydantic_model(result)
 model.to_markdown(output_path="output.md")
 ```
-
----
-
-## What is YomiToku-Pro Document Analyzer?
-
-YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marketplace.
-
-* It performs fast and highly accurate inference of text reading and document-layout analysis on Japanese documents.
-* Each model is trained specifically on Japanese document images, supports recognition of over 7,000 Japanese characters, and can also handle handwritten text or vertical layouts common in Japanese. (It also supports English document images.)
-* With layout analysis, table-structure extraction, and reading-order estimation, it enables extraction of information while preserving the semantic structure of the document image.
-* **Page rotation correction**: It estimates the page orientation and automatically corrects to the proper orientation before analysis.
-* A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. **No external servers or third-party transfers are required**, allowing document analysis with high security and compliance.
-
-
-### 利用方法
-* 🔒 **[Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide to configuring AWS authentication.
-* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Step-by-step guide for deploying the *YomiToku-Pro Document Analyzer* endpoint.
-
 ---
 
 ## Installation

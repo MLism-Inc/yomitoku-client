@@ -342,6 +342,7 @@ class MarkdownRenderer(BaseRenderer):
 
             figure_name = f"{basename}_figure_{i}_p_{page}.png"
             figure_path = os.path.join(save_dir, figure_name)
+
             save_image(figure_img, figure_path)
 
             relative_path = os.path.join(self.figure_dir, figure_name)
