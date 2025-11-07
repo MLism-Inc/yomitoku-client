@@ -916,6 +916,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyparsing"
+version = "3.2.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/a5/181488fc2b9d093e3972d2a472855aae8a03f000592dbfce716a512b3359/pyparsing-3.2.5.tar.gz", hash = "sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6", size = 1099274, upload-time = "2025-09-21T04:11:06.277Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/10/5e/1aa9a93198c6b64513c9d7752de7422c06402de6600a8767da1524f9570b/pyparsing-3.2.5-py3-none-any.whl", hash = "sha256:e38a4f02064cf41fe6593d328d0512495ad1f3d8a91c4f73fc401b3079a59a5e", size = 113890, upload-time = "2025-09-21T04:11:04.117Z" },
+]
+
+[[package]]
 name = "pypdf2"
 version = "3.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1259,7 +1268,6 @@ dependencies = [
     { name = "opencv-python" },
     { name = "pandas" },
     { name = "pillow" },
-    { name = "pip-licenses" },
     { name = "pydantic" },
     { name = "pypdf2" },
     { name = "pypdfium2" },
@@ -1275,8 +1283,10 @@ dev = [
     { name = "mkdocs-include-markdown-plugin" },
     { name = "mkdocs-material" },
     { name = "mkdocs-static-i18n" },
+    { name = "pip-licenses" },
     { name = "plantuml-markdown" },
     { name = "pygments" },
+    { name = "pyparsing" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
@@ -1292,7 +1302,6 @@ requires-dist = [
     { name = "opencv-python", specifier = ">=4.8.0" },
     { name = "pandas", specifier = ">=2.1.0" },
     { name = "pillow", specifier = ">=9.5.0" },
-    { name = "pip-licenses", specifier = ">=5.5.0" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "pypdf2", specifier = ">=3.0.0" },
     { name = "pypdfium2", specifier = ">=4.30.0" },
@@ -1308,8 +1317,10 @@ dev = [
     { name = "mkdocs-include-markdown-plugin", specifier = ">=7.1.6" },
     { name = "mkdocs-material", specifier = ">=9.5.44" },
     { name = "mkdocs-static-i18n" },
+    { name = "pip-licenses", specifier = ">=5.5.0" },
     { name = "plantuml-markdown" },
     { name = "pygments" },
+    { name = "pyparsing", specifier = ">=3.2.5" },
     { name = "pytest", specifier = ">=8.3.3" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
     { name = "ruff", specifier = ">=0.7.0" },

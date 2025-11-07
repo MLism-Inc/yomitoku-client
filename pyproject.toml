@@ -168,9 +168,8 @@ description = Check third-party licenses using pip-licenses
 skip_install = true
 deps =
     pip-licenses
+allowlist_externals =
+    uv
 commands =
-    pip-licenses --format=markdown --with-urls \
-      --allow-only='Apache Software License;Apache-2.0;Apache License 2.0;BSD License;BSD-2-Clause;BSD-3-Clause;MIT;MIT License;MIT-CMU;Unlicense;Python Software Foundation License;PSF-2.0;MPL 2.0;Mozilla Public License 2.0 (MPL 2.0);(Apache-2.0 OR BSD-3-Clause) AND LicenseRef-PdfiumThirdParty'
-    
-    # may not be able to use Mozilla Public License 2.0 (MPL 2.0)
+    uv run python ./utils/src/check_license.py
 """

@@ -4,8 +4,8 @@ on:
     branches:
       - main
       - feature/add-ci # for debug
-    paths:
-      - "docs/**"
+    # paths: # for debug
+    #   - "docs/**"
 
 jobs:
   check-docs:
