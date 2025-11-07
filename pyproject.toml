@@ -29,7 +29,6 @@ dependencies = [
     "reportlab>=4.4.1",
     "jaconv>=0.4.0",
     "boto3>=1.26.0",
-    "pip-licenses>=5.5.0",
 ]
 
 [tool.uv-dynamic-versioning]
@@ -49,7 +48,9 @@ dev = [
     "pygments",
     "pytest-cov>=5.0.0",
     "pytest>=8.3.3",
-    "ruff>=0.7.0"
+    "ruff>=0.7.0",
+    "pip-licenses>=5.5.0",
+    "pyparsing>=3.2.5",
 ]
 
 [project.scripts]
@@ -74,6 +75,33 @@ ignore = ["E501","C901","B008", "S101", "BLE001"]
 [tool.ruff.lint.isort]
 known-first-party = ["yomitoku_client"]
 combine-as-imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings",
+    "--color=yes",
+]
+
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "pdf: marks tests that require PDF dependencies",
+    "visualization: marks tests that require visualization dependencies",
+]
+
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
 
 [tool.tox]
 legacy_tox_ini = """
@@ -129,15 +157,20 @@ commands =
 [testenv:uv-check]
 description = Check uv
 skip_install = true
+allowlist_externals =
+    uv
 commands =
     uv lock --check
     uv sync --frozen
 
 [testenv:license-check]
 description = Check third-party licenses using pip-licenses
+skip_install = true
 deps =
     pip-licenses
 commands =
     pip-licenses --format=markdown --with-urls \
-      --allow-only='Apache-2.0;Apache Software License;MIT;BSD;BSD License;BSD-2-Clause;BSD-3-Clause;ISC;Zlib;Python-2.0;PSF'
+      --allow-only='Apache Software License;Apache-2.0;Apache License 2.0;BSD License;BSD-2-Clause;BSD-3-Clause;MIT;MIT License;MIT-CMU;Unlicense;Python Software Foundation License;PSF-2.0;MPL 2.0;Mozilla Public License 2.0 (MPL 2.0);(Apache-2.0 OR BSD-3-Clause) AND LicenseRef-PdfiumThirdParty'
+    
+    # may not be able to use Mozilla Public License 2.0 (MPL 2.0)
 """
