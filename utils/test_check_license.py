@@ -142,3 +142,173 @@ def test_eval_nested_and_or_mixed():
     assert eval_expr(parsed, {"apache-2.0", "bsd-3-clause"}) is True
     assert eval_expr(parsed, {"mit", "unlicense"}) is True
     assert eval_expr(parsed, {"apache-2.0"}) is False
+
+
+# --- 追加テスト（より複雑で多様な入力） ---
+
+
+def test_long_chained_expression(parser):
+    """AND/ORが多数連鎖した式"""
+    expr = "Apache-2.0 OR MIT AND BSD-3-Clause OR Unlicense AND Zlib"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        ["Apache-2.0", "OR", ["MIT", "AND", "BSD-3-Clause"]],
+        "OR",
+        ["Unlicense", "AND", "Zlib"],
+    ]]
+
+
+def test_multiple_levels_of_annotations(parser):
+    """注釈が複数段階で存在するケース"""
+    expr = "MIT License (Expat (2010 Revision))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["MIT License (Expat (2010 Revision))"]
+
+
+def test_mixed_logic_and_annotations(parser):
+    """注釈を含む複雑な論理式"""
+    expr = "(Apache-2.0 (SPDX)) AND (BSD-3-Clause OR MIT (X11))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        "Apache-2.0 (SPDX)",
+        "AND",
+        ["BSD-3-Clause", "OR", "MIT (X11)"],
+    ]]
+
+
+def test_annotation_with_special_chars(parser):
+    """注釈内にドットやハイフンなどの特殊文字がある場合"""
+    expr = "BSD-3-Clause (version-2.0.alpha)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["BSD-3-Clause (version-2.0.alpha)"]
+
+
+def test_parentheses_with_extra_spaces(parser):
+    """括弧周囲に余分なスペースがあっても正しく動作"""
+    expr = "(  Apache-2.0  OR  MIT  )  AND  BSD-3-Clause"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[["Apache-2.0", "OR", "MIT"], "AND", "BSD-3-Clause"]]
+
+
+def test_nested_and_or_with_annotation(parser):
+    """注釈付きライセンスがネスト構造に含まれる"""
+    expr = "((MIT (X11)) OR (BSD-3-Clause AND Apache-2.0))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        ["MIT (X11)", "OR", ["BSD-3-Clause", "AND", "Apache-2.0"]],
+    ]]
+
+
+def test_double_parentheses_pairs(parser):
+    """二重括弧構造"""
+    expr = "((Apache-2.0))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["Apache-2.0"]
+
+
+def test_or_with_slash_and_semicolon(parser):
+    """OR式にスラッシュとセミコロンが混在"""
+    expr = "(MIT / BSD-3-Clause) OR Apache-2.0; Zlib"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        ["MIT", "AND", "BSD-3-Clause"],
+        "OR",
+        ["Apache-2.0", "AND", "Zlib"],
+    ]]
+
+
+def test_annotation_that_looks_like_operator(parser):
+    """注釈内にAND/ORという単語が含まれても誤認しない"""
+    expr = "MIT (compatible with OR later)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["MIT (compatible with OR later)"]
+
+
+def test_weird_but_valid_spacing(parser):
+    """スペースや改行など不規則な空白"""
+    expr = "Apache-2.0  AND  \n  (MIT  OR  BSD-3-Clause)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Apache-2.0", "AND", ["MIT", "OR", "BSD-3-Clause"]]]
+
+
+def test_multiple_license_blocks(parser):
+    """複数ブロックを論理ORで連結"""
+    expr = "(Apache-2.0 AND MIT) OR (BSD-3-Clause AND Zlib)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        ["Apache-2.0", "AND", "MIT"],
+        "OR",
+        ["BSD-3-Clause", "AND", "Zlib"],
+    ]]
+
+
+def test_complex_annotation_and_or_mix(parser):
+    """注釈と論理式の複合混在"""
+    expr = "(Apache-2.0 (spdx)) AND ((MIT (X11)) OR BSD-3-Clause (3-Clause))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        "Apache-2.0 (spdx)",
+        "AND",
+        [["MIT (X11)", "OR", "BSD-3-Clause (3-Clause)"]],
+    ]]
+
+
+def test_consecutive_and(parser):
+    """連続するANDの構文エラー"""
+    with pytest.raises(ParseException):
+        parser.parseString("MIT AND AND BSD-3-Clause", parseAll=True)
+
+
+def test_consecutive_or(parser):
+    """連続するORの構文エラー"""
+    with pytest.raises(ParseException):
+        parser.parseString("Apache-2.0 OR OR MIT", parseAll=True)
+
+
+def test_extra_parentheses_pairs(parser):
+    """余分な括弧があってもバランスしていればOK"""
+    expr = "(((MIT)))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["MIT"]
+
+
+def test_invalid_token_is_treated_as_name(parser):
+    """#invalid のような未知トークンも単なるライセンス名として扱う"""
+    expr = "#invalid"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["#invalid"]
+
+
+def test_empty_parentheses_treated_as_annotation(parser):
+    """空の括弧 '()' は空注釈として扱う"""
+    expr = "MIT ()"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["MIT ()"]
+
+
+def test_double_nested_and_or(parser):
+    """(A AND (B OR (C AND D)))のような多段ネスト"""
+    expr = "(Apache-2.0 AND (MIT OR (BSD-3-Clause AND Unlicense)))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        "Apache-2.0",
+        "AND",
+        ["MIT", "OR", ["BSD-3-Clause", "AND", "Unlicense"]],
+    ]]
+
+
+def test_unbalanced_right_parenthesis(parser):
+    """右括弧だけ余っている構文エラー"""
+    with pytest.raises(ParseException):
+        parser.parseString("Apache-2.0 OR MIT)", parseAll=True)
+
+
+def test_long_mixed_chain(parser):
+    """長い混在式：AND/OR/カンマ/セミコロン混合"""
+    expr = "MIT, Apache-2.0; BSD-3-Clause OR Unlicense / Zlib"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        ["MIT", "AND", "Apache-2.0", "AND", "BSD-3-Clause"],
+        "OR",
+        ["Unlicense", "AND", "Zlib"],
+    ]]
