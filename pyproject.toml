@@ -171,5 +171,5 @@ deps =
 allowlist_externals =
     uv
 commands =
-    uv run python ./utils/src/check_license.py
+    uv run python ./utils/check_license.py
 """
