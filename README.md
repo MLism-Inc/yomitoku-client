@@ -14,33 +14,21 @@ YomiToku-Proの高精度OCRと、業務アプリケーションを結びつけ�
 - 読み取り結果を可視化し、内容をすぐに確認できます。
 - バッチ処理機能で大量の文書を効率的に処理できます。
 
+```mermaid
+flowchart LR
+    subgraph Local["ユーザー環境"]
+        A["解析対象データ"]
+        B["YomiToku-Client<br/>(Pythonライブラリ / CLI)"]
+    end
 
-## クイックリンク
-- 📓 **[サンプルNotebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
-- 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
+    subgraph AWS["AWS アカウント内"]
+        C["Amazon SageMaker Endpoint<br/>YomiToku-Pro Document Analyzer"]
+    end
 
-## クイックスタート(CLI)
-**ファイル単体の解析**
-```bash
-yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} -f json
-```
-**バッチ処理**
-```bash
-yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
-```
-
-オプションの詳細は`--help`を参照してください。
-
-## クイックスタート(同期版)
-最もシンプルな実行プログラムの例です。PDFを入力し、Markdownとして保存します。
-```python
-from yomitoku_client import YomitokuClient, parse_pydantic_model
-
-with YomitokuClient(endpoint="my-endpoint", region="ap-northeast-1") as client:
-    result = client.analyze("notebooks/sample/image.pdf")
-
-model = parse_pydantic_model(result)
-model.to_markdown(output_path="output.md")
+    A -->|"ドキュメント画像 / (PDF / JPG / PNG / TIFF)"| B
+    B -->|"推論リクエスト"| C
+    C -->|"解析結果<br/>(JSON)"| B
+    B -->|"構造化データ(CSV / JSON / Markdown / HTML / PDF)"| A
 ```
 
 ## YomiToku-Pro Document Analyzer とは
@@ -54,6 +42,43 @@ YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエ�
 ### 利用方法
 - 🔒 **[AWSの認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** - AWSの認証の設定ガイド
 - 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
+
+
+## 解析結果の例
+[gellery.md](./gellery.md)を参照してくだい
+
+---
+
+## クイックリンク
+- 📓 **[サンプルNotebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
+- 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
+
+---
+
+## クイックスタート(CLI)
+**ファイル単体の解析**
+```bash
+yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} -f json
+```
+**バッチ処理**
+```bash
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
+```
+
+オプションの詳細は`--help`を参照してください。
+
+
+## クイックスタート(同期版)
+最もシンプルな実行プログラムの例です。PDFを入力し、Markdownとして保存します。
+```python
+from yomitoku_client import YomitokuClient, parse_pydantic_model
+
+with YomitokuClient(endpoint="my-endpoint", region="ap-northeast-1") as client:
+    result = client.analyze("notebooks/sample/image.pdf")
+
+model = parse_pydantic_model(result)
+model.to_markdown(output_path="output.md")
+```
 
 ## インストール
 
