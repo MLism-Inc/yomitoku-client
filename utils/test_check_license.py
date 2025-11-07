@@ -272,11 +272,11 @@ def test_extra_parentheses_pairs(parser):
     assert result == ["MIT"]
 
 
-def test_invalid_token_is_treated_as_name(parser):
-    """#invalid のような未知トークンも単なるライセンス名として扱う"""
+def test_invalid_token_is_treated_as_error(parser):
+    """#invalid のような不正トークンは構文エラーとして扱う"""
     expr = "#invalid"
-    result = parser.parseString(expr, parseAll=True).asList()
-    assert result == ["#invalid"]
+    with pytest.raises(ParseException):
+        parser.parseString(expr, parseAll=True)
 
 
 def test_empty_parentheses_treated_as_annotation(parser):
@@ -301,6 +301,12 @@ def test_unbalanced_right_parenthesis(parser):
     """右括弧だけ余っている構文エラー"""
     with pytest.raises(ParseException):
         parser.parseString("Apache-2.0 OR MIT)", parseAll=True)
+
+
+def test_unbalanced_left_parenthesis(parser):
+    """左括弧だけ余っている構文エラー"""
+    with pytest.raises(ParseException):
+        parser.parseString("(Apache-2.0 OR MIT", parseAll=True)
 
 
 def test_long_mixed_chain(parser):
