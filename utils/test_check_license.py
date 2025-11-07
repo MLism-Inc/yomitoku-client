@@ -318,3 +318,80 @@ def test_long_mixed_chain(parser):
         "OR",
         ["Unlicense", "AND", "Zlib"],
     ]]
+
+
+# --- 追加テスト（空白・注釈・複合名称ライセンスの扱い） ---
+
+
+def test_license_with_spaces(parser):
+    """空白を含むライセンス名（例: Apache Software License）"""
+    expr = "Apache Software License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["Apache Software License"]
+
+
+def test_license_with_spaces_and_and(parser):
+    """空白を含むライセンス名同士のAND式"""
+    expr = "Apache Software License AND MIT License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Apache Software License", "AND", "MIT License"]]
+
+
+def test_license_with_version_and_annotation(parser):
+    """Mozilla Public License 2.0 (MPL 2.0) のような注釈付き名称"""
+    expr = "Mozilla Public License 2.0 (MPL 2.0)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["Mozilla Public License 2.0 (MPL 2.0)"]
+
+
+def test_license_with_or_later_text(parser):
+    """or later を含む長いライセンス名（例: LGPL v2.1 or later）"""
+    expr = "GNU Lesser General Public License v2.1 or later"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["GNU Lesser General Public License v2.1 or later"]
+
+
+def test_license_with_and_inside_name(parser):
+    """ライセンス名中の 'and' は論理ANDと誤認されない"""
+    expr = "Research and Development License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["Research and Development License"]
+
+
+def test_license_with_parenthetical_long_annotation(parser):
+    """括弧内に複数単語を含む注釈"""
+    expr = "BSD License (3-Clause Clear License)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["BSD License (3-Clause Clear License)"]
+
+
+def test_license_with_leading_article(parser):
+    """冠詞を含むライセンス名 (The Unlicense)"""
+    expr = "The Unlicense"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["The Unlicense"]
+
+
+def test_license_with_dash_and_space_mix(parser):
+    """ダッシュと空白を混在させた名称 (BSD 3-Clause)"""
+    expr = "BSD 3-Clause"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == ["BSD 3-Clause"]
+
+
+def test_license_with_annotation_and_logic(parser):
+    """注釈付き名称を含む論理式"""
+    expr = "Mozilla Public License 2.0 (MPL 2.0) OR Apache-2.0"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Mozilla Public License 2.0 (MPL 2.0)", "OR", "Apache-2.0"]]
+
+
+def test_license_with_spaces_and_parentheses_nested(parser):
+    """空白・注釈・論理括弧の混在"""
+    expr = "(Apache Software License OR Mozilla Public License 2.0 (MPL 2.0)) AND BSD-3-Clause"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [[
+        ["Apache Software License", "OR", "Mozilla Public License 2.0 (MPL 2.0)"],
+        "AND",
+        "BSD-3-Clause",
+    ]]
