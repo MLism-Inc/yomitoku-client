@@ -55,7 +55,7 @@ def parse(expr, _allowed_set=None):
     return parser.parseString(expr, parseAll=True)
 
 
-# --- パース系テスト ---
+# --- Parsing Tests ---
 
 
 def test_simple_license_name(parser):
@@ -64,7 +64,7 @@ def test_simple_license_name(parser):
 
 
 def test_parenthesis_annotation(parser):
-    """注釈付き括弧 (MPL 2.0) が論理括弧として扱われない"""
+    """Annotation parentheses (MPL 2.0) are not treated as logical parentheses"""
     result = parser.parseString(
         "Mozilla Public License 2.0 (MPL 2.0)", parseAll=True
     ).asList()
@@ -85,12 +85,12 @@ def test_expression_with_parentheses(parser):
     result = parser.parseString(
         "(Apache-2.0 OR MIT) AND BSD-3-Clause", parseAll=True
     ).asList()
-    # infixNotation はネストしたリスト構造を返す
+    # infixNotation returns a nested list structure
     assert result == [[["Apache-2.0", "OR", "MIT"], "AND", "BSD-3-Clause"]]
 
 
 def test_nested_parentheses(parser):
-    """ネスト構造が正しく処理できる"""
+    """Nested structure is processed correctly"""
     result = parser.parseString(
         "(Apache-2.0 AND (MIT OR BSD-3-Clause))", parseAll=True
     ).asList()
@@ -98,38 +98,38 @@ def test_nested_parentheses(parser):
 
 
 def test_consecutive_operators(parser):
-    """連続するAND/ORの構文エラー"""
+    """Syntax error for consecutive AND/OR"""
     with pytest.raises(ParseException):
         parser.parseString("Apache-2.0 AND OR MIT", parseAll=True)
 
 
 def test_slash_as_and(parser):
-    """スラッシュ区切りをANDとみなす"""
+    """Treat slash delimiter as AND"""
     result = parser.parseString("Apache-2.0 / MIT", parseAll=True).asList()
     assert result == [["Apache-2.0", "AND", "MIT"]]
 
 
 def test_semicolon_as_and(parser):
-    """セミコロン区切りをANDとみなす"""
+    """Treat semicolon delimiter as AND"""
     result = parser.parseString("MIT; BSD-3-Clause", parseAll=True).asList()
     assert result == [["MIT", "AND", "BSD-3-Clause"]]
 
 
 def test_annotation_not_confused_with_logic(parser):
-    """括弧内にANDが含まれていなければ論理式とみなさない"""
+    """Do not treat as logical expression if AND is not inside parentheses"""
     expr = "MIT License (X11 Style)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["MIT License (X11 Style)"]
 
 
 def test_annotation_with_logic_inside(parser):
-    """括弧内にAND/ORがある場合は論理括弧とみなす"""
+    """Treat as logical parentheses if AND/OR are inside parentheses"""
     expr = "MIT AND (Apache-2.0 OR BSD-3-Clause)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["MIT", "AND", ["Apache-2.0", "OR", "BSD-3-Clause"]]]
 
 
-# --- 評価系テスト ---
+# --- Evaluation Tests ---
 
 
 def test_eval_simple_true():
@@ -177,7 +177,7 @@ def test_eval_with_slash_and_semicolon():
 
 
 def test_eval_nested_and_or_mixed():
-    """(A OR B) AND (C OR D) のような複雑な式"""
+    """Complex expression like (A OR B) AND (C OR D)"""
     expr = "(Apache-2.0 OR MIT) AND (BSD-3-Clause OR Unlicense)"
     parsed = parse(expr)[0]
     assert eval_expr(parsed, {"apache-2.0", "bsd-3-clause"}) is True
@@ -185,11 +185,11 @@ def test_eval_nested_and_or_mixed():
     assert eval_expr(parsed, {"apache-2.0"}) is False
 
 
-# --- 追加テスト（より複雑で多様な入力） ---
+# --- Additional Tests (More Complex and Diverse Inputs) ---
 
 
 def test_long_chained_expression(parser):
-    """AND/ORが多数連鎖した式"""
+    """Expression with many chained AND/OR"""
     expr = "Apache-2.0 OR MIT AND BSD-3-Clause OR Unlicense AND Zlib"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -202,14 +202,14 @@ def test_long_chained_expression(parser):
 
 
 def test_multiple_levels_of_annotations(parser):
-    """注釈が複数段階で存在するケース"""
+    """Case where annotation exists at multiple levels"""
     expr = "MIT License (Expat (2010 Revision))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["MIT License (Expat (2010 Revision))"]
 
 
 def test_mixed_logic_and_annotations(parser):
-    """注釈を含む複雑な論理式"""
+    """Complex logical expression including annotations"""
     expr = "(Apache-2.0 (SPDX)) AND (BSD-3-Clause OR MIT (X11))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -222,21 +222,21 @@ def test_mixed_logic_and_annotations(parser):
 
 
 def test_annotation_with_special_chars(parser):
-    """注釈内にドットやハイフンなどの特殊文字がある場合"""
+    """Annotation containing special characters like dots or hyphens"""
     expr = "BSD-3-Clause (version-2.0.alpha)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["BSD-3-Clause (version-2.0.alpha)"]
 
 
 def test_parentheses_with_extra_spaces(parser):
-    """括弧周囲に余分なスペースがあっても正しく動作"""
+    """Correct behavior even with extra spaces around parentheses"""
     expr = "(  Apache-2.0  OR  MIT  )  AND  BSD-3-Clause"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [[["Apache-2.0", "OR", "MIT"], "AND", "BSD-3-Clause"]]
 
 
 def test_nested_and_or_with_annotation(parser):
-    """注釈付きライセンスがネスト構造に含まれる"""
+    """Annotation license included in nested structure"""
     expr = "((MIT (X11)) OR (BSD-3-Clause AND Apache-2.0))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -247,14 +247,14 @@ def test_nested_and_or_with_annotation(parser):
 
 
 def test_double_parentheses_pairs(parser):
-    """二重括弧構造"""
+    """Double parentheses structure"""
     expr = "((Apache-2.0))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["Apache-2.0"]
 
 
 def test_or_with_slash_and_semicolon(parser):
-    """OR式にスラッシュとセミコロンが混在"""
+    """OR expression mixed with slash and semicolon"""
     expr = "(MIT / BSD-3-Clause) OR Apache-2.0; Zlib"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -267,21 +267,21 @@ def test_or_with_slash_and_semicolon(parser):
 
 
 def test_annotation_that_looks_like_operator(parser):
-    """注釈内にAND/ORという単語が含まれても誤認しない"""
+    """Do not misidentify words like 'AND' or 'OR' inside annotation"""
     expr = "MIT (compatible with OR later)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["MIT (compatible with OR later)"]
 
 
 def test_weird_but_valid_spacing(parser):
-    """スペースや改行など不規則な空白"""
+    """Irregular whitespace like spaces and newlines"""
     expr = "Apache-2.0  AND  \n  (MIT  OR  BSD-3-Clause)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Apache-2.0", "AND", ["MIT", "OR", "BSD-3-Clause"]]]
 
 
 def test_multiple_license_blocks(parser):
-    """複数ブロックを論理ORで連結"""
+    """Multiple blocks linked by logical OR"""
     expr = "(Apache-2.0 AND MIT) OR (BSD-3-Clause AND Zlib)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -294,7 +294,7 @@ def test_multiple_license_blocks(parser):
 
 
 def test_complex_annotation_and_or_mix(parser):
-    """注釈と論理式の複合混在"""
+    """Complex mix of annotation and logical expression"""
     expr = "(Apache-2.0 (spdx)) AND ((MIT (X11)) OR BSD-3-Clause (3-Clause))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -307,40 +307,40 @@ def test_complex_annotation_and_or_mix(parser):
 
 
 def test_consecutive_and(parser):
-    """連続するANDの構文エラー"""
+    """Syntax error for consecutive AND"""
     with pytest.raises(ParseException):
         parser.parseString("MIT AND AND BSD-3-Clause", parseAll=True)
 
 
 def test_consecutive_or(parser):
-    """連続するORの構文エラー"""
+    """Syntax error for consecutive OR"""
     with pytest.raises(ParseException):
         parser.parseString("Apache-2.0 OR OR MIT", parseAll=True)
 
 
 def test_extra_parentheses_pairs(parser):
-    """余分な括弧があってもバランスしていればOK"""
+    """Balanced extra parentheses are OK"""
     expr = "(((MIT)))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["MIT"]
 
 
 def test_invalid_token_is_treated_as_error(parser):
-    """#invalid のような不正トークンは構文エラーとして扱う"""
+    """Invalid tokens like #invalid are treated as syntax errors"""
     expr = "#invalid"
     with pytest.raises(ParseException):
         parser.parseString(expr, parseAll=True)
 
 
 def test_empty_parentheses_treated_as_annotation(parser):
-    """空の括弧 '()' は空注釈として扱う"""
+    """Empty parentheses '()' are treated as an empty annotation"""
     expr = "MIT ()"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["MIT ()"]
 
 
 def test_double_nested_and_or(parser):
-    """(A AND (B OR (C AND D)))のような多段ネスト"""
+    """Multi-level nesting like (A AND (B OR (C AND D)))"""
     expr = "(Apache-2.0 AND (MIT OR (BSD-3-Clause AND Unlicense)))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -353,19 +353,19 @@ def test_double_nested_and_or(parser):
 
 
 def test_unbalanced_right_parenthesis(parser):
-    """右括弧だけ余っている構文エラー"""
+    """Syntax error for extra right parenthesis"""
     with pytest.raises(ParseException):
         parser.parseString("Apache-2.0 OR MIT)", parseAll=True)
 
 
 def test_unbalanced_left_parenthesis(parser):
-    """左括弧だけ余っている構文エラー"""
+    """Syntax error for extra left parenthesis"""
     with pytest.raises(ParseException):
         parser.parseString("(Apache-2.0 OR MIT", parseAll=True)
 
 
 def test_long_mixed_chain(parser):
-    """長い混在式：AND/OR/カンマ/セミコロン混合"""
+    """Long mixed expression: AND/OR/comma/semicolon mix"""
     expr = "MIT, Apache-2.0; BSD-3-Clause OR Unlicense / Zlib"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -377,74 +377,74 @@ def test_long_mixed_chain(parser):
     ]
 
 
-# --- 追加テスト（空白・注釈・複合名称ライセンスの扱い） ---
+# --- Additional Tests (Handling of Spaces, Annotations, and Multi-Word Licenses) ---
 
 
 def test_license_with_spaces(parser):
-    """空白を含むライセンス名（例: Apache Software License）"""
+    """License name containing spaces (e.g., Apache Software License)"""
     expr = "Apache Software License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["Apache Software License"]
 
 
 def test_license_with_spaces_and_and(parser):
-    """空白を含むライセンス名同士のAND式"""
+    """AND expression between license names containing spaces"""
     expr = "Apache Software License AND MIT License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Apache Software License", "AND", "MIT License"]]
 
 
 def test_license_with_version_and_annotation(parser):
-    """Mozilla Public License 2.0 (MPL 2.0) のような注釈付き名称"""
+    """Annotation name (e.g., Mozilla Public License 2.0 (MPL 2.0))"""
     expr = "Mozilla Public License 2.0 (MPL 2.0)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["Mozilla Public License 2.0 (MPL 2.0)"]
 
 
 def test_license_with_or_later_text(parser):
-    """or later を含む長いライセンス名（例: LGPL v2.1 or later）"""
+    """Long license name including 'or later' (e.g., LGPL v2.1 or later)"""
     expr = "GNU Lesser General Public License v2.1 or later"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["GNU Lesser General Public License v2.1 or later"]
 
 
 def test_license_with_and_inside_name(parser):
-    """ライセンス名中の 'and' は論理ANDと誤認されない"""
+    """'and' inside the license name is not misidentified as logical AND"""
     expr = "Research and Development License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["Research and Development License"]
 
 
 def test_license_with_parenthetical_long_annotation(parser):
-    """括弧内に複数単語を含む注釈"""
+    """Annotation including multiple words inside parentheses"""
     expr = "BSD License (3-Clause Clear License)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["BSD License (3-Clause Clear License)"]
 
 
 def test_license_with_leading_article(parser):
-    """冠詞を含むライセンス名 (The Unlicense)"""
+    """License name including an article (The Unlicense)"""
     expr = "The Unlicense"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["The Unlicense"]
 
 
 def test_license_with_dash_and_space_mix(parser):
-    """ダッシュと空白を混在させた名称 (BSD 3-Clause)"""
+    """Name mixing dashes and spaces (BSD 3-Clause)"""
     expr = "BSD 3-Clause"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == ["BSD 3-Clause"]
 
 
 def test_license_with_annotation_and_logic(parser):
-    """注釈付き名称を含む論理式"""
+    """Logical expression including an annotated name"""
     expr = "Mozilla Public License 2.0 (MPL 2.0) OR Apache-2.0"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Mozilla Public License 2.0 (MPL 2.0)", "OR", "Apache-2.0"]]
 
 
 def test_license_with_spaces_and_parentheses_nested(parser):
-    """空白・注釈・論理括弧の混在"""
+    """Mix of spaces, annotations, and logical parentheses"""
     expr = "(Apache Software License OR Mozilla Public License 2.0 (MPL 2.0)) AND BSD-3-Clause"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -457,27 +457,27 @@ def test_license_with_spaces_and_parentheses_nested(parser):
 
 
 def test_simple_or_between_two_licenses(parser):
-    """単純なOR式 (MIT or Apache-2.0)"""
+    """Simple OR expression (MIT or Apache-2.0)"""
     expr = "MIT or Apache-2.0"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["MIT", "OR", "Apache-2.0"]]
 
 
 def test_simple_and_between_two_licenses(parser):
-    """単純なAND式 (GPL and LGPL)"""
+    """Simple AND expression (GPL and LGPL)"""
     expr = "GPL and LGPL"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["GPL", "AND", "LGPL"]]
 
 
-# --- 小文字 and / or を使った複雑な論理式テスト ---
+# --- Complex Logical Expression Tests with Lowercase and/or ---
 
 
 def test_lowercase_or_and_and_combination(parser):
-    """小文字or/andを混在させた複雑な式"""
+    """Complex expression mixing lowercase or/and"""
     expr = "MIT and Apache-2.0 or BSD-3-Clause and Unlicense"
     result = parser.parseString(expr, parseAll=True).asList()
-    # infixNotationでは and の方が優先順位が高い
+    # 'and' has higher precedence in infixNotation
     assert result == [
         [
             ["MIT", "AND", "Apache-2.0"],
@@ -488,7 +488,7 @@ def test_lowercase_or_and_and_combination(parser):
 
 
 def test_parenthesized_lowercase_logic(parser):
-    """括弧付きで小文字and/orを使った式"""
+    """Expression using lowercase and/or with parentheses"""
     expr = "(mit or apache-2.0) and (bsd-3-clause or unlicense)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -501,7 +501,7 @@ def test_parenthesized_lowercase_logic(parser):
 
 
 def test_nested_lowercase_logic(parser):
-    """ネスト構造の小文字and/or式"""
+    """Nested lowercase and/or expression"""
     expr = "((mit or apache-2.0) and bsd-3-clause) or unlicense"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -514,7 +514,7 @@ def test_nested_lowercase_logic(parser):
 
 
 def test_mixed_case_logic_expression(parser):
-    """大文字と小文字が混在した複合式"""
+    """Composite expression with mixed case logic"""
     expr = "MIT or Apache-2.0 AND bsd-3-clause Or unlicense And Zlib"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -526,18 +526,18 @@ def test_mixed_case_logic_expression(parser):
     ]
 
 
-# --- 小文字 and/or + 空白や注釈を含む複合名称テスト ---
+# --- Lowercase and/or + Multi-Word License with Spaces or Annotation Tests ---
 
 
 def test_lowercase_and_with_multiword_license(parser):
-    """空白を含むライセンス名をandで接続"""
+    """Connecting multi-word license names with 'and'"""
     expr = "Apache Software License and MIT License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Apache Software License", "AND", "MIT License"]]
 
 
 def test_lowercase_or_with_multiword_license(parser):
-    """空白を含むライセンス名をorで接続"""
+    """Connecting multi-word license names with 'or'"""
     expr = "Mozilla Public License 2.0 (MPL 2.0) or Apache Software License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -546,10 +546,10 @@ def test_lowercase_or_with_multiword_license(parser):
 
 
 def test_lowercase_and_or_mixed_with_multiword(parser):
-    """複数語ライセンスを含む小文字and/or混在式"""
+    """Mixed lowercase and/or expression including multi-word licenses"""
     expr = "Apache Software License or MIT License and BSD License"
     result = parser.parseString(expr, parseAll=True).asList()
-    # and の方が優先順位が高い
+    # 'and' has higher precedence
     assert result == [
         [
             "Apache Software License",
@@ -560,7 +560,7 @@ def test_lowercase_and_or_mixed_with_multiword(parser):
 
 
 def test_parenthesized_lowercase_and_or_with_multiword(parser):
-    """括弧と複数語ライセンスを組み合わせた小文字and/or式"""
+    """Lowercase and/or expression combining parentheses and multi-word licenses"""
     expr = "(Apache Software License or MIT License) and (BSD License or Mozilla Public License 2.0 (MPL 2.0))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -572,17 +572,17 @@ def test_parenthesized_lowercase_and_or_with_multiword(parser):
     ]
 
 def test_complex_expression_with_and_inside_name_left(parser):
-    """'and' を含むライセンス名が左側にある場合"""
+    """License name containing 'and' appears on the left side"""
     expr = "Research and Development License OR MIT"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Research and Development License", "OR", "MIT"]]
 
 
 def test_complex_expression_with_and_inside_name_middle(parser):
-    """'and' を含むライセンス名が中央にある場合"""
+    """License name containing 'and' appears in the middle"""
     expr = "Apache-2.0 AND Research and Development License OR BSD-3-Clause"
     result = parser.parseString(expr, parseAll=True).asList()
-    # AND の方が優先順位が高い
+    # AND has higher precedence
     assert result == [
         [
             ["Apache-2.0", "AND", "Research and Development License"],
@@ -593,14 +593,14 @@ def test_complex_expression_with_and_inside_name_middle(parser):
 
 
 def test_complex_expression_with_and_inside_name_right(parser):
-    """'and' を含むライセンス名が右側にある場合"""
+    """License name containing 'and' appears on the right side"""
     expr = "MIT OR Research and Development License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["MIT", "OR", "Research and Development License"]]
 
 
 def test_parenthesized_and_inside_name(parser):
-    """括弧内で 'and' を含むライセンス名が現れる場合"""
+    """License name containing 'and' appears within parentheses"""
     expr = "(Apache-2.0 OR Research and Development License) AND BSD-3-Clause"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -613,7 +613,7 @@ def test_parenthesized_and_inside_name(parser):
 
 
 def test_double_nested_and_inside_name(parser):
-    """多段ネスト中に 'and' を含むライセンス名が現れる場合"""
+    """License name containing 'and' appears within multi-level nesting"""
     expr = "(MIT OR (BSD-3-Clause AND Research and Development License))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -625,35 +625,35 @@ def test_double_nested_and_inside_name(parser):
     ]
 
 def test_research_and_dev_with_apache_left(parser):
-    """Research and Development License が左側にあり、Apache Software License と組み合わさる"""
+    """Research and Development License on the left, combined with Apache Software License"""
     expr = "Research and Development License OR Apache Software License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Research and Development License", "OR", "Apache Software License"]]
 
 
 def test_research_and_dev_with_apache_right(parser):
-    """Research and Development License が右側にあり、Apache Software License と組み合わさる"""
+    """Research and Development License on the right, combined with Apache Software License"""
     expr = "Apache Software License AND Research and Development License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Apache Software License", "AND", "Research and Development License"]]
 
 
 def test_research_and_dev_with_mozilla_left(parser):
-    """Research and Development License が左側にあり、Mozilla Public License 2.0 (MPL 2.0) と組み合わさる"""
+    """Research and Development License on the left, combined with Mozilla Public License 2.0 (MPL 2.0)"""
     expr = "Research and Development License OR Mozilla Public License 2.0 (MPL 2.0)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Research and Development License", "OR", "Mozilla Public License 2.0 (MPL 2.0)"]]
 
 
 def test_research_and_dev_with_mozilla_right(parser):
-    """Research and Development License が右側にあり、Mozilla Public License 2.0 (MPL 2.0) と組み合わさる"""
+    """Research and Development License on the right, combined with Mozilla Public License 2.0 (MPL 2.0)"""
     expr = "Mozilla Public License 2.0 (MPL 2.0) AND Research and Development License"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [["Mozilla Public License 2.0 (MPL 2.0)", "AND", "Research and Development License"]]
 
 
 def test_research_and_dev_nested_with_apache_and_mozilla(parser):
-    """Research and Development License を含む多段ネスト構造（Apache + Mozilla 両方）"""
+    """Multi-level nesting structure including Research and Development License (Apache + Mozilla combined)"""
     expr = "(Apache Software License OR (Mozilla Public License 2.0 (MPL 2.0) AND Research and Development License))"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
@@ -666,10 +666,10 @@ def test_research_and_dev_nested_with_apache_and_mozilla(parser):
 
 
 def test_research_and_dev_middle_with_mixed_complex(parser):
-    """Research and Development License が中間項にある複合論理式"""
+    """Research and Development License as an intermediate term in a complex logical expression"""
     expr = "Apache Software License AND Research and Development License OR Mozilla Public License 2.0 (MPL 2.0)"
     result = parser.parseString(expr, parseAll=True).asList()
-    # AND が OR より優先される
+    # AND takes precedence over OR
     assert result == [
         [
             ["Apache Software License", "AND", "Research and Development License"],
@@ -680,7 +680,7 @@ def test_research_and_dev_middle_with_mixed_complex(parser):
 
 
 def test_research_and_dev_parenthesized(parser):
-    """Research and Development License を括弧で囲んだ論理式"""
+    """Logical expression where Research and Development License is enclosed in parentheses"""
     expr = "(Research and Development License OR Apache Software License) AND Mozilla Public License 2.0 (MPL 2.0)"
     result = parser.parseString(expr, parseAll=True).asList()
     assert result == [
