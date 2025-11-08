@@ -42,18 +42,38 @@ def normalize_str(s: str) -> str:
     return s.lower()
 
 
+def build_allowed_phrase(phrases: set[str]) -> ParserElement | None:
+    """find allowed phrases"""
+    if not phrases:
+        return None
+
+    normalized = {" ".join(p.split()) for p in phrases}
+    candidates = [p for p in normalized if re.search(r"\b(and|or)\b", p, flags=re.I)]
+    if not candidates:
+        return None
+
+    # Greedy: try to match longer phrases first
+    candidates.sort(key=len, reverse=True)
+
+    def as_regex(phrase: str) -> ParserElement:
+        pattern = re.escape(" ".join(phrase.split())).replace(r"\ ", r"\s+")
+        return Regex(rf"(?i)\b{pattern}\b").setParseAction(lambda t: str(t[0]).strip())
+
+    return MatchFirst([as_regex(p) for p in candidates])
+
+
 def build_parser(allowed_set: set[str]) -> ParserElement:
     """
     Build a parser for license expressions.
 
-    Grammar highlights (behavior preserved):
+    Grammar highlights:
     - Operators: AND (also ';', ',', '/'), OR.
     - License names: words (including .:+-), optionally followed by an
       annotation in parentheses, e.g. "MIT (X11)".
     - Parentheses for grouping: support single and multiple nestings like
       (A), ((A)), etc., without confusing annotations with grouping.
     - Certain composite phrases listed in `allowed_set` that contain logical
-      keywords (e.g. "A and B") are treated as a single token.
+      keywords (e.g. "LGPL v2.1 or later") are treated as a single token.
     """
 
     ParserElement.enable_packrat()
@@ -79,29 +99,6 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
     # Annotation is any parenthesized text (including nested), captured verbatim
     annotation = originalTextFor(nestedExpr(opener="(", closer=")"))
 
-    # Some allowed phrases may contain logical words; treat them as a single token
-    def build_allowed_phrase(phrases: set[str]) -> ParserElement | None:
-        if not phrases:
-            return None
-
-        normalized = {" ".join(p.split()) for p in phrases}
-        candidates = [
-            p for p in normalized if re.search(r"\b(and|or)\b", p, flags=re.I)
-        ]
-        if not candidates:
-            return None
-
-        # Greedy: try to match longer phrases first
-        candidates.sort(key=len, reverse=True)
-
-        def as_regex(phrase: str) -> ParserElement:
-            pattern = re.escape(" ".join(phrase.split())).replace(r"\ ", r"\s+")
-            return Regex(rf"(?i)\b{pattern}\b").setParseAction(
-                lambda t: str(t[0]).strip()
-            )
-
-        return MatchFirst([as_regex(p) for p in candidates])
-
     allowed_phrase = build_allowed_phrase(allowed_set)
 
     name_with_annotation = Combine(simple_name + Optional(annotation)).setParseAction(
@@ -117,27 +114,11 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
     # --- Expressions and parentheses --------------------------------------
     expr = Forward()
 
-    # ((expr)) → keep as nested list (for parity with existing behavior)
-    double_paren_subexpr = Group(
-        Suppress("(") + Suppress("(") + expr + Suppress(")") + Suppress(")")
-    ).setParseAction(lambda t: [t[0]])
-
-    # (NAME) → just the name string
-    name_in_parens = (Suppress("(") + license_name + Suppress(")")).setParseAction(
-        lambda t: t[0]
-    )
-
-    # (expr) where the '(' is not followed by another '(' → unwrap inner list
-    def _unwrap_single_paren(_s, _loc, toks: ParseResults):
-        return toks.asList()[0] if isinstance(toks, ParseResults) else toks[0]
-
     single_paren_subexpr = Group(
         Suppress("(") + ~FollowedBy(Literal("(")) + expr + Suppress(")")
-    ).setParseAction(_unwrap_single_paren)
-
-    operand = (
-        double_paren_subexpr | name_in_parens | license_name | single_paren_subexpr
     )
+
+    operand = license_name | single_paren_subexpr
 
     expr <<= infixNotation(
         operand,
@@ -147,14 +128,7 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
         ],
     )
 
-    # Accept: (expr), expr, or plain name (possibly wrapped by parens)
-    name_or_paren = Forward()
-    name_or_paren <<= license_name | (Suppress("(") + name_or_paren + Suppress(")"))
-
-    wrapped_all = Group(Suppress("(") + expr + Suppress(")")) + StringEnd()
-    start = wrapped_all | (expr + StringEnd()) | (name_or_paren + StringEnd())
-
-    return start
+    return expr + StringEnd()
 
 
 def eval_expr(parsed, allowed_set: set[str]) -> bool:
@@ -210,10 +184,12 @@ def check_licenses(
         if not lic:
             click.echo("[WARN] License information is empty")
             license_ok[lic] = False
+            parse_results.append([lic])
             continue
 
         if lic in allowed_set:
             license_ok[lic] = True
+            parse_results.append([lic])
             continue
 
         try:
@@ -239,7 +215,14 @@ def check_licenses(
     required=True,
     help="Specify multiple allowed licenses. Example: -a Apache-2.0 -a BSD-3-Clause -a MIT",
 )
-def main(allow: list[str]):
+@click.option(
+    "--debug",
+    "-d",
+    is_flag=True,
+    default=False,
+    help="Enable debug mode. Shows parsed strings when active.",
+)
+def main(allow: list[str], debug: bool):
     """
     Retrieves the output of uv run pip-licenses and checks if all licenses
     are satisfied within the allowed list ALLOW
@@ -268,16 +251,17 @@ def main(allow: list[str]):
     allowed_set = set(allow)
 
     click.echo(f"Allowed licenses: {', '.join(sorted(allowed_set))}")
-    click.echo("-" * 70)
 
     # Check only unique values in the 'License' column
     unique_licenses = list(df["License"].astype(str).unique())
     license_ok, parse_results = check_licenses(unique_licenses, allowed_set)
 
-    click.echo("Parse Results\n")
+    if debug:
+        click.echo("-" * 70)
+        click.echo("Parse Results\n")
 
-    for s in parse_results:
-        click.echo(s)
+        for s in parse_results:
+            click.echo(s)
 
     # Map results to all packages
     df["LicenseOK"] = df["License"].map(license_ok)
@@ -286,7 +270,7 @@ def main(allow: list[str]):
     # List packages with disallowed licenses
     bad_rows = df.loc[~df["LicenseOK"]]
 
-    if len(bad_rows):
+    if debug and len(bad_rows):
         click.echo("-" * 70)
 
     for lic, group in bad_rows.groupby("License"):
