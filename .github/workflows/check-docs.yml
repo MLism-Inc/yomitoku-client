@@ -3,9 +3,8 @@ on:
   push:
     branches:
       - main
-      - feature/add-ci # for debug
-    # paths: # for debug
-    #   - "docs/**"
+    paths:
+      - "docs/**"
 
 jobs:
   check-docs:

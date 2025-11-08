@@ -5,12 +5,53 @@ from utils.check_license import build_parser, eval_expr
 
 
 @pytest.fixture(scope="module")
-def parser():
-    return build_parser()
+def allowed_set():
+    return {
+        "apache-2.0",
+        "mit",
+        "bsd-3-clause",
+        "gpl",
+        "lgpl",
+        "unlicense",
+        "zlib",
+        "mozilla public license 2.0 (mpl 2.0)",
+        "apache software license",
+        "bsd license",
+        "the unlicense",
+        "gnu lesser general public license v2.1 or later",
+        "research and development license",
+        "bsd license (3-clause clear license)",
+        "mit license",
+        "apache-2.0 (spdx)",
+        "mit (x11)",
+    }
 
 
-def parse(expr):
-    parser = build_parser()
+@pytest.fixture(scope="module")
+def parser(allowed_set):
+    return build_parser(allowed_set)
+
+
+def parse(expr, _allowed_set=None):
+    parser = build_parser(_allowed_set or {
+        "apache-2.0",
+        "mit",
+        "bsd-3-clause",
+        "gpl",
+        "lgpl",
+        "unlicense",
+        "zlib",
+        "mozilla public license 2.0 (mpl 2.0)",
+        "apache software license",
+        "bsd license",
+        "the unlicense",
+        "gnu lesser general public license v2.1 or later",
+        "research and development license",
+        "bsd license (3-clause clear license)",
+        "mit license",
+        "apache-2.0 (spdx)",
+        "mit (x11)",
+    })
     return parser.parseString(expr, parseAll=True)
 
 
