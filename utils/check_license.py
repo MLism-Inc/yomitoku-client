@@ -10,13 +10,13 @@ import pandas as pd
 from pyparsing import (
     CaselessKeyword,
     Combine,
-    FollowedBy,
     Forward,
     Group,
     Literal,
     MatchFirst,
     OneOrMore,
     Optional,
+    ParseException,
     ParserElement,
     ParseResults,
     Regex,
@@ -35,6 +35,7 @@ from pyparsing import (
 def normalize_str(s: str) -> str:
     """Normalize string (case, spaces, full-width characters, and Unicode normalization)"""
     s = s.strip()
+    s = s.replace("–", "-").replace("_", "-")
     s = unicodedata.normalize(
         "NFKC", s
     )  # Normalize full-width characters and composite characters
@@ -56,7 +57,7 @@ def build_allowed_phrase(phrases: set[str]) -> ParserElement | None:
     candidates.sort(key=len, reverse=True)
 
     def as_regex(phrase: str) -> ParserElement:
-        pattern = re.escape(" ".join(phrase.split())).replace(r"\ ", r"\s+")
+        pattern = (" ".join(phrase.split())).replace(r"\ ", r"\s+")
         return Regex(rf"(?i)\b{pattern}\b").setParseAction(lambda t: str(t[0]).strip())
 
     return MatchFirst([as_regex(p) for p in candidates])
@@ -105,10 +106,8 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
         lambda t: str(t[0]).strip()
     )
 
-    license_name = (
-        (allowed_phrase | name_with_annotation)
-        if allowed_phrase
-        else name_with_annotation
+    license_name = MatchFirst(
+        filter(None, [allowed_phrase, name_with_annotation])
     ).setParseAction(lambda t: str(t[0]).strip())
 
     # --- Expressions and parentheses --------------------------------------
@@ -146,8 +145,7 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
 
     # Composite expression case
     left = eval_expr(parsed[0], allowed_set)
-    i = 1
-    while i < len(parsed):
+    for i in range(1, len(parsed), 2):
         op = parsed[i]
         right = eval_expr(parsed[i + 1], allowed_set)
         if op.upper() == "AND":
@@ -156,8 +154,6 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
             left = left or right
         else:
             raise ValueError(f"Unknown operator: {op}")
-
-        i += 2
 
     return left
 
@@ -170,6 +166,7 @@ def check_licenses(
     with the licenses allowed in allowed_set
     """
 
+    normalized_allowed_set = {normalize_str(s) for s in allowed_set}
     parser = build_parser(allowed_set)
     license_ok: dict[str, bool] = {}
     parse_results: list[list[str]] = []
@@ -181,7 +178,7 @@ def check_licenses(
             parse_results.append([lic])
             continue
 
-        if lic in allowed_set:
+        if normalize_str(lic) in normalized_allowed_set:
             license_ok[lic] = True
             parse_results.append([lic])
             continue
@@ -191,32 +188,23 @@ def check_licenses(
             parse_results.append(parsed)
 
             # Pass the allowed license list normalized
-            ok = eval_expr(parsed, {normalize_str(s) for s in allowed_set})
+            ok = eval_expr(parsed, normalized_allowed_set)
+        except ParseException as e:
+            click.echo(
+                f"[WARN] Syntax error in license expression ({lic}): {e}", err=True
+            )
         except Exception as e:
-            click.echo(f"[WARN] Failed to parse license expression ({lic}) -> {e}")
-            ok = False
+            click.echo(
+                f"[WARN] Unexpected error for ({lic}): {type(e).__name__}: {e}",
+                err=True,
+            )
 
         license_ok[lic] = bool(ok)
 
     return license_ok, parse_results
 
 
-@click.command()
-@click.option(
-    "--allow",
-    "-a",
-    multiple=True,
-    required=True,
-    help="Specify multiple allowed licenses. Example: -a Apache-2.0 -a BSD-3-Clause -a MIT",
-)
-@click.option(
-    "--debug",
-    "-d",
-    is_flag=True,
-    default=False,
-    help="Enable debug mode. Shows parsed strings when active.",
-)
-def main(allow: list[str], debug: bool):
+def run_license_check(allow: list[str], debug: bool = False) -> int:
     """
     Retrieves the output of uv run pip-licenses and checks if all licenses
     are satisfied within the allowed list ALLOW
@@ -225,13 +213,14 @@ def main(allow: list[str], debug: bool):
     uv_path = shutil.which("uv")
     if uv_path is None:
         click.echo("❌ uv command not found. Please check your installation.", err=True)
-        sys.exit(1)
+        return 1
 
     # Read pip-licenses output
     try:
+        cmd = [uv_path, "run", "pip-licenses", "--format=csv"]
         # Ruff S603/S607 warning: Can be ignored for fixed safe command
         result = subprocess.run(  # noqa: S603,S607
-            [uv_path, "run", "pip-licenses", "--format=csv"],
+            cmd,
             check=True,
             capture_output=True,
             text=True,
@@ -240,7 +229,7 @@ def main(allow: list[str], debug: bool):
         df = pd.read_csv(io.StringIO(result.stdout))
     except subprocess.CalledProcessError as e:
         click.echo(f"❌ Failed to run pip-licenses: {e}", err=True)
-        sys.exit(e.returncode)
+        return e.returncode
 
     allowed_set = set(allow)
 
@@ -269,14 +258,33 @@ def main(allow: list[str], debug: bool):
 
     for lic, group in bad_rows.groupby("License"):
         pkgs = ", ".join(group["Name"].tolist())
-        click.echo(f"❌ {lic} : {pkgs}")
+        click.echo(f"❌ {lic} : {pkgs}", err=True)
 
     click.echo("-" * 70)
     click.echo(
         "Result: "
-        + ("✅ All are allowed" if all_ok else "❌ Some licenses are not allowed")
+        + ("✅ All are allowed" if all_ok else "❌ Some licenses are not allowed"),
     )
-    sys.exit(0 if all_ok else 2)
+    return 0 if all_ok else 2
+
+
+@click.command()
+@click.option(
+    "--allow",
+    "-a",
+    multiple=True,
+    required=True,
+    help="Specify multiple allowed licenses. Example: -a Apache-2.0 -a BSD-3-Clause -a MIT",
+)
+@click.option(
+    "--debug",
+    "-d",
+    is_flag=True,
+    default=False,
+    help="Enable debug mode. Shows parsed strings when active.",
+)
+def main(allow: list[str], debug: bool):
+    sys.exit(run_license_check(allow, debug))
 
 
 if __name__ == "__main__":
