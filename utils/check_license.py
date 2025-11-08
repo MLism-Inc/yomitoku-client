@@ -332,36 +332,17 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
     if len(parsed) == 1:
         return eval_expr(parsed[0], allowed_set)
 
-    # Exceptionally, allow a 3-element sequence of name + AND/OR + name
-    # to be treated as a single phrase (e.g., "Research and Development License", "... or later")
-    # If the phrase is in the allowed set, treat it as True
-    if (
-        len(parsed) == 3
-        and isinstance(parsed[0], str)
-        and isinstance(parsed[2], str)
-        and isinstance(parsed[1], str)
-        and parsed[1].upper() in {"AND", "OR"}
-    ):
-        op_word = "and" if parsed[1].upper() == "AND" else "or"
-        phrase = f"{parsed[0]} {op_word} {parsed[2]}"
-        norm_phrase = normalize_str(" ".join(phrase.strip().split()))
-        if norm_phrase in allowed_set:
-            return True
+    assert len(parsed) == 3
 
-    # Composite expression case
-    left = eval_expr(parsed[0], allowed_set)
-    i = 1
-    while i < len(parsed):
-        op = parsed[i]
-        right = eval_expr(parsed[i + 1], allowed_set)
-        if op.upper() == "AND":
-            left = left and right
-        elif op.upper() == "OR":
-            left = left or right
-        else:
-            raise ValueError(f"Unknown operator: {op}")
+    op = parsed[1]
+    left, right = eval_expr(parsed[0], allowed_set), eval_expr(parsed[2], allowed_set)
 
-        i += 2
+    if op.upper() == "AND":
+        left = left and right
+    elif op.upper() == "OR":
+        left = left or right
+    else:
+        raise ValueError(f"Unknown operator: {op}")
 
     return left
 

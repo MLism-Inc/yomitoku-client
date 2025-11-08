@@ -171,5 +171,16 @@ deps =
 allowlist_externals =
     uv
 commands =
-    uv run python ./utils/check_license.py --allow "MIT"
+    uv run python ./utils/check_license.py \
+         -a "MIT" \
+         -a "MIT License" \
+         -a "MIT-CMU" \
+         -a "BSD License" \
+         -a "BSD-2-Clause" \
+         -a "BSD-3-Clause" \
+         -a "Apache Software License" \
+         -a "Apache-2.0" \
+         -a "Mozilla Public License 2.0 (MPL 2.0)" \
+         -a "PSF-2.0" \
+         -a "LicenseRef-PdfiumThirdParty"
 """
