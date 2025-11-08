@@ -1,10 +1,9 @@
+[日本語版](README.md) | English
+
+[![Document](https://img.shields.io/badge/docs-live-brightgreen)](https://mlism-inc.github.io/yomitoku-client/)
+![Python](https://img.shields.io/badge/Python-3.10|3.11|3.12-F9DC3E.svg?logo=python&logoColor=&style=flat)
+
 # YomiToku-Client
-
-<div align="center">  
-
-[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge\&logo=github)](README.en.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge\&logo=github)](README.md)
-
-</div>  
 
 **YomiToku-Client** is a Python client library designed for handling the output from the YomiToku-Pro API provided on AWS SageMaker. It converts OCR analysis results into structured data and makes it easy to save or visualize them in formats such as CSV, JSON, Markdown, and PDF.
 It acts as the “bridge” linking YomiToku-Pro’s high-accuracy OCR with your business applications.
@@ -45,21 +44,15 @@ YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marke
 * **Page rotation correction**: It estimates the page orientation and automatically corrects to the proper orientation before analysis.
 * A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. **No external servers or third-party transfers are required**, allowing document analysis with high security and compliance.
 
-
-### 利用方法
-* 🔒 **[Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide to configuring AWS authentication.
-* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Step-by-step guide for deploying the *YomiToku-Pro Document Analyzer* endpoint.
-
-## Example of Analysis Results
-
-Please refer to [gellery.md](./gellery.md).
-
 ---
 
 ## Quick Links
-* 📓 **[Sample Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial on connecting to an AWS SageMaker endpoint and performing document analysis.
-* 📖 **[Documentation](https://mlism-inc.github.io/yomitoku-client/)** – Detailed guide on how to use **YomiToku-Client**.
 
+* 🔒 **[AWS Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide for configuring AWS authentication.
+* 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Deployment guide for the **YomiToku-Pro Document Analyzer** endpoint.
+* 📋 **[Sample Analysis Results](./gellery.md)** – Example datasets of analysis results.
+* 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial notebook for connecting to the AWS SageMaker endpoint and performing document analysis.
+* 📖 **[Documentation](https://mlism-inc.github.io/yomitoku-client/)** – Detailed usage guide for **YomiToku-Client**.
 ---
 
 ## Quick Start (CLI)
@@ -109,6 +102,33 @@ uv add yomitoku-client
 > ```bash
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
+
+---
+
+
+## Throughput
+
+The following table shows **theoretical throughput reference values** based on internal testing conducted by **MLism (Local → AWS)**.
+Each value represents performance measured using the **batch processing feature of YomiToku-Client**, analyzing **randomly sampled single-sided A4 documents**.
+
+| Instance Type    | SageMaker License Fee | Theoretical Throughput (pages/hour) | **Theoretical Processing Time per Page (seconds)** | Estimated Cost per Page  | Notes                                     |
+| ---------------- | ----------------------------- | ----------------------------------- | -------------------------------------------------- | ------------------------ | ----------------------------------------- |
+| **ml.g5.xlarge** | $10 / hour                    | Approx. **6,000 pages / hour**      | Approx. **0.60 s / page**                          | Approx. **¥0.29 / page** | High-speed GPU-optimized configuration    |
+| **ml.g6.xlarge** | $10 / hour                    | Approx. **4,500 pages / hour**      | Approx. **0.80 s / page**                          | Approx. **¥0.40 / page** | Balanced stability and throughput         |
+| **ml.g4.xlarge** | $10 / hour                    | Approx. **3,000 pages / hour**      | Approx. **1.20 s / page**                          | Approx. **¥0.55 / page** | Cost-efficient standard GPU configuration |
+
+> **Notes**
+>
+> * Exchange rate: **1 USD ≒ 153.2 JPY (as of November 2025)**
+> * Instance charges are billed separately.
+> * Actual performance may vary depending on network latency and throughput.
+> * Model used: **YomiToku-Pro – Document Analyzer v1.0.3**
+> * Theoretical values exclude I/O wait times and initialization overhead (effective throughput is typically **60–80%** of theoretical values).
+> * Processing time may vary depending on document complexity, text density, and layout structure.
+
+If you plan to use the SageMaker endpoint for real-time processing or long-term / continuous operation,
+discounted pricing is available through private offers.
+Please contact us at the email address listed at the bottom of this page for more details.
 
 ---
 ## Single-File Analysis (Asynchronous Version)
