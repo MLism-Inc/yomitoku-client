@@ -165,7 +165,7 @@ def test_eval_nested_expression():
 def test_eval_with_case_insensitivity():
     parsed = parse("APACHE-2.0 or mit")[0]
     assert eval_expr(parsed, {"apache-2.0"}) is True
-    assert eval_expr(parsed, {"MIT"}) is True
+    assert eval_expr(parsed, {"mit"}) is True
     assert eval_expr(parsed, {"bsd"}) is False
 
 

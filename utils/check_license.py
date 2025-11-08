@@ -3,6 +3,7 @@ import re
 import shutil
 import subprocess
 import sys
+import unicodedata
 
 import click
 import pandas as pd
@@ -31,7 +32,17 @@ from pyparsing import (
 )
 
 
-def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
+def normalize_str(s: str) -> str:
+    """Normalize string (case, spaces, full-width characters, and Unicode normalization)"""
+    s = s.strip()
+    s = unicodedata.normalize(
+        "NFKC", s
+    )  # Normalize full-width characters and composite characters
+    s = re.sub(r"\s+", " ", s)  # Unify spaces
+    return s.lower()
+
+
+def build_parser(allowed_set: set[str]) -> ParserElement:
     """License logical expression parser"""
 
     ParserElement.enable_packrat()
@@ -248,7 +259,7 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
                     depth0 += 1
                 elif ch == ")":
                     depth0 -= 1
-                elif depth0 == 0 and source[i : i + 3].lower() == "and":
+                elif depth0 == 0 and normalize_str(source[i : i + 3]) == "and":
                     prev = source[i - 1] if i - 1 >= 0 else " "
                     nxt = source[i + 3] if i + 3 < n else " "
                     if prev.isspace() and nxt.isspace():
@@ -305,16 +316,13 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
 def eval_expr(parsed, allowed_set: set[str]) -> bool:
     """
     Recursively evaluates the pyparsing parse tree (ParseResults or list)
+    allowed_set: set that includes normalized strs
     """
 
-    # Leaf: If it's a string (assumes the allowed set is lowercased externally,
+    # Leaf: If it's a string (assumes the allowed set is normalized externally,
     # but allows case-insensitive comparison for compatibility)
     if isinstance(parsed, str):
-        return (
-            parsed in allowed_set
-            or parsed.lower() in allowed_set
-            or parsed.upper() in allowed_set
-        )
+        return normalize_str(parsed) in allowed_set
 
     # Convert ParseResults to list
     if isinstance(parsed, ParseResults):
@@ -336,7 +344,7 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
     ):
         op_word = "and" if parsed[1].upper() == "AND" else "or"
         phrase = f"{parsed[0]} {op_word} {parsed[2]}"
-        norm_phrase = " ".join(phrase.strip().split()).lower()
+        norm_phrase = normalize_str(" ".join(phrase.strip().split()))
         if norm_phrase in allowed_set:
             return True
 
@@ -384,8 +392,8 @@ def check_licenses(
             parsed = parser.parseString(lic, parseAll=True).asList()[0]
             parse_results.append(parsed)
 
-            # Pass the allowed license list normalized to lowercase
-            ok = eval_expr(parsed, {s.lower() for s in allowed_set})
+            # Pass the allowed license list normalized
+            ok = eval_expr(parsed, {normalize_str(s) for s in allowed_set})
         except Exception as e:
             click.echo(f"[WARN] Failed to parse license expression ({lic}) -> {e}")
             ok = False
@@ -411,9 +419,7 @@ def main(allow: list[str]):
 
     uv_path = shutil.which("uv")
     if uv_path is None:
-        click.echo(
-            "❌ uv command not found. Please check your installation.", err=True
-        )
+        click.echo("❌ uv command not found. Please check your installation.", err=True)
         sys.exit(1)
 
     # Read pip-licenses output
@@ -440,12 +446,10 @@ def main(allow: list[str]):
     unique_licenses = list(df["License"].astype(str).unique())
     license_ok, parse_results = check_licenses(unique_licenses, allowed_set)
 
-    click.echo("Parse results")
+    click.echo("Parse Results\n")
 
     for s in parse_results:
         click.echo(s)
-
-    click.echo("-" * 70)
 
     # Map results to all packages
     df["LicenseOK"] = df["License"].map(license_ok)
@@ -453,6 +457,10 @@ def main(allow: list[str]):
 
     # List packages with disallowed licenses
     bad_rows = df.loc[~df["LicenseOK"]]
+
+    if len(bad_rows):
+        click.echo("-" * 70)
+
     for lic, group in bad_rows.groupby("License"):
         pkgs = ", ".join(group["Name"].tolist())
         click.echo(f"❌ {lic} : {pkgs}")
@@ -460,11 +468,7 @@ def main(allow: list[str]):
     click.echo("-" * 70)
     click.echo(
         "Result: "
-        + (
-            "✅ All are allowed"
-            if all_ok
-            else "❌ Some licenses are not allowed"
-        )
+        + ("✅ All are allowed" if all_ok else "❌ Some licenses are not allowed")
     )
     sys.exit(0 if all_ok else 2)
 
