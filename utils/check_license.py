@@ -32,56 +32,56 @@ from pyparsing import (
 
 
 def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
-    """ライセンス論理式パーサー"""
+    """License logical expression parser"""
 
     ParserElement.enable_packrat()
 
-    # 演算子定義（大文字小文字を問わず and/or を演算子として扱う）
+    # Operator definition (AND/OR are treated as operators regardless of case)
     AND = MatchFirst(
         [CaselessKeyword("AND"), Literal(";"), Literal(","), Literal("/")]
     ).setParseAction(lambda _: "AND")
 
     OR = CaselessKeyword("OR").setParseAction(lambda _: "OR")
 
-    # ライセンス名（注釈括弧はOK、ただし中にAND/ORがあればNG）
+    # License name (Annotation parentheses are OK, but not if they contain AND/OR)
     name_word = Word(alphanums + ".:+-")
-    # ライセンス名（単語と空白の連結。演算子トークン AND/OR は除外）
+    # License name (Concatenation of words and spaces. Excludes operator tokens AND/OR)
     simple_name = OneOrMore(((~AND) + (~OR) + name_word) | White(" ")).setParseAction(
         lambda t: re.sub(r" {2,}", " ", "".join(t))
     )
 
     def _build_phrase_expr(phrase: str):
         """
-        allowed_set に含まれる複合フレーズをマッチさせる
-        大文字小文字は無視して比較するが、入力上の原文をそのまま返す
+        Matches composite phrases in allowed_set
+        Compares case-insensitively but returns the original text
         """
-        # 空白を 1 個以上に正規化し、句読点などはエスケープ
+        # Normalize spaces to 1 or more, escape punctuation
         pattern = re.escape(" ".join(phrase.split()))
 
-        # 空白を柔軟に：1個以上の任意空白に置換
+        # Flexible spacing: replace space with one or more arbitrary whitespace
         pattern = pattern.replace(r"\ ", r"\s+")
 
-        # 大文字小文字を無視しつつ、原文をそのまま返す
-        # (?i) で case-insensitive、\b で単語境界を確保
+        # Case-insensitive, but return the original text
+        # (?i) for case-insensitive, \b for word boundaries
         regex = rf"(?i)\b{pattern}\b"
 
-        # pyparsing.Regex は re モジュール互換。マッチ文字列がそのまま返る
+        # pyparsing.Regex is compatible with the re module. The matched string is returned as is
         return Regex(regex).setParseAction(lambda t: str(t[0]).strip())
 
-    # allowed_set に含まれるフレーズは優先して 1 トークンとして扱う（大文字小文字を無視）
+    # Phrases in allowed_set are prioritized as 1 token (case-insensitive)
     allowed_phrase = None
     if allowed_set:
         norm_phrases = {" ".join(p.split()) for p in allowed_set}
-        # and/or を含む複合フレーズだけを抽出
+        # Extract composite phrases that contain and/or
         and_or_phrases = [
             p for p in norm_phrases if " and " in p.lower() or " or " in p.lower()
         ]
-        and_or_phrases.sort(key=len, reverse=True)  # 長い順で最長一致
+        and_or_phrases.sort(key=len, reverse=True)  # Longest match first
         if and_or_phrases:
             allowed_phrase = MatchFirst([_build_phrase_expr(p) for p in and_or_phrases])
 
-    # 括弧付き注釈（中身は自由・入れ子も許可、空でもOK）
-    # 直前の名前に付随する場合のみ注釈として扱う
+    # Parenthesized annotation (content is free, nesting allowed, empty is OK)
+    # Treated as annotation only when appended to the immediately preceding name
     annotation = originalTextFor(nestedExpr(opener="(", closer=")"))
 
     if allowed_phrase is not None:
@@ -97,7 +97,8 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
         )
 
     expr = Forward()
-    # 括弧は原則抑制するが、先頭が二重括弧のサブ式は1レベル包んで残す
+    # Parentheses are generally suppressed, but a sub-expression that starts with
+    # double parentheses is wrapped one level and kept
     double_paren_subexpr = Group(
         Suppress("(") + Suppress("(") + expr + Suppress(")") + Suppress(")")
     ).setParseAction(lambda t: [t[0]])
@@ -126,11 +127,11 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
         ],
     )
 
-    # OR が複数並ぶ場合は左結合にネストさせる（AND はそのまま）
+    # If multiple ORs are present, they are nested left-associatively (AND remains as is)
     def _nest_or(node):
         if isinstance(node, list):
             node = [_nest_or(x) for x in node]
-            # [x, 'OR', y, 'OR', z, ...] 形式を [[x,'OR',y], 'OR', z, ...] に段階的に変換
+            # Convert [x, 'OR', y, 'OR', z, ...] to [[x,'OR',y], 'OR', z, ...] stepwise
             or_positions = [
                 i
                 for i in range(1, len(node), 2)
@@ -153,8 +154,8 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
 
     expr.add_parse_action(lambda t: _nest_or(t.asList()))
 
-    # ルートは全体括弧付き式 → 式 → 純粋な名前 の順に解釈
-    # それぞれで終端まで消費するように各選択肢ごとに StringEnd を付与
+    # Root interprets in order: entire input wrapped, then expression, then pure name
+    # StringEnd is added to each option to ensure consumption until the end
     name_or_paren = Forward()
     name_or_paren <<= license_name | (Suppress("(") + name_or_paren + Suppress(")"))
 
@@ -164,8 +165,9 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
 
     def _flatten_simple_wrapped(s, _, toks):
         """
-        「すべてが括弧で包まれた単純名称」の場合のみネストを潰して1レベルにする。
-        論理式（AND/ORを含む）や複合構造は潰さない
+        Only for "simple name entirely wrapped in parentheses",
+        collapse the nesting to one level.
+        Do not collapse logical expressions (containing AND/OR) or compound structures.
         """
         # ParseResults -> list
         v = toks.asList() if isinstance(toks, ParseResults) else toks
@@ -275,21 +277,21 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
         # Do not collapse [[expr]] -> [expr]; tests expect one extra wrapper
         # when the entire input is wrapped in parentheses around an expression.
 
-        # [[[["MIT"]]]] のように1要素リストを剥がしていく
+        # Unpack single-element lists like [[[["MIT"]]]]
         cur = v
         depth = 0
         while isinstance(cur, list) and len(cur) == 1:
             cur = cur[0]
             depth += 1
 
-        # --- flatten 条件 ---
-        # (1) 最外層がすべて括弧で包まれていた
-        # (2) 中身が完全に str のみ（AND/ORなどを含まない単純名）
-        # このときだけ潰す
+        # --- Flattening condition ---
+        # (1) The outermost layer was entirely wrapped in parentheses
+        # (2) The content is purely str (simple name without AND/OR etc.)
+        # Only then, flatten.
         if depth >= 1 and isinstance(cur, str):
             return [cur]
 
-        # あるいは ["MIT License (X11)"] のようにリスト全体が1つの文字列
+        # Or the entire list is a single string like ["MIT License (X11)"]
         if depth >= 1 and isinstance(cur, list) and len(cur) == 1:
             return [cur[0]]
 
@@ -302,10 +304,11 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
 
 def eval_expr(parsed, allowed_set: set[str]) -> bool:
     """
-    pyparsingの構文木（ParseResultsまたはリスト）を再帰的に評価する
+    Recursively evaluates the pyparsing parse tree (ParseResults or list)
     """
 
-    # 末端: 文字列の場合（許可集合は外部で小文字化される前提だが、互換のため大文字小文字を許容）
+    # Leaf: If it's a string (assumes the allowed set is lowercased externally,
+    # but allows case-insensitive comparison for compatibility)
     if isinstance(parsed, str):
         return (
             parsed in allowed_set
@@ -313,17 +316,17 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
             or parsed.upper() in allowed_set
         )
 
-    # ParseResults → リストに変換
+    # Convert ParseResults to list
     if isinstance(parsed, ParseResults):
         parsed = parsed.asList()
 
-    # 単一要素の入れ子を解いて再帰
+    # Unwrap single-element nesting and recurse
     if len(parsed) == 1:
         return eval_expr(parsed[0], allowed_set)
 
-    # 例外的に、名前 + AND/OR + 名前 という3要素の並びを
-    # 一つのフレーズとして許容（例: "Research and Development License", "... or later")
-    # 許可集合にそのフレーズが含まれていれば True とみなす
+    # Exceptionally, allow a 3-element sequence of name + AND/OR + name
+    # to be treated as a single phrase (e.g., "Research and Development License", "... or later")
+    # If the phrase is in the allowed set, treat it as True
     if (
         len(parsed) == 3
         and isinstance(parsed[0], str)
@@ -337,7 +340,7 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
         if norm_phrase in allowed_set:
             return True
 
-    # 複合式の場合
+    # Composite expression case
     left = eval_expr(parsed[0], allowed_set)
     i = 1
     while i < len(parsed):
@@ -348,7 +351,7 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
         elif op.upper() == "OR":
             left = left or right
         else:
-            raise ValueError(f"未知の演算子: {op}")
+            raise ValueError(f"Unknown operator: {op}")
 
         i += 2
 
@@ -359,8 +362,8 @@ def check_licenses(
     licenses: list[str], allowed_set: set[str]
 ) -> tuple[dict[str, bool], list[list[str]]]:
     """
-    allowed_setで許可されているライセンスでlicensesの各ライセンスのパッケージを
-    使うことができるかを返す
+    Returns whether packages with each license in licenses can be used
+    with the licenses allowed in allowed_set
     """
 
     parser = build_parser(allowed_set)
@@ -369,7 +372,7 @@ def check_licenses(
 
     for lic in licenses:
         if not lic:
-            click.echo("[WARN] ライセンス情報が空欄")
+            click.echo("[WARN] License information is empty")
             license_ok[lic] = False
             continue
 
@@ -381,10 +384,10 @@ def check_licenses(
             parsed = parser.parseString(lic, parseAll=True).asList()[0]
             parse_results.append(parsed)
 
-            # 許可したライセンスリストを小文字に正規化して渡す
+            # Pass the allowed license list normalized to lowercase
             ok = eval_expr(parsed, {s.lower() for s in allowed_set})
         except Exception as e:
-            click.echo(f"[WARN] ライセンス式を解析できません ({lic}) → {e}")
+            click.echo(f"[WARN] Failed to parse license expression ({lic}) -> {e}")
             ok = False
 
         license_ok[lic] = bool(ok)
@@ -398,24 +401,24 @@ def check_licenses(
     "-a",
     multiple=True,
     required=True,
-    help="許可するライセンスを複数指定可能。例: -a Apache-2.0 -a BSD-3-Clause -a MIT",
+    help="Specify multiple allowed licenses. Example: -a Apache-2.0 -a BSD-3-Clause -a MIT",
 )
 def main(allow: list[str]):
     """
-    uv run pip-licenses の出力を取得し、
-    すべてのライセンスが許可リスト ALLOW 内で満たされているかチェックする
+    Retrieves the output of uv run pip-licenses and checks if all licenses
+    are satisfied within the allowed list ALLOW
     """
 
     uv_path = shutil.which("uv")
     if uv_path is None:
         click.echo(
-            "❌ uv コマンドが見つかりません。インストールを確認してください。", err=True
+            "❌ uv command not found. Please check your installation.", err=True
         )
         sys.exit(1)
 
-    # pip-licensesの出力を読み取る
+    # Read pip-licenses output
     try:
-        # Ruff S603/S607警告: 固定安全コマンドのため無視してよい
+        # Ruff S603/S607 warning: Can be ignored for fixed safe command
         result = subprocess.run(  # noqa: S603,S607
             [uv_path, "run", "pip-licenses", "--format=csv"],
             check=True,
@@ -425,30 +428,30 @@ def main(allow: list[str]):
 
         df = pd.read_csv(io.StringIO(result.stdout))
     except subprocess.CalledProcessError as e:
-        click.echo(f"❌ pip-licenses の実行に失敗しました: {e}", err=True)
+        click.echo(f"❌ Failed to run pip-licenses: {e}", err=True)
         sys.exit(e.returncode)
 
     allowed_set = set(allow)
 
-    click.echo(f"許可ライセンス: {', '.join(sorted(allowed_set))}")
+    click.echo(f"Allowed licenses: {', '.join(sorted(allowed_set))}")
     click.echo("-" * 70)
 
-    # License列のユニーク値のみを対象にチェック
+    # Check only unique values in the 'License' column
     unique_licenses = list(df["License"].astype(str).unique())
     license_ok, parse_results = check_licenses(unique_licenses, allowed_set)
 
-    click.echo("パースの結果")
+    click.echo("Parse results")
 
     for s in parse_results:
         click.echo(s)
 
     click.echo("-" * 70)
 
-    # 全パッケージについて結果をマッピング
+    # Map results to all packages
     df["LicenseOK"] = df["License"].map(license_ok)
     all_ok = df["LicenseOK"].all()
 
-    # 不許可ライセンスを持つパッケージ列挙
+    # List packages with disallowed licenses
     bad_rows = df.loc[~df["LicenseOK"]]
     for lic, group in bad_rows.groupby("License"):
         pkgs = ", ".join(group["Name"].tolist())
@@ -456,11 +459,11 @@ def main(allow: list[str]):
 
     click.echo("-" * 70)
     click.echo(
-        "結果: "
+        "Result: "
         + (
-            "✅ すべて許可されています"
+            "✅ All are allowed"
             if all_ok
-            else "❌ 許可されないライセンスがあります"
+            else "❌ Some licenses are not allowed"
         )
     )
     sys.exit(0 if all_ok else 2)
