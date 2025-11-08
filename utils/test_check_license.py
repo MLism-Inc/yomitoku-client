@@ -690,3 +690,38 @@ def test_research_and_dev_parenthesized(parser):
             "Mozilla Public License 2.0 (MPL 2.0)",
         ]
     ]
+
+
+def test_double_and_as_error(parser):
+    """and が 2 回連続する構文エラー"""
+    expr = "MIT and and Apache-2.0"
+    with pytest.raises(ParseException):
+        parser.parseString(expr, parseAll=True)
+
+
+def test_and_inside_name_and_operator(parser):
+    """ライセンス名に 'and' を含み、続けて論理 and が続くパターン"""
+    expr = "Research and Development License and MIT"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Research and Development License", "AND", "MIT"]]
+
+
+def test_operator_and_and_inside_name(parser):
+    """論理 and のあとに 'and' を含むライセンス名が続くパターン"""
+    expr = "MIT and Research and Development License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["MIT", "AND", "Research and Development License"]]
+
+
+def test_nested_double_and(parser):
+    """括弧内で and が 2 回連続する構文エラー"""
+    expr = "(Apache-2.0 and and MIT)"
+    with pytest.raises(ParseException):
+        parser.parseString(expr, parseAll=True)
+
+
+def test_double_and_in_long_expression(parser):
+    """複雑な式の途中に and and が混入する構文エラー"""
+    expr = "Apache-2.0 or MIT and and BSD-3-Clause"
+    with pytest.raises(ParseException):
+        parser.parseString(expr, parseAll=True)

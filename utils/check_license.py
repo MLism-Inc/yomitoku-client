@@ -332,17 +332,20 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
     if len(parsed) == 1:
         return eval_expr(parsed[0], allowed_set)
 
-    assert len(parsed) == 3
+    # Composite expression case
+    left = eval_expr(parsed[0], allowed_set)
+    i = 1
+    while i < len(parsed):
+        op = parsed[i]
+        right = eval_expr(parsed[i + 1], allowed_set)
+        if op.upper() == "AND":
+            left = left and right
+        elif op.upper() == "OR":
+            left = left or right
+        else:
+            raise ValueError(f"Unknown operator: {op}")
 
-    op = parsed[1]
-    left, right = eval_expr(parsed[0], allowed_set), eval_expr(parsed[2], allowed_set)
-
-    if op.upper() == "AND":
-        left = left and right
-    elif op.upper() == "OR":
-        left = left or right
-    else:
-        raise ValueError(f"Unknown operator: {op}")
+        i += 2
 
     return left
 
