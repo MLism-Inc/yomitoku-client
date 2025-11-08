@@ -570,3 +570,123 @@ def test_parenthesized_lowercase_and_or_with_multiword(parser):
             ["BSD License", "OR", "Mozilla Public License 2.0 (MPL 2.0)"],
         ]
     ]
+
+def test_complex_expression_with_and_inside_name_left(parser):
+    """'and' を含むライセンス名が左側にある場合"""
+    expr = "Research and Development License OR MIT"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Research and Development License", "OR", "MIT"]]
+
+
+def test_complex_expression_with_and_inside_name_middle(parser):
+    """'and' を含むライセンス名が中央にある場合"""
+    expr = "Apache-2.0 AND Research and Development License OR BSD-3-Clause"
+    result = parser.parseString(expr, parseAll=True).asList()
+    # AND の方が優先順位が高い
+    assert result == [
+        [
+            ["Apache-2.0", "AND", "Research and Development License"],
+            "OR",
+            "BSD-3-Clause",
+        ]
+    ]
+
+
+def test_complex_expression_with_and_inside_name_right(parser):
+    """'and' を含むライセンス名が右側にある場合"""
+    expr = "MIT OR Research and Development License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["MIT", "OR", "Research and Development License"]]
+
+
+def test_parenthesized_and_inside_name(parser):
+    """括弧内で 'and' を含むライセンス名が現れる場合"""
+    expr = "(Apache-2.0 OR Research and Development License) AND BSD-3-Clause"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [
+        [
+            ["Apache-2.0", "OR", "Research and Development License"],
+            "AND",
+            "BSD-3-Clause",
+        ]
+    ]
+
+
+def test_double_nested_and_inside_name(parser):
+    """多段ネスト中に 'and' を含むライセンス名が現れる場合"""
+    expr = "(MIT OR (BSD-3-Clause AND Research and Development License))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [
+        [
+            "MIT",
+            "OR",
+            ["BSD-3-Clause", "AND", "Research and Development License"],
+        ]
+    ]
+
+def test_research_and_dev_with_apache_left(parser):
+    """Research and Development License が左側にあり、Apache Software License と組み合わさる"""
+    expr = "Research and Development License OR Apache Software License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Research and Development License", "OR", "Apache Software License"]]
+
+
+def test_research_and_dev_with_apache_right(parser):
+    """Research and Development License が右側にあり、Apache Software License と組み合わさる"""
+    expr = "Apache Software License AND Research and Development License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Apache Software License", "AND", "Research and Development License"]]
+
+
+def test_research_and_dev_with_mozilla_left(parser):
+    """Research and Development License が左側にあり、Mozilla Public License 2.0 (MPL 2.0) と組み合わさる"""
+    expr = "Research and Development License OR Mozilla Public License 2.0 (MPL 2.0)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Research and Development License", "OR", "Mozilla Public License 2.0 (MPL 2.0)"]]
+
+
+def test_research_and_dev_with_mozilla_right(parser):
+    """Research and Development License が右側にあり、Mozilla Public License 2.0 (MPL 2.0) と組み合わさる"""
+    expr = "Mozilla Public License 2.0 (MPL 2.0) AND Research and Development License"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [["Mozilla Public License 2.0 (MPL 2.0)", "AND", "Research and Development License"]]
+
+
+def test_research_and_dev_nested_with_apache_and_mozilla(parser):
+    """Research and Development License を含む多段ネスト構造（Apache + Mozilla 両方）"""
+    expr = "(Apache Software License OR (Mozilla Public License 2.0 (MPL 2.0) AND Research and Development License))"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [
+        [
+            "Apache Software License",
+            "OR",
+            ["Mozilla Public License 2.0 (MPL 2.0)", "AND", "Research and Development License"],
+        ]
+    ]
+
+
+def test_research_and_dev_middle_with_mixed_complex(parser):
+    """Research and Development License が中間項にある複合論理式"""
+    expr = "Apache Software License AND Research and Development License OR Mozilla Public License 2.0 (MPL 2.0)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    # AND が OR より優先される
+    assert result == [
+        [
+            ["Apache Software License", "AND", "Research and Development License"],
+            "OR",
+            "Mozilla Public License 2.0 (MPL 2.0)",
+        ]
+    ]
+
+
+def test_research_and_dev_parenthesized(parser):
+    """Research and Development License を括弧で囲んだ論理式"""
+    expr = "(Research and Development License OR Apache Software License) AND Mozilla Public License 2.0 (MPL 2.0)"
+    result = parser.parseString(expr, parseAll=True).asList()
+    assert result == [
+        [
+            ["Research and Development License", "OR", "Apache Software License"],
+            "AND",
+            "Mozilla Public License 2.0 (MPL 2.0)",
+        ]
+    ]

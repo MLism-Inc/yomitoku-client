@@ -22,6 +22,7 @@ from pyparsing import (
     ParseException,
     ParserElement,
     ParseResults,
+    Regex,
     StringEnd,
     Suppress,
     White,
@@ -31,7 +32,6 @@ from pyparsing import (
     nestedExpr,
     opAssoc,
     originalTextFor,
-    Regex,
 )
 
 
@@ -104,7 +104,7 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
     # 括弧は原則抑制するが、先頭が二重括弧のサブ式は1レベル包んで残す
     double_paren_subexpr = Group(
         Suppress("(") + Suppress("(") + expr + Suppress(")") + Suppress(")")
-    ).setParseAction(lambda t: {"__dbl__": t[0]})
+    ).setParseAction(lambda t: [t[0]])
     # 通常の括弧は抑制（論理括弧の存在は構造に反映しない）
     def _single_group_action(toks):
         inner = toks.asList()[0] if isinstance(toks, ParseResults) else toks[0]
@@ -185,23 +185,10 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
     def _flatten_simple_wrapped(s, loc, toks):
         """
         「すべてが括弧で包まれた単純名称」の場合のみネストを潰して1レベルにする。
-        論理式（AND/ORを含む）や複合構造は潰さない。
+        論理式（AND/ORを含む）や複合構造は潰さない
         """
         # ParseResults -> list
         v = toks.asList() if isinstance(toks, ParseResults) else toks
-
-        # Expand markers for double-parentheses subexpressions into a single
-        # extra grouping level that survives infixNotation flattening.
-        def _expand_double(node):
-            if isinstance(node, ParseResults):
-                node = node.asList()
-            if isinstance(node, dict) and "__dbl__" in node:
-                return [_expand_double(node["__dbl__"])]
-            if isinstance(node, list):
-                return [_expand_double(e) for e in node]
-            return node
-
-        v = _expand_double(v)
 
         # Collapse [[name]] -> [name] for cases like ((MIT)) or (((MIT)))
         if (
@@ -232,6 +219,67 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
                 and any(isinstance(e, list) for e in expr_list[2])
             ):
                 return [expr_list]
+
+        # If top-level is [ [ left, 'AND', rhs ] ] and rhs is an OR expression
+        # whose left operand is a list (due to double parentheses like
+        # ((MIT (X11))) inside the group), then wrap rhs once to preserve
+        # the group shape: rhs -> [rhs].
+        if (
+            isinstance(v, list)
+            and len(v) == 1
+            and isinstance(v[0], list)
+            and len(v[0]) == 3
+            and isinstance(v[0][1], str)
+            and v[0][1].upper() == 'AND'
+        ):
+            rhs = v[0][2]
+            if (
+                isinstance(rhs, list)
+                and len(rhs) == 3
+                and isinstance(rhs[0], list)
+                and not (isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list))
+            ):
+                v[0][2] = [rhs]
+                return v
+
+        # Fallback for cases where the textual RHS begins with a double
+        # parenthesis at top level: "... AND ((...))". In that case, wrap the
+        # RHS once to reflect that grouping.
+        def _rhs_starts_with_double_paren(source: str) -> bool:
+            n = len(source)
+            depth0 = 0
+            i = 0
+            while i < n:
+                ch = source[i]
+                if ch == '(':
+                    depth0 += 1
+                elif ch == ')':
+                    depth0 -= 1
+                elif depth0 == 0:
+                    if source[i:i+3].lower() == 'and':
+                        prev = source[i-1] if i-1 >= 0 else ' '
+                        nxt = source[i+3] if i+3 < n else ' '
+                        if prev.isspace() and nxt.isspace():
+                            j = i + 3
+                            while j < n and source[j].isspace():
+                                j += 1
+                            return j + 1 < n and source[j] == '(' and source[j+1] == '('
+                i += 1
+            return False
+
+        if (
+            isinstance(v, list)
+            and len(v) == 1
+            and isinstance(v[0], list)
+            and len(v[0]) == 3
+            and isinstance(v[0][1], str)
+            and v[0][1].upper() == 'AND'
+            and _rhs_starts_with_double_paren(s)
+        ):
+            rhs = v[0][2]
+            if not (isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)):
+                v[0][2] = [rhs]
+                return v
         # Do not collapse [[expr]] -> [expr]; tests expect one extra wrapper
         # when the entire input is wrapped in parentheses around an expression.
 
@@ -258,49 +306,6 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             return [cur[0]]
 
         # No additional whole-input normalization here; wrapped_all handles it
-
-        # Special-case: if a top-level AND has its RHS starting with
-        # double parentheses, wrap the RHS with one extra list level.
-        def _top_level_and_rhs_starts_with_dbl_paren(source: str) -> bool:
-            n = len(source)
-            depth2 = 0
-            i = 0
-            while i < n:
-                ch = source[i]
-                if ch == '(':
-                    depth2 += 1
-                    i += 1
-                    continue
-                if ch == ')':
-                    depth2 -= 1
-                    i += 1
-                    continue
-                if depth2 == 0:
-                    # match 'and' at word boundaries (case-insensitive)
-                    if source[i:i+3].lower() == 'and':
-                        prev = source[i-1] if i-1 >= 0 else ' '
-                        nxt = source[i+3] if i+3 < n else ' '
-                        if prev.isspace() and nxt.isspace():
-                            j = i + 3
-                            while j < n and source[j].isspace():
-                                j += 1
-                            return j+1 < n and source[j] == '(' and source[j+1] == '('
-                i += 1
-            return False
-
-        if (
-            isinstance(v, list)
-            and len(v) == 1
-            and isinstance(v[0], list)
-            and len(v[0]) == 3
-            and isinstance(v[0][1], str)
-            and v[0][1].upper() == 'AND'
-            and _top_level_and_rhs_starts_with_dbl_paren(s)
-        ):
-            rhs = v[0][2]
-            if not (isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)):
-                v[0][2] = [rhs]
-                return v
         return v
 
     start.add_parse_action(_flatten_simple_wrapped)
