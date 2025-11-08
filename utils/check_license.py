@@ -57,7 +57,9 @@ def build_allowed_phrase(phrases: set[str]) -> ParserElement | None:
     candidates.sort(key=len, reverse=True)
 
     def as_regex(phrase: str) -> ParserElement:
-        pattern = re.escape(" ".join(phrase.split())).replace(r"\ ", r"\s+")
+        words = phrase.split()
+        escaped = [re.escape(w) for w in words]
+        pattern = r"\s+".join(escaped)
         return Regex(rf"(?i)\b{pattern}\b").setParseAction(lambda t: str(t[0]).strip())
 
     return MatchFirst([as_regex(p) for p in candidates])
