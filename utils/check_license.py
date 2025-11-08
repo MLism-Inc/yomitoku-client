@@ -57,7 +57,7 @@ def build_allowed_phrase(phrases: set[str]) -> ParserElement | None:
     candidates.sort(key=len, reverse=True)
 
     def as_regex(phrase: str) -> ParserElement:
-        pattern = (" ".join(phrase.split())).replace(r"\ ", r"\s+")
+        pattern = re.escape(" ".join(phrase.split())).replace(r"\ ", r"\s+")
         return Regex(rf"(?i)\b{pattern}\b").setParseAction(lambda t: str(t[0]).strip())
 
     return MatchFirst([as_regex(p) for p in candidates])
@@ -183,6 +183,7 @@ def check_licenses(
             parse_results.append([lic])
             continue
 
+        ok = False
         try:
             parsed = parser.parseString(lic, parseAll=True).asList()[0]
             parse_results.append(parsed)
