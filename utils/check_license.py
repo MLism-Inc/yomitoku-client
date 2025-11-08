@@ -114,14 +114,8 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
     # --- Expressions and parentheses --------------------------------------
     expr = Forward()
 
-    single_paren_subexpr = Group(
-        Suppress("(") + ~FollowedBy(Literal("(")) + expr + Suppress(")")
-    )
-
-    operand = license_name | single_paren_subexpr
-
     expr <<= infixNotation(
-        operand,
+        license_name | Group(Suppress("(") + expr + Suppress(")")),
         [
             (AND, 2, opAssoc.LEFT),
             (OR, 2, opAssoc.LEFT),

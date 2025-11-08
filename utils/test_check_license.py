@@ -837,3 +837,17 @@ def test_quint_paren():
     expr = "(((((aaa)))))"
     result = parse(expr)
     assert result == "aaa"
+
+
+def test_parenthesized_lowercase_and_or_with_nested_annotation():
+    """Lowercase and/or expression with deeply nested parentheses in license annotation"""
+    expr = (
+        "(Apache Software License or MIT License) and "
+        "(BSD License or Mozilla Public License 2.0 (((MPL 2.0))))"
+    )
+    result = parse(expr)
+    assert result == [
+        ["Apache Software License", "OR", "MIT License"],
+        "AND",
+        ["BSD License", "OR", "Mozilla Public License 2.0 (((MPL 2.0)))"],
+    ]
