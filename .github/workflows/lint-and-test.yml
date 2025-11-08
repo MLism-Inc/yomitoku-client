@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - feature/add-ci # for debug
 
 permissions:
   contents: read
