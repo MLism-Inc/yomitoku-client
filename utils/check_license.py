@@ -7,19 +7,15 @@ import sys
 import click
 import pandas as pd
 from pyparsing import (
-    And,
     CaselessKeyword,
-    CaselessLiteral,
     Combine,
     FollowedBy,
     Forward,
     Group,
-    Keyword,
     Literal,
     MatchFirst,
     OneOrMore,
     Optional,
-    ParseException,
     ParserElement,
     ParseResults,
     Regex,
@@ -105,33 +101,21 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
     double_paren_subexpr = Group(
         Suppress("(") + Suppress("(") + expr + Suppress(")") + Suppress(")")
     ).setParseAction(lambda t: [t[0]])
-    # 通常の括弧は抑制（論理括弧の存在は構造に反映しない）
-    def _single_group_action(toks):
-        inner = toks.asList()[0] if isinstance(toks, ParseResults) else toks[0]
-        # If parentheses enclose just a single name, don't create a group
-        if isinstance(inner, str):
-            return inner
-        return toks
 
     # (name) should behave like just name, without extra grouping
     name_in_parens = (Suppress("(") + license_name + Suppress(")")).setParseAction(
         lambda t: t[0]
     )
 
-    def _single_paren_action_group(s, loc, toks):
-        inner = toks.asList()[0] if isinstance(toks, ParseResults) else toks[0]
-        # Always return inner; root/double paren handling is centralized
-        # in the final root-level flatten pass.
-        return inner
-
     single_paren_subexpr = Group(
         Suppress("(") + ~FollowedBy(Literal("(")) + expr + Suppress(")")
-    ).setParseAction(_single_paren_action_group)
+    ).setParseAction(
+        lambda _, _2, toks: toks.asList()[0]
+        if isinstance(toks, ParseResults)
+        else toks[0]
+    )
     operand = (
-        double_paren_subexpr
-        | name_in_parens
-        | license_name
-        | single_paren_subexpr
+        double_paren_subexpr | name_in_parens | license_name | single_paren_subexpr
     )
 
     expr <<= infixNotation(
@@ -176,13 +160,9 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
 
     # Start: entire input wrapped once in parentheses, or plain expr/name
     wrapped_all = Group(Suppress("(") + expr + Suppress(")")) + StringEnd()
-    start = (
-        wrapped_all
-        | (expr + StringEnd())
-        | (name_or_paren + StringEnd())
-    )
+    start = wrapped_all | (expr + StringEnd()) | (name_or_paren + StringEnd())
 
-    def _flatten_simple_wrapped(s, loc, toks):
+    def _flatten_simple_wrapped(s, _, toks):
         """
         「すべてが括弧で包まれた単純名称」の場合のみネストを潰して1レベルにする。
         論理式（AND/ORを含む）や複合構造は潰さない
@@ -201,9 +181,9 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             return [v[0][0]]
 
         # For whole-input parentheses around a complex expression, tests expect:
-        # - Keep one extra wrapper normally (e.g., (A AND (B OR C)) -> [[[...]]])
-        # - But collapse one level when the right-hand side is itself a
-        #   nested expression (e.g., (A AND (B OR (C AND D))) -> [[...]]).
+        # - If top-level operator is OR, collapse one level: ((X OR ...)) -> [[...]]
+        # - If top-level operator is AND and RHS is itself nested (contains a
+        #   deeper list), collapse one level: (A AND (B OR (C AND D))) -> [[...]]
         if (
             isinstance(v, list)
             and len(v) == 1
@@ -212,13 +192,22 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             and isinstance(v[0][0], list)
         ):
             expr_list = v[0][0]
-            if (
-                isinstance(expr_list, list)
-                and len(expr_list) == 3
-                and isinstance(expr_list[2], list)
-                and any(isinstance(e, list) for e in expr_list[2])
-            ):
-                return [expr_list]
+            if isinstance(expr_list, list) and len(expr_list) == 3:
+                op_tok = expr_list[1]
+
+                # Do not collapse if the whole parenthesized input begins
+                # with a double "((", which should preserve one extra
+                # grouping level for this OR group.
+                if (
+                    isinstance(op_tok, str)
+                    and op_tok.upper() == "OR"
+                    and not s.strip().startswith("((")
+                ):
+                    return [expr_list]
+                if isinstance(expr_list[2], list) and any(
+                    isinstance(e, list) for e in expr_list[2]
+                ):
+                    return [expr_list]
 
         # If top-level is [ [ left, 'AND', rhs ] ] and rhs is an OR expression
         # whose left operand is a list (due to double parentheses like
@@ -230,14 +219,16 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             and isinstance(v[0], list)
             and len(v[0]) == 3
             and isinstance(v[0][1], str)
-            and v[0][1].upper() == 'AND'
+            and v[0][1].upper() == "AND"
         ):
             rhs = v[0][2]
             if (
                 isinstance(rhs, list)
                 and len(rhs) == 3
                 and isinstance(rhs[0], list)
-                and not (isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list))
+                and not (
+                    isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)
+                )
             ):
                 v[0][2] = [rhs]
                 return v
@@ -251,19 +242,18 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             i = 0
             while i < n:
                 ch = source[i]
-                if ch == '(':
+                if ch == "(":
                     depth0 += 1
-                elif ch == ')':
+                elif ch == ")":
                     depth0 -= 1
-                elif depth0 == 0:
-                    if source[i:i+3].lower() == 'and':
-                        prev = source[i-1] if i-1 >= 0 else ' '
-                        nxt = source[i+3] if i+3 < n else ' '
-                        if prev.isspace() and nxt.isspace():
-                            j = i + 3
-                            while j < n and source[j].isspace():
-                                j += 1
-                            return j + 1 < n and source[j] == '(' and source[j+1] == '('
+                elif depth0 == 0 and source[i : i + 3].lower() == "and":
+                    prev = source[i - 1] if i - 1 >= 0 else " "
+                    nxt = source[i + 3] if i + 3 < n else " "
+                    if prev.isspace() and nxt.isspace():
+                        j = i + 3
+                        while j < n and source[j].isspace():
+                            j += 1
+                        return j + 1 < n and source[j] == "(" and source[j + 1] == "("
                 i += 1
             return False
 
@@ -273,11 +263,13 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             and isinstance(v[0], list)
             and len(v[0]) == 3
             and isinstance(v[0][1], str)
-            and v[0][1].upper() == 'AND'
+            and v[0][1].upper() == "AND"
             and _rhs_starts_with_double_paren(s)
         ):
             rhs = v[0][2]
-            if not (isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)):
+            if not (
+                isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)
+            ):
                 v[0][2] = [rhs]
                 return v
         # Do not collapse [[expr]] -> [expr]; tests expect one extra wrapper
@@ -298,11 +290,7 @@ def build_parser(allowed_set: set[str] | None = None) -> ParserElement:
             return [cur]
 
         # あるいは ["MIT License (X11)"] のようにリスト全体が1つの文字列
-        if (
-            depth >= 1
-            and isinstance(cur, list)
-            and len(cur) == 1
-        ):
+        if depth >= 1 and isinstance(cur, list) and len(cur) == 1:
             return [cur[0]]
 
         # No additional whole-input normalization here; wrapped_all handles it
@@ -408,12 +396,11 @@ def check_licenses(
 @click.option(
     "--allow",
     "-a",
+    multiple=True,
     required=True,
-    help=(
-        "許可するライセンスをスペース区切りで指定 例: -a 'Apache-2.0 BSD-3-Clause MIT'"
-    ),
+    help="許可するライセンスを複数指定可能。例: -a Apache-2.0 -a BSD-3-Clause -a MIT",
 )
-def main(allow: str):
+def main(allow: list[str]):
     """
     uv run pip-licenses の出力を取得し、
     すべてのライセンスが許可リスト ALLOW 内で満たされているかチェックする
@@ -441,7 +428,7 @@ def main(allow: str):
         click.echo(f"❌ pip-licenses の実行に失敗しました: {e}", err=True)
         sys.exit(e.returncode)
 
-    allowed_set = set(allow.split())
+    allowed_set = set(allow)
 
     click.echo(f"許可ライセンス: {', '.join(sorted(allowed_set))}")
     click.echo("-" * 70)
