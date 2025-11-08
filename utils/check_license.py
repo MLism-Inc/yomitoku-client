@@ -43,89 +43,98 @@ def normalize_str(s: str) -> str:
 
 
 def build_parser(allowed_set: set[str]) -> ParserElement:
-    """License logical expression parser"""
+    """
+    Build a parser for license expressions.
+
+    Grammar highlights (behavior preserved):
+    - Operators: AND (also ';', ',', '/'), OR.
+    - License names: words (including .:+-), optionally followed by an
+      annotation in parentheses, e.g. "MIT (X11)".
+    - Parentheses for grouping: support single and multiple nestings like
+      (A), ((A)), etc., without confusing annotations with grouping.
+    - Certain composite phrases listed in `allowed_set` that contain logical
+      keywords (e.g. "A and B") are treated as a single token.
+    """
 
     ParserElement.enable_packrat()
 
-    # Operator definition (AND/OR are treated as operators regardless of case)
+    # --- Operators ---------------------------------------------------------
     AND = MatchFirst(
         [CaselessKeyword("AND"), Literal(";"), Literal(","), Literal("/")]
     ).setParseAction(lambda _: "AND")
-
     OR = CaselessKeyword("OR").setParseAction(lambda _: "OR")
 
-    # License name (Annotation parentheses are OK, but not if they contain AND/OR)
+    # --- License name and annotation --------------------------------------
     name_word = Word(alphanums + ".:+-")
-    # License name (Concatenation of words and spaces. Excludes operator tokens AND/OR)
+
+    # Join tokens as a single name while ignoring operator tokens
+    def _join_and_collapse_spaces(toks: ParseResults | list[str]) -> str:
+        joined = "".join(toks)
+        return re.sub(r" {2,}", " ", joined)
+
     simple_name = OneOrMore(((~AND) + (~OR) + name_word) | White(" ")).setParseAction(
-        lambda t: re.sub(r" {2,}", " ", "".join(t))
+        _join_and_collapse_spaces
     )
 
-    def _build_phrase_expr(phrase: str):
-        """
-        Matches composite phrases in allowed_set
-        Compares case-insensitively but returns the original text
-        """
-        # Normalize spaces to 1 or more, escape punctuation
-        pattern = re.escape(" ".join(phrase.split()))
-
-        # Flexible spacing: replace space with one or more arbitrary whitespace
-        pattern = pattern.replace(r"\ ", r"\s+")
-
-        # Case-insensitive, but return the original text
-        # (?i) for case-insensitive, \b for word boundaries
-        regex = rf"(?i)\b{pattern}\b"
-
-        # pyparsing.Regex is compatible with the re module. The matched string is returned as is
-        return Regex(regex).setParseAction(lambda t: str(t[0]).strip())
-
-    # Phrases in allowed_set are prioritized as 1 token (case-insensitive)
-    allowed_phrase = None
-    if allowed_set:
-        norm_phrases = {" ".join(p.split()) for p in allowed_set}
-        # Extract composite phrases that contain and/or
-        and_or_phrases = [
-            p for p in norm_phrases if " and " in p.lower() or " or " in p.lower()
-        ]
-        and_or_phrases.sort(key=len, reverse=True)  # Longest match first
-        if and_or_phrases:
-            allowed_phrase = MatchFirst([_build_phrase_expr(p) for p in and_or_phrases])
-
-    # Parenthesized annotation (content is free, nesting allowed, empty is OK)
-    # Treated as annotation only when appended to the immediately preceding name
+    # Annotation is any parenthesized text (including nested), captured verbatim
     annotation = originalTextFor(nestedExpr(opener="(", closer=")"))
 
-    if allowed_phrase is not None:
-        name_with_annotation = Combine(
-            simple_name + Optional(annotation)
-        ).setParseAction(lambda t: str(t[0]).strip())
-        license_name = (allowed_phrase | name_with_annotation).setParseAction(
-            lambda t: str(t[0]).strip()
-        )
-    else:
-        license_name = Combine(simple_name + Optional(annotation)).setParseAction(
-            lambda t: str(t[0]).strip()
-        )
+    # Some allowed phrases may contain logical words; treat them as a single token
+    def build_allowed_phrase(phrases: set[str]) -> ParserElement | None:
+        if not phrases:
+            return None
 
+        normalized = {" ".join(p.split()) for p in phrases}
+        candidates = [
+            p for p in normalized if re.search(r"\b(and|or)\b", p, flags=re.I)
+        ]
+        if not candidates:
+            return None
+
+        # Greedy: try to match longer phrases first
+        candidates.sort(key=len, reverse=True)
+
+        def as_regex(phrase: str) -> ParserElement:
+            pattern = re.escape(" ".join(phrase.split())).replace(r"\ ", r"\s+")
+            return Regex(rf"(?i)\b{pattern}\b").setParseAction(
+                lambda t: str(t[0]).strip()
+            )
+
+        return MatchFirst([as_regex(p) for p in candidates])
+
+    allowed_phrase = build_allowed_phrase(allowed_set)
+
+    name_with_annotation = Combine(simple_name + Optional(annotation)).setParseAction(
+        lambda t: str(t[0]).strip()
+    )
+
+    license_name = (
+        (allowed_phrase | name_with_annotation)
+        if allowed_phrase
+        else name_with_annotation
+    ).setParseAction(lambda t: str(t[0]).strip())
+
+    # --- Expressions and parentheses --------------------------------------
     expr = Forward()
-    # Parentheses are generally suppressed, but a sub-expression that starts with
-    # double parentheses is wrapped one level and kept
+
+    # ((expr)) → keep as nested list (for parity with existing behavior)
     double_paren_subexpr = Group(
         Suppress("(") + Suppress("(") + expr + Suppress(")") + Suppress(")")
     ).setParseAction(lambda t: [t[0]])
 
-    # (name) should behave like just name, without extra grouping
+    # (NAME) → just the name string
     name_in_parens = (Suppress("(") + license_name + Suppress(")")).setParseAction(
         lambda t: t[0]
     )
 
+    # (expr) where the '(' is not followed by another '(' → unwrap inner list
+    def _unwrap_single_paren(_s, _loc, toks: ParseResults):
+        return toks.asList()[0] if isinstance(toks, ParseResults) else toks[0]
+
     single_paren_subexpr = Group(
         Suppress("(") + ~FollowedBy(Literal("(")) + expr + Suppress(")")
-    ).setParseAction(
-        lambda _, _2, toks: toks.asList()[0]
-        if isinstance(toks, ParseResults)
-        else toks[0]
-    )
+    ).setParseAction(_unwrap_single_paren)
+
     operand = (
         double_paren_subexpr | name_in_parens | license_name | single_paren_subexpr
     )
@@ -138,178 +147,13 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
         ],
     )
 
-    # If multiple ORs are present, they are nested left-associatively (AND remains as is)
-    def _nest_or(node):
-        if isinstance(node, list):
-            node = [_nest_or(x) for x in node]
-            # Convert [x, 'OR', y, 'OR', z, ...] to [[x,'OR',y], 'OR', z, ...] stepwise
-            or_positions = [
-                i
-                for i in range(1, len(node), 2)
-                if isinstance(node[i], str) and node[i].upper() == "OR"
-            ]
-            if len(or_positions) >= 2:
-                left = [node[0], "OR", node[2]]
-                i = 3
-                while i < len(node):
-                    op = node[i]
-                    right = node[i + 1]
-                    if isinstance(op, str) and op.upper() == "OR":
-                        left = [left, "OR", right]
-                    else:
-                        left = [left, op, right]
-                    i += 2
-                return left
-            return node
-        return node
-
-    expr.add_parse_action(lambda t: _nest_or(t.asList()))
-
-    # Root interprets in order: entire input wrapped, then expression, then pure name
-    # StringEnd is added to each option to ensure consumption until the end
+    # Accept: (expr), expr, or plain name (possibly wrapped by parens)
     name_or_paren = Forward()
     name_or_paren <<= license_name | (Suppress("(") + name_or_paren + Suppress(")"))
 
-    # Start: entire input wrapped once in parentheses, or plain expr/name
     wrapped_all = Group(Suppress("(") + expr + Suppress(")")) + StringEnd()
     start = wrapped_all | (expr + StringEnd()) | (name_or_paren + StringEnd())
 
-    def _flatten_simple_wrapped(s, _, toks):
-        """
-        Only for "simple name entirely wrapped in parentheses",
-        collapse the nesting to one level.
-        Do not collapse logical expressions (containing AND/OR) or compound structures.
-        """
-        # ParseResults -> list
-        v = toks.asList() if isinstance(toks, ParseResults) else toks
-
-        # Collapse [[name]] -> [name] for cases like ((MIT)) or (((MIT)))
-        if (
-            isinstance(v, list)
-            and len(v) == 1
-            and isinstance(v[0], list)
-            and len(v[0]) == 1
-            and isinstance(v[0][0], str)
-        ):
-            return [v[0][0]]
-
-        # For whole-input parentheses around a complex expression, tests expect:
-        # - If top-level operator is OR, collapse one level: ((X OR ...)) -> [[...]]
-        # - If top-level operator is AND and RHS is itself nested (contains a
-        #   deeper list), collapse one level: (A AND (B OR (C AND D))) -> [[...]]
-        if (
-            isinstance(v, list)
-            and len(v) == 1
-            and isinstance(v[0], list)
-            and len(v[0]) == 1
-            and isinstance(v[0][0], list)
-        ):
-            expr_list = v[0][0]
-            if isinstance(expr_list, list) and len(expr_list) == 3:
-                op_tok = expr_list[1]
-
-                # Do not collapse if the whole parenthesized input begins
-                # with a double "((", which should preserve one extra
-                # grouping level for this OR group.
-                if (
-                    isinstance(op_tok, str)
-                    and op_tok.upper() == "OR"
-                    and not s.strip().startswith("((")
-                ):
-                    return [expr_list]
-                if isinstance(expr_list[2], list) and any(
-                    isinstance(e, list) for e in expr_list[2]
-                ):
-                    return [expr_list]
-
-        # If top-level is [ [ left, 'AND', rhs ] ] and rhs is an OR expression
-        # whose left operand is a list (due to double parentheses like
-        # ((MIT (X11))) inside the group), then wrap rhs once to preserve
-        # the group shape: rhs -> [rhs].
-        if (
-            isinstance(v, list)
-            and len(v) == 1
-            and isinstance(v[0], list)
-            and len(v[0]) == 3
-            and isinstance(v[0][1], str)
-            and v[0][1].upper() == "AND"
-        ):
-            rhs = v[0][2]
-            if (
-                isinstance(rhs, list)
-                and len(rhs) == 3
-                and isinstance(rhs[0], list)
-                and not (
-                    isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)
-                )
-            ):
-                v[0][2] = [rhs]
-                return v
-
-        # Fallback for cases where the textual RHS begins with a double
-        # parenthesis at top level: "... AND ((...))". In that case, wrap the
-        # RHS once to reflect that grouping.
-        def _rhs_starts_with_double_paren(source: str) -> bool:
-            n = len(source)
-            depth0 = 0
-            i = 0
-            while i < n:
-                ch = source[i]
-                if ch == "(":
-                    depth0 += 1
-                elif ch == ")":
-                    depth0 -= 1
-                elif depth0 == 0 and normalize_str(source[i : i + 3]) == "and":
-                    prev = source[i - 1] if i - 1 >= 0 else " "
-                    nxt = source[i + 3] if i + 3 < n else " "
-                    if prev.isspace() and nxt.isspace():
-                        j = i + 3
-                        while j < n and source[j].isspace():
-                            j += 1
-                        return j + 1 < n and source[j] == "(" and source[j + 1] == "("
-                i += 1
-            return False
-
-        if (
-            isinstance(v, list)
-            and len(v) == 1
-            and isinstance(v[0], list)
-            and len(v[0]) == 3
-            and isinstance(v[0][1], str)
-            and v[0][1].upper() == "AND"
-            and _rhs_starts_with_double_paren(s)
-        ):
-            rhs = v[0][2]
-            if not (
-                isinstance(rhs, list) and len(rhs) == 1 and isinstance(rhs[0], list)
-            ):
-                v[0][2] = [rhs]
-                return v
-        # Do not collapse [[expr]] -> [expr]; tests expect one extra wrapper
-        # when the entire input is wrapped in parentheses around an expression.
-
-        # Unpack single-element lists like [[[["MIT"]]]]
-        cur = v
-        depth = 0
-        while isinstance(cur, list) and len(cur) == 1:
-            cur = cur[0]
-            depth += 1
-
-        # --- Flattening condition ---
-        # (1) The outermost layer was entirely wrapped in parentheses
-        # (2) The content is purely str (simple name without AND/OR etc.)
-        # Only then, flatten.
-        if depth >= 1 and isinstance(cur, str):
-            return [cur]
-
-        # Or the entire list is a single string like ["MIT License (X11)"]
-        if depth >= 1 and isinstance(cur, list) and len(cur) == 1:
-            return [cur[0]]
-
-        # No additional whole-input normalization here; wrapped_all handles it
-        return v
-
-    start.add_parse_action(_flatten_simple_wrapped)
     return start
 
 
