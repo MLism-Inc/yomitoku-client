@@ -175,7 +175,7 @@ skip_install = true
 allowlist_externals =
     uv
 commands =
-    uv run python ./utils/check_license.py \
+    uv run python {toxinidir}/utils/check_license.py \
          -a "MIT" \
          -a "MIT License" \
          -a "MIT-CMU" \
