@@ -50,7 +50,7 @@ YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marke
 
 * 🔒 **[AWS Authentication Setup](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** – Guide for configuring AWS authentication.
 * 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Deployment guide for the **YomiToku-Pro Document Analyzer** endpoint.
-* 📋 **[Sample Analysis Results](./gellery.md)** – Example datasets of analysis results.
+* 📋 **[Sample Analysis Results](./gallery.md)** – Example datasets of analysis results.
 * 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial notebook for connecting to the AWS SageMaker endpoint and performing document analysis.
 * 📖 **[Documentation](https://mlism-inc.github.io/yomitoku-client/)** – Detailed usage guide for **YomiToku-Client**.
 ---

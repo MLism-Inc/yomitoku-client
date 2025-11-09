@@ -46,6 +46,3 @@ class PDFRenderer(BaseRenderer):
             docs=[data],
             font_path=self.font_path,
         )
-
-    def save(self, data: DocumentResult, output_path: str, **kwargs) -> None:
-        pass
