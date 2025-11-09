@@ -316,7 +316,7 @@
   
     
   
-  Modules
+  Python API
 
       </a>
     </li>
@@ -511,7 +511,7 @@
   
   
   <span class="md-ellipsis">
-    Modules
+    Python API
     
   </span>
   
@@ -589,26 +589,44 @@
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
+      詳細設定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      並列処理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
       タイムアウト / リトライ処理
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       サーキットブレーカー
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="サーキットブレーカー">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
-      🔁 シーケンス図
+      上書き制御
     </span>
   </a>
   
@@ -620,18 +638,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
-      パラメータ設定例
+      🔁 シーケンス図
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#python-api" class="md-nav__link">
     <span class="md-ellipsis">
-      🧠 補足
+      パラメータ設定例(Python API)
     </span>
   </a>
   
@@ -683,26 +701,44 @@
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
+      詳細設定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      並列処理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
       タイムアウト / リトライ処理
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       サーキットブレーカー
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="サーキットブレーカー">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
-      🔁 シーケンス図
+      上書き制御
     </span>
   </a>
   
@@ -714,18 +750,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
-      パラメータ設定例
+      🔁 シーケンス図
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#python-api" class="md-nav__link">
     <span class="md-ellipsis">
-      🧠 補足
+      パラメータ設定例(Python API)
     </span>
   </a>
   
@@ -757,7 +793,12 @@
 <li><a href="https://mlism-marketplace-documents.s3.ap-northeast-1.amazonaws.com/yomitoku-pro-document-analyzer-v1-3-2.html">YomiToku-Pro Document Analyzer API Schema (v1.3.2)</a></li>
 </ul>
 <hr />
-<h2 id="_1">タイムアウト / リトライ処理<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="_1">詳細設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="_2">並列処理<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>YomitokuClientでは、複数ページで構成されるPDFなどのデータをページ単位で分割し、Endpointに並列でリクエストを行います。並列処理のワーカーの数の設定が可能です。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yomitoku-client<span class="w"> </span>batch<span class="w"> </span>-i<span class="w"> </span>./input<span class="w"> </span>-o<span class="w"> </span>./output<span class="w"> </span>-e<span class="w"> </span>my-endpoint<span class="w"> </span>--workers<span class="w"> </span><span class="m">8</span>
+</span></code></pre></div>
+<h3 id="_3">タイムアウト / リトライ処理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>YomitokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
 各パラメータの意味は以下のとおりです。</p>
 <table>
@@ -772,44 +813,114 @@
 </thead>
 <tbody>
 <tr>
-<td><code>connect_timeout</code></td>
+<td><code>--connect_timeout</code></td>
 <td><code>int</code></td>
 <td><code>10</code> 秒</td>
 <td>各リクエスト単位</td>
-<td>サーバー（SageMaker Endpoint）への接続確立までの最大待機時間。TCP/HTTPS 接続が確立しない場合にタイムアウト。</td>
+<td>SageMaker Endpoint への接続確立までの最大待機時間。</td>
 </tr>
 <tr>
-<td><code>read_timeout</code></td>
+<td><code>--read_timeout</code></td>
 <td><code>int</code></td>
 <td><code>60</code> 秒</td>
 <td>各リクエスト単位</td>
-<td>接続確立後、レスポンスを受け取るまでの最大待機時間。推論処理が遅い場合などに適用される。</td>
+<td>接続確立後、レスポンス受信までの最大待機時間。推論遅延時に適用。</td>
 </tr>
 <tr>
-<td><code>request_timeout</code></td>
-<td><code>float</code> / <code>int</code></td>
+<td><code>--max_retries</code></td>
+<td><code>int</code></td>
+<td><code>3</code> 回</td>
+<td>各リクエスト単位</td>
+<td>boto3 の再試行回数の上限。通信エラーや 5xx 応答時に再試行。</td>
+</tr>
+<tr>
+<td><code>--request_timeout</code></td>
+<td><code>float</code></td>
 <td>任意設定</td>
 <td>ページ単位</td>
-<td>1ページ（または 1 ファイル）全体の推論処理に対する上限時間。<code>connect_timeout + read_timeout</code> を包括。</td>
+<td>1 ページ（または 1 ファイル）の処理上限時間。</td>
 </tr>
 <tr>
-<td><code>total_timeout</code></td>
-<td><code>float</code> / <code>int</code></td>
+<td><code>--total_timeout</code></td>
+<td><code>float</code></td>
 <td>任意設定</td>
-<td>ファイル単位</td>
-<td>バッチ処理全体の合計実行時間の上限。全ページの処理を含むグローバルなタイムアウト制御。</td>
+<td>バッチ全体</td>
+<td>全ページ合計の処理上限時間。超過時は未完了タスクをキャンセル。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>使用例</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>yomitoku-client<span class="w"> </span>batch<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>-i<span class="w"> </span>./input<span class="w"> </span>-o<span class="w"> </span>./output<span class="w"> </span>-e<span class="w"> </span>my-endpoint<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--connect_timeout<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>--read_timeout<span class="w"> </span><span class="m">120</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span>--max_retries<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span>--request_timeout<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span>--total_timeout<span class="w"> </span><span class="m">300</span>
+</span></code></pre></div></p>
+<hr />
+<h3 id="_4">サーキットブレーカー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>サーキットブレーカーは、連続して解析に失敗した場合にエンドポイントを保護するための仕組みです。
+これが存在しない場合、複数クライアントが無制限にリトライを行い、エンドポイントの負荷が過大になる恐れがあります。</p>
+<p>YomitokuClient はこのリスクを防ぐため、<strong>連続失敗時に一時的にリクエストを停止</strong>し、一定時間後に再試行を行う設計となっています。</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ名</th>
+<th>型</th>
+<th>既定値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--threthold_circuit</code></td>
+<td><code>int</code></td>
+<td><code>5</code></td>
+<td>連続失敗のしきい値。これを超えるとリクエストを一時停止。</td>
+</tr>
+<tr>
+<td><code>--cooldown_time</code></td>
+<td><code>int</code></td>
+<td><code>30</code> 秒</td>
+<td>サーキットが開いた後に再試行を許可するまでの待機時間。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>使用例</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>yomitoku-client<span class="w"> </span>batch<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>-i<span class="w"> </span>./input<span class="w"> </span>-o<span class="w"> </span>./output<span class="w"> </span>-e<span class="w"> </span>my-endpoint<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--threthold_circuit<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--cooldown_time<span class="w"> </span><span class="m">60</span>
+</span></code></pre></div></p>
+<blockquote>
+<p>🔒 連続失敗が 3 回発生した場合、60 秒間すべてのリクエストが停止します。
+クールダウン経過後に自動的にリクエストを再開します。</p>
+</blockquote>
+<hr />
+<h3 id="_5">上書き制御<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>YomiToku-Clientのバッチ処理は過去のログ情報(<code>${OUTPUT_DIR}/process_log.jsonl</code>)を参照し、処理に失敗したデータのみ再推論が可能です。通常は<code>overwrite=False</code>のときはエラーの発生などにより、推論が実行されていないデータのみを対象としてリクエストします。<code>overwrite=True</code>のときは、フォルダ内の全データを対象に再リクエストを行います。</p>
+<p><code>--overwrite</code>オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再リクエストします。
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>yomitoku-client<span class="w"> </span>batch<span class="w"> </span>-i<span class="w"> </span>./input<span class="w"> </span>-o<span class="w"> </span>./output<span class="w"> </span>-e<span class="w"> </span>my-endpoint<span class="w"> </span>--overwrite
+</span></code></pre></div></p>
+<table>
+<thead>
+<tr>
+<th>オプション</th>
+<th>型</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--overwrite</code></td>
+<td><em>(flag)</em></td>
+<td>True の場合、既存の出力に関係なく全ファイルを再処理。</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="_2">サーキットブレーカー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>サーキットブレーカーは、連続して解析に失敗した場合にエンドポイントを保護するための仕組みです。
-これが存在しない場合、複数クライアントが無制限にリトライを行い、
-エンドポイントの負荷が過大になる恐れがあります。</p>
-<p>YomitokuClient はこのリスクを防ぐため、<strong>連続失敗時に一時的にリクエストを停止</strong>し、
-一定時間後に再試行を行う設計となっています。</p>
-<hr />
-<h3 id="_3">🔁 シーケンス図<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h2 id="_6">🔁 シーケンス図<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     participant Client as YomitokuClient
     participant Boto3 as boto3 (AWS SDK)
@@ -849,46 +960,37 @@
 
     %% --- 終了処理 ---
     Client--&gt;&gt;Client: ページ単位の結果を統合して出力</code></pre>
-<hr />
-<h2 id="_4">パラメータ設定例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="python-api">パラメータ設定例(Python API)<a class="headerlink" href="#python-api" title="Permanent link">&para;</a></h2>
 <p>以下のコードは、タイムアウトおよびサーキットブレーカー設定を含む
 YomitokuClient の使用例です。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestConfig</span><span class="p">,</span> <span class="n">CircuitConfig</span><span class="p">,</span> <span class="n">YomitokuClient</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">request_config</span> <span class="o">=</span> <span class="n">RequestConfig</span><span class="p">(</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">read_timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>     <span class="c1"># Boto3 → Endpoint 応答待機タイムアウト [秒]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">connect_timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>    <span class="c1"># Boto3 → Endpoint 接続確立タイムアウト [秒]</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">max_attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>       <span class="c1"># Boto3 による再試行回数の上限 [回]</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">circuit_config</span> <span class="o">=</span> <span class="n">CircuitConfig</span><span class="p">(</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">threshold</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>          <span class="c1"># 連続失敗のしきい値</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">cooldown_sec</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>      <span class="c1"># サーキットブレーカー適用後のクールダウン時間 [秒]</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">)</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="k">with</span> <span class="n">YomitokuClient</span><span class="p">(</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">endpoint</span><span class="o">=</span><span class="n">ENDPOINT_NAME</span><span class="p">,</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">region</span><span class="o">=</span><span class="n">AWS_REGION</span><span class="p">,</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">request_config</span><span class="o">=</span><span class="n">request_config</span><span class="p">,</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">circuit_config</span><span class="o">=</span><span class="n">circuit_config</span><span class="p">,</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="n">path_img</span><span class="o">=</span><span class="n">PATH_IMG</span><span class="p">,</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="n">request_timeout</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>   <span class="c1"># ページ単位の解析時間上限 [秒]</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>        <span class="n">total_timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>     <span class="c1"># ファイル全体の解析時間上限 [秒]</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    <span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestConfig</span><span class="p">,</span> <span class="n">CircuitConfig</span><span class="p">,</span> <span class="n">YomitokuClient</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">request_config</span> <span class="o">=</span> <span class="n">RequestConfig</span><span class="p">(</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">read_timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>     <span class="c1"># 応答待機タイムアウト [秒]</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">connect_timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>    <span class="c1"># 接続確立タイムアウト [秒]</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>       <span class="c1"># boto3 のリトライ回数</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">circuit_config</span> <span class="o">=</span> <span class="n">CircuitConfig</span><span class="p">(</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">threshold</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>          <span class="c1"># 連続失敗のしきい値</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">cooldown_time</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>      <span class="c1"># サーキットブレーカー発動後のクールダウン [秒]</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">)</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="k">async</span> <span class="k">with</span> <span class="n">YomitokuClient</span><span class="p">(</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="n">endpoint</span><span class="o">=</span><span class="n">ENDPOINT_NAME</span><span class="p">,</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    <span class="n">region</span><span class="o">=</span><span class="n">AWS_REGION</span><span class="p">,</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    <span class="n">request_config</span><span class="o">=</span><span class="n">request_config</span><span class="p">,</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>    <span class="n">circuit_config</span><span class="o">=</span><span class="n">circuit_config</span><span class="p">,</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>    <span class="n">max_workers</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>        <span class="c1"># 並列ワーカー数</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">analyze_batch_async</span><span class="p">(</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>        <span class="n">input_dir</span><span class="o">=</span><span class="s2">&quot;./input&quot;</span><span class="p">,</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>        <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./output&quot;</span><span class="p">,</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>        <span class="n">request_timeout</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>   <span class="c1"># ページ単位の解析上限時間 [秒]</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>        <span class="n">total_timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>     <span class="c1"># 全体解析上限時間 [秒]</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>        <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># 未処理データのみ対象</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>    <span class="p">)</span>
 </span></code></pre></div>
-<hr />
-<h2 id="_5">🧠 補足<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><code>connect_timeout</code> / <code>read_timeout</code></strong>：
-  Boto3 レイヤーでリクエストごとに適用されます（1 ページごとなど）。</li>
-<li><strong><code>request_timeout</code> / <code>total_timeout</code></strong>：
-  YomitokuClient 側の高レベル制御で、ページ単位・全体単位の上限時間を定義します。</li>
-<li><strong><code>circuit_config</code></strong>：
-  短時間に連続失敗が発生した場合の再試行抑止とエンドポイント保護を担います。</li>
-</ul>
-<hr />
 
 
 
