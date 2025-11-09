@@ -229,11 +229,11 @@ def test_single_command_with_pages_split_intermediate_and_advanced_options(
     # ※ 型は実際の RequestConfig インスタンス
     assert client.request_config.read_timeout == 120
     assert client.request_config.connect_timeout == 5
-    assert client.request_config.max_attempts == 5
+    assert client.request_config.max_retries == 5
 
     # CircuitConfig の中身を確認
     assert client.circuit_config.threshold == 3
-    assert client.circuit_config.cooldown_sec == 60
+    assert client.circuit_config.cooldown_time == 60
 
     # CLI 内の intermediate_save ロジック:
     # output_dir/intermediate/{base_name}_{base_ext}.json
