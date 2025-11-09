@@ -1283,7 +1283,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=9.5.0" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "pypdf2", specifier = ">=3.0.0" },
-    { name = "pypdfium2", specifier = ">=4.30.0" },
+    { name = "pypdfium2", specifier = "==4.30.0" },
     { name = "reportlab", specifier = ">=4.4.1" },
     { name = "requests", specifier = ">=2.28.0" },
 ]
