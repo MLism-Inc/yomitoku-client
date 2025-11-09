@@ -33,16 +33,32 @@ flowchart LR
     C -->|"Analysis Result<br/>(JSON)"| B
     B -->|"Structured Data (CSV / JSON / Markdown / HTML / PDF)"| A
 ```
+---
 
-## What is YomiToku-Pro Document Analyzer?
+## What is **YomiToku-Pro Document Analyzer**?
 
-YomiToku-Pro Document Analyzer is a SageMaker endpoint offered via the AWS Marketplace.
+**YomiToku-Pro Document Analyzer** is a **high-precision Japanese document analysis engine** provided on **AWS Marketplace** as a dedicated **Amazon SageMaker endpoint**.
 
-* It performs fast and highly accurate inference of text reading and document-layout analysis on Japanese documents.
-* Each model is trained specifically on Japanese document images, supports recognition of over 7,000 Japanese characters, and can also handle handwritten text or vertical layouts common in Japanese. (It also supports English document images.)
-* With layout analysis, table-structure extraction, and reading-order estimation, it enables extraction of information while preserving the semantic structure of the document image.
-* **Page rotation correction**: It estimates the page orientation and automatically corrects to the proper orientation before analysis.
-* A dedicated SageMaker endpoint is created in each user’s AWS account, and processing is completed within the AWS region. **No external servers or third-party transfers are required**, allowing document analysis with high security and compliance.
+It is deployed securely within your own AWS account as a private endpoint, enabling **fast, accurate, and secure document analysis** with **no data ever sent to external servers**.
+
+---
+
+### 🔍 Key Features
+
+* **High-accuracy Japanese OCR and layout analysis**
+  Trained specifically for Japanese documents, it supports recognition of **over 7,000 Japanese characters**, including variant and traditional forms.
+  It accurately handles handwritten text, vertical writing, and complex form layouts, and includes **page orientation correction** and **advanced layout analysis** capabilities.
+
+* **High-speed inference (≈ 0.6 – 1.2 seconds per page)**
+  A standard A4-sized page can be processed in **under 1 second on average**.
+  Parallel processing is supported, making it ideal for high-volume batch document analysis.
+
+* **Secure-by-design architecture**
+  All processing takes place entirely **within your AWS environment**.
+  No data is transmitted to external networks or third-party servers, ensuring full data privacy and compliance.
+
+* **Unlimited scalability**
+  Delivered as a dedicated SageMaker endpoint, the service has **no rate limits or request quotas** — you can process as many documents as needed while the endpoint is active.
 
 ---
 
