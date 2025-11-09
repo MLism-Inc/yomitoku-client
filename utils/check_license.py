@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 import unicodedata
+from typing import Any
 
 import click
 import pandas as pd
@@ -126,7 +127,7 @@ def build_parser(allowed_set: set[str]) -> ParserElement:
     return expr + StringEnd()
 
 
-def eval_expr(parsed, allowed_set: set[str]) -> bool:
+def eval_expr(parsed: ParseResults | list[Any] | str, allowed_set: set[str]) -> bool:
     """
     Recursively evaluates the pyparsing parse tree (ParseResults or list)
     allowed_set: set that includes normalized strs
@@ -270,22 +271,22 @@ def run_license_check(allow: list[str], debug: bool = False) -> int:
     return 0 if all_ok else 2
 
 
-@click.command()
+@click.command()  # type: ignore[misc]
 @click.option(
     "--allow",
     "-a",
     multiple=True,
     required=True,
     help="Specify multiple allowed licenses. Example: -a Apache-2.0 -a BSD-3-Clause -a MIT",
-)
+)  # type: ignore[misc]
 @click.option(
     "--debug",
     "-d",
     is_flag=True,
     default=False,
     help="Enable debug mode. Shows parsed strings when active.",
-)
-def main(allow: list[str], debug: bool):
+)  # type: ignore[misc]
+def main(allow: list[str], debug: bool) -> None:
     sys.exit(run_license_check(allow, debug))
 
 
