@@ -138,6 +138,7 @@ commands =
 
 [testenv:docs]
 basepython = python3.12
+changedir = {toxinidir}
 deps = 
     mkdocs-material
     pygments 
@@ -150,6 +151,7 @@ commands =
 
 [testenv:docs-check]
 description = Build MkDocs site strictly to check internal link consistency
+changedir = {toxinidir}
 deps =
     mkdocs-material
     pygments 
