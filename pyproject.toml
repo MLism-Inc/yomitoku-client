@@ -36,8 +36,8 @@ vcs = "git"
 style = "semver"
 format = "{base}"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "json-schema-for-humans>=1.4.1",
     "mkdocs-codeinclude-plugin>=0.2.1",
     "mkdocs-include-markdown-plugin>=7.1.6",
@@ -50,6 +50,8 @@ dev-dependencies = [
     "pytest-cov>=5.0.0",
     "pytest>=8.3.3",
     "ruff>=0.7.0",
+    "pip-licenses>=5.5.0",
+    "pyparsing>=3.2.5",
 ]
 
 [project.scripts]
@@ -75,14 +77,43 @@ ignore = ["E501","C901","B008", "S101", "BLE001"]
 known-first-party = ["yomitoku_client"]
 combine-as-imports = true
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+addopts = [
+    "-v",
+    "--tb=short",
+    "--strict-markers",
+    "--disable-warnings",
+    "--color=yes",
+]
+
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "pdf: marks tests that require PDF dependencies",
+    "visualization: marks tests that require visualization dependencies",
+]
+
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = lint, py310, py311, py312, docs
+envlist = lint, py310, py311, py312, docs, docs-check, lock-check, sync-check, license-check
 
 [testenv]
-deps = 
+deps =
     pytest
+    pyparsing
+    pip-licenses
     pytest-asyncio>=1.2.0
 commands = 
     pytest {toxinidir}/tests
@@ -116,4 +147,44 @@ deps =
     mkdocs-codeinclude-plugin
 commands = 
     mkdocs gh-deploy --force
+
+[testenv:docs-check]
+description = Build MkDocs site strictly to check internal link consistency
+deps =
+    mkdocs-material
+    pygments 
+    plantuml_markdown 
+    mkdocs-include-markdown-plugin
+    mkdocs-static-i18n
+    mkdocs-codeinclude-plugin
+commands =
+    mkdocs build --strict
+
+[testenv:uv-check]
+description = Check uv
+skip_install = true
+allowlist_externals =
+    uv
+commands =
+    uv lock --check
+    uv sync --frozen
+
+[testenv:license-check]
+description = Check third-party licenses using pip-licenses
+skip_install = true
+allowlist_externals =
+    uv
+commands =
+    uv run python {toxinidir}/utils/check_license.py \
+         -a "MIT" \
+         -a "MIT License" \
+         -a "MIT-CMU" \
+         -a "BSD License" \
+         -a "BSD-2-Clause" \
+         -a "BSD-3-Clause" \
+         -a "Apache Software License" \
+         -a "Apache-2.0" \
+         -a "Mozilla Public License 2.0 (MPL 2.0)" \
+         -a "PSF-2.0" \
+         -a "LicenseRef-PdfiumThirdParty"
 """

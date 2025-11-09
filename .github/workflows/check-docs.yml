@@ -1,4 +1,4 @@
-name: ci
+name: docs-ci
 on:
   push:
     branches:
@@ -6,10 +6,8 @@ on:
     paths:
       - "docs/**"
 
-permissions:
-  contents: write
 jobs:
-  deploy-docs:
+  check-docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,4 +18,4 @@ jobs:
           python-version: "3.12"
       - run: | 
           pip install tox
-          tox -e docs
+          tox -e docs-check
