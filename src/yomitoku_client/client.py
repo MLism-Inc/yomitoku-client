@@ -44,14 +44,14 @@ class InvokeResult:
 @dataclass
 class CircuitConfig:
     threshold: int = 5  # サーキットブレーカーの失敗閾値
-    cooldown_sec: int = 30  # サーキットオープン後のクールダウン時間（秒）
+    cooldown_time: int = 30  # サーキットオープン後のクールダウン時間（秒）
 
 
 @dataclass
 class RequestConfig:
     read_timeout: int = 60
     connect_timeout: int = 10
-    max_attempts: int = 3
+    max_retries: int = 3
 
 
 def guess_content_type(path: str) -> str:
@@ -149,7 +149,7 @@ class YomitokuClient:
         # boto3の短期間再試行ポリシーを設定
         cfg = Config(
             retries={
-                "max_attempts": self._request_config.max_attempts,
+                "max_attempts": self._request_config.max_retries,
                 "mode": "standard",
             },
             read_timeout=self._request_config.read_timeout,
@@ -181,12 +181,12 @@ class YomitokuClient:
             # 失敗回数が閾値を超えたらサーキットオープン
             if self._circuit_failures >= self._circuit_config.threshold:
                 self._circuit_open_until = (
-                    now_ms() + self._circuit_config.cooldown_sec * 1000
+                    now_ms() + self._circuit_config.cooldown_time * 1000
                 )
                 self._circuit_failures = 0
                 logger.warning(
                     "Circuit OPEN for %ss (endpoint=%s)",
-                    self._circuit_config.cooldown_sec,
+                    self._circuit_config.cooldown_time,
                     self.endpoint,
                 )
 

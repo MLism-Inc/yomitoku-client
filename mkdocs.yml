@@ -70,7 +70,7 @@ nav:
   - Setting-Authentication: 'iam-doc.md'
   - How To Deploy: 'deploy-yomitoku-pro.md'
   - CLI: 'cli-usage.md'
-  - Modules: 'module-usage.md'
+  - Python API: 'module-usage.md'
   - Advanced: 'advanced.md'
 
 plugins:

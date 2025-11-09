@@ -5,8 +5,6 @@ import pytest
 from click.testing import CliRunner
 
 import yomitoku_client.cli.single as single_module
-
-# CLI 本体
 from yomitoku_client.cli.single import single_command
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -22,7 +20,7 @@ def sample_api_result():
     """
     API の中間 JSON（YomitokuClient.analyze の戻り値と同等）を読み込む。
 
-    例: tests/data/sample_result.json に保存しておく。
+    例: tests/data/image_pdf.json に保存しておく。
     """
     path = DATA_DIR / "image_pdf.json"
     with path.open("r", encoding="utf-8") as f:
@@ -40,10 +38,21 @@ def _patch_yomitoku_client(monkeypatch, sample_api_result):
     class FakeClient:
         last_instance = None
 
-        def __init__(self, endpoint, region=None, profile=None):
+        def __init__(
+            self,
+            endpoint,
+            region=None,
+            profile=None,
+            max_workers: int = 4,
+            request_config=None,
+            circuit_config=None,
+        ):
             self.endpoint = endpoint
             self.region = region
             self.profile = profile
+            self.max_workers = max_workers
+            self.request_config = request_config
+            self.circuit_config = circuit_config
             self.analyze_calls = []
             FakeClient.last_instance = self
 
@@ -140,7 +149,7 @@ def test_single_command_each_format(
     assert expected_out.exists()
 
 
-def test_single_command_with_pages_split_intermediate(
+def test_single_command_with_pages_split_intermediate_and_advanced_options(
     monkeypatch,
     tmp_path: Path,
     runner,
@@ -148,10 +157,8 @@ def test_single_command_with_pages_split_intermediate(
 ):
     """
     --pages / --split_mode / --ignore_line_break / --intermediate_save
-    が YomitokuClient.analyze と model.to_json に反映されるかを見る統合テスト。
-
-    ※ model.to_json は本物を使うので、別途ユニットテストもある前提で、
-      ここでは主に「CLI → analyze まで」と「中間 JSON の保存」を確認。
+    に加えて、各種タイムアウト・リトライ・サーキットブレーカ・workers が
+    YomitokuClient に正しく渡されるかを検証する統合テスト。
     """
 
     FakeClient = _patch_yomitoku_client(monkeypatch, sample_api_result)
@@ -165,8 +172,10 @@ def test_single_command_with_pages_split_intermediate(
             str(input_file),
             "--endpoint",
             "test-endpoint",
+            "--region",
+            "ap-northeast-1",
             "--file_format",
-            "json",
+            "json,md,pdf,html,csv",
             "--output_dir",
             str(output_dir),
             "--split_mode",
@@ -183,6 +192,18 @@ def test_single_command_with_pages_split_intermediate(
             "10",
             "--total_timeout",
             "30",
+            "--workers",
+            "8",
+            "--read_timeout",
+            "120",
+            "--connect_timeout",
+            "5",
+            "--max_retries",
+            "5",
+            "--threthold_circuit",
+            "3",
+            "--cooldown_time",
+            "60",
         ],
     )
 
@@ -193,26 +214,53 @@ def test_single_command_with_pages_split_intermediate(
     assert len(client.analyze_calls) == 1
     analyze_kwargs = client.analyze_calls[0]
 
-    # parse_pages の結果がそのまま page_index に渡っているか
-    # ここは parse_pages の実装に依存するので、期待形に合わせてチェック
+    # analyze に渡された値確認
+    assert analyze_kwargs["path_img"] == str(input_file)
     assert analyze_kwargs["dpi"] == 150
     assert analyze_kwargs["request_timeout"] == 10
     assert analyze_kwargs["total_timeout"] == 30
 
+    # YomitokuClient 生成時のパラメータ確認
+    assert client.max_workers == 8
+    assert client.request_config is not None
+    assert client.circuit_config is not None
+
+    # RequestConfig の中身を確認
+    # ※ 型は実際の RequestConfig インスタンス
+    assert client.request_config.read_timeout == 120
+    assert client.request_config.connect_timeout == 5
+    assert client.request_config.max_retries == 5
+
+    # CircuitConfig の中身を確認
+    assert client.circuit_config.threshold == 3
+    assert client.circuit_config.cooldown_time == 60
+
     # CLI 内の intermediate_save ロジック:
     # output_dir/intermediate/{base_name}_{base_ext}.json
-    base_name = input_file.stem  # sample_input
+    base_name = input_file.stem  # image
     base_ext = input_file.suffix.lstrip(".")  # pdf
     intermediate_file = output_dir / "intermediate" / f"{base_name}_{base_ext}.json"
     assert intermediate_file.exists()
 
-    # main の出力 JSON（combine/separate のファイル自体が出ていること）
+    # split_mode="separate" のときは base_name_page_{i}.{ext} が出力される想定
     for i in range(3):
         main_json = output_dir / f"{base_name}_page_{i}.json"
         assert main_json.exists()
 
-        vis_img = output_dir / f"{base_name}_ocr_page_{i}.jpg"
-        assert vis_img.exists()
+        main_md = output_dir / f"{base_name}_page_{i}.md"
+        assert main_md.exists()
 
-        vis_img = output_dir / f"{base_name}_layout_page_{i}.jpg"
-        assert vis_img.exists()
+        main_pdf = output_dir / f"{base_name}_page_{i}.pdf"
+        assert main_pdf.exists()
+
+        main_html = output_dir / f"{base_name}_page_{i}.html"
+        assert main_html.exists()
+
+        main_csv = output_dir / f"{base_name}_page_{i}.csv"
+        assert main_csv.exists()
+
+        vis_ocr = output_dir / f"{base_name}_ocr_page_{i}.jpg"
+        assert vis_ocr.exists()
+
+        vis_layout = output_dir / f"{base_name}_layout_page_{i}.jpg"
+        assert vis_layout.exists()
