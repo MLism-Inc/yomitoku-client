@@ -21,17 +21,10 @@ from yomitoku_client.utils import (
 )
 
 from .constants import SUPPORT_INPUT_FORMAT
+from .exceptions import YomitokuInvokeError
 
 logger = set_logger(__name__, "INFO")
 JST = timezone(timedelta(hours=9), name="Asia/Tokyo")
-
-
-class YomitokuError(Exception):
-    pass
-
-
-class YomitokuInvokeError(YomitokuError):
-    pass
 
 
 @dataclass
