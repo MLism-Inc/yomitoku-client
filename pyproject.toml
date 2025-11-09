@@ -109,7 +109,10 @@ legacy_tox_ini = """
 envlist = lint, py310, py311, py312, docs, docs-check, lock-check, sync-check, license-check
 
 [testenv]
-deps = pytest
+deps =
+    pytest
+    pyparsing
+    pip-licenses
 commands = 
     pytest tests
 
@@ -166,8 +169,6 @@ commands =
 [testenv:license-check]
 description = Check third-party licenses using pip-licenses
 skip_install = true
-deps =
-    pip-licenses
 allowlist_externals =
     uv
 commands =
