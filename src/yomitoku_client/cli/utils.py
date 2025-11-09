@@ -1,3 +1,6 @@
+from yomitoku_client.constants import SUPPORT_OUTPUT_FORMAT
+
+
 def parse_pages(pages_str):
     pages = set()
     for part in pages_str.split(","):
@@ -23,3 +26,23 @@ def get_format_ext(file_format: str) -> str:
         return "pdf"
     else:
         raise ValueError(f"Unsupported format: {file_format}")
+
+
+def parse_formats(formats):
+    formats = formats.lower()
+    formats = formats.split(",")
+
+    parsed_formats = []
+    for file_format in formats:
+        if file_format not in SUPPORT_OUTPUT_FORMAT:
+            raise ValueError(f"Unsupported format: {file_format}")
+
+        if file_format == "markdown":
+            file_format = "md"
+
+        parsed_formats.append(file_format)
+
+    if len(parsed_formats) == 0:
+        raise ValueError("At least one format must be specified.")
+
+    return parsed_formats

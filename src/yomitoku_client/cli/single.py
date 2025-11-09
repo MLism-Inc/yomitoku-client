@@ -5,8 +5,9 @@ from pathlib import Path
 import click
 
 from yomitoku_client import YomitokuClient, parse_pydantic_model
+from yomitoku_client.client import CircuitConfig, RequestConfig
 
-from .utils import get_format_ext, parse_pages
+from .utils import parse_formats, parse_pages
 
 
 @click.command("single")
@@ -28,9 +29,9 @@ from .utils import get_format_ext, parse_pages
 @click.option(
     "--file_format",
     "-f",
-    type=click.Choice(["json", "csv", "html", "md", "pdf"]),
+    type=str,
     default="json",
-    help="Output format for the analysis result",
+    help="Output format for the analysis result (json, csv, html, md, pdf)",
 )
 @click.option(
     "--output_dir",
@@ -95,6 +96,42 @@ from .utils import get_format_ext, parse_pages
     default=False,
     help="Save intermediate RAW JSON result",
 )
+@click.option(
+    "--workers",
+    default=4,
+    type=int,
+    help="Number of workers for multiprocessing",
+)
+@click.option(
+    "--threthold_circuit",
+    default=0.5,
+    type=int,
+    help="Threshold for circuit breaker",
+)
+@click.option(
+    "--cooldown_time",
+    default=30,
+    type=int,
+    help="Cooldown time for circuit breaker in seconds",
+)
+@click.option(
+    "--read_timeout",
+    default=60,
+    type=int,
+    help="Read timeout for HTTP requests in seconds",
+)
+@click.option(
+    "--connect_timeout",
+    default=10,
+    type=int,
+    help="Connect timeout for HTTP requests in seconds",
+)
+@click.option(
+    "--max_retries",
+    default=3,
+    type=int,
+    help="Maximum number of retries for HTTP requests",
+)
 def single_command(
     endpoint,
     region,
@@ -110,16 +147,34 @@ def single_command(
     pages,
     vis_mode,
     intermediate_save,
+    workers,
+    threthold_circuit,
+    cooldown_time,
+    read_timeout,
+    connect_timeout,
+    max_retries,
 ):
     page_index = None
     if pages is not None:
         page_index = parse_pages(pages)
+
+    extract_formats = parse_formats(file_format)
 
     """Analyze a single file and save the result."""
     with YomitokuClient(
         endpoint=endpoint,
         region=region,
         profile=profile,
+        max_workers=workers,
+        request_config=RequestConfig(
+            read_timeout=read_timeout,
+            connect_timeout=connect_timeout,
+            max_attempts=max_retries,
+        ),
+        circuit_config=CircuitConfig(
+            threshold=threthold_circuit,
+            cooldown_sec=cooldown_time,
+        ),
     ) as client:
         result = client.analyze(
             path_img=input_path,
@@ -129,14 +184,13 @@ def single_command(
             total_timeout=total_timeout,
         )
 
-    ext = get_format_ext(file_format)
     base_file_name = Path(input_path).stem
     base_ext = Path(input_path).suffix.lstrip(".")
 
     if output_dir is None:
-        output_file_path = f"{base_file_name}.{ext}"
+        output_file_base = f"{base_file_name}"
     else:
-        output_file_path = Path(output_dir) / f"{base_file_name}.{ext}"
+        output_file_base = Path(output_dir) / f"{base_file_name}"
 
     if intermediate_save:
         intermediate_dir = (
@@ -152,21 +206,24 @@ def single_command(
 
     model = parse_pydantic_model(result)
 
-    if ext == "json":
+    if "json" in extract_formats:
+        output_file_path = output_file_base + ".json"
         model.to_json(
             output_path=output_file_path,
             mode=split_mode,
             page_index=page_index,
             ignore_line_break=ignore_line_break,
         )
-    elif ext == "csv":
+    if "csv" in extract_formats:
+        output_file_path = output_file_base + ".csv"
         model.to_csv(
             output_path=output_file_path,
             mode=split_mode,
             page_index=page_index,
             ignore_line_break=ignore_line_break,
         )
-    elif ext == "html":
+    if "html" in extract_formats:
+        output_file_path = output_file_base + ".html"
         model.to_html(
             output_path=output_file_path,
             image_path=input_path,
@@ -174,7 +231,8 @@ def single_command(
             page_index=page_index,
             ignore_line_break=ignore_line_break,
         )
-    elif ext == "md":
+    if "md" in extract_formats:
+        output_file_path = output_file_base + ".md"
         model.to_markdown(
             output_path=output_file_path,
             image_path=input_path,
@@ -182,7 +240,8 @@ def single_command(
             page_index=page_index,
             ignore_line_break=ignore_line_break,
         )
-    elif ext == "pdf":
+    if "pdf" in extract_formats:
+        output_file_path = output_file_base + ".pdf"
         model.to_pdf(
             output_path=output_file_path,
             image_path=input_path,

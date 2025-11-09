@@ -8,32 +8,65 @@ SageMaker エンドポイントから取得できる API スキーマは以下�
 
 ---
 
+## 並列処理
+YomitokuClientでは、複数ページで構成されるPDFなどのデータをページ単位で分割し、Endpointに並列でリクエストを行います。並列処理のワーカーの数の設定が可能です。
+
+```bash
+yomitoku-client batch -i ./input -o ./output -e my-endpoint --workers 8
+```
+
 ## タイムアウト / リトライ処理
 
 YomitokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
 各パラメータの意味は以下のとおりです。
 
-| パラメータ名            | 型               | 既定値    | 対象範囲     | 説明                                                                    |
-| ----------------- | --------------- | ------ | -------- | --------------------------------------------------------------------- |
-| `connect_timeout` | `int`           | `10` 秒 | 各リクエスト単位 | サーバー（SageMaker Endpoint）への接続確立までの最大待機時間。TCP/HTTPS 接続が確立しない場合にタイムアウト。  |
-| `read_timeout`    | `int`           | `60` 秒 | 各リクエスト単位 | 接続確立後、レスポンスを受け取るまでの最大待機時間。推論処理が遅い場合などに適用される。                          |
-| `request_timeout` | `float` / `int` | 任意設定   | ページ単位    | 1ページ（または 1 ファイル）全体の推論処理に対する上限時間。`connect_timeout + read_timeout` を包括。 |
-| `total_timeout`   | `float` / `int` | 任意設定   | ファイル単位   | バッチ処理全体の合計実行時間の上限。全ページの処理を含むグローバルなタイムアウト制御。                           |
+| パラメータ名              | 型       | 既定値    | 対象範囲     | 説明                                  |
+| ------------------- | ------- | ------ | -------- | ----------------------------------- |
+| `--connect_timeout` | `int`   | `10` 秒 | 各リクエスト単位 | SageMaker Endpoint への接続確立までの最大待機時間。 |
+| `--read_timeout`    | `int`   | `60` 秒 | 各リクエスト単位 | 接続確立後、レスポンス受信までの最大待機時間。推論遅延時に適用。    |
+| `--max_retries`     | `int`   | `3` 回  | 各リクエスト単位 | boto3 の再試行回数の上限。通信エラーや 5xx 応答時に再試行。 |
+| `--request_timeout` | `float` | 任意設定   | ページ単位    | 1 ページ（または 1 ファイル）の処理上限時間。           |
+| `--total_timeout`   | `float` | 任意設定   | バッチ全体    | 全ページ合計の処理上限時間。超過時は未完了タスクをキャンセル。    |
+
+**使用例**
+```bash
+yomitoku-client batch \
+  -i ./input -o ./output -e my-endpoint \
+  --connect_timeout 5 \
+  --read_timeout 120 \
+  --max_retries 5 \
+  --request_timeout 150 \
+  --total_timeout 300
+```
 
 ---
 
 ## サーキットブレーカー
 
 サーキットブレーカーは、連続して解析に失敗した場合にエンドポイントを保護するための仕組みです。
-これが存在しない場合、複数クライアントが無制限にリトライを行い、
-エンドポイントの負荷が過大になる恐れがあります。
+これが存在しない場合、複数クライアントが無制限にリトライを行い、エンドポイントの負荷が過大になる恐れがあります。
 
-YomitokuClient はこのリスクを防ぐため、**連続失敗時に一時的にリクエストを停止**し、
-一定時間後に再試行を行う設計となっています。
+YomitokuClient はこのリスクを防ぐため、**連続失敗時に一時的にリクエストを停止**し、一定時間後に再試行を行う設計となっています。
 
+| パラメータ名                | 型     | 既定値    | 説明                           |
+| --------------------- | ----- | ------ | ---------------------------- |
+| `--threthold_circuit` | `int` | `5`    | 連続失敗のしきい値。これを超えるとリクエストを一時停止。 |
+| `--cooldown_time`     | `int` | `30` 秒 | サーキットが開いた後に再試行を許可するまでの待機時間。  |
+
+**使用例**
+```bash
+yomitoku-client batch \
+  -i ./input -o ./output -e my-endpoint \
+  --threthold_circuit 3 \
+  --cooldown_time 60
+```
+
+> 🔒 連続失敗が 3 回発生した場合、60 秒間すべてのリクエストが停止します。
+> クールダウン経過後に自動的にリクエストを再開します。
 ---
 
-### 🔁 シーケンス図
+
+## 🔁 シーケンス図
 
 ```mermaid
 sequenceDiagram
@@ -77,9 +110,21 @@ sequenceDiagram
     Client-->>Client: ページ単位の結果を統合して出力
 ```
 
+## 上書き制御
+YomiToku-Clientのバッチ処理は過去のログ情報(`{$OUTPUT_DIR}/process_log.jsonl`)を参照し、処理に失敗したデータのみ再推論が可能です。`overwrite=False`のときはエラーが発生したり、推論が実行されていないデータのみを対象として推論します。`overwrite=True`のときは、フォルダ内の全データを対象に再実行を行います。
+
+`--overwrite`オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再解析します。
+```bash
+yomitoku-client batch -i ./input -o ./output -e my-endpoint --overwrite
+```
+
+| オプション         | 型        | 説明                            |
+| ------------- | -------- | ----------------------------- |
+| `--overwrite` | *(flag)* | True の場合、既存の出力に関係なく全ファイルを再処理。 |
+
 ---
 
-## パラメータ設定例
+## パラメータ設定例(Python API)
 
 以下のコードは、タイムアウトおよびサーキットブレーカー設定を含む
 YomitokuClient の使用例です。
@@ -88,38 +133,29 @@ YomitokuClient の使用例です。
 from yomitoku_client.client import RequestConfig, CircuitConfig, YomitokuClient
 
 request_config = RequestConfig(
-    read_timeout=120,     # Boto3 → Endpoint 応答待機タイムアウト [秒]
-    connect_timeout=5,    # Boto3 → Endpoint 接続確立タイムアウト [秒]
-    max_attempts=5,       # Boto3 による再試行回数の上限 [回]
+    read_timeout=120,     # 応答待機タイムアウト [秒]
+    connect_timeout=5,    # 接続確立タイムアウト [秒]
+    max_attempts=5,       # boto3 のリトライ回数
 )
 
 circuit_config = CircuitConfig(
     threshold=3,          # 連続失敗のしきい値
-    cooldown_sec=60,      # サーキットブレーカー適用後のクールダウン時間 [秒]
+    cooldown_sec=60,      # サーキットブレーカー発動後のクールダウン [秒]
 )
 
-with YomitokuClient(
+async with YomitokuClient(
     endpoint=ENDPOINT_NAME,
     region=AWS_REGION,
     request_config=request_config,
     circuit_config=circuit_config,
+    max_workers=5,        # 並列ワーカー数
 ) as client:
-    result = client.analyze(
-        path_img=PATH_IMG,
-        request_timeout=150,   # ページ単位の解析時間上限 [秒]
-        total_timeout=300,     # ファイル全体の解析時間上限 [秒]
+    await client.analyze_batch_async(
+        input_dir="./input",
+        output_dir="./output",
+        request_timeout=150,   # ページ単位の解析上限時間 [秒]
+        total_timeout=300,     # 全体解析上限時間 [秒]
+        overwrite=False,       # 未処理データのみ対象
     )
+
 ```
-
----
-
-## 🧠 補足
-
-* **`connect_timeout` / `read_timeout`**：
-  Boto3 レイヤーでリクエストごとに適用されます（1 ページごとなど）。
-* **`request_timeout` / `total_timeout`**：
-  YomitokuClient 側の高レベル制御で、ページ単位・全体単位の上限時間を定義します。
-* **`circuit_config`**：
-  短時間に連続失敗が発生した場合の再試行抑止とエンドポイント保護を担います。
-
----

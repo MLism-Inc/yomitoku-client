@@ -32,7 +32,7 @@ PALETTE = [
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Supported output formats
-SUPPORT_OUTPUT_FORMAT = ["html", "markdown", "csv", "json", "pdf"]
+SUPPORT_OUTPUT_FORMAT = ["html", "md", "csv", "json", "pdf"]
 
 SUPPORT_INPUT_FORMAT = ["jpg", "jpeg", "png", "bmp", "tiff", "tif", "pdf"]
 
