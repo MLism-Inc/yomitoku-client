@@ -5,11 +5,8 @@ CSV Renderer - For converting document data to CSV format
 import csv
 from typing import Any
 
-import numpy as np
-
-from ..exceptions import FormatConversionError
 from ..models import DocumentResult, Paragraph, Table
-from ..utils import save_figure, table_to_csv
+from ..utils import table_to_csv
 from .base import BaseRenderer
 
 
@@ -101,35 +98,6 @@ class CSVRenderer(BaseRenderer):
 
         # Convert to CSV string
         return self._elements_to_csv_string(elements)
-
-    def save(
-        self,
-        data: DocumentResult,
-        output_path: str,
-        img: np.ndarray | None = None,
-        **kwargs,
-    ) -> None:
-        """
-        Save rendered content to CSV file
-
-        Args:
-            data: Document result to render
-            output_path: Path to save the CSV file
-            img: Optional image array for figure extraction
-            **kwargs: Additional rendering options
-        """
-        # Save figures if requested
-        if self.export_figure and img is not None and hasattr(data, "figures"):
-            save_figure(data.figures, img, output_path, self.figure_dir)
-
-        # Render and save CSV
-        csv_content = self.render(data, img=img, **kwargs)
-
-        try:
-            with open(output_path, "w", newline="", encoding="utf-8") as f:
-                f.write(csv_content)
-        except Exception as e:
-            raise FormatConversionError(f"Failed to save CSV file: {e}") from e
 
     def _table_to_csv(self, table: Table) -> str:
         """

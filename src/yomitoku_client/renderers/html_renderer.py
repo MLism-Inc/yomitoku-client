@@ -9,7 +9,6 @@ from typing import Any
 
 import numpy as np
 
-from ..exceptions import FormatConversionError
 from ..models import DocumentResult, Figure, Paragraph, Table
 from ..utils import remove_dot_prefix, save_image
 from .base import BaseRenderer
@@ -97,30 +96,6 @@ class HTMLRenderer(BaseRenderer):
         formatted_html = self._format_html(html_string)
 
         return formatted_html
-
-    def save(
-        self,
-        data: DocumentResult,
-        output_path: str,
-        img: np.ndarray | None = None,
-        **kwargs,
-    ) -> None:
-        """
-        Save rendered content to HTML file
-
-        Args:
-            data: Document result to render
-            output_path: Path to save the HTML file
-            img: Optional image array for figure extraction
-            **kwargs: Additional rendering options
-        """
-        html_content = self.render(data, img=img, output_path=output_path, **kwargs)
-
-        try:
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(html_content)
-        except Exception as e:
-            raise FormatConversionError(f"Failed to save HTML file: {e}") from e
 
     def _convert_text_to_html(self, text: str) -> str:
         """

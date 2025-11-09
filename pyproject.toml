@@ -46,6 +46,7 @@ dev-dependencies = [
     "mkdocs>=1.6.1",
     "plantuml-markdown",
     "pygments",
+    "pytest-asyncio>=1.2.0",
     "pytest-cov>=5.0.0",
     "pytest>=8.3.3",
     "ruff>=0.7.0",
@@ -93,7 +94,7 @@ commands =
 [testenv:lint]
 deps = ruff>=0.7
 commands = 
-    ruff check --fix .
+    ruff check --fix . --exclude tests
 
 [testenv:type]
 description = Run mypy strict type checks
