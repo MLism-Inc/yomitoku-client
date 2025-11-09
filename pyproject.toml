@@ -81,9 +81,12 @@ legacy_tox_ini = """
 envlist = lint, py310, py311, py312, docs
 
 [testenv]
-deps = pytest
+deps = 
+    pytest
+    pytest-asyncio>=1.2.0
 commands = 
-    pytest tests
+    pytest {toxinidir}/tests
+changedir = {toxworkdir}/{envname}
 
 [testenv:format]
 description = Run ruff format
