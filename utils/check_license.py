@@ -132,8 +132,7 @@ def eval_expr(parsed, allowed_set: set[str]) -> bool:
     allowed_set: set that includes normalized strs
     """
 
-    # Leaf: If it's a string (assumes the allowed set is normalized externally,
-    # but allows case-insensitive comparison for compatibility)
+    # Leaf node: compare as a normalized string.
     if isinstance(parsed, str):
         return normalize_str(parsed) in allowed_set
 
