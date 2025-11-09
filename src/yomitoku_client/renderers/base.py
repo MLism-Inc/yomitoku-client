@@ -27,17 +27,6 @@ class BaseRenderer(ABC):
             str: Rendered content
         """
 
-    @abstractmethod
-    def save(self, data: DocumentResult, output_path: str, **kwargs) -> None:
-        """
-        Save rendered content to file
-
-        Args:
-            data: Document result to render
-            output_path: Path to save the output
-            **kwargs: Additional rendering options
-        """
-
     def get_supported_formats(self) -> list:
         """
         Get list of supported output formats

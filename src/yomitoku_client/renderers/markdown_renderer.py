@@ -8,7 +8,6 @@ from typing import Any
 
 import numpy as np
 
-from ..exceptions import FormatConversionError
 from ..models import DocumentResult, Figure, Paragraph, Table
 from ..utils import escape_markdown_special_chars, remove_dot_prefix, save_image
 from .base import BaseRenderer
@@ -108,30 +107,6 @@ class MarkdownRenderer(BaseRenderer):
         # Sort by order
         elements.sort(key=lambda x: x["order"])
         return self._elements_to_markdown_string(elements)
-
-    def save(
-        self,
-        data: DocumentResult,
-        output_path: str,
-        img: np.ndarray | None = None,
-        **kwargs,
-    ) -> None:
-        """
-        Save rendered content to Markdown file
-
-        Args:
-            data: Document result to render
-            output_path: Path to save the Markdown file
-            img: Optional image array for figure extraction
-            **kwargs: Additional rendering options
-        """
-        md_content = self.render(data, img=img, output_path=output_path, **kwargs)
-
-        try:
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(md_content)
-        except Exception as e:
-            raise FormatConversionError(f"Failed to save Markdown file: {e}") from e
 
     def _paragraph_to_markdown(self, paragraph: Paragraph) -> str:
         """
@@ -342,6 +317,7 @@ class MarkdownRenderer(BaseRenderer):
 
             figure_name = f"{basename}_figure_{i}_p_{page}.png"
             figure_path = os.path.join(save_dir, figure_name)
+
             save_image(figure_img, figure_path)
 
             relative_path = os.path.join(self.figure_dir, figure_name)

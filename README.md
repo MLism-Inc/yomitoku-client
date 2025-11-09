@@ -1,9 +1,9 @@
+日本語版 | [English](README.en.md)
+
+[![Document](https://img.shields.io/badge/docs-live-brightgreen)](https://mlism-inc.github.io/yomitoku-client/)
+![Python](https://img.shields.io/badge/Python-3.10|3.11|3.12-F9DC3E.svg?logo=python&logoColor=&style=flat)
+
 # YomiToku-Client
-<div align="center">
-
-[![Language](https://img.shields.io/badge/🌐_English-blue?style=for-the-badge&logo=github)](README.en.md) [![Language](https://img.shields.io/badge/🌐_日本語-red?style=for-the-badge&logo=github)](README.md)
-
-</div>
 
 YomiToku-Clientは、AWS SageMaker上で提供されるYomiToku-Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。
 YomiToku-Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
@@ -14,10 +14,41 @@ YomiToku-Proの高精度OCRと、業務アプリケーションを結びつけ�
 - 読み取り結果を可視化し、内容をすぐに確認できます。
 - バッチ処理機能で大量の文書を効率的に処理できます。
 
+```mermaid
+flowchart LR
+    subgraph Local["ユーザー環境"]
+        A["解析対象データ"]
+        B["YomiToku-Client<br/>(Pythonライブラリ / CLI)"]
+    end
+
+    subgraph AWS["AWS アカウント内"]
+        C["Amazon SageMaker Endpoint<br/>YomiToku-Pro Document Analyzer"]
+    end
+
+    A -->|"ドキュメント画像 / (PDF / JPG / PNG / TIFF)"| B
+    B -->|"推論リクエスト"| C
+    C -->|"解析結果<br/>(JSON)"| B
+    B -->|"構造化データ(CSV / JSON / Markdown / HTML / PDF)"| A
+```
+
+## YomiToku-Pro Document Analyzer とは
+YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエンドポイントです。
+- 日本語文書に対して、文字の読み取り、文書のレイアウトの解析を高速・高精度に推論します。
+- 各モデルは日本語の文書画像に特化して学習されており、7000文字を超える日本語文字の認識をサポート、手書き文字、縦書きなど日本語特有のレイアウト構造の文書画像の解析も可能です。（日本語以外に、英語文書にも対応しています）。
+- レイアウト解析・表の構造解析・読み順推定機能により、文書画像のレイアウトの意味的構造を壊さずに情報を抽出することが可能です。
+- ページの回転補正：ページの回転の向きを推定し、自動で正しい向きに補正してから解析します。
+- 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。**データは外部サーバーや第三者に送信されることはなく、高いセキュリティを維持**したまま文書解析が可能です。
+
+---
 
 ## クイックリンク
-- 📓 **[サンプルNotebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアル
+- 🔒 **[AWSの認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** - AWSの認証の設定ガイド
+- 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
+- 📋 **[解析結果のサンプル](./gallery.md)** - 解析結果のサンプルデータを載せています。
+- 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアルNotebook
 - 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
+
+---
 
 ## クイックスタート(CLI)
 **ファイル単体の解析**
@@ -31,6 +62,7 @@ yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profi
 
 オプションの詳細は`--help`を参照してください。
 
+
 ## クイックスタート(同期版)
 最もシンプルな実行プログラムの例です。PDFを入力し、Markdownとして保存します。
 ```python
@@ -42,18 +74,6 @@ with YomitokuClient(endpoint="my-endpoint", region="ap-northeast-1") as client:
 model = parse_pydantic_model(result)
 model.to_markdown(output_path="output.md")
 ```
-
-## YomiToku-Pro Document Analyzer とは
-YomiToku-Pro Document AnalyzerはAWS Marketplaceで提供されるSageMakerエンドポイントです。
-- 日本語文書に対して、文字の読み取り、文書のレイアウトの解析を高速・高精度に推論します。
-- 各モデルは日本語の文書画像に特化して学習されており、7000文字を超える日本語文字の認識をサポート、手書き文字、縦書きなど日本語特有のレイアウト構造の文書画像の解析も可能です。（日本語以外に、英語文書にも対応しています）。
-- レイアウト解析・表の構造解析・読み順推定機能により、文書画像のレイアウトの意味的構造を壊さずに情報を抽出することが可能です。
-- ページの回転補正：ページの回転の向きを推定し、自動で正しい向きに補正してから解析します。
-- 各ユーザーのAWSアカウント内で専用のSageMakerエンドポイントが作成され、データはAWSリージョン内で完結して処理されます。**データは外部サーバーや第三者に送信されることはなく**、高いセキュリティとコンプライアンスを維持したまま文書解析が可能です。
-
-### 利用方法
-- 🔒 **[AWSの認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** - AWSの認証の設定ガイド
-- 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
 
 ## インストール
 
@@ -72,6 +92,32 @@ uv add yomitoku-client
 > curl -LsSf https://astral.sh/uv/install.sh | sh
 > ```
 
+---
+
+## スループット
+以下は MLism 社内検証（ローカル → AWS） に基づく理論スループットの参考値です。
+各インスタンスタイプ上で YomiToku-Client のバッチ処理機能を使用し、A4片面文書をランダムサンプリングして解析した際の理論値を示します。
+
+| インスタンスタイプ        | SageMakerライセンス料金 | 理論解析性能（ページ/時）       | **1ページあたりの理論解析時間（秒）** | 1ページあたりの理論コスト（概算）  | 備考              |
+| ---------------- | ----------- | ------------------- | --------------------- | ------------------ | --------------- |
+| **ml.g5.xlarge** | $10 / hour  | 約 **6,000 ページ / hour** | 約 **0.60 秒 / ページ**    | 約 **0.29 円 / ページ** | 高速・GPU最適化構成     |
+| **ml.g6.xlarge** | $10 / hour  | 約 **4,500 ページ / hour** | 約 **0.80 秒 / ページ**    | 約 **0.40 円 / ページ** | 安定性とスループットのバランス |
+| **ml.g4.xlarge** | $10 / hour  | 約 **3,000 ページ / hour** | 約 **1.20 秒 / ページ**    | 約 **0.55 円 / ページ** | 低コスト・標準GPU構成    |
+
+> **Notes**
+> - 為替レート：1 USD ≒ 153.2 円（2025年11月時点）
+> - インスタンス料金が別途発生します。
+> - ネットワークのレイテンシやスループットにより、実際の性能は変動します。
+> - 使用モデル: YomiToku-Pro - Document Analyzer v1.0.3
+> - 理論値には I/O 待機時間や初期化時間を含みません（実効値は理論値の約 60〜80 % が目安）。
+> - 文書の複雑度や文字量等に応じて、解析時間は前後します。
+
+リアルタイム処理などのユースケースでSagaMakerエンドポイントを長時間 / 常時運用をご希望する場合は、プライベートオファーにて割引価格での提供も行っています。
+ご希望する場合は、最下部のメールにお問い合わせください。
+
+---
+
+# サンプルプログラム
 ## 単一ファイル解析（非同期版）
 - **自動コンテンツタイプ判定**: PDF / TIFF / PNG / JPEG を自動認識し、最適な形式で処理
 - **ページ分割と非同期並列処理**: 複数ページで構成されるPDF・TIFFを自動でページ分割し、各ページを並列で推論

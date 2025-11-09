@@ -2,11 +2,7 @@
 JSON Renderer - For converting document data to JSON format
 """
 
-import numpy as np
-
-from ..exceptions import FormatConversionError
 from ..models import DocumentResult
-from ..utils import save_figure
 from .base import BaseRenderer
 
 
@@ -57,35 +53,3 @@ class JSONRenderer(BaseRenderer):
 
         # Format JSON with proper settings (matching original)
         return data_dict
-
-        # return json.dumps(
-        #    data_dict,
-        #    ensure_ascii=False,
-        #    indent=4,
-        #    sort_keys=True,
-        #    separators=(",", ": "),
-        # )
-
-    def save(
-        self,
-        data: DocumentResult,
-        output_path: str,
-        img: np.ndarray | None = None,
-        **kwargs,
-    ) -> None:
-        """Save rendered content to JSON file"""
-        # Save figures if requested
-        if self.export_figure and img is not None and hasattr(data, "figures"):
-            save_figure(data.figures, img, output_path, self.figure_dir)
-
-        # Render and save JSON
-        json_content = self.render(data, img=img, **kwargs)
-        try:
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(json_content)
-        except Exception as e:
-            raise FormatConversionError(f"Failed to save JSON file: {e}") from e
-
-    def get_supported_formats(self) -> list:
-        """Get supported formats"""
-        return ["json"]

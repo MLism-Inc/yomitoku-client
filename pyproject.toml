@@ -23,7 +23,7 @@ dependencies = [
     "click>=8.1.0",
     "lxml>=5.3.0",
     "PyPDF2>=3.0.0",
-    "pypdfium2>=4.30.0",
+    "pypdfium2==4.30.0",
     "opencv-python>=4.8.0",
     "Pillow>=9.5.0",
     "reportlab>=4.4.1",
@@ -46,6 +46,7 @@ dev = [
     "mkdocs>=1.6.1",
     "plantuml-markdown",
     "pygments",
+    "pytest-asyncio>=1.2.0",
     "pytest-cov>=5.0.0",
     "pytest>=8.3.3",
     "ruff>=0.7.0",
@@ -113,8 +114,10 @@ deps =
     pytest
     pyparsing
     pip-licenses
+    pytest-asyncio>=1.2.0
 commands = 
-    pytest tests
+    pytest {toxinidir}/tests
+changedir = {toxworkdir}/{envname}
 
 [testenv:format]
 description = Run ruff format
@@ -125,7 +128,7 @@ commands =
 [testenv:lint]
 deps = ruff>=0.7
 commands = 
-    ruff check --fix .
+    ruff check --fix . --exclude tests
 
 [testenv:type]
 description = Run mypy strict type checks

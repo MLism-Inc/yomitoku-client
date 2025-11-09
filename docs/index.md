@@ -4,6 +4,23 @@
 
 YomiToku-Clientは、AWS SageMaker上で提供されるYomiToku-Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。YomiToku-Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
 
+```mermaid
+flowchart LR
+    subgraph Local["ユーザー環境"]
+        A["解析対象データ"]
+        B["YomiToku-Client<br/>(Pythonライブラリ / CLI)"]
+    end
+
+    subgraph AWS["AWS アカウント内"]
+        C["Amazon SageMaker Endpoint<br/>YomiToku-Pro Document Analyzer"]
+    end
+
+    A -->|"ドキュメント画像 / (PDF / JPG / PNG / TIFF)"| B
+    B -->|"推論リクエスト"| C
+    C -->|"解析結果<br/>(JSON)"| B
+    B -->|"構造化データ(CSV / JSON / Markdown / HTML / PDF)"| A
+```
+
 ## 利用の手順
 1. [YomiToku-Clientをインストール](installation.md)
 1. [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa)より**YomiToku-Pro - Document Analyzer**をサブスクライブ

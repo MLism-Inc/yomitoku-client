@@ -21,3 +21,7 @@ class FormatConversionError(YomitokuError):
 
 class ValidationError(YomitokuError):
     """Data validation error"""
+
+
+class YomitokuInvokeError(YomitokuError):
+    pass
