@@ -68,9 +68,9 @@ yomitoku-client batch \
 ---
 
 ### 上書き制御
-YomiToku-Clientのバッチ処理は過去のログ情報(`{$OUTPUT_DIR}/process_log.jsonl`)を参照し、処理に失敗したデータのみ再推論が可能です。`overwrite=False`のときはエラーが発生したり、推論が実行されていないデータのみを対象として推論します。`overwrite=True`のときは、フォルダ内の全データを対象に再実行を行います。
+YomiToku-Clientのバッチ処理は過去のログ情報(`${OUTPUT_DIR}/process_log.jsonl`)を参照し、処理に失敗したデータのみ再推論が可能です。通常は`overwrite=False`のときはエラーの発生などにより、推論が実行されていないデータのみを対象としてリクエストします。`overwrite=True`のときは、フォルダ内の全データを対象に再リクエストを行います。
 
-`--overwrite`オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再解析します。
+`--overwrite`オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再リクエストします。
 ```bash
 yomitoku-client batch -i ./input -o ./output -e my-endpoint --overwrite
 ```
