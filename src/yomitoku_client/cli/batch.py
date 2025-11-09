@@ -37,11 +37,11 @@ async def process_batch(
         request_config=RequestConfig(
             read_timeout=read_timeout,
             connect_timeout=connect_timeout,
-            max_attempts=max_retries,
+            max_retries=max_retries,
         ),
         circuit_config=CircuitConfig(
             threshold=threthold_circuit,
-            cooldown_sec=cooldown_time,
+            cooldown_time=cooldown_time,
         ),
     ) as client:
         await client.analyze_batch_async(

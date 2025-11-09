@@ -8,14 +8,15 @@ SageMaker エンドポイントから取得できる API スキーマは以下�
 
 ---
 
-## 並列処理
+## 詳細設定
+### 並列処理
 YomitokuClientでは、複数ページで構成されるPDFなどのデータをページ単位で分割し、Endpointに並列でリクエストを行います。並列処理のワーカーの数の設定が可能です。
 
 ```bash
 yomitoku-client batch -i ./input -o ./output -e my-endpoint --workers 8
 ```
 
-## タイムアウト / リトライ処理
+### タイムアウト / リトライ処理
 
 YomitokuClient では、Boto3 レイヤおよびクライアントレイヤの双方でタイムアウト制御を行います。
 各パラメータの意味は以下のとおりです。
@@ -41,7 +42,7 @@ yomitoku-client batch \
 
 ---
 
-## サーキットブレーカー
+### サーキットブレーカー
 
 サーキットブレーカーは、連続して解析に失敗した場合にエンドポイントを保護するための仕組みです。
 これが存在しない場合、複数クライアントが無制限にリトライを行い、エンドポイントの負荷が過大になる恐れがあります。
@@ -63,8 +64,22 @@ yomitoku-client batch \
 
 > 🔒 連続失敗が 3 回発生した場合、60 秒間すべてのリクエストが停止します。
 > クールダウン経過後に自動的にリクエストを再開します。
+
 ---
 
+### 上書き制御
+YomiToku-Clientのバッチ処理は過去のログ情報(`{$OUTPUT_DIR}/process_log.jsonl`)を参照し、処理に失敗したデータのみ再推論が可能です。`overwrite=False`のときはエラーが発生したり、推論が実行されていないデータのみを対象として推論します。`overwrite=True`のときは、フォルダ内の全データを対象に再実行を行います。
+
+`--overwrite`オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再解析します。
+```bash
+yomitoku-client batch -i ./input -o ./output -e my-endpoint --overwrite
+```
+
+| オプション         | 型        | 説明                            |
+| ------------- | -------- | ----------------------------- |
+| `--overwrite` | *(flag)* | True の場合、既存の出力に関係なく全ファイルを再処理。 |
+
+---
 
 ## 🔁 シーケンス図
 
@@ -110,20 +125,6 @@ sequenceDiagram
     Client-->>Client: ページ単位の結果を統合して出力
 ```
 
-## 上書き制御
-YomiToku-Clientのバッチ処理は過去のログ情報(`{$OUTPUT_DIR}/process_log.jsonl`)を参照し、処理に失敗したデータのみ再推論が可能です。`overwrite=False`のときはエラーが発生したり、推論が実行されていないデータのみを対象として推論します。`overwrite=True`のときは、フォルダ内の全データを対象に再実行を行います。
-
-`--overwrite`オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再解析します。
-```bash
-yomitoku-client batch -i ./input -o ./output -e my-endpoint --overwrite
-```
-
-| オプション         | 型        | 説明                            |
-| ------------- | -------- | ----------------------------- |
-| `--overwrite` | *(flag)* | True の場合、既存の出力に関係なく全ファイルを再処理。 |
-
----
-
 ## パラメータ設定例(Python API)
 
 以下のコードは、タイムアウトおよびサーキットブレーカー設定を含む
@@ -135,12 +136,12 @@ from yomitoku_client.client import RequestConfig, CircuitConfig, YomitokuClient
 request_config = RequestConfig(
     read_timeout=120,     # 応答待機タイムアウト [秒]
     connect_timeout=5,    # 接続確立タイムアウト [秒]
-    max_attempts=5,       # boto3 のリトライ回数
+    max_retries=5,       # boto3 のリトライ回数
 )
 
 circuit_config = CircuitConfig(
     threshold=3,          # 連続失敗のしきい値
-    cooldown_sec=60,      # サーキットブレーカー発動後のクールダウン [秒]
+    cooldown_time=60,      # サーキットブレーカー発動後のクールダウン [秒]
 )
 
 async with YomitokuClient(

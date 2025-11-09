@@ -169,11 +169,11 @@ def single_command(
         request_config=RequestConfig(
             read_timeout=read_timeout,
             connect_timeout=connect_timeout,
-            max_attempts=max_retries,
+            max_retries=max_retries,
         ),
         circuit_config=CircuitConfig(
             threshold=threthold_circuit,
-            cooldown_sec=cooldown_time,
+            cooldown_time=cooldown_time,
         ),
     ) as client:
         result = client.analyze(
@@ -188,9 +188,9 @@ def single_command(
     base_ext = Path(input_path).suffix.lstrip(".")
 
     if output_dir is None:
-        output_file_base = f"{base_file_name}"
+        output_file_base = base_file_name
     else:
-        output_file_base = Path(output_dir) / f"{base_file_name}"
+        output_file_base = str(Path(output_dir) / base_file_name)
 
     if intermediate_save:
         intermediate_dir = (

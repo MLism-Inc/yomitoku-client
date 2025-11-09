@@ -284,7 +284,7 @@ def test_circuit_breaker_opens_after_threshold_and_blocks_requests(monkeypatch):
     monkeypatch.setattr(client_module, "now_ms", fake_now_ms)
 
     # 3) サーキット閾値を小さめ（3回）にしたクライアントを作る
-    cfg = CircuitConfig(threshold=3, cooldown_sec=10)
+    cfg = CircuitConfig(threshold=3, cooldown_time=10)
     client = YomitokuClient(
         endpoint="dummy-endpoint",
         region=None,

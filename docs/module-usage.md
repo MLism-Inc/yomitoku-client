@@ -1,4 +1,4 @@
-# Module Usage
+# Python API
 
 YomiToku-Client は、Python コードから直接利用することができます。
 
