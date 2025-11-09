@@ -1,4 +1,4 @@
-name: Python Lint
+name: Python Lint and Test Workflow
 
 on:
   pull_request:

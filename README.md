@@ -31,9 +31,6 @@ flowchart LR
     B -->|"構造化データ(CSV / JSON / Markdown / HTML / PDF)"| A
 ```
 
-こちらの文を、README に自然に馴染むように情報構成・語彙を整理してアップデートした案です👇
-トーンは公式ドキュメント兼マーケ的な「技術者にも伝わるプロフェッショナルな紹介」にしています。
-
 ---
 
 ## YomiToku-Pro Document Analyzer とは
