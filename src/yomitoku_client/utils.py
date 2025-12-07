@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import re
 from pathlib import Path
@@ -643,3 +644,25 @@ def convert_table_array_to_dict(
         table_dict.append(row_dict)
 
     return table_dict
+
+
+def get_config_path() -> Path:
+    """Get the path to the config file."""
+    return Path.home() / ".yomitoku" / "config.json"
+
+
+def load_config() -> dict:
+    """Load the config file."""
+    config_path = get_config_path()
+    if not config_path.exists():
+        return {}
+    with open(config_path, "r") as f:
+        return json.load(f)
+
+
+def save_config(config: dict) -> None:
+    """Save the config file."""
+    config_path = get_config_path()
+    config_path.parent.mkdir(exist_ok=True)
+    with open(config_path, "w") as f:
+        json.dump(config, f, indent=2)

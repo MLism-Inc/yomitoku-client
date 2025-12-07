@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  This AWS CloudFormation template creates an endpoint for an ML model from AWS Marketplace.
+  Once the AWS CloudFormation stack is created, please go to the Outputs section for next steps.
+Parameters:
+  InstanceType:
+    Type: String
+    Description: The deployment instance type.
+  InstanceCount:
+    Type: Number
+    Default: "1"
+    Description: Initial instance count for the endpoint.
+  ModelPackageARN:
+    Type: String
+    Description: Product identifier based on software version and region.
+  EndpointName:
+    Type: String
+    Description: Specify suitable name to host the model endpoint. This is a mandatory field.
+Resources:
+  SageMakerExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "sagemaker.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
+  Model:
+    Type: "AWS::SageMaker::Model"
+    Properties:
+      EnableNetworkIsolation: True
+      ExecutionRoleArn: !GetAtt SageMakerExecutionRole.Arn
+      PrimaryContainer:
+        ModelPackageName: !Ref ModelPackageARN
+  EndPointConfig:
+    Type: "AWS::SageMaker::EndpointConfig"
+    Properties:
+      ProductionVariants:
+      - ModelName: !GetAtt Model.ModelName
+        VariantName: AllTraffic
+        InitialInstanceCount: !Ref InstanceCount
+        InstanceType: !Ref InstanceType
+        InitialVariantWeight: 1
+        ModelDataDownloadTimeoutInSeconds: 3600
+  EndPoint:
+    Type: "AWS::SageMaker::Endpoint"
+    Properties:
+      EndpointName: !Ref EndpointName
+      EndpointConfigName: !GetAtt EndPointConfig.EndpointConfigName
+Outputs:
+  EndPointConfigName:
+    Description: Endpoint confirmation.
+    Value: !GetAtt 'EndPointConfig.EndpointConfigName'
+  EndpointName:
+    Description: Endpoint Name.
+    Value: !Ref EndpointName
