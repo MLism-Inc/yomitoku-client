@@ -90,7 +90,7 @@ def deploy(
     endpoint_name,
     instance_type,
     instance_count,
-    model_package_arn,  # This is the new parameter
+    model_package_arn,
     profile,
     region,
 ):
