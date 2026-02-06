@@ -228,6 +228,7 @@ def single_command(
             output_path=output_file_path,
             image_path=input_path,
             mode=split_mode,
+            dpi=dpi,
             page_index=page_index,
             ignore_line_break=ignore_line_break,
         )
@@ -237,6 +238,7 @@ def single_command(
             output_path=output_file_path,
             image_path=input_path,
             mode=split_mode,
+            dpi=dpi,
             page_index=page_index,
             ignore_line_break=ignore_line_break,
         )
@@ -246,6 +248,7 @@ def single_command(
             output_path=output_file_path,
             image_path=input_path,
             mode=split_mode,
+            dpi=dpi,
             page_index=page_index,
         )
 
