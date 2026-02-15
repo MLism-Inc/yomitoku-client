@@ -67,7 +67,15 @@ def configure(profile, region):
 )
 @click.option(
     "--instance-type",
-    type=click.Choice(["ml.g4dn.xlarge", "ml.g5.xlarge", "ml.g6.xlarge"]),
+    type=click.Choice(
+        [
+            "ml.g4dn.xlarge",
+            "ml.g5.xlarge",
+            "ml.g6.xlarge",
+            "ml.c7i.xlarge",
+            "ml.c7i.2xlarge",
+        ]
+    ),
     default="ml.g4dn.xlarge",
     show_default=True,
     help="Instance type for the endpoint.",
