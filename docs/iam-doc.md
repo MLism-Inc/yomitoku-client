@@ -25,7 +25,9 @@
 1. AWSマネジメントコンソールにログインし、サービス検索で「**IAM**」と入力して選択します。
 2. 左側のメニューから「**ポリシー**」をクリックします。
 3. 「**ポリシーを作成**」ボタンをクリックします。
-4. 「**JSON**」タブを選択し、既存のテキストをすべて削除してから、以下のJSONコードを貼り付けます。
+4. 「**JSON**」タブを選択し、既存のテキストをすべて削除してから、**用途に応じて**以下のJSONコードを貼り付けます。
+
+  - 既存のSageMakerエンドポイントを呼び出すだけの権限を与える場合
 
     ```json
     {
@@ -36,6 +38,26 @@
                 "Action": [
                   "sagemaker:DescribeEndpoint",
                   "sagemaker:InvokeEndpoint"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+    ```
+
+  - SageMakerエンドポイントを作成・更新・削除する権限を与える場合
+
+    ```json
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "cloudformation:*",
+                    "sagemaker:*",
+                    "iam:*Role",
+                    "iam:*RolePolicy"
                 ],
                 "Resource": "*"
             }
