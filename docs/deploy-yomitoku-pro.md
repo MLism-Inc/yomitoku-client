@@ -91,7 +91,7 @@ yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-t
 | オプション | デフォルト値 | 説明 |
 | --- | --- | --- |
 | `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
-| `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。(`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能) |
+| `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
 | `--instance-count` | `1` | デプロイするインスタンス数。 |
 
 
@@ -173,7 +173,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure9](images/marketplace-sagemaker-configure9.png)
 アクションの欄にある「編集」をクリックします。
 ![marketplace sagemaker configure9-2](images/marketplace-sagemaker-configure9-2.png)
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。ml.c5.2xlargeではGPUを使うことができないのでYomiToku-Proでサポートされていません。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。`v1.1.0`よりCPUインスタンスによる推論もサポートされており、`ml.c7i.xlarge`, `ml.c7i.2xlarge`を利用することでインスタンス利用量をさらに抑えることができます。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 ![marketplace sagemaker configure9-3](images/marketplace-sagemaker-configure9-3.png)
 1. 右下の「保存」をクリックしてバリアントの設定を保存します。
 1. シャドウバリアントの設定はここでは利用しません。
