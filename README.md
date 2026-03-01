@@ -130,6 +130,7 @@ uv add yomitoku-client
 > - 使用モデル: YomiToku-Pro - Document Analyzer v1.0.3
 > - 理論値には I/O 待機時間や初期化時間を含みません（実効値は理論値の約 60〜80 % が目安）。
 > - 文書の複雑度や文字量等に応じて、解析時間は前後します。
+> - 一部のインスタンスはデフォルトでAWSのクオータで利用が制限されている場合があります。[公式ドキュメント](https://docs.aws.amazon.com/ja_jp/general/latest/gr/aws_service_limits.html)を参考にクオータの引き上げを行ってください。
 
 リアルタイム処理などのユースケースでSagaMakerエンドポイントを長時間 / 常時運用をご希望する場合は、プライベートオファーにて割引価格での提供も行っています。
 ご希望する場合は、最下部のメールにお問い合わせください。
@@ -272,3 +273,6 @@ Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 ## お問い合わせ
 ご質問やサポートのご依頼は、以下までご連絡ください。  
 📧 **support-aws-marketplace@mlism.com**
+
+
+

@@ -1,18 +1,138 @@
 # YomiToku-Proのデプロイ
 
 !!! tip "前提"
-    このページは [YomiToku-ClientのAWS認証設定ガイド](./iam-doc.md) のIAM設定を前提にしています。
+    このページは [YomiToku-ClientのAWS認証設定ガイド](./iam-doc.md) の「SageMakerエンドポイントを作成・更新・削除する権限」が付与されたIAMを利用していることを前提にしています。
     まだ前の手順が未完了の場合は、まずそちらをご覧ください。
 
 YomiToku-Clientをご利用いただくには、AWS Marketplaceを通じてYomiToku-Proのサブスクリプションに加入し、YomiToku-ProのSageMakerエンドポイントをデプロイする必要があります。
 
-YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の二つの方法があります。
+YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３つの方法があります。
 各デプロイ方法の特徴を特徴を踏まえて、どちらかの方法を選びましょう。
 
 |デプロイ方法|リソースの管理方法|特徴|
 |:--:|:--:|:--:|
-|[AWS SageMaker単体によるデプロイ](#aws-sagemaker)|個別に管理|詳細に設定・管理可能|
-|[AWS CloudFormationによるデプロイ](#aws-cloudformation)|スタックでまとめて管理|お手軽に設定・管理|
+|[yomitoku-clientによるデプロイ](#yomitoku-client)|スタックでまとめて管理|お手軽に設定・管理。CLIで操作|
+|[AWS SageMaker単体によるデプロイ](#aws-sagemaker)|個別に管理|詳細に設定・管理可能。ブラウザで操作|
+|[AWS CloudFormationによるデプロイ](#aws-cloudformation)|スタックでまとめて管理|お手軽に設定・管理。ブラウザで操作|
+
+
+## yomitoku-clientでデプロイする場合
+
+### yomitoku-clientによるデプロイと管理
+
+`yomitoku-client` のCLIツールを使用すると、コマンドラインから簡単にSageMakerエンドポイントの作成、状態確認、削除を行うことができます。内部的にはAWS CloudFormationを利用しているため、関連するリソース（モデル、エンドポイント設定、エンドポイント）を「スタック」として一括管理できます。
+
+### デプロイの流れ
+
+1. 初期設定（ARNの取得と登録）
+2. エンドポイントのデプロイ
+3. ステータスの確認
+4. エンドポイントの削除（アンデプロイ）
+
+### コマンドリファレンスまとめ
+
+
+| コマンド | 用途 |
+| --- | --- |
+| `configure` | モデルパッケージARNの設定 |
+| `deploy` | CloudFormationによるエンドポイント作成・更新 |
+| `list` | 管理している全スタックの状態一覧 |
+| `describe` | 特定スタックのステータス詳細 |
+| `delete` | スタックの削除（リソースの全削除） |
+
+
+### Step 1: 初期設定（ARNの取得と登録）
+
+最初に、AWS Marketplaceで購読しているYomiToku-Proの「モデルパッケージARN」を取得してクライアントに設定する必要があります。
+
+1. ターミナルで以下のコマンドを実行します。
+
+```bash
+yomitoku-client sagemaker configure
+```
+
+2. 実行すると、ブラウザで開くべきURLが表示されます。
+
+```text
+Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
+--------------------------------------------------------------------------------
+https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/prod-o37wuz7bn7kvc
+--------------------------------------------------------------------------------
+
+```
+
+3. AWSコンソールにログインした状態で表示されたURLにアクセスし、使用するバージョンの **Model Package ARN**（`arn:aws:sagemaker:...` で始まる文字列）をコピーします。
+
+4. ターミナルのプロンプトにコピーしたARNを貼り付けてエンターキーを押します。
+```text
+Please enter the Model Package ARN: arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/yomitoku-pro-xxx
+Successfully configured Model Package ARN!
+
+```
+
+!!! note
+    「モデルパッケージARN」はバージョン毎に変わります。最新のYomitoku-Proを利用する際は改めて上記を実行して更新してください。
+
+
+### Step 2: エンドポイントのデプロイ
+
+設定したARNを用いて、SageMakerエンドポイントを作成します。
+
+1. 以下のコマンドを実行してデプロイを開始します。
+
+```bash
+yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-type ml.g4dn.xlarge
+```
+
+
+主要なオプション
+
+
+| オプション | デフォルト値 | 説明 |
+| --- | --- | --- |
+| `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
+| `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
+| `--instance-count` | `1` | デプロイするインスタンス数。 |
+
+
+!!! warning
+
+    サービスはスタックをデプロイしてから、スタックを削除するまで、従量課金で料金が発生します。サービスの利用を終了する場合は、必ず削除コマンド`yomitoku-client sagemaker delete`を実行してください。
+
+### Step 3: ステータスの確認 
+
+デプロイには通常数分〜10分程度の時間がかかります。現在の状態を確認するには以下のコマンドを使用します。
+
+- スタック一覧の表示
+
+    作成済みの管理スタックとその状態を一覧表示します。
+
+    ```bash
+    yomitoku-client sagemaker list
+    ```
+
+- 詳細情報の表示
+
+    特定のエンドポイント（スタック）の詳細な情報を取得します。
+
+    ```bash
+    yomitoku-client sagemaker describe --endpoint-name yomitoku-sagemaker
+    ```
+
+    ステータスが `CREATE_COMPLETE` になっていれば、エンドポイントは正常に起動し、推論が可能な状態です。
+
+
+### Step 4: エンドポイントの削除（アンデプロイ）
+
+利用を終了する場合は、課金を止めるためにスタックを削除します。この操作により、エンドポイント、エンドポイント設定、モデルのすべてが自動的に削除されます。
+
+1. 以下のコマンドを実行します。
+```bash
+yomitoku-client sagemaker delete --endpoint-name yomitoku-sagemaker
+```
+
+2. 削除が開始されます。完全に削除されたかどうかは `yomitoku-client sagemaker list` コマンドで確認してください。
+
 
 ## AWS SageMakerでデプロイをする場合
 
@@ -53,7 +173,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure9](images/marketplace-sagemaker-configure9.png)
 アクションの欄にある「編集」をクリックします。
 ![marketplace sagemaker configure9-2](images/marketplace-sagemaker-configure9-2.png)
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。ml.c5.2xlargeではGPUを使うことができないのでYomiToku-Proでサポートされていません。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。`v1.1.0`よりCPUインスタンスによる推論もサポートされており、`ml.c7i.xlarge`, `ml.c7i.2xlarge`を利用することでインスタンス利用量をさらに抑えることができます。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 ![marketplace sagemaker configure9-3](images/marketplace-sagemaker-configure9-3.png)
 1. 右下の「保存」をクリックしてバリアントの設定を保存します。
 1. シャドウバリアントの設定はここでは利用しません。
