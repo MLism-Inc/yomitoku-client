@@ -15,8 +15,11 @@
         <link rel="next" href="../cli-usage/">
       
       
+        
+      
+      
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -24,10 +27,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -50,7 +53,6 @@
     
       
 
-    
     
     
   </head>
@@ -403,9 +405,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Home
+  
+
     
   </span>
+  
   
 
       </a>
@@ -425,9 +432,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Installation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -447,9 +459,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Setting-Authentication
+  
+
     
   </span>
+  
   
 
       </a>
@@ -478,9 +495,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     How To Deploy
+  
+
     
   </span>
+  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -491,9 +513,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     How To Deploy
+  
+
     
   </span>
+  
   
 
       </a>
@@ -514,9 +541,105 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#yomitoku-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        yomitoku-clientでデプロイする場合
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="yomitoku-clientでデプロイする場合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yomitoku-client_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        yomitoku-clientによるデプロイと管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デプロイの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンドリファレンスまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-arn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: 初期設定（ARNの取得と登録）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: エンドポイントのデプロイ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: ステータスの確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: エンドポイントの削除（アンデプロイ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#aws-sagemaker" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerでデプロイをする場合
+      
+        AWS SageMakerでデプロイをする場合
+      
     </span>
   </a>
   
@@ -526,7 +649,9 @@
           <li class="md-nav__item">
   <a href="#aws-sagemaker_1" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerでデプロイ
+      
+        AWS SageMakerでデプロイ
+      
     </span>
   </a>
   
@@ -535,7 +660,9 @@
           <li class="md-nav__item">
   <a href="#aws-sagemaker_2" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerでアンデプロイ
+      
+        AWS SageMakerでアンデプロイ
+      
     </span>
   </a>
   
@@ -549,7 +676,9 @@
         <li class="md-nav__item">
   <a href="#aws-cloudformation" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationでデプロイする場合
+      
+        AWS CloudFormationでデプロイする場合
+      
     </span>
   </a>
   
@@ -559,7 +688,9 @@
           <li class="md-nav__item">
   <a href="#aws-cloudformation_1" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationでデプロイ
+      
+        AWS CloudFormationでデプロイ
+      
     </span>
   </a>
   
@@ -568,7 +699,9 @@
           <li class="md-nav__item">
   <a href="#aws-cloudformation_2" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationでアンデプロイ
+      
+        AWS CloudFormationでアンデプロイ
+      
     </span>
   </a>
   
@@ -580,9 +713,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      付録:各種設定画面の開き方
+      
+        付録:各種設定画面の開き方
+      
     </span>
   </a>
   
@@ -590,9 +725,11 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
-      ロール
+      
+        ロール
+      
     </span>
   </a>
   
@@ -601,7 +738,9 @@
           <li class="md-nav__item">
   <a href="#aws-sagemaker_3" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerのモデル・エンドポイント設定・エンドポイント
+      
+        AWS SageMakerのモデル・エンドポイント設定・エンドポイント
+      
     </span>
   </a>
   
@@ -610,7 +749,9 @@
           <li class="md-nav__item">
   <a href="#aws-cloudformation_3" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationのスタック
+      
+        AWS CloudFormationのスタック
+      
     </span>
   </a>
   
@@ -641,9 +782,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     CLI
+  
+
     
   </span>
+  
   
 
       </a>
@@ -663,9 +809,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Python API
+  
+
     
   </span>
+  
   
 
       </a>
@@ -685,9 +836,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Advanced
+  
+
     
   </span>
+  
   
 
       </a>
@@ -722,9 +878,105 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#yomitoku-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        yomitoku-clientでデプロイする場合
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="yomitoku-clientでデプロイする場合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yomitoku-client_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        yomitoku-clientによるデプロイと管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デプロイの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンドリファレンスまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-arn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: 初期設定（ARNの取得と登録）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: エンドポイントのデプロイ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: ステータスの確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: エンドポイントの削除（アンデプロイ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#aws-sagemaker" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerでデプロイをする場合
+      
+        AWS SageMakerでデプロイをする場合
+      
     </span>
   </a>
   
@@ -734,7 +986,9 @@
           <li class="md-nav__item">
   <a href="#aws-sagemaker_1" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerでデプロイ
+      
+        AWS SageMakerでデプロイ
+      
     </span>
   </a>
   
@@ -743,7 +997,9 @@
           <li class="md-nav__item">
   <a href="#aws-sagemaker_2" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerでアンデプロイ
+      
+        AWS SageMakerでアンデプロイ
+      
     </span>
   </a>
   
@@ -757,7 +1013,9 @@
         <li class="md-nav__item">
   <a href="#aws-cloudformation" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationでデプロイする場合
+      
+        AWS CloudFormationでデプロイする場合
+      
     </span>
   </a>
   
@@ -767,7 +1025,9 @@
           <li class="md-nav__item">
   <a href="#aws-cloudformation_1" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationでデプロイ
+      
+        AWS CloudFormationでデプロイ
+      
     </span>
   </a>
   
@@ -776,7 +1036,9 @@
           <li class="md-nav__item">
   <a href="#aws-cloudformation_2" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationでアンデプロイ
+      
+        AWS CloudFormationでアンデプロイ
+      
     </span>
   </a>
   
@@ -788,9 +1050,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      付録:各種設定画面の開き方
+      
+        付録:各種設定画面の開き方
+      
     </span>
   </a>
   
@@ -798,9 +1062,11 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
-      ロール
+      
+        ロール
+      
     </span>
   </a>
   
@@ -809,7 +1075,9 @@
           <li class="md-nav__item">
   <a href="#aws-sagemaker_3" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS SageMakerのモデル・エンドポイント設定・エンドポイント
+      
+        AWS SageMakerのモデル・エンドポイント設定・エンドポイント
+      
     </span>
   </a>
   
@@ -818,7 +1086,9 @@
           <li class="md-nav__item">
   <a href="#aws-cloudformation_3" class="md-nav__link">
     <span class="md-ellipsis">
-      AWS CloudFormationのスタック
+      
+        AWS CloudFormationのスタック
+      
     </span>
   </a>
   
@@ -839,6 +1109,7 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -851,11 +1122,11 @@
 <h1 id="yomitoku-pro">YomiToku-Proのデプロイ<a class="headerlink" href="#yomitoku-pro" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">前提</p>
-<p>このページは <a href="../iam-doc/">YomiToku-ClientのAWS認証設定ガイド</a> のIAM設定を前提にしています。
+<p>このページは <a href="../iam-doc/">YomiToku-ClientのAWS認証設定ガイド</a> の「SageMakerエンドポイントを作成・更新・削除する権限」が付与されたIAMを利用していることを前提にしています。
 まだ前の手順が未完了の場合は、まずそちらをご覧ください。</p>
 </div>
 <p>YomiToku-Clientをご利用いただくには、AWS Marketplaceを通じてYomiToku-Proのサブスクリプションに加入し、YomiToku-ProのSageMakerエンドポイントをデプロイする必要があります。</p>
-<p>YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の二つの方法があります。
+<p>YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３つの方法があります。
 各デプロイ方法の特徴を特徴を踏まえて、どちらかの方法を選びましょう。</p>
 <table>
 <thead>
@@ -867,17 +1138,160 @@
 </thead>
 <tbody>
 <tr>
+<td style="text-align: center;"><a href="#yomitoku-client">yomitoku-clientによるデプロイ</a></td>
+<td style="text-align: center;">スタックでまとめて管理</td>
+<td style="text-align: center;">お手軽に設定・管理。CLIで操作</td>
+</tr>
+<tr>
 <td style="text-align: center;"><a href="#aws-sagemaker">AWS SageMaker単体によるデプロイ</a></td>
 <td style="text-align: center;">個別に管理</td>
-<td style="text-align: center;">詳細に設定・管理可能</td>
+<td style="text-align: center;">詳細に設定・管理可能。ブラウザで操作</td>
 </tr>
 <tr>
 <td style="text-align: center;"><a href="#aws-cloudformation">AWS CloudFormationによるデプロイ</a></td>
 <td style="text-align: center;">スタックでまとめて管理</td>
-<td style="text-align: center;">お手軽に設定・管理</td>
+<td style="text-align: center;">お手軽に設定・管理。ブラウザで操作</td>
 </tr>
 </tbody>
 </table>
+<h2 id="yomitoku-client">yomitoku-clientでデプロイする場合<a class="headerlink" href="#yomitoku-client" title="Permanent link">&para;</a></h2>
+<h3 id="yomitoku-client_1">yomitoku-clientによるデプロイと管理<a class="headerlink" href="#yomitoku-client_1" title="Permanent link">&para;</a></h3>
+<p><code>yomitoku-client</code> のCLIツールを使用すると、コマンドラインから簡単にSageMakerエンドポイントの作成、状態確認、削除を行うことができます。内部的にはAWS CloudFormationを利用しているため、関連するリソース（モデル、エンドポイント設定、エンドポイント）を「スタック」として一括管理できます。</p>
+<h3 id="_1">デプロイの流れ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>初期設定（ARNの取得と登録）</li>
+<li>エンドポイントのデプロイ</li>
+<li>ステータスの確認</li>
+<li>エンドポイントの削除（アンデプロイ）</li>
+</ol>
+<h3 id="_2">コマンドリファレンスまとめ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>コマンド</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>configure</code></td>
+<td>モデルパッケージARNの設定</td>
+</tr>
+<tr>
+<td><code>deploy</code></td>
+<td>CloudFormationによるエンドポイント作成・更新</td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td>管理している全スタックの状態一覧</td>
+</tr>
+<tr>
+<td><code>describe</code></td>
+<td>特定スタックのステータス詳細</td>
+</tr>
+<tr>
+<td><code>delete</code></td>
+<td>スタックの削除（リソースの全削除）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-1-arn">Step 1: 初期設定（ARNの取得と登録）<a class="headerlink" href="#step-1-arn" title="Permanent link">&para;</a></h3>
+<p>最初に、AWS Marketplaceで購読しているYomiToku-Proの「モデルパッケージARN」を取得してクライアントに設定する必要があります。</p>
+<ol>
+<li>ターミナルで以下のコマンドを実行します。</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure
+</span></code></pre></div>
+<ol>
+<li>実行すると、ブラウザで開くべきURLが表示されます。</li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--------------------------------------------------------------------------------
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/prod-o37wuz7bn7kvc
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>--------------------------------------------------------------------------------
+</span></code></pre></div>
+<ol>
+<li>
+<p>AWSコンソールにログインした状態で表示されたURLにアクセスし、使用するバージョンの <strong>Model Package ARN</strong>（<code>arn:aws:sagemaker:...</code> で始まる文字列）をコピーします。</p>
+</li>
+<li>
+<p>ターミナルのプロンプトにコピーしたARNを貼り付けてエンターキーを押します。
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Please enter the Model Package ARN: arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/yomitoku-pro-xxx
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Successfully configured Model Package ARN!
+</span></code></pre></div></p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>「モデルパッケージARN」はバージョン毎に変わります。最新のYomitoku-Proを利用する際は改めて上記を実行して更新してください。</p>
+</div>
+<h3 id="step-2">Step 2: エンドポイントのデプロイ<a class="headerlink" href="#step-2" title="Permanent link">&para;</a></h3>
+<p>設定したARNを用いて、SageMakerエンドポイントを作成します。</p>
+<ol>
+<li>以下のコマンドを実行してデプロイを開始します。</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge
+</span></code></pre></div>
+<p>主要なオプション</p>
+<table>
+<thead>
+<tr>
+<th>オプション</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--endpoint-name</code></td>
+<td><code>yomitoku-sagemaker</code></td>
+<td>作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。</td>
+</tr>
+<tr>
+<td><code>--instance-type</code></td>
+<td><code>ml.g4dn.xlarge</code></td>
+<td>使用するインスタンスタイプ。<code>ml.g4dn.xlarge</code>, <code>ml.g5.xlarge</code>, <code>ml.g6.xlarge</code>, <code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code> が選択可能。検証用途ならデフォルトの<code>ml.g4dn.xlarge</code>で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。</td>
+</tr>
+<tr>
+<td><code>--instance-count</code></td>
+<td><code>1</code></td>
+<td>デプロイするインスタンス数。</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>サービスはスタックをデプロイしてから、スタックを削除するまで、従量課金で料金が発生します。サービスの利用を終了する場合は、必ず削除コマンド<code>yomitoku-client sagemaker delete</code>を実行してください。</p>
+</div>
+<h3 id="step-3">Step 3: ステータスの確認<a class="headerlink" href="#step-3" title="Permanent link">&para;</a></h3>
+<p>デプロイには通常数分〜10分程度の時間がかかります。現在の状態を確認するには以下のコマンドを使用します。</p>
+<ul>
+<li>
+<p>スタック一覧の表示</p>
+<p>作成済みの管理スタックとその状態を一覧表示します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
+</span></code></pre></div>
+</li>
+<li>
+<p>詳細情報の表示</p>
+<p>特定のエンドポイント（スタック）の詳細な情報を取得します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+</span></code></pre></div>
+<p>ステータスが <code>CREATE_COMPLETE</code> になっていれば、エンドポイントは正常に起動し、推論が可能な状態です。</p>
+</li>
+</ul>
+<h3 id="step-4">Step 4: エンドポイントの削除（アンデプロイ）<a class="headerlink" href="#step-4" title="Permanent link">&para;</a></h3>
+<p>利用を終了する場合は、課金を止めるためにスタックを削除します。この操作により、エンドポイント、エンドポイント設定、モデルのすべてが自動的に削除されます。</p>
+<ol>
+<li>
+<p>以下のコマンドを実行します。
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+</span></code></pre></div></p>
+</li>
+<li>
+<p>削除が開始されます。完全に削除されたかどうかは <code>yomitoku-client sagemaker list</code> コマンドで確認してください。</p>
+</li>
+</ol>
 <h2 id="aws-sagemaker">AWS SageMakerでデプロイをする場合<a class="headerlink" href="#aws-sagemaker" title="Permanent link">&para;</a></h2>
 <h3 id="aws-sagemaker_1">AWS SageMakerでデプロイ<a class="headerlink" href="#aws-sagemaker_1" title="Permanent link">&para;</a></h3>
 <p>AWS Marketplaceを用いてAWS SageMakerでデプロイします。
@@ -915,7 +1329,7 @@
 <img alt="marketplace sagemaker configure9" src="../images/marketplace-sagemaker-configure9.png" />
 アクションの欄にある「編集」をクリックします。
 <img alt="marketplace sagemaker configure9-2" src="../images/marketplace-sagemaker-configure9-2.png" />
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。ml.c5.2xlargeではGPUを使うことができないのでYomiToku-Proでサポートされていません。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>v1.1.0</code>よりCPUインスタンスによる推論もサポートされており、<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用することでインスタンス利用量をさらに抑えることができます。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 <img alt="marketplace sagemaker configure9-3" src="../images/marketplace-sagemaker-configure9-3.png" /></li>
 <li>右下の「保存」をクリックしてバリアントの設定を保存します。</li>
 <li>シャドウバリアントの設定はここでは利用しません。</li>
@@ -1000,8 +1414,8 @@
 <img alt="marketplace-cloudformation-undeploy" src="../images/marketplace-cloudformation-undeploy.png" /></li>
 <li>上部にある「削除」を選択します。</li>
 </ol>
-<h2 id="_1">付録:各種設定画面の開き方<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<h3 id="_2">ロール<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<h2 id="_3">付録:各種設定画面の開き方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">ロール<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>ロールの設定画面はIAMから開くことができます。ロールの削除をしたい場合などはそちらをご利用ください。</p>
 <p>次の手順でIAMの設定画面を開くことができます。</p>
 <ol>
@@ -1078,10 +1492,11 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
