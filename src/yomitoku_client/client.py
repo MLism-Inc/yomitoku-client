@@ -54,22 +54,35 @@ class RequestConfig:
     max_retries: int = 3
 
 
-def guess_content_type(path: str) -> str:
-    _, ext = os.path.splitext(path)
-    ext = ext.lower()
-    if ext == ".pdf":
-        return "application/pdf"
-    if ext in [".png"]:
-        return "image/png"
-    if ext in [".jpg", ".jpeg"]:
-        return "image/jpeg"
-    if ext in [".tif", ".tiff"]:
-        return "image/tiff"
-    raise ValueError(f"Unsupported file extension: {ext}")
+def guess_content_type(img: str|bytes) -> str:
+    if type(img) == str:
+        _, ext = os.path.splitext(img)
+        ext = ext.lower()
+        if ext == ".pdf":
+            return "application/pdf"
+        if ext in [".png"]:
+            return "image/png"
+        if ext in [".jpg", ".jpeg"]:
+            return "image/jpeg"
+        if ext in [".tif", ".tiff"]:
+            return "image/tiff"
+        raise ValueError(f"Unsupported file extension: {ext}")
+    else:
+        if img.startswith(b'\xff\xd8\xff\xe0'):
+            return 'image/jpeg'
+        if img.startswith(b'\x89\x50\x4e\x47\x0d\x0a\x1a\x0a'):
+            return 'image/png'
+        if img.startswith(b'\x49\x49\x2a\x00'):
+            return 'image/tiff'
+        if img.startswith(b'\x4d\x4d\x00\x2a'):
+            return 'image/tiff'
+        if img.startswith(b'%PDF'):
+            return 'application/pdf'
+        raise ValueError(f"Unsupported image type")
 
 
 def load_image_bytes(
-    path_img: str,
+    path_img: str|bytes,
     content_type: str,
     dpi=200,
 ) -> tuple[list[bytes], str]:
@@ -79,9 +92,11 @@ def load_image_bytes(
         content_type = "image/png"
     elif content_type == "image/tiff":
         img_bytes = load_tiff_to_bytes(path_img)
-    else:
+    elif isinstance(path_img, (str,)):
         with open(path_img, "rb") as f:
             img_bytes = [f.read()]
+    else:
+        img_bytes = [path_img]
     return img_bytes, content_type
 
 
@@ -268,15 +283,22 @@ class YomitokuClient:
 
     async def analyze_async(
         self,
-        path_img: str,
+        img: str|bytes,
         dpi: int = 200,
         page_index: None | int | list = None,
         request_timeout: float | None = None,
         total_timeout: float | None = None,
+        *,
+        content_type: str|None = None,
     ):
         # 画像データ読み込み
-        content_type = guess_content_type(path_img)
-        img_bytes, content_type = load_image_bytes(path_img, content_type, dpi)
+        if content_type is None:
+            content_type = guess_content_type(img)
+        if type(img) == bytes:
+            path_img = '<bytes>'
+        else:
+            path_img = img
+        img_bytes, content_type = load_image_bytes(img, content_type, dpi)
         page_index = make_page_index(page_index, len(img_bytes))
 
         # 全ページ処理のタイムアウト設定
@@ -419,19 +441,21 @@ class YomitokuClient:
 
     def analyze(
         self,
-        path_img: str,
+        img: str|bytes,
         dpi: int = 200,
         page_index: None | int | list = None,
         request_timeout: float | None = None,
         total_timeout: float | None = None,
+        **kwargs
     ):
         return self._loop.run_until_complete(
             self.analyze_async(
-                path_img,
+                img,
                 dpi,
                 page_index,
                 request_timeout,
                 total_timeout,
+                **kwargs
             ),
         )
 

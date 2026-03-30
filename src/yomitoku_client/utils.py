@@ -3,7 +3,9 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import Any
+from os import PathLike
+from io import BytesIO
+from typing import Any, IO
 
 import numpy as np
 import pypdfium2
@@ -113,7 +115,7 @@ def load_pdf(pdf_path: str, dpi=200) -> list[np.ndarray]:
     return images
 
 
-def load_pdf_to_bytes(pdf_path: str, dpi=200) -> list[bytes]:
+def load_pdf_to_bytes(pdf_path: str|PathLike|bytes|IO[bytes], dpi=200) -> list[bytes]:
     """
     Convert each page of a PDF into image bytes (PNG format).
 
@@ -125,12 +127,13 @@ def load_pdf_to_bytes(pdf_path: str, dpi=200) -> list[bytes]:
         list[bytes]: list of byte data (one per page)
     """
 
-    pdf_path = Path(pdf_path)
-    if not pdf_path.exists():
-        raise FileNotFoundError(f"File not found: {pdf_path}")
+    if isinstance(pdf_path, (PathLike, str)):
+        pdf_path = Path(pdf_path)
+        if not pdf_path.exists():
+            raise FileNotFoundError(f"File not found: {pdf_path}")
 
-    if pdf_path.suffix.lower() != ".pdf":
-        raise ValueError("Only PDF files are supported.")
+        if pdf_path.suffix.lower() != ".pdf":
+            raise ValueError("Only PDF files are supported.")
 
     try:
         doc = pypdfium2.PdfDocument(pdf_path)
@@ -149,7 +152,9 @@ def load_pdf_to_bytes(pdf_path: str, dpi=200) -> list[bytes]:
         raise RuntimeError(f"Failed to convert PDF to images: {e}") from e
 
 
-def load_tiff_to_bytes(tiff_path: str) -> list[bytes]:
+def load_tiff_to_bytes(tiff_path: str|PathLike|bytes|IO[bytes]) -> list[bytes]:
+    if type(tiff_path) == bytes:
+        tiff_path = BytesIO(tiff_path)
     im = Image.open(tiff_path)
     pages = []
     try:
