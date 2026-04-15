@@ -68,7 +68,7 @@ def guess_content_type(img: str|bytes) -> str:
             return "image/tiff"
         raise ValueError(f"Unsupported file extension: {ext}")
     else:
-        if img.startswith(b'\xff\xd8\xff\xe0'):
+        if img.startswith(b'\xff\xd8\xff'):
             return 'image/jpeg'
         if img.startswith(b'\x89\x50\x4e\x47\x0d\x0a\x1a\x0a'):
             return 'image/png'
