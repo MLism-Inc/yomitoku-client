@@ -186,8 +186,11 @@ def test_single_command_with_pages_split_intermediate_and_advanced_options(
             "--intermediate_save",
             "--vis_mode",
             "both",
+            # NOTE: image_pdf.json のレイアウト座標は dpi=200 で解析された結果。
+            # レンダリング時の dpi をこれと変えると figure の box が画像外に出て
+            # 空クロップ→cv2.imencode で落ちるため、fixture と同じ dpi を指定する。
             "--dpi",
-            "150",
+            "200",
             "--request_timeout",
             "10",
             "--total_timeout",
@@ -216,7 +219,7 @@ def test_single_command_with_pages_split_intermediate_and_advanced_options(
 
     # analyze に渡された値確認
     assert analyze_kwargs["path_img"] == str(input_file)
-    assert analyze_kwargs["dpi"] == 150
+    assert analyze_kwargs["dpi"] == 200
     assert analyze_kwargs["request_timeout"] == 10
     assert analyze_kwargs["total_timeout"] == 30
 

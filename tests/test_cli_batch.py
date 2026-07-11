@@ -207,8 +207,11 @@ def test_batch_command_with_pages_split_visualize_and_advanced_options(
             "--ignore_line_break",
             "--vis_mode",
             "both",
+            # NOTE: image_pdf.json のレイアウト座標は dpi=200 で解析された結果。
+            # レンダリング時の dpi をこれと変えると figure の box が画像外に出て
+            # 空クロップ→cv2.imencode で落ちるため、fixture と同じ dpi を指定する。
             "--dpi",
-            "150",
+            "200",
             "--request_timeout",
             "10",
             "--total_timeout",
@@ -236,7 +239,7 @@ def test_batch_command_with_pages_split_visualize_and_advanced_options(
     assert record["output_dir"] == str(output_dir)
     assert record["endpoint"] == "test-endpoint"
     assert record["region"] == "ap-northeast-1"
-    assert record["dpi"] == 150
+    assert record["dpi"] == 200
     assert record["request_timeout"] == 10
     assert record["total_timeout"] == 30
     assert record["workers"] == 8
