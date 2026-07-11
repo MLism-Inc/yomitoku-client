@@ -207,7 +207,9 @@ def create_searchable_pdf(
                 )
 
         # Sort containers by reading order
-        containers = sorted(containers, key=lambda c: (c["order"], c["sub_order"]))
+        containers = sorted(
+            containers, key=lambda c: (c["order"] or 0, c["sub_order"])
+        )
 
         all_words = []
         for container in containers:

@@ -12,6 +12,7 @@ from yomitoku_client.models import (
     TableCell,
     Word,
 )
+from yomitoku_client.parser import parse_pydantic_model
 
 
 class TestDocumentResult:
@@ -248,6 +249,74 @@ class TestTableCell:
 
         assert cell.row_span == 2
         assert cell.col_span == 3
+
+
+class TestSchemaNullability:
+    """
+    yomitoku-pro(サーバー)側は Paragraph/Figure の contents・direction・order
+    などを ``Union[str|int, None]`` として返す。クライアントのモデルも同様に
+    None を受理できることを保証する(サーバーが None を返しても壊れないため)。
+    """
+
+    def test_paragraph_accepts_none(self):
+        para = Paragraph(box=[0, 0, 1, 1], contents=None, direction=None, order=None)
+        assert para.contents is None
+        assert para.direction is None
+        assert para.order is None
+
+    def test_table_cell_accepts_none_contents(self):
+        cell = TableCell(
+            box=[0, 0, 1, 1],
+            contents=None,
+            col=1,
+            row=1,
+            col_span=1,
+            row_span=1,
+        )
+        assert cell.contents is None
+
+    def test_figure_accepts_none(self):
+        fig = Figure(box=[0, 0, 1, 1], order=None, direction=None, paragraphs=[])
+        assert fig.order is None
+        assert fig.direction is None
+
+    def test_parse_pydantic_model_with_none_fields(self):
+        """サーバーが figure 内 paragraph に None を返すケース(実際の障害再現)。"""
+        data = {
+            "result": [
+                {
+                    "num_page": 0,
+                    "preprocess": None,
+                    "paragraphs": [],
+                    "tables": [],
+                    "words": [],
+                    "figures": [
+                        {
+                            "box": [0, 0, 10, 10],
+                            "order": None,
+                            "direction": None,
+                            "role": None,
+                            "paragraphs": [
+                                {
+                                    "box": [0, 0, 5, 5],
+                                    "contents": None,
+                                    "direction": None,
+                                    "order": None,
+                                    "role": "page_footer",
+                                }
+                            ],
+                        }
+                    ],
+                }
+            ]
+        }
+
+        model = parse_pydantic_model(data)
+        page = model.pages[0]
+        assert page.preprocess is None
+        para = page.figures[0].paragraphs[0]
+        assert para.contents is None
+        assert para.direction is None
 
 
 if __name__ == "__main__":

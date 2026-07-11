@@ -84,7 +84,7 @@ class HTMLRenderer(BaseRenderer):
             elements.extend(figure_elements)
 
         # Sort by order
-        elements.sort(key=lambda x: x["order"])
+        elements.sort(key=lambda x: x["order"] or 0)
 
         # Build list structure
         self._list_to_html(elements)
@@ -157,7 +157,7 @@ class HTMLRenderer(BaseRenderer):
         caption = ""
         if table.caption:
             if hasattr(table.caption, "contents"):
-                caption_text = table.caption.contents
+                caption_text = table.caption.contents or ""
             elif isinstance(table.caption, dict):
                 caption_text = table.caption.get("contents", "")
             else:
@@ -184,7 +184,7 @@ class HTMLRenderer(BaseRenderer):
         Returns:
             dict: HTML element dictionary
         """
-        contents = paragraph.contents
+        contents = paragraph.contents or ""
         contents = self._convert_text_to_html(contents)
 
         if self.ignore_line_break:
@@ -262,7 +262,9 @@ class HTMLRenderer(BaseRenderer):
 
             # Process figure letters if requested
             if self.export_figure_letter and hasattr(figure, "paragraphs"):
-                for paragraph in sorted(figure.paragraphs, key=lambda x: x.order):
+                for paragraph in sorted(
+                    figure.paragraphs, key=lambda x: x.order or 0
+                ):
                     contents = self._paragraph_to_html(paragraph)
                     elements.append(
                         {
@@ -291,7 +293,7 @@ class HTMLRenderer(BaseRenderer):
 
         if caption:
             if hasattr(caption, "contents"):
-                caption_text = caption.contents
+                caption_text = caption.contents or ""
             elif isinstance(caption, dict):
                 caption_text = caption.get("contents", "")
             else:

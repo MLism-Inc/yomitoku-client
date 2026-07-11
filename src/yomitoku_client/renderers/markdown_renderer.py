@@ -105,7 +105,7 @@ class MarkdownRenderer(BaseRenderer):
             elements.extend(figure_elements)
 
         # Sort by order
-        elements.sort(key=lambda x: x["order"])
+        elements.sort(key=lambda x: x["order"] or 0)
         return self._elements_to_markdown_string(elements)
 
     def _paragraph_to_markdown(self, paragraph: Paragraph) -> str:
@@ -118,7 +118,7 @@ class MarkdownRenderer(BaseRenderer):
         Returns:
             str: Markdown formatted paragraph
         """
-        contents = paragraph.contents
+        contents = paragraph.contents or ""
         indent = paragraph.indent_level or 0
 
         if self.ignore_line_break:
@@ -159,7 +159,7 @@ class MarkdownRenderer(BaseRenderer):
             col = cell.col - 1
             row_span = cell.row_span
             col_span = cell.col_span
-            contents = cell.contents
+            contents = cell.contents or ""
 
             contents = escape_markdown_special_chars(contents)
             if self.ignore_line_break:
@@ -179,7 +179,7 @@ class MarkdownRenderer(BaseRenderer):
         if table.caption:
             # Handle caption as object or dict
             if hasattr(table.caption, "contents"):
-                caption_text = table.caption.contents
+                caption_text = table.caption.contents or ""
             elif isinstance(table.caption, dict):
                 caption_text = table.caption.get("contents", "")
             else:
@@ -213,7 +213,7 @@ class MarkdownRenderer(BaseRenderer):
         # Add caption if available
         if table.caption:
             if hasattr(table.caption, "contents"):
-                caption_text = table.caption.contents
+                caption_text = table.caption.contents or ""
             elif isinstance(table.caption, dict):
                 caption_text = table.caption.get("contents", "")
             else:
@@ -329,7 +329,7 @@ class MarkdownRenderer(BaseRenderer):
             # Add caption if available
             if figure.caption:
                 if hasattr(figure.caption, "contents"):
-                    caption_text = figure.caption.contents
+                    caption_text = figure.caption.contents or ""
                 elif isinstance(figure.caption, dict):
                     caption_text = figure.caption.get("contents", "")
                 else:
@@ -344,7 +344,9 @@ class MarkdownRenderer(BaseRenderer):
 
             # Process figure letters if requested
             if self.export_figure_letter and hasattr(figure, "paragraphs"):
-                for paragraph in sorted(figure.paragraphs, key=lambda x: x.order):
+                for paragraph in sorted(
+                    figure.paragraphs, key=lambda x: x.order or 0
+                ):
                     md_content = self._paragraph_to_markdown(paragraph)
                     elements.append(
                         {

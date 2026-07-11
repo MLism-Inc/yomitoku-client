@@ -567,7 +567,7 @@ def convert_table_array(
         col = cell.col - 1
         row_span = cell.row_span
         col_span = cell.col_span
-        contents = cell.contents
+        contents = cell.contents or ""
 
         table_array[row][col] = contents
         if padding:
