@@ -177,7 +177,7 @@ def single_command(
         ),
     ) as client:
         result = client.analyze(
-            path_img=input_path,
+            img=input_path,
             page_index=page_index,
             dpi=dpi,
             request_timeout=request_timeout,

@@ -1,5 +1,5 @@
 import json
-from pathlib import Path
+
 
 import pytest
 from click.testing import CliRunner
@@ -64,15 +64,19 @@ def _patch_yomitoku_client(monkeypatch, sample_api_result):
 
         def analyze(
             self,
-            path_img,
+            img=None,
             page_index=None,
             dpi=None,
             request_timeout=None,
             total_timeout=None,
+            *,
+            path_img=None,
         ):
+            # 本物の client と同じく旧 path_img 引数も受け付ける
+            resolved = img if img is not None else path_img
             self.analyze_calls.append(
                 {
-                    "path_img": path_img,
+                    "img": resolved,
                     "page_index": page_index,
                     "dpi": dpi,
                     "request_timeout": request_timeout,
@@ -142,7 +146,7 @@ def test_single_command_each_format(
     assert client.endpoint == "test-endpoint"
     assert client.region == "ap-northeast-1"
     assert len(client.analyze_calls) == 1
-    assert client.analyze_calls[0]["path_img"] == str(input_file)
+    assert client.analyze_calls[0]["img"] == str(input_file)
 
     # 出力ファイルが存在すること
     expected_out = output_dir / f"{input_file.stem}.{ext}"
@@ -218,7 +222,7 @@ def test_single_command_with_pages_split_intermediate_and_advanced_options(
     analyze_kwargs = client.analyze_calls[0]
 
     # analyze に渡された値確認
-    assert analyze_kwargs["path_img"] == str(input_file)
+    assert analyze_kwargs["img"] == str(input_file)
     assert analyze_kwargs["dpi"] == 200
     assert analyze_kwargs["request_timeout"] == 10
     assert analyze_kwargs["total_timeout"] == 30
