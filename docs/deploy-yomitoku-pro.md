@@ -93,6 +93,7 @@ yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-t
 | `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
 | `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
 | `--instance-count` | `1` | デプロイするインスタンス数。 |
+| `--lite` | `False`` | GPUインスタンスでliteモデルを利用する場合に指定します。コンテナ環境変数`YOMITOKU_MODEL_LITE`を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。 |
 
 
 !!! warning

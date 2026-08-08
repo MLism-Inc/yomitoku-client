@@ -92,6 +92,17 @@ def configure(profile, region):
     default=None,
     help="Model Package ARN to deploy. If not provided, it will be loaded from the configuration file.",
 )
+@click.option(
+    "--lite",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help=(
+        "Opt into the lite (dynamic-width tiny) recognizer on GPU instances by "
+        "setting the YOMITOKU_MODEL_LITE container environment variable. "
+        "CPU instances always run lite regardless of this flag."
+    ),
+)
 @click.option("--profile", default=None, help="AWS profile name.")
 @click.option("--region", default=None, help="AWS region.")
 def deploy(
@@ -99,6 +110,7 @@ def deploy(
     instance_type,
     instance_count,
     model_package_arn,
+    lite,
     profile,
     region,
 ):
@@ -127,6 +139,7 @@ def deploy(
         instance_type=instance_type,
         model_package_arn=deploy_model_package_arn,
         instance_count=instance_count,
+        model_lite=lite,
     )
     if not success:
         sys.exit(1)
