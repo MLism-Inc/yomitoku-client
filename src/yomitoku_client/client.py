@@ -4,6 +4,7 @@ import math
 import os
 import threading
 import time
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -25,6 +26,30 @@ from .exceptions import YomitokuInvokeError
 
 logger = set_logger(__name__, "INFO")
 JST = timezone(timedelta(hours=9), name="Asia/Tokyo")
+
+
+def _resolve_img_arg(
+    img: str | bytes | None,
+    path_img: str | bytes | None,
+) -> str | bytes:
+    """Resolve the image argument, accepting the deprecated ``path_img`` alias.
+
+    ``analyze``/``analyze_async`` originally took ``path_img``; it was renamed to
+    ``img`` (which also accepts bytes). ``path_img`` is still accepted for
+    backward compatibility but is deprecated.
+    """
+    if path_img is not None:
+        warnings.warn(
+            "The 'path_img' argument is deprecated and will be removed in a "
+            "future release; use 'img' instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        if img is None:
+            img = path_img
+    if img is None:
+        raise TypeError("analyze() missing required argument: 'img'")
+    return img
 
 
 @dataclass
@@ -283,21 +308,26 @@ class YomitokuClient:
 
     async def analyze_async(
         self,
-        img: str|bytes,
+        img: str | bytes | None = None,
         dpi: int = 200,
         page_index: None | int | list = None,
         request_timeout: float | None = None,
         total_timeout: float | None = None,
         *,
+        path_img: str | bytes | None = None,
         content_type: str|None = None,
     ):
+        # 後方互換: 引数名は path_img から img に変更された。旧名 path_img も
+        # 受け付けるが deprecated 扱いとする。
+        img = _resolve_img_arg(img, path_img)
+
         # 画像データ読み込み
         if content_type is None:
             content_type = guess_content_type(img)
         if type(img) == bytes:
-            path_img = '<bytes>'
+            source_name = '<bytes>'
         else:
-            path_img = img
+            source_name = img
         img_bytes, content_type = load_image_bytes(img, content_type, dpi)
         page_index = make_page_index(page_index, len(img_bytes))
 
@@ -317,7 +347,7 @@ class YomitokuClient:
                 index=i,
                 content_type=content_type,
                 body=b,
-                source_name=os.path.basename(path_img),
+                source_name=os.path.basename(source_name),
             )
             for i, b in enumerate(img_bytes)
             if i in page_index
@@ -347,8 +377,8 @@ class YomitokuClient:
             for t in tasks:
                 if not t.done():
                     t.cancel()
-            logger.exception("Analyze failed: %s", path_img)
-            raise YomitokuInvokeError(f"Analyze failed for {path_img}") from e
+            logger.exception("Analyze failed: %s", source_name)
+            raise YomitokuInvokeError(f"Analyze failed for {source_name}") from e
 
         if not results:
             raise YomitokuInvokeError("No page results were returned.")
@@ -441,7 +471,7 @@ class YomitokuClient:
 
     def analyze(
         self,
-        img: str|bytes,
+        img: str | bytes | None = None,
         dpi: int = 200,
         page_index: None | int | list = None,
         request_timeout: float | None = None,
