@@ -82,7 +82,9 @@ class CSVRenderer(BaseRenderer):
         if self.export_figure_letter and hasattr(data, "figures"):
             for figure in data.figures:
                 if hasattr(figure, "paragraphs"):
-                    for paragraph in sorted(figure.paragraphs, key=lambda x: x.order):
+                    for paragraph in sorted(
+                        figure.paragraphs, key=lambda x: x.order or 0
+                    ):
                         contents = self._paragraph_to_csv(paragraph)
                         elements.append(
                             {
@@ -94,7 +96,7 @@ class CSVRenderer(BaseRenderer):
                         )
 
         # Sort by order
-        elements.sort(key=lambda x: x["order"])
+        elements.sort(key=lambda x: x["order"] or 0)
 
         # Convert to CSV string
         return self._elements_to_csv_string(elements)
@@ -122,7 +124,7 @@ class CSVRenderer(BaseRenderer):
         Returns:
             str: CSV formatted paragraph content
         """
-        contents = paragraph.contents
+        contents = paragraph.contents or ""
 
         if self.ignore_line_break:
             contents = contents.replace("\n", "")

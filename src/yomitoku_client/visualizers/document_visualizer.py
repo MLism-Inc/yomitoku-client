@@ -227,7 +227,7 @@ class DocumentVisualizer(BaseVisualizer):
     ):
         """Visualize reading order of document elements"""
         elements = results.paragraphs + results.tables + results.figures
-        elements = sorted(elements, key=lambda x: x.order)
+        elements = sorted(elements, key=lambda x: x.order or 0)
 
         out = self._reading_order_visualizer(img, elements, line_color, tip_size)
 

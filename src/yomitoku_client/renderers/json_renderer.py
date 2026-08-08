@@ -43,12 +43,12 @@ class JSONRenderer(BaseRenderer):
             # Process tables
             for table in data_dict.get("tables", []):
                 for cell in table.get("cells", []):
-                    if "contents" in cell:
+                    if cell.get("contents") is not None:
                         cell["contents"] = cell["contents"].replace("\n", "")
 
             # Process paragraphs
             for paragraph in data_dict.get("paragraphs", []):
-                if "contents" in paragraph:
+                if paragraph.get("contents") is not None:
                     paragraph["contents"] = paragraph["contents"].replace("\n", "")
 
         # Format JSON with proper settings (matching original)

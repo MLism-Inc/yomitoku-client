@@ -46,10 +46,10 @@ class Paragraph(BaseModel):
     """Paragraph data model"""
 
     box: list[int] = Field(description="Bounding box coordinates [x1, y1, x2, y2]")
-    contents: str = Field(description="Text content")
-    direction: str = Field(default="horizontal", description="Text direction")
+    contents: str | None = Field(default=None, description="Text content")
+    direction: str | None = Field(default="horizontal", description="Text direction")
     indent_level: int | None = Field(default=None, description="Indentation level")
-    order: int = Field(description="Reading order")
+    order: int | None = Field(default=None, description="Reading order")
     role: str | None = Field(default=None, description="Paragraph role")
 
 
@@ -57,7 +57,7 @@ class TableCell(BaseModel):
     """Table cell data model"""
 
     box: list[int] = Field(description="Bounding box coordinates")
-    contents: str = Field(description="Cell content")
+    contents: str | None = Field(default=None, description="Cell content")
     col: int = Field(description="Column index")
     row: int = Field(description="Row index")
     col_span: int = Field(description="Column span")
@@ -90,8 +90,8 @@ class Figure(BaseModel):
         description="Table caption",
     )
     decode: str | None = Field(default=None, description="Decoded content")
-    direction: str = Field(default="horizontal", description="Text direction")
-    order: int = Field(description="Reading order")
+    direction: str | None = Field(default="horizontal", description="Text direction")
+    order: int | None = Field(default=None, description="Reading order")
     paragraphs: list[Paragraph] = Field(description="Figure paragraphs")
     role: str | None = Field(default=None, description="Figure role")
 
@@ -112,7 +112,9 @@ class DocumentResult(BaseModel):
     num_page: int = Field(description="Page index in the original document")
     figures: list[Figure] = Field(description="Detected figures")
     paragraphs: list[Paragraph] = Field(description="Detected paragraphs")
-    preprocess: dict[str, Any] = Field(description="Preprocessing information")
+    preprocess: dict[str, Any] | None = Field(
+        default=None, description="Preprocessing information"
+    )
     tables: list[Table] = Field(description="Detected tables")
     words: list[Word] = Field(description="Detected words")
 
@@ -377,7 +379,7 @@ class MultiPageDocumentResult(BaseModel):
             if image_path is not None:
                 corrected_img = correct_rotation_image(
                     images[idx],
-                    angle=self.pages[idx].preprocess.get("angle", 0),
+                    angle=(self.pages[idx].preprocess or {}).get("angle", 0),
                 )
 
             results.append(
@@ -525,7 +527,7 @@ class MultiPageDocumentResult(BaseModel):
             if image_path is not None:
                 corrected_img = correct_rotation_image(
                     images[idx],
-                    angle=self.pages[idx].preprocess.get("angle", 0),
+                    angle=(self.pages[idx].preprocess or {}).get("angle", 0),
                 )
             else:
                 corrected_img = None
@@ -589,7 +591,7 @@ class MultiPageDocumentResult(BaseModel):
             if image_path is not None:
                 corrected_img = correct_rotation_image(
                     images[idx],
-                    angle=self.pages[idx].preprocess.get("angle", 0),
+                    angle=(self.pages[idx].preprocess or {}).get("angle", 0),
                 )
 
             results.append(
@@ -686,7 +688,7 @@ class MultiPageDocumentResult(BaseModel):
         for index in page_index:
             corrected_img = correct_rotation_image(
                 images[index],
-                angle=self.pages[index].preprocess.get("angle", 0),
+                angle=(self.pages[index].preprocess or {}).get("angle", 0),
             )
 
             visualize_img = self.pages[index].visualize(
