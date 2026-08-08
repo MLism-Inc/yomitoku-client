@@ -25,13 +25,19 @@ def mock_sagemaker_manager(monkeypatch):
             record["init_args"] = {"region": region, "profile": profile}
 
         def deploy(
-            self, endpoint_name, instance_type, model_package_arn, instance_count
+            self,
+            endpoint_name,
+            instance_type,
+            model_package_arn,
+            instance_count,
+            model_lite=False,
         ):
             record["deploy_args"] = {
                 "endpoint_name": endpoint_name,
                 "instance_type": instance_type,
                 "model_package_arn": model_package_arn,
                 "instance_count": instance_count,
+                "model_lite": model_lite,
             }
             return True  # 成功をシミュレート
 
@@ -120,6 +126,29 @@ def test_deploy_with_cli_option(runner: CliRunner, mock_sagemaker_manager):
     assert deploy_args["instance_type"] == instance_type
     assert deploy_args["endpoint_name"] == endpoint_name
     assert deploy_args["instance_count"] == 1  # Default value
+    assert deploy_args["model_lite"] is False  # Default value
+
+
+def test_deploy_with_lite_flag(runner: CliRunner, mock_sagemaker_manager):
+    """
+    deploy コマンドで --lite フラグが渡された場合に、model_lite=True で呼ばれることをテストする
+    """
+    cli_arn = "arn:aws:sagemaker:us-west-2:111122223333:model-package/cli-model"
+
+    result = runner.invoke(
+        sagemaker,
+        [
+            "deploy",
+            "--endpoint-name",
+            "test-endpoint",
+            "--model-package-arn",
+            cli_arn,
+            "--lite",
+        ],
+        catch_exceptions=False,
+    )
+    assert result.exit_code == 0
+    assert mock_sagemaker_manager["deploy_args"]["model_lite"] is True
 
 
 def test_deploy_with_config_file(

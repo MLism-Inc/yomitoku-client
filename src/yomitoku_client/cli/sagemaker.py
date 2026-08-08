@@ -93,7 +93,8 @@ def configure(profile, region):
     help="Model Package ARN to deploy. If not provided, it will be loaded from the configuration file.",
 )
 @click.option(
-    "--model-lite/--no-model-lite",
+    "--lite",
+    is_flag=True,
     default=False,
     show_default=True,
     help=(
@@ -109,7 +110,7 @@ def deploy(
     instance_type,
     instance_count,
     model_package_arn,
-    model_lite,
+    lite,
     profile,
     region,
 ):
@@ -138,7 +139,7 @@ def deploy(
         instance_type=instance_type,
         model_package_arn=deploy_model_package_arn,
         instance_count=instance_count,
-        model_lite=model_lite,
+        model_lite=lite,
     )
     if not success:
         sys.exit(1)
