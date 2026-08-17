@@ -84,6 +84,12 @@ Successfully configured Model Package ARN!
 yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-type ml.g4dn.xlarge
 ```
 
+GPUインスタンスで軽量版（liteモデル）を利用する場合は、`--lite`を指定します。
+
+```bash
+yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-type ml.g6.xlarge --lite
+```
+
 
 主要なオプション
 
@@ -93,7 +99,7 @@ yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-t
 | `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
 | `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
 | `--instance-count` | `1` | デプロイするインスタンス数。 |
-| `--lite` | `False`` | GPUインスタンスでliteモデルを利用する場合に指定します。コンテナ環境変数`YOMITOKU_MODEL_LITE`を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。 |
+| `--lite` | `False` | GPUインスタンスで軽量版（liteモデル）を利用する場合に指定します。コンテナ環境変数`YOMITOKU_MODEL_LITE`を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。通常版との精度・処理性能の比較は[技術記事](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace)を参照してください。 |
 
 
 !!! warning
@@ -174,7 +180,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure9](images/marketplace-sagemaker-configure9.png)
 アクションの欄にある「編集」をクリックします。
 ![marketplace sagemaker configure9-2](images/marketplace-sagemaker-configure9-2.png)
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。`v1.1.0`よりCPUインスタンスによる推論もサポートされており、`ml.c7i.xlarge`, `ml.c7i.2xlarge`を利用することでインスタンス利用量をさらに抑えることができます。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。`v1.1.0`よりCPUインスタンスによる推論もサポートされており、`ml.c7i.xlarge`, `ml.c7i.2xlarge`を利用することでインスタンス利用量をさらに抑えることができます。GPUインスタンスで軽量版（liteモデル）を利用する場合は、モデルの設定でコンテナ環境変数`YOMITOKU_MODEL_LITE`に`true`を設定します。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 ![marketplace sagemaker configure9-3](images/marketplace-sagemaker-configure9-3.png)
 1. 右下の「保存」をクリックしてバリアントの設定を保存します。
 1. シャドウバリアントの設定はここでは利用しません。
