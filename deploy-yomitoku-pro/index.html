@@ -1232,6 +1232,9 @@
 </ol>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge
 </span></code></pre></div>
+<p>GPUインスタンスで軽量版（liteモデル）を利用する場合は、<code>--lite</code>を指定します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span>--instance-type<span class="w"> </span>ml.g6.xlarge<span class="w"> </span>--lite
+</span></code></pre></div>
 <p>主要なオプション</p>
 <table>
 <thead>
@@ -1259,8 +1262,8 @@
 </tr>
 <tr>
 <td><code>--lite</code></td>
-<td><code>False`` | GPUインスタンスでliteモデルを利用する場合に指定します。コンテナ環境変数</code>YOMITOKU_MODEL_LITE`を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。</td>
-<td></td>
+<td><code>False</code></td>
+<td>GPUインスタンスで軽量版（liteモデル）を利用する場合に指定します。コンテナ環境変数<code>YOMITOKU_MODEL_LITE</code>を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。通常版との精度・処理性能の比較は<a href="https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace">技術記事</a>を参照してください。</td>
 </tr>
 </tbody>
 </table>
@@ -1274,13 +1277,13 @@
 <li>
 <p>スタック一覧の表示</p>
 <p>作成済みの管理スタックとその状態を一覧表示します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
 </span></code></pre></div>
 </li>
 <li>
 <p>詳細情報の表示</p>
 <p>特定のエンドポイント（スタック）の詳細な情報を取得します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
 </span></code></pre></div>
 <p>ステータスが <code>CREATE_COMPLETE</code> になっていれば、エンドポイントは正常に起動し、推論が可能な状態です。</p>
 </li>
@@ -1290,7 +1293,7 @@
 <ol>
 <li>
 <p>以下のコマンドを実行します。
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
 </span></code></pre></div></p>
 </li>
 <li>
@@ -1334,7 +1337,7 @@
 <img alt="marketplace sagemaker configure9" src="../images/marketplace-sagemaker-configure9.png" />
 アクションの欄にある「編集」をクリックします。
 <img alt="marketplace sagemaker configure9-2" src="../images/marketplace-sagemaker-configure9-2.png" />
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>v1.1.0</code>よりCPUインスタンスによる推論もサポートされており、<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用することでインスタンス利用量をさらに抑えることができます。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>v1.1.0</code>よりCPUインスタンスによる推論もサポートされており、<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用することでインスタンス利用量をさらに抑えることができます。GPUインスタンスで軽量版（liteモデル）を利用する場合は、モデルの設定でコンテナ環境変数<code>YOMITOKU_MODEL_LITE</code>に<code>true</code>を設定します。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 <img alt="marketplace sagemaker configure9-3" src="../images/marketplace-sagemaker-configure9-3.png" /></li>
 <li>右下の「保存」をクリックしてバリアントの設定を保存します。</li>
 <li>シャドウバリアントの設定はここでは利用しません。</li>
