@@ -124,23 +124,25 @@ uv add yomitoku-client
 
 ## Throughput
 
-The following table shows **theoretical throughput reference values** based on internal testing conducted by **MLism (Local → AWS)**.
-Each value represents performance measured using the **batch processing feature of YomiToku-Client**, analyzing **randomly sampled single-sided A4 documents**.
+The following values are **measured results** from internal testing conducted by **MLism**. The same set of 509 pages (business forms, handwritten notes, newspapers, and more) was processed on each configuration in the Tokyo region (`ap-northeast-1`) using asynchronous inference with a concurrency of 4.
 
-| Instance Type    | SageMaker License Fee | Theoretical Throughput (pages/hour) | **Theoretical Processing Time per Page (seconds)** | Estimated Cost per Page  | Notes                                     |
-| ---------------- | ----------------------------- | ----------------------------------- | -------------------------------------------------- | ------------------------ | ----------------------------------------- |
-| **ml.g5.xlarge** | $10 / hour                    | Approx. **6,000 pages / hour**      | Approx. **0.60 s / page**                          | Approx. **¥0.29 / page** | High-speed GPU-optimized configuration    |
-| **ml.g6.xlarge** | $10 / hour                    | Approx. **4,500 pages / hour**      | Approx. **0.80 s / page**                          | Approx. **¥0.40 / page** | Balanced stability and throughput         |
-| **ml.g4.xlarge** | $10 / hour                    | Approx. **3,000 pages / hour**      | Approx. **1.20 s / page**                          | Approx. **¥0.55 / page** | Cost-efficient standard GPU configuration |
+| Instance Type      | Model    | Measured Throughput (pages/hour) | Estimated Cost per Page (incl. license) |
+| ------------------ | -------- | -------------------------------: | ---------------------------------------: |
+| **ml.g4dn.xlarge** | Standard | 1,512                            | Approx. ¥1.16                             |
+| **ml.g4dn.xlarge** | Lite     | 2,952                            | Approx. ¥0.60                             |
+| **ml.g5.xlarge**   | Standard | 3,276                            | Approx. ¥0.59                             |
+| **ml.g5.xlarge**   | Lite     | 4,356                            | Approx. ¥0.44                             |
+| **ml.g6.xlarge**   | Standard | 2,376                            | Approx. ¥0.78                             |
+| **ml.g6.xlarge**   | Lite     | **4,788**                        | **Approx. ¥0.39**                         |
+| **ml.c7i.2xlarge** | Lite     | 900                              | Approx. ¥1.87                             |
 
 > **Notes**
 >
-> * Exchange rate: **1 USD ≒ 153.2 JPY (as of November 2025)**
-> * Instance charges are billed separately.
-> * Actual performance may vary depending on network latency and throughput.
-> * Model used: **YomiToku-Pro – Document Analyzer v1.0.3**
-> * Theoretical values exclude I/O wait times and initialization overhead (effective throughput is typically **60–80%** of theoretical values).
-> * Processing time may vary depending on document complexity, text density, and layout structure.
+> * On GPU instances, the lite model can be selected with the `--lite` option of `yomitoku-client sagemaker deploy`. CPU instances (c7i) always run the lite model.
+> * Costs are rough estimates that include the SageMaker software fee ($10 / hour, converted at 1 USD ≒ 160 JPY) and the instance fee (Tokyo region, at the time of measurement), assuming the endpoint keeps processing at the listed throughput for a full hour. Network, storage, and other charges are not included.
+> * Performance depends heavily on the distribution of your documents (text volume, image resolution, and so on). We recommend validating with your own documents.
+> * For measurement details and an accuracy/latency comparison between the standard and lite models, see the [tech blog article](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace) (Japanese).
+> * Some instance types are limited by default AWS quotas. See the [official documentation](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html) to request a quota increase.
 
 If you plan to use the SageMaker endpoint for real-time processing or long-term / continuous operation,
 discounted pricing is available through private offers.
