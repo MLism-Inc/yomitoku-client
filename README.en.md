@@ -138,7 +138,7 @@ The following values are **measured results** from internal testing conducted by
 
 > **Notes**
 >
-> * On GPU instances, the lite model can be selected with the `--lite` option of `yomitoku-client sagemaker deploy`. CPU instances (c7i) always run the lite model.
+> * The lite model is offered as a separate product on AWS Marketplace and can be selected with the `--product document-analyzer-lite` option of `yomitoku-client sagemaker deploy`. Note that CPU instances (c7i) always run the lite model, even with the standard product.
 > * Costs are rough estimates that include the SageMaker software fee ($10 / hour, converted at 1 USD ≒ 160 JPY) and the instance fee (Tokyo region, at the time of measurement), assuming the endpoint keeps processing at the listed throughput for a full hour. Network, storage, and other charges are not included.
 > * Performance depends heavily on the distribution of your documents (text volume, image resolution, and so on). We recommend validating with your own documents.
 > * For measurement details and an accuracy/latency comparison between the standard and lite models, see the [tech blog article](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace) (Japanese).
