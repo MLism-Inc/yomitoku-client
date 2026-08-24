@@ -586,6 +586,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロダクトの選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#step-1-arn" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -713,7 +724,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         付録:各種設定画面の開き方
@@ -725,7 +736,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         ロール
@@ -923,6 +934,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロダクトの選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#step-1-arn" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1050,7 +1072,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         付録:各種設定画面の開き方
@@ -1062,7 +1084,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         ロール
@@ -1195,20 +1217,52 @@
 </tr>
 </tbody>
 </table>
+<h3 id="_3">プロダクトの選択<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>YomiToku-ProはAWS Marketplace上で、通常版と軽量版（liteモデル）が別々のプロダクトとして提供されています。
+<code>configure</code>と<code>deploy</code>では、<code>--product</code>オプションで対象のプロダクトを指定します。</p>
+<table>
+<thead>
+<tr>
+<th><code>--product</code></th>
+<th>プロダクト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>document-analyzer</code>（デフォルト）</td>
+<td>YomiToku-Pro - Document Analyzer（通常版）</td>
+</tr>
+<tr>
+<td><code>document-analyzer-lite</code></td>
+<td>YomiToku-Pro - Document Analyzer Lite（軽量版）</td>
+</tr>
+</tbody>
+</table>
+<p>軽量版はスループット向上・コスト削減が見込めます。通常版との精度・処理性能の比較は<a href="https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace">技術記事</a>を参照してください。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>モデルパッケージARNはプロダクトごとに設定を保持します。通常版と軽量版を併用する場合は、それぞれ<code>configure</code>を実行してください。
+また、両方のエンドポイントを同時に稼働させる場合は、<code>--endpoint-name</code>で別々の名前を指定してデプロイしてください（それぞれ課金が発生します）。</p>
+</div>
 <h3 id="step-1-arn">Step 1: 初期設定（ARNの取得と登録）<a class="headerlink" href="#step-1-arn" title="Permanent link">&para;</a></h3>
 <p>最初に、AWS Marketplaceで購読しているYomiToku-Proの「モデルパッケージARN」を取得してクライアントに設定する必要があります。</p>
 <ol>
-<li>ターミナルで以下のコマンドを実行します。</li>
+<li>ターミナルで以下のコマンドを実行します。利用するプロダクトを<code>--product</code>で指定します。</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 通常版</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 軽量版</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span>--product<span class="w"> </span>document-analyzer-lite
 </span></code></pre></div>
 <ol>
 <li>実行すると、ブラウザで開くべきURLが表示されます。</li>
 </ol>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>--------------------------------------------------------------------------------
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/prod-o37wuz7bn7kvc
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>--------------------------------------------------------------------------------
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Product: YomiToku-Pro - Document Analyzer (document-analyzer)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>--------------------------------------------------------------------------------
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/prod-o37wuz7bn7kvc
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>--------------------------------------------------------------------------------
 </span></code></pre></div>
 <ol>
 <li>
@@ -1217,7 +1271,7 @@
 <li>
 <p>ターミナルのプロンプトにコピーしたARNを貼り付けてエンターキーを押します。
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Please enter the Model Package ARN: arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/yomitoku-pro-xxx
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Successfully configured Model Package ARN!
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Successfully configured Model Package ARN for 'document-analyzer'!
 </span></code></pre></div></p>
 </li>
 </ol>
@@ -1232,8 +1286,8 @@
 </ol>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge
 </span></code></pre></div>
-<p>GPUインスタンスで軽量版（liteモデル）を利用する場合は、<code>--lite</code>を指定します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span>--instance-type<span class="w"> </span>ml.g6.xlarge<span class="w"> </span>--lite
+<p>軽量版（liteモデル）を利用する場合は、<code>--product document-analyzer-lite</code>を指定します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--product<span class="w"> </span>document-analyzer-lite<span class="w"> </span>--instance-type<span class="w"> </span>ml.g6.xlarge
 </span></code></pre></div>
 <p>主要なオプション</p>
 <table>
@@ -1245,6 +1299,11 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>--product</code></td>
+<td><code>document-analyzer</code></td>
+<td>デプロイするプロダクト。<code>document-analyzer</code>（通常版）, <code>document-analyzer-lite</code>（軽量版）が選択可能。</td>
+</tr>
 <tr>
 <td><code>--endpoint-name</code></td>
 <td><code>yomitoku-sagemaker</code></td>
@@ -1263,7 +1322,7 @@
 <tr>
 <td><code>--lite</code></td>
 <td><code>False</code></td>
-<td>GPUインスタンスで軽量版（liteモデル）を利用する場合に指定します。コンテナ環境変数<code>YOMITOKU_MODEL_LITE</code>を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。通常版との精度・処理性能の比較は<a href="https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace">技術記事</a>を参照してください。</td>
+<td><strong>非推奨。</strong> <code>--product document-analyzer-lite</code>と同じ意味として扱われます。軽量版はAWS Marketplace上の別プロダクトとして提供しているため、<code>--product</code>での指定に移行してください。</td>
 </tr>
 </tbody>
 </table>
@@ -1337,7 +1396,7 @@
 <img alt="marketplace sagemaker configure9" src="../images/marketplace-sagemaker-configure9.png" />
 アクションの欄にある「編集」をクリックします。
 <img alt="marketplace sagemaker configure9-2" src="../images/marketplace-sagemaker-configure9-2.png" />
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>v1.1.0</code>よりCPUインスタンスによる推論もサポートされており、<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用することでインスタンス利用量をさらに抑えることができます。GPUインスタンスで軽量版（liteモデル）を利用する場合は、モデルの設定でコンテナ環境変数<code>YOMITOKU_MODEL_LITE</code>に<code>true</code>を設定します。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>v1.1.0</code>よりCPUインスタンスによる推論もサポートされており、<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用することでインスタンス利用量をさらに抑えることができます。軽量版（liteモデル）を利用する場合は、軽量版のプロダクト（YomiToku-Pro - Document Analyzer Lite）をサブスクライブして同様の手順でデプロイします。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 <img alt="marketplace sagemaker configure9-3" src="../images/marketplace-sagemaker-configure9-3.png" /></li>
 <li>右下の「保存」をクリックしてバリアントの設定を保存します。</li>
 <li>シャドウバリアントの設定はここでは利用しません。</li>
@@ -1422,8 +1481,8 @@
 <img alt="marketplace-cloudformation-undeploy" src="../images/marketplace-cloudformation-undeploy.png" /></li>
 <li>上部にある「削除」を選択します。</li>
 </ol>
-<h2 id="_3">付録:各種設定画面の開き方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="_4">ロール<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h2 id="_4">付録:各種設定画面の開き方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="_5">ロール<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>ロールの設定画面はIAMから開くことができます。ロールの削除をしたい場合などはそちらをご利用ください。</p>
 <p>次の手順でIAMの設定画面を開くことができます。</p>
 <ol>
