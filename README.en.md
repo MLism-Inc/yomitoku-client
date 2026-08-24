@@ -147,7 +147,7 @@ The following values are **measured results** from internal testing conducted by
 
 > **Notes**
 >
-> * The Standard and Lite editions are separate AWS Marketplace products. To use the Lite edition, subscribe to the Lite product and configure its Model Package ARN.
+> * The Standard and Lite editions are separate AWS Marketplace products. To use the Lite edition, subscribe to the Lite product and configure its Model Package ARN with `yomitoku-client sagemaker configure --product document-analyzer-lite`.
 > * Costs are rough estimates that include the SageMaker software fee ($10 / hour, converted at 1 USD ≒ 160 JPY) and the instance fee (Tokyo region, at the time of measurement), assuming the endpoint keeps processing at the listed throughput for a full hour. Network, storage, and other charges are not included.
 > * Performance depends heavily on the distribution of your documents (text volume, image resolution, and so on). We recommend validating with your own documents.
 > * For measurement details and an accuracy/latency comparison between the standard and lite models, see the [tech blog article](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace) (Japanese).

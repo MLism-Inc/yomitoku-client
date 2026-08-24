@@ -48,21 +48,29 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 !!! important "通常版とLite版は別のMarketplace製品です"
     YomiToku-Pro通常版とYomiToku-Pro Lite版はMarketplaceのサブスクリプションが分かれており、モデルパッケージARNも異なります。使用する製品をそれぞれサブスクライブし、通常版を使う場合は通常版のARN、Lite版を使う場合はLite版のARNを取得してください。
 
+| `--product` | 対象製品 |
+| --- | --- |
+| `document-analyzer`（デフォルト） | YomiToku-Pro - Document Analyzer（通常版） |
+| `document-analyzer-lite` | YomiToku-Pro Lite - Document Analyzer（Lite版） |
+
 1. ターミナルで以下のコマンドを実行します。
 
 ```bash
+# 通常版
 yomitoku-client sagemaker configure
+
+# Lite版
+yomitoku-client sagemaker configure --product document-analyzer-lite
 ```
 
-2. 実行すると、SageMakerのモデルパッケージ一覧を開くURLが表示されます。
+2. 実行すると、選択した製品のモデルパッケージ一覧を開くURLが表示されます。
 
 ```text
-Please sign in to the AWS account subscribed to YomiToku-Pro and open the following SageMaker URL.
+Product: YomiToku-Pro - Document Analyzer (document-analyzer)
+Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
 --------------------------------------------------------------------------------
-https://console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages
+https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/PRODUCT_ID
 --------------------------------------------------------------------------------
-Open AWS Marketplace resources > Model packages > AWS Marketplace subscriptions, then select YomiToku-Pro and its version.
-If no packages are displayed, confirm the AWS account and region (ap-northeast-1).
 ```
 
 3. YomiToku-Proを購読したAWSアカウントでログインし、左側の **AWS Marketplace resources > モデルパッケージ** を開きます。**AWS Marketplaceサブスクリプション**から使用する製品（通常版またはLite版）とバージョンを選び、**Model Package ARN**（`arn:aws:sagemaker:...` で始まる文字列）をコピーします。Lite版を利用する場合は、必ずLite版製品のサブスクリプションを開いてください。
@@ -70,12 +78,12 @@ If no packages are displayed, confirm the AWS account and region (ap-northeast-1
 4. ターミナルのプロンプトにコピーしたARNを貼り付けてエンターキーを押します。
 ```text
 Please enter the Model Package ARN: arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/yomitoku-pro-xxx
-Successfully configured Model Package ARN!
+Successfully configured Model Package ARN for 'document-analyzer'!
 
 ```
 
 !!! note
-    `configure`が保存するARNは1件です。別のARNで再実行すると保存値が上書きされます。通常版とLite版を切り替える場合は、使用する製品のARNで`configure`を再実行してからデプロイしてください。ARNは製品、リージョン、バージョンごとに異なります。
+    `configure`は製品ごとにARNを保存します。通常版とLite版を併用する場合は、それぞれの`--product`を指定して設定してください。ARNは製品、リージョン、バージョンごとに異なります。
 
 #### URLからModel Package ARNを取得できない場合 {#arn-fallback}
 
@@ -115,10 +123,12 @@ Lite版をデプロイする場合は、先に`configure`でLite版製品のARN�
 
 ```bash
 yomitoku-client sagemaker configure \
+  --product document-analyzer-lite \
   --profile YOUR_AWS_PROFILE \
   --region ap-northeast-1
 
 yomitoku-client sagemaker deploy \
+  --product document-analyzer-lite \
   --endpoint-name yomitoku-sagemaker-lite \
   --instance-type ml.g4dn.xlarge \
   --profile YOUR_AWS_PROFILE \
@@ -131,6 +141,7 @@ yomitoku-client sagemaker deploy \
 
 | オプション | デフォルト値 | 説明 |
 | --- | --- | --- |
+| `--product` | `document-analyzer` | デプロイする製品。Lite版では`document-analyzer-lite`を指定します。 |
 | `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
 | `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
 | `--instance-count` | `1` | デプロイするインスタンス数。 |

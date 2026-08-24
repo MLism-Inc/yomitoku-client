@@ -1,4 +1,5 @@
 import sys
+from dataclasses import dataclass
 
 import boto3
 import click
@@ -7,6 +8,52 @@ from yomitoku_client.sagemaker import SagemakerManager
 from yomitoku_client.utils import load_config, save_config
 
 DEFAULT_REGION = "ap-northeast-1"
+
+
+@dataclass(frozen=True)
+class SagemakerProduct:
+    """AWS Marketplaceで提供しているプロダクトごとに異なる情報"""
+
+    display_name: str
+    """ユーザーに表示するプロダクト名"""
+
+    marketplace_product_id: str
+    """サブスクリプション画面のURL生成に利用するMarketplaceのプロダクトID"""
+
+
+DEFAULT_PRODUCT = "document-analyzer"
+LITE_PRODUCT = "document-analyzer-lite"
+
+# プロダクトを追加する場合はこの辞書にエントリを追加する
+PRODUCTS: dict[str, SagemakerProduct] = {
+    "document-analyzer": SagemakerProduct(
+        display_name="YomiToku-Pro - Document Analyzer",
+        marketplace_product_id="prod-o37wuz7bn7kvc",
+    ),
+    LITE_PRODUCT: SagemakerProduct(
+        display_name="YomiToku-Pro Lite - Document Analyzer",
+        marketplace_product_id="prod-n6jdf73xzm24m",
+    ),
+}
+
+INSTANCE_TYPES = [
+    "ml.g4dn.xlarge",
+    "ml.g5.xlarge",
+    "ml.g6.xlarge",
+    "ml.c7i.xlarge",
+    "ml.c7i.2xlarge",
+]
+
+
+def product_option(func):
+    """--product オプションを付与するデコレータ"""
+    return click.option(
+        "--product",
+        type=click.Choice(list(PRODUCTS)),
+        default=DEFAULT_PRODUCT,
+        show_default=True,
+        help="AWS Marketplace product to operate on.",
+    )(func)
 
 
 def _validate_model_package_arn(arn: str):
@@ -19,15 +66,46 @@ def _validate_model_package_arn(arn: str):
         sys.exit(1)
 
 
+def _load_model_package_arn(product: str) -> str | None:
+    """設定ファイルからプロダクトのModel Package ARNを読み込む"""
+    sagemaker_config = load_config().get("sagemaker", {})
+    model_package_arn = (
+        sagemaker_config.get("products", {}).get(product, {}).get("model_package_arn")
+    )
+    if model_package_arn:
+        return model_package_arn
+
+    if product == DEFAULT_PRODUCT:
+        # プロダクト別のキーを導入する前のバージョンで保存された設定との互換
+        return sagemaker_config.get("model_package_arn")
+
+    return None
+
+
+def _save_model_package_arn(product: str, model_package_arn: str) -> None:
+    """設定ファイルにプロダクトのModel Package ARNを保存する"""
+    config = load_config()
+    sagemaker_config = config.setdefault("sagemaker", {})
+    products = sagemaker_config.setdefault("products", {})
+    products.setdefault(product, {})["model_package_arn"] = model_package_arn
+
+    if product == DEFAULT_PRODUCT:
+        # プロダクト別のキーへ移行するため、旧形式のキーは残さない
+        sagemaker_config.pop("model_package_arn", None)
+
+    save_config(config)
+
+
 @click.group("sagemaker")
 def sagemaker():
     """Manage SageMaker endpoint deployment with CloudFormation."""
 
 
 @sagemaker.command("configure")
+@product_option
 @click.option("--profile", default=None, help="AWS profile name.")
 @click.option("--region", default=None, help="AWS region.")
-def configure(profile, region):
+def configure(product, profile, region):
     """
     Configure the Model Package ARN for SageMaker deployment.
     """
@@ -35,39 +113,31 @@ def configure(profile, region):
         boto3.Session(profile_name=profile, region_name=region).region_name
         or DEFAULT_REGION
     )
-    destination_url = (
-        f"https://console.aws.amazon.com/sagemaker/home?region={region}#/model-packages"
+    product_id = PRODUCTS[product].marketplace_product_id
+    destination_url = f"https://{region}.console.aws.amazon.com/sagemaker/home?region={region}#/model-packages/my-subscriptions/{product_id}"
+    click.echo(
+        f"Product: {PRODUCTS[product].display_name} ({product})",
     )
     click.echo(
-        "Please sign in to the AWS account subscribed to YomiToku-Pro and open "
-        "the following SageMaker URL.",
+        "Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.",
     )
 
     click.echo("-" * 80)
     click.echo(destination_url)
     click.echo("-" * 80)
-    click.echo(
-        "Open AWS Marketplace resources > Model packages > AWS Marketplace "
-        "subscriptions, then select YomiToku-Pro and its version."
-    )
-    click.echo(
-        f"If no packages are displayed, confirm the AWS account and region ({region})."
-    )
 
     model_package_arn = click.prompt("Please enter the Model Package ARN")
     _validate_model_package_arn(model_package_arn)
 
-    config = load_config()
-    if "sagemaker" not in config:
-        config["sagemaker"] = {}
-    config["sagemaker"]["model_package_arn"] = model_package_arn
+    _save_model_package_arn(product, model_package_arn)
 
-    save_config(config)
-
-    click.secho("Successfully configured Model Package ARN!", fg="green")
+    click.secho(
+        f"Successfully configured Model Package ARN for '{product}'!", fg="green"
+    )
 
 
 @sagemaker.command("deploy")
+@product_option
 @click.option(
     "--endpoint-name",
     default="yomitoku-sagemaker",
@@ -76,15 +146,7 @@ def configure(profile, region):
 )
 @click.option(
     "--instance-type",
-    type=click.Choice(
-        [
-            "ml.g4dn.xlarge",
-            "ml.g5.xlarge",
-            "ml.g6.xlarge",
-            "ml.c7i.xlarge",
-            "ml.c7i.2xlarge",
-        ]
-    ),
+    type=click.Choice(INSTANCE_TYPES),
     default="ml.g4dn.xlarge",
     show_default=True,
     help="Instance type for the endpoint.",
@@ -104,6 +166,7 @@ def configure(profile, region):
 @click.option("--profile", default=None, help="AWS profile name.")
 @click.option("--region", default=None, help="AWS region.")
 def deploy(
+    product,
     endpoint_name,
     instance_type,
     instance_count,
@@ -114,16 +177,13 @@ def deploy(
     """
     Create a new stack or update an existing one.
     """
-    if model_package_arn:
-        deploy_model_package_arn = model_package_arn
-    else:
-        config = load_config()
-        deploy_model_package_arn = config.get("sagemaker", {}).get("model_package_arn")
+    deploy_model_package_arn = model_package_arn or _load_model_package_arn(product)
 
     if not deploy_model_package_arn:
         click.secho(
-            "Error: Model Package ARN is not specified. "
-            "Please provide it via --model-package-arn option or configure it using 'yomitoku-client sagemaker configure'.",
+            f"Error: Model Package ARN for '{product}' is not specified. "
+            "Please provide it via --model-package-arn option or configure it using "
+            f"'yomitoku-client sagemaker configure --product {product}'.",
             fg="red",
         )
         sys.exit(1)
