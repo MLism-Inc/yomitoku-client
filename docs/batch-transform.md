@@ -46,13 +46,21 @@ ARNは次のような形式です。
 arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/example
 ```
 
-`yomitoku-client`をインストールしている場合は、次のコマンドでSageMakerのモデルパッケージ一覧のURLを表示できます。
+`yomitoku-client`をインストールしている場合は、使用する製品を`--product`で指定すると、その製品のモデルパッケージ一覧のURLを表示できます。
 
 ```bash
-yomitoku-client sagemaker configure --region ap-northeast-1
+# 通常版
+yomitoku-client sagemaker configure \
+  --product document-analyzer \
+  --region ap-northeast-1
+
+# Lite版
+yomitoku-client sagemaker configure \
+  --product document-analyzer-lite \
+  --region ap-northeast-1
 ```
 
-表示されたURLを、YomiToku-Proを購読したAWSアカウントで開きます。**AWS Marketplace resources > モデルパッケージ > AWS Marketplaceサブスクリプション**からYomiToku-Proと使用するバージョンを選び、Model Package ARNをコピーしてターミナルへ貼り付けます。入力したARNは`~/.yomitoku/config.json`にも保存されます。
+表示されたURLを、指定した製品をサブスクライブしたAWSアカウントで開きます。使用するバージョンを選び、Model Package ARNをコピーしてターミナルへ貼り付けます。入力したARNは`~/.yomitoku/config.json`へ製品ごとに保存されます。
 
 一覧が空の場合は、AWSアカウントとリージョンが購読時のものか確認してください。URLから確認できない場合は、Marketplaceのダッシュボードから対象製品を開いてSageMakerモデルを作成し、SageMaker AIコンソールの **Deployments & inference > モデル** にあるモデル詳細画面から **Model package name**を取得します。詳しくは[URLからModel Package ARNを取得できない場合](deploy-yomitoku-pro.md#arn-fallback)を参照してください。
 
