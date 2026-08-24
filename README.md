@@ -101,46 +101,6 @@ yomitoku-client convert document.pdf.out \
 
 オプションの詳細は`--help`を参照してください。
 
-## Batch Transform出力の変換
-
-SageMaker Batch Transformの解析結果は、入力名に`.out`が付いたJSONとしてS3へ保存されます。ダウンロードした`.out`は、SageMakerエンドポイントやAWS認証を使用せずに変換できます。
-
-```bash
-yomitoku-client convert document.pdf.out \
-  --format md,csv,html \
-  --output-dir ./converted
-```
-
-上記の例では次のファイルを生成します。
-
-```text
-converted/document.md
-converted/document.csv
-converted/document.html
-```
-
-複数の`.out`を一括変換する場合は、入力ディレクトリを指定します。
-
-```bash
-yomitoku-client convert ./batch-output \
-  --format md,csv \
-  --output-dir ./converted
-```
-
-図の切り出し画像をMarkdownまたはHTMLへ含める場合は、元の画像またはPDFを`--src`で指定します。
-
-```bash
-yomitoku-client convert document.pdf.out \
-  --format md,html \
-  --src document.pdf \
-  --output-dir ./converted
-```
-
-`--src`を省略した場合は、段落・見出し・表を変換し、図の画像は出力しません。既存ファイルはデフォルトで上書きされないため、置き換える場合は`--overwrite`を指定してください。
-
-Batch Transformジョブの作成から`.out`の取得までは[Batch Transformを実行する](https://mlism-inc.github.io/yomitoku-client/batch-transform/)、変換オプションの詳細は[CLIマニュアル](https://mlism-inc.github.io/yomitoku-client/cli-usage/#batch-transform)を参照してください。
-
-
 ## クイックスタート(同期版)
 最もシンプルな実行プログラムの例です。PDFを入力し、Markdownとして保存します。
 ```python
