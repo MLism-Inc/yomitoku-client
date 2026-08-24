@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 import boto3
 import click
-from click.core import ParameterSource
 
 from yomitoku_client.sagemaker import SagemakerManager
 from yomitoku_client.utils import load_config, save_config
@@ -32,7 +31,7 @@ PRODUCTS: dict[str, SagemakerProduct] = {
         marketplace_product_id="prod-o37wuz7bn7kvc",
     ),
     LITE_PRODUCT: SagemakerProduct(
-        display_name="YomiToku-Pro - Document Analyzer Lite",
+        display_name="YomiToku-Pro Lite - Document Analyzer",
         marketplace_product_id="prod-n6jdf73xzm24m",
     ),
 }
@@ -65,29 +64,6 @@ def _validate_model_package_arn(arn: str):
             fg="red",
         )
         sys.exit(1)
-
-
-def _resolve_lite_flag(product: str) -> str:
-    """非推奨の --lite を軽量版プロダクトの指定として解釈する"""
-    ctx = click.get_current_context()
-    if (
-        ctx.get_parameter_source("product") != ParameterSource.DEFAULT
-        and product != LITE_PRODUCT
-    ):
-        click.secho(
-            f"Error: --lite conflicts with '--product {product}'. "
-            f"Please use '--product {LITE_PRODUCT}' instead of --lite.",
-            fg="red",
-        )
-        sys.exit(1)
-
-    click.secho(
-        "Warning: --lite is deprecated. The lite model is now provided as a separate "
-        f"AWS Marketplace product, so please use '--product {LITE_PRODUCT}' instead. "
-        f"Deploying '{LITE_PRODUCT}'.",
-        fg="yellow",
-    )
-    return LITE_PRODUCT
 
 
 def _load_model_package_arn(product: str) -> str | None:
@@ -187,12 +163,6 @@ def configure(product, profile, region):
     default=None,
     help="Model Package ARN to deploy. If not provided, it will be loaded from the configuration file.",
 )
-@click.option(
-    "--lite",
-    is_flag=True,
-    default=False,
-    help=f"[Deprecated] Alias for '--product {LITE_PRODUCT}'.",
-)
 @click.option("--profile", default=None, help="AWS profile name.")
 @click.option("--region", default=None, help="AWS region.")
 def deploy(
@@ -201,16 +171,12 @@ def deploy(
     instance_type,
     instance_count,
     model_package_arn,
-    lite,
     profile,
     region,
 ):
     """
     Create a new stack or update an existing one.
     """
-    if lite:
-        product = _resolve_lite_flag(product)
-
     deploy_model_package_arn = model_package_arn or _load_model_package_arn(product)
 
     if not deploy_model_package_arn:

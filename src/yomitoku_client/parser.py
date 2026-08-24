@@ -33,13 +33,16 @@ def parse_pydantic_model(data: dict[str, Any]) -> MultiPageDocumentResult:
             if len(data["result"]) == 0:
                 raise ValidationError("Empty result list")
             # Create pages from all results
-            pages = [
-                DocumentResult(**result_data)
-                for i, result_data in enumerate(data["result"])
-            ]
+            pages = []
+            for i, result_data in enumerate(data["result"]):
+                # Batch Transform output does not include num_page. Infer it from
+                # the response order without mutating the caller's dictionary.
+                page_data = {"num_page": i, **result_data}
+                pages.append(DocumentResult(**page_data))
         else:
             # Single result, create single page
-            pages = [DocumentResult(**data["result"])]
+            page_data = {"num_page": 0, **data["result"]}
+            pages = [DocumentResult(**page_data)]
 
         pages = {page.num_page: page for page in pages}
 

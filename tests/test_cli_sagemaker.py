@@ -250,52 +250,6 @@ def test_deploy_uses_product_specific_config(
     assert deploy_args["endpoint_name"] == "yomitoku-sagemaker"
 
 
-def test_deploy_lite_flag_is_treated_as_lite_product(
-    runner: CliRunner, mock_sagemaker_manager, mock_home_dir: Path
-):
-    """
-    非推奨の --lite が --product document-analyzer-lite として扱われることをテストする
-    """
-    lite_arn = "arn:aws:sagemaker:ap-northeast-1:444455556666:model-package/lite-model"
-
-    config_dir = mock_home_dir / ".yomitoku"
-    config_dir.mkdir()
-    with (config_dir / "config.json").open("w") as f:
-        json.dump(
-            {
-                "sagemaker": {
-                    "products": {
-                        "document-analyzer-lite": {"model_package_arn": lite_arn}
-                    }
-                }
-            },
-            f,
-        )
-
-    result = runner.invoke(sagemaker, ["deploy", "--lite"], catch_exceptions=False)
-
-    assert result.exit_code == 0
-    assert "--lite is deprecated" in result.output
-    assert mock_sagemaker_manager["deploy_args"]["model_package_arn"] == lite_arn
-
-
-def test_deploy_lite_flag_conflicting_with_product_fails(
-    runner: CliRunner,
-    mock_sagemaker_manager,  # noqa: ARG001
-):
-    """
-    --lite と別プロダクトの --product を同時に指定した場合にエラー終了することをテストする
-    """
-    result = runner.invoke(
-        sagemaker,
-        ["deploy", "--product", "document-analyzer", "--lite"],
-        catch_exceptions=False,
-    )
-
-    assert result.exit_code == 1
-    assert "--lite conflicts with" in result.output
-
-
 def test_deploy_legacy_config_is_not_used_for_other_product(
     runner: CliRunner,
     mock_sagemaker_manager,  # noqa: ARG001

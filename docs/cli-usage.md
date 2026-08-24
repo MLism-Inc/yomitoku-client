@@ -189,3 +189,56 @@ yomitoku-client batch --help
 * AWS 認証は環境変数または `--profile` で指定されたプロファイルを使用します。
 
 ---
+
+## Batch Transform出力の変換
+
+保存済みのBatch Transform `.out`を、再推論せずにMarkdown、CSV、HTMLへ変換します。このコマンドはSageMakerエンドポイントやAWS認証を必要としません。
+
+### クイックスタート
+
+```bash
+yomitoku-client convert document.pdf.out --format md,csv,html --output-dir ./converted
+```
+
+出力先には元文書の拡張子と`.out`を除いた名前でファイルが生成されます。
+
+```text
+converted/document.md
+converted/document.csv
+converted/document.html
+```
+
+ディレクトリを指定すると、配下の`.out`を一括変換できます。
+
+```bash
+yomitoku-client convert ./batch-output --format md,csv --output-dir ./converted
+```
+
+### 図の画像を出力する
+
+MarkdownまたはHTMLへ図の切り出し画像を含める場合は、元画像または元PDFを`--src`で指定します。
+
+```bash
+yomitoku-client convert document.pdf.out \
+  --format md,html \
+  --src document.pdf \
+  --output-dir ./converted
+```
+
+`--src`を省略した場合も変換できますが、図の画像は出力されません。段落、見出し、表などJSONだけで復元できる内容が出力されます。
+
+### オプション詳細
+
+| オプション | 説明 |
+| --- | --- |
+| `-f, --format` | 出力形式。`md`, `csv`, `html`をカンマ区切りで指定（デフォルト: `md`） |
+| `-o, --output-dir` | 出力ディレクトリ。省略時は単一ファイルなら入力元、ディレクトリなら`converted`配下 |
+| `--src` | 図の切り出しに使用する元文書、または元文書を保存したディレクトリ |
+| `--split-mode` | `combine`または`separate`（デフォルト: `combine`） |
+| `--pages` | 変換するページ（例: `0,1,3-5`） |
+| `--dpi` | 元PDFを読み込むDPI（デフォルト: `200`） |
+| `--ignore-line-break` | 本文中の改行を除去 |
+| `--overwrite` | 既存の出力ファイルを上書き |
+
+!!! warning "既存ファイルはデフォルトで上書きしません"
+    同名の出力が既に存在する場合はエラーになります。置き換える場合のみ`--overwrite`を指定してください。
