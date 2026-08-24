@@ -606,6 +606,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#batch-transform_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch Transformの特長
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -981,6 +992,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#batch-transform_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch Transformの特長
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1236,6 +1258,13 @@
 <h1 id="batch-transform">Batch Transformを実行する<a class="headerlink" href="#batch-transform" title="Permanent link">&para;</a></h1>
 <p>Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存した文書をまとめて解析できます。ジョブの実行中だけ推論用インスタンスが起動し、解析結果はJSONとしてS3に保存されます。</p>
 <p>このページでは、YomiToku-Proのモデルを使ってBatch Transformを実行し、出力された<code>.out</code>ファイルをダウンロードするまでの手順を説明します。</p>
+<h2 id="batch-transform_1">Batch Transformの特長<a class="headerlink" href="#batch-transform_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ジョブ単位でバッチ処理を開始します。</li>
+<li>バッチ処理中のみ推論用インスタンスが起動します。</li>
+<li>ジョブが完了すると、推論用インスタンスは自動的に停止します。</li>
+</ul>
+<p>処理が必要な時間だけインスタンスを稼働させるため、リアルタイムエンドポイントを常時稼働する構成と比べてコストを最適化できます。夜間バッチ、定期スケジュールによる処理、大量文書の一括処理に適しています。</p>
 <div class="admonition info">
 <p class="admonition-title">Batch Transformの出力</p>
 <p>入力オブジェクトごとに、元の名前へ<code>.out</code>を付けたJSONファイルが作成されます。たとえば<code>document.pdf</code>の出力名は<code>document.pdf.out</code>です。</p>
