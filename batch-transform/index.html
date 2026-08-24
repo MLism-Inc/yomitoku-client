@@ -1,0 +1,1559 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../deploy-yomitoku-pro/">
+      
+      
+        <link rel="next" href="../cli-usage/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Batch Transform - YomiToku-Client</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#batch-transform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="YomiToku-Client" class="md-header__button md-logo" aria-label="YomiToku-Client" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YomiToku-Client
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Batch Transform
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/MLism-Inc/yomitoku-client" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../iam-doc/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Setting-Authentication
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../deploy-yomitoku-pro/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  How To Deploy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Batch Transform
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../cli-usage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../module-usage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Python API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../advanced/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Advanced
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="YomiToku-Client" class="md-nav__button md-logo" aria-label="YomiToku-Client" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YomiToku-Client
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/MLism-Inc/yomitoku-client" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../iam-doc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setting-Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-yomitoku-pro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How To Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch Transform
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch Transform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提条件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sagemaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SageMakerモデルを準備する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SageMakerモデルを準備する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-model-package-arn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Package ARNを取得する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Package ARNを取得する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWSコンソールから取得する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        作成済みモデルから確認する
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batch-lite-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        軽量モードを利用する
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 入力ファイルをS3にアップロードする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-batch-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Batch Transformジョブを作成する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Batch Transformジョブを作成する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWSマネジメントコンソールを使う場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS CLIを使う場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ジョブの状態を確認する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download-batch-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. .outファイルを確認・ダウンロードする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-outmarkdowncsvhtml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. .outをMarkdown、CSV、HTMLへ変換する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unsupported-content-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupported content typeになる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ジョブが入力ファイルを見つけられない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力ファイルが見つからない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ジョブがFailedになる
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連するAWS公式ドキュメント
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../module-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提条件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sagemaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SageMakerモデルを準備する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SageMakerモデルを準備する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-model-package-arn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Package ARNを取得する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Package ARNを取得する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWSコンソールから取得する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        作成済みモデルから確認する
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batch-lite-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        軽量モードを利用する
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 入力ファイルをS3にアップロードする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-batch-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Batch Transformジョブを作成する
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Batch Transformジョブを作成する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aws_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWSマネジメントコンソールを使う場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aws-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS CLIを使う場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ジョブの状態を確認する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download-batch-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. .outファイルを確認・ダウンロードする
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-outmarkdowncsvhtml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. .outをMarkdown、CSV、HTMLへ変換する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unsupported-content-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupported content typeになる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ジョブが入力ファイルを見つけられない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力ファイルが見つからない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ジョブがFailedになる
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#aws_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連するAWS公式ドキュメント
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="batch-transform">Batch Transformを実行する<a class="headerlink" href="#batch-transform" title="Permanent link">&para;</a></h1>
+<p>Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存した文書をまとめて解析できます。ジョブの実行中だけ推論用インスタンスが起動し、解析結果はJSONとしてS3に保存されます。</p>
+<p>このページでは、YomiToku-Proのモデルを使ってBatch Transformを実行し、出力された<code>.out</code>ファイルをダウンロードするまでの手順を説明します。</p>
+<div class="admonition info">
+<p class="admonition-title">Batch Transformの出力</p>
+<p>入力オブジェクトごとに、元の名前へ<code>.out</code>を付けたJSONファイルが作成されます。たとえば<code>document.pdf</code>の出力名は<code>document.pdf.out</code>です。</p>
+</div>
+<h2 id="_1">前提条件<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>以下を準備してください。</p>
+<ul>
+<li>AWS MarketplaceでYomiToku-Proをサブスクライブ済みであること</li>
+<li>サブスクライブしたモデルパッケージから作成したSageMakerモデル（未作成の場合は次の「SageMakerモデルを準備する」を参照）</li>
+<li>入出力に使用するS3バケット</li>
+<li>SageMaker実行ロール</li>
+<li>AWS CLIを使う場合は、AWS CLIの認証とリージョンが設定済みであること</li>
+</ul>
+<p>SageMaker実行ロールには、少なくとも入力先S3オブジェクトの読み取り権限と、出力先S3プレフィックスへの書き込み権限が必要です。S3オブジェクトをAWS KMSで暗号化している場合は、使用するKMSキーの権限も必要です。</p>
+<h2 id="sagemaker">SageMakerモデルを準備する<a class="headerlink" href="#sagemaker" title="Permanent link">&para;</a></h2>
+<p>Batch Transformを実行するには、サブスクライブしたYomiToku-Proのモデルパッケージから作成したSageMakerモデルが必要です。</p>
+<p>モデルをまだ作成していない場合は、<a href="../deploy-yomitoku-pro/#create-sagemaker-model">Step 1: SageMakerモデルを作成する</a>の手順で作成してください。モデルを作成したらこのページへ戻り、「1. 入力ファイルをS3にアップロードする」へ進みます。</p>
+<div class="admonition info">
+<p class="admonition-title">エンドポイントは不要です</p>
+<p>Batch Transformで必要なのはSageMakerモデルです。リアルタイム推論用のエンドポイント設定とエンドポイントを作成する必要はありません。</p>
+</div>
+<h3 id="get-model-package-arn">Model Package ARNを取得する<a class="headerlink" href="#get-model-package-arn" title="Permanent link">&para;</a></h3>
+<p>AWS CLIでSageMakerモデルを作成するには、使用するYomiToku-Pro製品およびバージョンのModel Package ARNが必要です。通常版とLite版は別のMarketplace製品であり、ARNも異なります。通常版では通常版製品、Lite版ではLite版製品をサブスクライブして、それぞれのARNを取得してください。</p>
+<h4 id="aws">AWSコンソールから取得する<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Amazon SageMaker AIコンソールを開きます。</li>
+<li>左側のメニューから <strong>AWS Marketplace resources &gt; モデルパッケージ</strong> を開きます。</li>
+<li><strong>AWS Marketplaceサブスクリプション</strong>から、使用する通常版またはLite版のYomiToku-Pro製品を開きます。Lite版を利用する場合はLite版製品のサブスクリプションを選択します。</li>
+<li>使用するバージョンを選択します。</li>
+<li>詳細画面に表示される <strong>Model Package ARN</strong>をコピーします。</li>
+</ol>
+<p>ARNは次のような形式です。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/example
+</span></code></pre></div>
+<p><code>yomitoku-client</code>をインストールしている場合は、使用する製品を<code>--product</code>で指定すると、その製品のモデルパッケージ一覧のURLを表示できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 通常版</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--product<span class="w"> </span>document-analyzer<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Lite版</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span>--product<span class="w"> </span>document-analyzer-lite<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
+<p>表示されたURLを、指定した製品をサブスクライブしたAWSアカウントで開きます。使用するバージョンを選び、Model Package ARNをコピーしてターミナルへ貼り付けます。入力したARNは<code>~/.yomitoku/config.json</code>へ製品ごとに保存されます。</p>
+<p>一覧が空の場合は、AWSアカウントとリージョンが購読時のものか確認してください。URLから確認できない場合は、Marketplaceのダッシュボードから対象製品を開いてSageMakerモデルを作成し、SageMaker AIコンソールの <strong>Deployments &amp; inference &gt; モデル</strong> にあるモデル詳細画面から <strong>Model package name</strong>を取得します。詳しくは<a href="../deploy-yomitoku-pro/#arn-fallback">URLからModel Package ARNを取得できない場合</a>を参照してください。</p>
+<div class="admonition warning">
+<p class="admonition-title">リージョンとバージョンを確認してください</p>
+<p>Model Package ARNは通常版／Lite版の製品、リージョン、ソフトウェアバージョンごとに異なります。Batch Transformジョブと同じリージョンにある、使用する製品とバージョンのARNをコピーしてください。製品ページのURLや製品ID（<code>prod-...</code>）はModel Package ARNではありません。</p>
+</div>
+<h4 id="_2">作成済みモデルから確認する<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h4>
+<p>既にYomiToku-ProのSageMakerモデルがある場合は、モデルのコンテナ定義からARNを取得できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-model<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--model-name<span class="w"> </span>YOUR_MODEL_NAME<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s1">'PrimaryContainer.ModelPackageName'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--output<span class="w"> </span>text<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
+<h3 id="batch-lite-model">軽量モードを利用する<a class="headerlink" href="#batch-lite-model" title="Permanent link">&para;</a></h3>
+<p>Lite版は通常版とは別のAWS Marketplace製品として提供されます。AWS MarketplaceでLite版製品をサブスクライブし、<strong>AWS Marketplaceサブスクリプション</strong>からLite版のModel Package ARNを取得してください。通常版のARNを指定したまま、環境変数やエンドポイント名でLite版へ切り替えることはできません。</p>
+<p>Lite版モデルをAWS CLIで作成する場合は、Lite版製品のARNを<code>ModelPackageName</code>へ指定します。<code>Environment</code>は指定しません。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>create-model<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--model-name<span class="w"> </span>yomitoku-pro-lite-batch<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--execution-role-arn<span class="w"> </span>arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_SAGEMAKER_ROLE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--primary-container<span class="w"> </span><span class="s1">'{"ModelPackageName":"YOUR_LITE_MODEL_PACKAGE_ARN"}'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
+<h2 id="1-s3">1. 入力ファイルをS3にアップロードする<a class="headerlink" href="#1-s3" title="Permanent link">&para;</a></h2>
+<p>この例では、ローカルの<code>input</code>ディレクトリにあるPDFをS3へアップロードします。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>./input/<span class="w"> </span>s3://YOUR_BUCKET/yomitoku-batch/input/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--recursive<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>--exclude<span class="w"> </span><span class="s2">"*"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>--include<span class="w"> </span><span class="s2">"*.pdf"</span>
+</span></code></pre></div>
+<p>YomiToku-Proが受け付けるContent-Typeは次のとおりです。</p>
+<table>
+<thead>
+<tr>
+<th>入力形式</th>
+<th>Content-Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF</td>
+<td><code>application/pdf</code></td>
+</tr>
+<tr>
+<td>JPEG</td>
+<td><code>image/jpeg</code></td>
+</tr>
+<tr>
+<td>PNG</td>
+<td><code>image/png</code></td>
+</tr>
+<tr>
+<td>TIFF</td>
+<td><code>image/tiff</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">1ジョブには同じ形式のファイルを指定してください</p>
+<p>Batch Transformの<code>ContentType</code>はジョブ全体で1つです。PDFとPNGのようにContent-Typeが異なるファイルは、入力プレフィックスまたはジョブを分けてください。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">入力プレフィックスを空にしないでください</p>
+<p><code>S3DataType=S3Prefix</code>では、指定したプレフィックス以下のオブジェクトが処理対象になります。入力プレフィックスには、処理対象以外のファイルを置かないでください。また、出力プレフィックスは入力プレフィックスの外にしてください。</p>
+</div>
+<h2 id="2-batch-transform">2. Batch Transformジョブを作成する<a class="headerlink" href="#2-batch-transform" title="Permanent link">&para;</a></h2>
+<h3 id="aws_1">AWSマネジメントコンソールを使う場合<a class="headerlink" href="#aws_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>入力ファイルと同じリージョンのAmazon SageMaker AIコンソールを開きます。</li>
+<li>左側のメニューから <strong>Deployments &amp; inference &gt; バッチ変換ジョブ</strong> を開きます。
+<img alt="SageMaker AIのバッチ変換ジョブメニュー" src="../images/sagemaker-batch-transform-menu.png" /></li>
+<li><strong>バッチ変換ジョブを作成</strong> を選択します。</li>
+<li>ジョブ名と、YomiToku-Proのモデル名を指定します。</li>
+<li>インスタンスタイプとインスタンス数を指定します。最初の動作確認では、モデルパッケージが対応しているインスタンスタイプを1台指定してください。</li>
+<li>
+<p>入力データを次のように設定します。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>PDFの場合の設定値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S3データタイプ</td>
+<td><code>S3Prefix</code></td>
+</tr>
+<tr>
+<td>S3の場所</td>
+<td><code>s3://YOUR_BUCKET/yomitoku-batch/input/</code></td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td><code>application/pdf</code></td>
+</tr>
+<tr>
+<td>圧縮タイプ</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td>分割タイプ</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>出力データを次のように設定します。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>設定値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S3出力先</td>
+<td><code>s3://YOUR_BUCKET/yomitoku-batch/output/</code></td>
+</tr>
+<tr>
+<td>Accept</td>
+<td><code>application/json</code></td>
+</tr>
+<tr>
+<td>結合方法</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>ジョブを作成します。</p>
+</li>
+</ol>
+<p><code>SplitType=None</code>を指定すると、S3オブジェクト全体が1回の推論リクエストとしてYomiToku-Proへ渡されます。画像やPDFのバイナリを行単位で分割しないよう、<code>Line</code>は指定しないでください。</p>
+<h3 id="aws-cli">AWS CLIを使う場合<a class="headerlink" href="#aws-cli" title="Permanent link">&para;</a></h3>
+<p>次の値を環境に合わせて置き換えます。</p>
+<ul>
+<li><code>YOUR_MODEL_NAME</code>: 作成済みのSageMakerモデル名</li>
+<li><code>YOUR_BUCKET</code>: 入出力用S3バケット名</li>
+<li><code>ml.g4dn.xlarge</code>: 使用するモデルパッケージが対応しているインスタンスタイプ</li>
+<li><code>ap-northeast-1</code>: 使用するAWSリージョン</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>create-transform-job<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>yomitoku-batch-001<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--model-name<span class="w"> </span>YOUR_MODEL_NAME<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>--transform-input<span class="w"> </span><span class="s1">'DataSource={S3DataSource={S3DataType=S3Prefix,S3Uri=s3://YOUR_BUCKET/yomitoku-batch/input/}},ContentType=application/pdf,CompressionType=None,SplitType=None'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>--transform-output<span class="w"> </span><span class="s1">'S3OutputPath=s3://YOUR_BUCKET/yomitoku-batch/output/,Accept=application/json,AssembleWith=None'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>--transform-resources<span class="w"> </span><span class="s1">'InstanceType=ml.g4dn.xlarge,InstanceCount=1'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
+<p>JPEG、PNG、TIFFを処理するときは、<code>ContentType</code>を入力形式に合わせて変更してください。</p>
+<div class="admonition note">
+<p class="admonition-title">ペイロードサイズ</p>
+<p>SageMaker Batch Transformの<code>MaxPayloadInMB</code>は最大100 MBです。大きなPDFを処理する場合はこの制限と処理時間に注意してください。まずは小さな画像またはPDF 1ファイルで動作を確認することを推奨します。</p>
+</div>
+<h2 id="3">3. ジョブの状態を確認する<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
+<p>AWS CLIでは次のコマンドで状態を確認できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-transform-job<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>yomitoku-batch-001<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s1">'{Status:TransformJobStatus,FailureReason:FailureReason}'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
+<p><code>TransformJobStatus</code>が<code>Completed</code>になれば完了です。<code>Failed</code>の場合は、<code>FailureReason</code>とAmazon CloudWatch Logsの推論コンテナログを確認してください。</p>
+<p>Batch Transformのインスタンスはジョブ完了後に終了するため、リアルタイムエンドポイントのような削除操作は不要です。ただし、S3の入力・出力オブジェクトには保存料金が発生します。</p>
+<h2 id="download-batch-output">4. <code>.out</code>ファイルを確認・ダウンロードする<a class="headerlink" href="#download-batch-output" title="Permanent link">&para;</a></h2>
+<p>出力先を一覧表示します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://YOUR_BUCKET/yomitoku-batch/output/<span class="w"> </span>--recursive
+</span></code></pre></div>
+<p>入力が次の場所にある場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>s3://YOUR_BUCKET/yomitoku-batch/input/document.pdf
+</span></code></pre></div>
+<p>出力先には、入力名に<code>.out</code>が付いたオブジェクトが作成されます。入力プレフィックス以下にサブディレクトリがある場合、その相対パスも出力先に引き継がれます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>document.pdf.out
+</span></code></pre></div>
+<p>実際の出力キーは、先ほどの<code>aws s3 ls ... --recursive</code>の結果で確認してください。確認したS3 URIを指定してローカルへダウンロードします。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>s3://YOUR_BUCKET/yomitoku-batch/output/PATH/TO/document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>./document.pdf.out
+</span></code></pre></div>
+<p>JSONとして読めることを確認します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>python<span class="w"> </span>-m<span class="w"> </span>json.tool<span class="w"> </span>./document.pdf.out<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span></code></pre></div>
+<p><code>python -m json.tool</code>が終了コード<code>0</code>で完了すれば、JSONとして解析できています。変換機能の検証に使用するときは、元の入力ファイルと<code>.out</code>ファイルをセットで保管してください。図の画像をMarkdownやHTMLへ書き出すには元画像または元PDFが必要です。</p>
+<h2 id="5-outmarkdowncsvhtml">5. <code>.out</code>をMarkdown、CSV、HTMLへ変換する<a class="headerlink" href="#5-outmarkdowncsvhtml" title="Permanent link">&para;</a></h2>
+<p><code>yomitoku-client convert</code>を使用すると、ダウンロードしたJSONを再推論せずに変換できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>--format<span class="w"> </span>md,csv,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p>元PDFを保管している場合は、<code>--src</code>を指定するとMarkdownとHTMLへ図の切り出し画像を出力できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span>--format<span class="w"> </span>md,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span>--src<span class="w"> </span>document.pdf<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p>詳細は<a href="../cli-usage/#batch-transform">Batch Transform出力の変換</a>を参照してください。</p>
+<h2 id="_3">トラブルシューティング<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="unsupported-content-type"><code>Unsupported content type</code>になる<a class="headerlink" href="#unsupported-content-type" title="Permanent link">&para;</a></h3>
+<p><code>TransformInput.ContentType</code>と入力ファイルの形式が一致しているか確認してください。特に、同じ入力プレフィックスへPDFと画像を混在させないでください。</p>
+<h3 id="_4">ジョブが入力ファイルを見つけられない<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>SageMaker実行ロールに入力S3プレフィックスの読み取り権限があるか</li>
+<li>S3 URIのバケット名とプレフィックスが正しいか</li>
+<li>S3バケットとBatch Transformジョブのリージョンが一致しているか</li>
+</ul>
+<p>を確認してください。</p>
+<h3 id="_5">出力ファイルが見つからない<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>出力オブジェクトは入力オブジェクトの相対パスを保持して、指定した出力プレフィックス以下に配置されることがあります。<code>aws s3 ls ... --recursive</code>で出力プレフィックス全体を確認してください。</p>
+<h3 id="failed">ジョブが<code>Failed</code>になる<a class="headerlink" href="#failed" title="Permanent link">&para;</a></h3>
+<p><code>describe-transform-job</code>の<code>FailureReason</code>を確認したうえで、Amazon CloudWatch Logsで<code>/aws/sagemaker/TransformJobs</code>のログを確認してください。大きな文書でのみ失敗する場合は、より小さなファイルで再実行し、ペイロードサイズまたは処理時間の影響を切り分けてください。</p>
+<h2 id="aws_2">関連するAWS公式ドキュメント<a class="headerlink" href="#aws_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/batch-transform.html">Batch Transformによる推論</a></li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/reference/sagemaker/create-transform-job.html">create-transform-job AWS CLIリファレンス</a></li>
+<li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-mkt-model-pkg-model.html">モデルパッケージからSageMakerモデルを作成する</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

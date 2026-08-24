@@ -12,7 +12,7 @@
         <link rel="prev" href="../iam-doc/">
       
       
-        <link rel="next" href="../cli-usage/">
+        <link rel="next" href="../batch-transform/">
       
       
         
@@ -297,6 +297,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../batch-transform/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Batch Transform
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../cli-usage/" class="md-tabs__link">
         
   
@@ -342,6 +361,25 @@
     
   
   Advanced
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
 
       </a>
     </li>
@@ -586,17 +624,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プロダクトの選択
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#step-1-arn" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -604,6 +631,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Step 1: 初期設定（ARNの取得と登録）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arn-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URLからModel Package ARNを取得できない場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -640,6 +684,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デプロイに失敗した場合
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -662,6 +717,28 @@
     <span class="md-ellipsis">
       
         AWS SageMakerでデプロイ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-sagemaker-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: SageMakerモデルを作成する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: リアルタイムエンドポイントを作成する
       
     </span>
   </a>
@@ -724,6 +801,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#yomitoku-pro_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デプロイ後にYomiToku-Proを呼び出す
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -777,6 +865,33 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../batch-transform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch Transform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -862,6 +977,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -934,17 +1076,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プロダクトの選択
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#step-1-arn" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -952,6 +1083,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Step 1: 初期設定（ARNの取得と登録）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arn-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URLからModel Package ARNを取得できない場合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -988,6 +1136,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デプロイに失敗した場合
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1010,6 +1169,28 @@
     <span class="md-ellipsis">
       
         AWS SageMakerでデプロイ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-sagemaker-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: SageMakerモデルを作成する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: リアルタイムエンドポイントを作成する
       
     </span>
   </a>
@@ -1068,6 +1249,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yomitoku-pro_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デプロイ後にYomiToku-Proを呼び出す
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1217,14 +1409,17 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_3">プロダクトの選択<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>YomiToku-ProはAWS Marketplace上で、通常版と軽量版（liteモデル）が別々のプロダクトとして提供されています。
-<code>configure</code>と<code>deploy</code>では、<code>--product</code>オプションで対象のプロダクトを指定します。</p>
+<h3 id="step-1-arn">Step 1: 初期設定（ARNの取得と登録）<a class="headerlink" href="#step-1-arn" title="Permanent link">&para;</a></h3>
+<p>最初に、AWS Marketplaceで購読している製品の「モデルパッケージARN」を取得してクライアントに設定する必要があります。</p>
+<div class="admonition important">
+<p class="admonition-title">通常版とLite版は別のMarketplace製品です</p>
+<p>YomiToku-Pro通常版とYomiToku-Pro Lite版はMarketplaceのサブスクリプションが分かれており、モデルパッケージARNも異なります。使用する製品をそれぞれサブスクライブし、通常版を使う場合は通常版のARN、Lite版を使う場合はLite版のARNを取得してください。</p>
+</div>
 <table>
 <thead>
 <tr>
 <th><code>--product</code></th>
-<th>プロダクト</th>
+<th>対象製品</th>
 </tr>
 </thead>
 <tbody>
@@ -1234,39 +1429,31 @@
 </tr>
 <tr>
 <td><code>document-analyzer-lite</code></td>
-<td>YomiToku-Pro - Document Analyzer Lite（軽量版）</td>
+<td>YomiToku-Pro Lite - Document Analyzer（Lite版）</td>
 </tr>
 </tbody>
 </table>
-<p>軽量版はスループット向上・コスト削減が見込めます。通常版との精度・処理性能の比較は<a href="https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace">技術記事</a>を参照してください。</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>モデルパッケージARNはプロダクトごとに設定を保持します。通常版と軽量版を併用する場合は、それぞれ<code>configure</code>を実行してください。
-また、両方のエンドポイントを同時に稼働させる場合は、<code>--endpoint-name</code>で別々の名前を指定してデプロイしてください（それぞれ課金が発生します）。</p>
-</div>
-<h3 id="step-1-arn">Step 1: 初期設定（ARNの取得と登録）<a class="headerlink" href="#step-1-arn" title="Permanent link">&para;</a></h3>
-<p>最初に、AWS Marketplaceで購読しているYomiToku-Proの「モデルパッケージARN」を取得してクライアントに設定する必要があります。</p>
 <ol>
-<li>ターミナルで以下のコマンドを実行します。利用するプロダクトを<code>--product</code>で指定します。</li>
+<li>ターミナルで以下のコマンドを実行します。</li>
 </ol>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 通常版</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 軽量版</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Lite版</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span>--product<span class="w"> </span>document-analyzer-lite
 </span></code></pre></div>
 <ol>
-<li>実行すると、ブラウザで開くべきURLが表示されます。</li>
+<li>実行すると、選択した製品のモデルパッケージ一覧を開くURLが表示されます。</li>
 </ol>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Product: YomiToku-Pro - Document Analyzer (document-analyzer)
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>--------------------------------------------------------------------------------
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/prod-o37wuz7bn7kvc
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/PRODUCT_ID
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>--------------------------------------------------------------------------------
 </span></code></pre></div>
 <ol>
 <li>
-<p>AWSコンソールにログインした状態で表示されたURLにアクセスし、使用するバージョンの <strong>Model Package ARN</strong>（<code>arn:aws:sagemaker:...</code> で始まる文字列）をコピーします。</p>
+<p>YomiToku-Proを購読したAWSアカウントでログインし、左側の <strong>AWS Marketplace resources &gt; モデルパッケージ</strong> を開きます。<strong>AWS Marketplaceサブスクリプション</strong>から使用する製品（通常版またはLite版）とバージョンを選び、<strong>Model Package ARN</strong>（<code>arn:aws:sagemaker:...</code> で始まる文字列）をコピーします。Lite版を利用する場合は、必ずLite版製品のサブスクリプションを開いてください。</p>
 </li>
 <li>
 <p>ターミナルのプロンプトにコピーしたARNを貼り付けてエンターキーを押します。
@@ -1277,19 +1464,48 @@
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>「モデルパッケージARN」はバージョン毎に変わります。最新のYomitoku-Proを利用する際は改めて上記を実行して更新してください。</p>
+<p><code>configure</code>は製品ごとにARNを保存します。通常版とLite版を併用する場合は、それぞれの<code>--product</code>を指定して設定してください。ARNは製品、リージョン、バージョンごとに異なります。</p>
 </div>
+<h4 id="arn-fallback">URLからModel Package ARNを取得できない場合<a class="headerlink" href="#arn-fallback" title="Permanent link">&para;</a></h4>
+<p><code>configure</code>が表示した画面に対象製品が表示されない場合は、<a href="#create-sagemaker-model">Step 1: SageMakerモデルを作成する</a>の手順で対象製品からモデルを作成した後、次の手順でARNを確認します。</p>
+<ol>
+<li>SageMaker AIコンソールの左側から <strong>Deployments &amp; inference &gt; モデル</strong> を開きます。</li>
+<li>作成したモデルを選択します。</li>
+<li>モデル詳細画面のコンテナ定義に表示される <strong>Model package name</strong>（<code>arn:aws:sagemaker:...:model-package/...</code>）をコピーします。</li>
+</ol>
+<p>作成したモデル名が分かる場合は、AWS CLIでも同じARNを取得できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-model<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--model-name<span class="w"> </span>YOUR_MODEL_NAME<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s1">'PrimaryContainer.ModelPackageName'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--output<span class="w"> </span>text<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
 <h3 id="step-2">Step 2: エンドポイントのデプロイ<a class="headerlink" href="#step-2" title="Permanent link">&para;</a></h3>
 <p>設定したARNを用いて、SageMakerエンドポイントを作成します。</p>
 <ol>
 <li>以下のコマンドを実行してデプロイを開始します。</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
-<p>軽量版（liteモデル）を利用する場合は、<code>--product document-analyzer-lite</code>を指定します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span>--product<span class="w"> </span>document-analyzer-lite<span class="w"> </span>--instance-type<span class="w"> </span>ml.g6.xlarge
+<p>Lite版をデプロイする場合は、先に<code>configure</code>でLite版製品のARNを設定してからデプロイします。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--product<span class="w"> </span>document-analyzer-lite<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>--product<span class="w"> </span>document-analyzer-lite<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker-lite<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
-<p>主要なオプション</p>
+<p><code>deploy</code>のオプション</p>
 <table>
 <thead>
 <tr>
@@ -1302,7 +1518,7 @@
 <tr>
 <td><code>--product</code></td>
 <td><code>document-analyzer</code></td>
-<td>デプロイするプロダクト。<code>document-analyzer</code>（通常版）, <code>document-analyzer-lite</code>（軽量版）が選択可能。</td>
+<td>デプロイする製品。Lite版では<code>document-analyzer-lite</code>を指定します。</td>
 </tr>
 <tr>
 <td><code>--endpoint-name</code></td>
@@ -1320,9 +1536,19 @@
 <td>デプロイするインスタンス数。</td>
 </tr>
 <tr>
-<td><code>--lite</code></td>
-<td><code>False</code></td>
-<td><strong>非推奨。</strong> <code>--product document-analyzer-lite</code>と同じ意味として扱われます。軽量版はAWS Marketplace上の別プロダクトとして提供しているため、<code>--product</code>での指定に移行してください。</td>
+<td><code>--model-package-arn</code></td>
+<td>設定ファイルの値</td>
+<td>デプロイするModel Package ARN。通常は省略し、<code>configure</code>で<code>~/.yomitoku/config.json</code>へ保存したARNを使用します。ARN内のリージョンは<code>--region</code>と一致させてください。</td>
+</tr>
+<tr>
+<td><code>--profile</code></td>
+<td>AWS SDKの既定値</td>
+<td>使用するAWS CLIプロファイル。AssumeRoleやMFAを使う場合も対象のプロファイル名を指定します。</td>
+</tr>
+<tr>
+<td><code>--region</code></td>
+<td>AWS SDKの既定値</td>
+<td>デプロイ先のAWSリージョン。未設定時はAWS SDKの設定に従います。Model Package ARNと同じリージョンを指定してください。</td>
 </tr>
 </tbody>
 </table>
@@ -1336,13 +1562,13 @@
 <li>
 <p>スタック一覧の表示</p>
 <p>作成済みの管理スタックとその状態を一覧表示します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
 </span></code></pre></div>
 </li>
 <li>
 <p>詳細情報の表示</p>
 <p>特定のエンドポイント（スタック）の詳細な情報を取得します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
 </span></code></pre></div>
 <p>ステータスが <code>CREATE_COMPLETE</code> になっていれば、エンドポイントは正常に起動し、推論が可能な状態です。</p>
 </li>
@@ -1352,40 +1578,103 @@
 <ol>
 <li>
 <p>以下のコマンドを実行します。
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div></p>
 </li>
 <li>
 <p>削除が開始されます。完全に削除されたかどうかは <code>yomitoku-client sagemaker list</code> コマンドで確認してください。</p>
 </li>
 </ol>
+<p><code>delete</code>のオプション</p>
+<table>
+<thead>
+<tr>
+<th>オプション</th>
+<th>デフォルト値</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--endpoint-name</code></td>
+<td><code>yomitoku-sagemaker</code></td>
+<td>削除するエンドポイント名です。同じ名前のCloudFormationスタックと、そのスタックが管理するモデル、エンドポイント設定、エンドポイントを削除します。別のエンドポイントを誤って削除しないよう、デプロイ時と同じ名前を指定してください。</td>
+</tr>
+<tr>
+<td><code>--profile</code></td>
+<td>AWS SDKの既定値</td>
+<td>削除に使用するAWS CLIプロファイル。デプロイ時と同じプロファイルを指定します。</td>
+</tr>
+<tr>
+<td><code>--region</code></td>
+<td>AWS SDKの既定値</td>
+<td>スタックが存在するリージョン。デプロイ時と同じリージョンを指定します。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">デプロイに失敗した場合<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>作成に失敗したCloudFormationスタックが<code>ROLLBACK_COMPLETE</code>になると、そのスタックは更新できません。原因を修正しただけで<code>deploy</code>を再実行せず、デプロイ時と同じ<code>--endpoint-name</code>、<code>--profile</code>、<code>--region</code>を指定して一度削除してください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
+<p>削除完了後に、正しいModel Package ARNなどを指定して<code>deploy</code>を再実行します。スタックがまだ<code>ROLLBACK_IN_PROGRESS</code>の場合は、ロールバック完了後に削除してください。</p>
 <h2 id="aws-sagemaker">AWS SageMakerでデプロイをする場合<a class="headerlink" href="#aws-sagemaker" title="Permanent link">&para;</a></h2>
 <h3 id="aws-sagemaker_1">AWS SageMakerでデプロイ<a class="headerlink" href="#aws-sagemaker_1" title="Permanent link">&para;</a></h3>
 <p>AWS Marketplaceを用いてAWS SageMakerでデプロイします。
-次の流れでデプロイをします。</p>
+SageMakerモデルの作成までは、リアルタイム推論とBatch Transformで共通です。モデルを作成した後、利用する推論方式へ進みます。</p>
 <ol>
 <li>モデルの作成</li>
-<li>エンドポイントの設定の作成</li>
-<li>エンドポイントの作成</li>
+<li>推論方式の選択<ul>
+<li>リアルタイム推論: エンドポイント設定とエンドポイントを作成</li>
+<li>Batch Transform: Batch Transformジョブを作成</li>
+</ul>
+</li>
 </ol>
-<p>ここではプロビジョン済みタイプのエンドポイントを使うため、エンドポイントの作成が完了した時点から、エンドポイントを削除するまで料金が発生します。モデルの作成やエンドポイントの設定を作成しても料金は発生しません。</p>
+<p>モデルの作成だけでは推論インスタンスの料金は発生しません。リアルタイム推論ではエンドポイントの稼働中、Batch Transformではジョブの実行中にインスタンス料金とソフトウェア利用料が発生します。</p>
+<h3 id="create-sagemaker-model">Step 1: SageMakerモデルを作成する<a class="headerlink" href="#create-sagemaker-model" title="Permanent link">&para;</a></h3>
 <ol>
 <li><a href="https://aws.amazon.com/jp/console/">AWS マネジメントコンソール</a>にサインインします。</li>
-<li>左上の検索ウィンドウからYomiToku-Proを検索し、選択します。
+<li>左上の検索ウィンドウから使用する製品を検索し、通常版ではYomiToku-Pro、Lite版ではYomiToku-Pro Lite版の製品を選択します。両方を利用する場合は、それぞれ個別にサブスクライブしてください。
 <img alt="marketplace search" src="../images/yomitoku-search.png" /></li>
 <li>右上のContinue to Subscribeを選択し、次のページでも右上のContinue to configurationを選択します。
 <img alt="yomitoku marketplace screen" src="../images/yomitoku-marketplace-screen.png" /></li>
 <li>launch methodでSageMaker Consoleを選択します。
 <img alt="marketplace sagemaker configure1" src="../images/marketplace-sagemaker-configure1.png" /></li>
-<li>Software Versionは、特別な理由がない限り、最新版を選択します。Regionは、使用するものを選択します。Amazon SageMaker optionsでCreate a real-time inference endpointを選択します。Create a batch transform jobの方のモードは現時点ではYomiToku-Clientでサポートされていません。
+<li>Software Versionは、特別な理由がない限り最新版を選択します。利用するRegionを選択し、Amazon SageMaker optionsで利用する推論方式を選択します。<ul>
+<li>リアルタイム推論: <strong>Create a real-time inference endpoint</strong></li>
+<li>Batch Transform: <strong>Create a batch transform job</strong>
 <img alt="marketplace sagemaker configure2" src="../images/marketplace-sagemaker-configure2.png" /></li>
-<li>モデルの設定をします。モデル名を設定し、ロールを設定します。「新しいロールの作成」を選択した際に自動作成されるロールを利用することを推奨します。「ロール作成ウィザードを使用してロールを作成」を選択するとロール名やロールに与える権限をより詳細に設定してロールを作成できます。エンドポイントの作成の2回目以降など、既にロールが存在している場合は新しくロールを作成する必要はありません。ロールの削除がしたいなどの理由でロールの設定画面を開きたい場合は本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
+</ul>
+</li>
+<li>モデルの設定をします。モデル名を設定し、ロールを設定します。「新しいロールの作成」を選択した際に自動作成されるロールを利用することを推奨します。「ロール作成ウィザードを使用してロールを作成」を選択するとロール名やロールに与える権限をより詳細に設定してロールを作成できます。2回目以降など、既にロールが存在している場合は新しくロールを作成する必要はありません。ロールの設定画面を開く場合は、本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
 <img alt="marketplace sagemaker configure3" src="../images/marketplace-sagemaker-configure3.png" /></li>
 <li>コンテナの定義1のコンテナ入力オプションで「AWS Marketplaceからのモデルパッケージサブスクリプションを使用する」を選択します。（デフォルト設定）
 <img alt="marketplace sagemaker configure4" src="../images/marketplace-sagemaker-configure4.png" /></li>
-<li>VPCはAWS上に構築する仮想的なプライベートネットワークです。AWS上の他のサービスから接続する際にVPCを用いることでセキュアな通信経路を構築できます。VPCの設定は必要に応じて設定します。（VPCの設定は必須ではありません。）詳しくは<a href="https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/host-vpc.html">こちらの公式ドキュメント</a>をご確認ください。タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは<a href="https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html">こちらの公式ドキュメント</a>をご確認ください。
-<img alt="marketplace sagemaker configure5" src="../images/marketplace-sagemaker-configure5.png" /></li>
+<li>
+<p>「モデルパッケージサブスクリプションの選択」で使用する製品の行を選択します。通常版では通常版のサブスクリプション、Lite版ではLite版のサブスクリプションを選択します。Lite版を環境変数で切り替える必要はありません。詳細は<a href="../batch-transform/#batch-lite-model">軽量モードを利用する</a>を参照してください。</p>
+</li>
+<li>
+<p>VPCはAWS上に構築する仮想的なプライベートネットワークです。AWS上の他のサービスから接続する際にVPCを用いることでセキュアな通信経路を構築できます。VPCの設定は必要に応じて設定します。（VPCの設定は必須ではありません。）詳しくは<a href="https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/host-vpc.html">こちらの公式ドキュメント</a>をご確認ください。タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは<a href="https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html">こちらの公式ドキュメント</a>をご確認ください。
+<img alt="marketplace sagemaker configure5" src="../images/marketplace-sagemaker-configure5.png" /></p>
+</li>
 <li>右下の「次へ」をクリックしてモデルの作成を完了します。</li>
+</ol>
+<p>モデルを作成した後は、利用する推論方式の手順へ進んでください。</p>
+<ul>
+<li>リアルタイム推論: 次の「Step 2: リアルタイムエンドポイントを作成する」へ進む</li>
+<li>Batch Transform: <a href="../batch-transform/">Batch Transformを実行する</a>へ進む。エンドポイント設定とエンドポイントの作成は不要</li>
+</ul>
+<h3 id="step-2_1">Step 2: リアルタイムエンドポイントを作成する<a class="headerlink" href="#step-2_1" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Batch Transformを利用する場合</p>
+<p>このStepは不要です。<a href="../batch-transform/">Batch Transformを実行する</a>へ進んでください。</p>
+</div>
+<ol>
 <li>エンドポイント名を設定し、エンドポイント設定のアタッチの項目の選択をします。既存のエンドポイント設定を使用する場合は「既存のエンドポイント設定の使用」を、新しくエンドポイント設定を作成する場合は「新しいエンドポイント設定の作成」を選択します。「既存のエンドポイント設定の使用」を選択した場合は使用するエンドポイント設定を選択して、バリアントの設定まで移ってください。「新しいエンドポイントの作成」を選択した場合について説明します。
 <img alt="marketplace sagemaker configure6" src="../images/marketplace-sagemaker-configure6.png" /></li>
 <li>エンドポイント設定名を設定します。エンドポイントのタイプはプロビジョン済みを選択します。暗号化キーを設定することでSageMakerがS3にデータを保存する際に用いられるAWS KMSキーを、お客様が管理・指定できます。暗号化キーは適宜設定します。（暗号化キーの設定は必須ではありません。）暗号化キーについては詳しくは<a href="https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/encryption-at-rest.html">こちらの公式ドキュメント</a>をご確認ください。プロビジョン済みのタイプではエンドポイントを作成してから削除するまでモデルをホストするコンテナが起動し続けます。サーバーレス推論はGPUをサポートしていないのでYomiToku-Proではご利用いただけません。
@@ -1396,7 +1685,7 @@
 <img alt="marketplace sagemaker configure9" src="../images/marketplace-sagemaker-configure9.png" />
 アクションの欄にある「編集」をクリックします。
 <img alt="marketplace sagemaker configure9-2" src="../images/marketplace-sagemaker-configure9-2.png" />
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>v1.1.0</code>よりCPUインスタンスによる推論もサポートされており、<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用することでインスタンス利用量をさらに抑えることができます。軽量版（liteモデル）を利用する場合は、軽量版のプロダクト（YomiToku-Pro - Document Analyzer Lite）をサブスクライブして同様の手順でデプロイします。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。<code>ml.c7i.xlarge</code>, <code>ml.c7i.2xlarge</code>を利用するとCPUインスタンスも選択できます。通常版とLite版のどちらが動作するかは、モデル作成時に選択したMarketplace製品のモデルパッケージで決まります。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 <img alt="marketplace sagemaker configure9-3" src="../images/marketplace-sagemaker-configure9-3.png" /></li>
 <li>右下の「保存」をクリックしてバリアントの設定を保存します。</li>
 <li>シャドウバリアントの設定はここでは利用しません。</li>
@@ -1481,6 +1770,14 @@
 <img alt="marketplace-cloudformation-undeploy" src="../images/marketplace-cloudformation-undeploy.png" /></li>
 <li>上部にある「削除」を選択します。</li>
 </ol>
+<h2 id="yomitoku-pro_1">デプロイ後にYomiToku-Proを呼び出す<a class="headerlink" href="#yomitoku-pro_1" title="Permanent link">&para;</a></h2>
+<p>エンドポイントのステータスが<code>InService</code>になったら、YomiToku-Clientから文書解析を実行できます。呼び出し方法は、利用形態に応じて次のページを参照してください。</p>
+<ul>
+<li>コマンドラインから呼び出す: <a href="../cli-usage/">CLI</a></li>
+<li>Pythonコードから呼び出す: <a href="../module-usage/">Python API</a></li>
+</ul>
+<p>どちらの場合も、デプロイ時に設定したエンドポイント名とAWSリージョンを指定します。ディレクトリ内のファイルを一括処理するCLIのバッチ処理と、Python APIによる同期・非同期呼び出しも利用できます。</p>
+<p>Batch Transformを利用する場合はエンドポイントを呼び出さず、<a href="../batch-transform/">Batch Transformを実行する</a>の手順でジョブを作成してください。</p>
 <h2 id="_4">付録:各種設定画面の開き方<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="_5">ロール<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>ロールの設定画面はIAMから開くことができます。ロールの削除をしたい場合などはそちらをご利用ください。</p>

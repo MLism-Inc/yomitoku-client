@@ -295,6 +295,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="batch-transform/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Batch Transform
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="cli-usage/" class="md-tabs__link">
         
   
@@ -340,6 +359,25 @@
     
   
   Advanced
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
 
       </a>
     </li>
@@ -491,6 +529,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#batch-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch Transform出力を変換する
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#yomitoku-pro-document-analyzer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -625,6 +674,33 @@
   
   
     <li class="md-nav__item">
+      <a href="batch-transform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch Transform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="cli-usage/" class="md-nav__link">
         
   
@@ -699,6 +775,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -752,6 +855,17 @@
     <span class="md-ellipsis">
       
         YomiToku-Clientの機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#batch-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch Transform出力を変換する
       
     </span>
   </a>
@@ -839,8 +953,13 @@
 <li><a href="installation/">YomiToku-Clientをインストール</a></li>
 <li><a href="https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&amp;ref_=beagle&amp;applicationId=AWSMPContessa">AWS Marketplace</a>より<strong>YomiToku-Pro - Document Analyzer</strong>をサブスクライブ</li>
 <li><a href="iam-doc/">AWSの認証の設定する</a></li>
-<li><a href="deploy-yomitoku-pro/">AWS SageMakerにYomiToku-Pro Document-AnalyzerのEndpointを作成する</a></li>
-<li>CLIかモジュールを実行し、エンドポイントを呼び出して、文書を解析する</li>
+<li><a href="deploy-yomitoku-pro/#create-sagemaker-model">SageMakerモデルを作成する</a></li>
+<li>利用する推論方式を選択する<ul>
+<li>リアルタイム推論: <a href="deploy-yomitoku-pro/">エンドポイントを作成</a>し、CLIまたはPython APIで解析する</li>
+<li>Batch Transform: <a href="batch-transform/">Batch Transformジョブを実行</a>し、S3から<code>.out</code>を取得する</li>
+</ul>
+</li>
+<li>Batch Transformを利用した場合は、必要に応じて<a href="cli-usage/#batch-transform"><code>.out</code>をMarkdown / CSV / HTMLへ変換する</a></li>
 </ol>
 <h2 id="yomitoku-client_1">YomiToku-Clientの機能<a class="headerlink" href="#yomitoku-client_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -848,7 +967,20 @@
 <li>読み取り結果を多様な出力形式(CSV / JSON / Markdown / HTML / PDF)への変換をサポートします。</li>
 <li>読み取り結果を可視化し、内容をすぐに確認できます。</li>
 <li>バッチ処理機能で大量の文書を効率的に処理できます。</li>
+<li>Batch Transformの<code>.out</code>を再推論せずにMarkdown / CSV / HTMLへ変換できます。</li>
 </ul>
+<h2 id="batch-transform">Batch Transform出力を変換する<a class="headerlink" href="#batch-transform" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>--format<span class="w"> </span>md,csv,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p>図の画像も出力する場合は、元文書を指定します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>--format<span class="w"> </span>md,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--src<span class="w"> </span>document.pdf<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p>詳しくは<a href="cli-usage/#batch-transform">Batch Transform出力の変換</a>を参照してください。</p>
 <h2 id="yomitoku-pro-document-analyzer">YomiToku-Pro Document Analyzer とは<a class="headerlink" href="#yomitoku-pro-document-analyzer" title="Permanent link">&para;</a></h2>
 <p><strong>YomiToku-Pro Document Analyzer</strong> は、AWS Marketplace 上で提供される <strong>Amazon SageMaker 専用の高精度日本語ドキュメント解析エンジン</strong> です。</p>
 <p>お客様の AWS アカウント上に専用エンドポイントとして構築され、外部サーバーへのデータ送信を一切行わずに、安全かつ高速、高精度な解析を実行します。</p>
@@ -869,9 +1001,9 @@
   データは外部ネットワークや第三者サーバーに送信されず、安全にデータを解析可能です。</p>
 </li>
 <li>
-<p><strong>無制限のスケーラビリティ</strong>
-  SageMaker の専用エンドポイントとして提供されるため、
-  <strong>レートリミットやクオーター制限がなく</strong>、起動中は無制限にリクエストを実行できます。</p>
+<p><strong>柔軟なスケーラビリティ</strong>
+  SageMaker の専用エンドポイントとして提供され、用途に応じてインスタンスタイプや台数を選択できます。
+  サービス独自のリクエスト回数制限はありませんが、実際の処理能力や利用可能なインスタンス数は、エンドポイント構成および AWS Service Quotas に依存します。</p>
 </li>
 </ul>
 <hr />

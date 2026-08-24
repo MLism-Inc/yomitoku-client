@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../deploy-yomitoku-pro/">
+        <link rel="prev" href="../batch-transform/">
       
       
         <link rel="next" href="../module-usage/">
@@ -293,6 +293,25 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../batch-transform/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Batch Transform
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -342,6 +361,25 @@
     
   
   Advanced
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
 
       </a>
     </li>
@@ -489,6 +527,33 @@
     
   
     How To Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../batch-transform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch Transform
   
 
     
@@ -711,6 +776,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#batch-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch Transform出力の変換
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Batch Transform出力の変換">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        クイックスタート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        図の画像を出力する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オプション詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -761,6 +876,33 @@
     
   
     Advanced
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
   
 
     
@@ -932,6 +1074,56 @@
     <span class="md-ellipsis">
       
         🧾 補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#batch-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch Transform出力の変換
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Batch Transform出力の変換">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        クイックスタート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        図の画像を出力する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オプション詳細
       
     </span>
   </a>
@@ -1343,6 +1535,74 @@ SageMaker 上の YomiToku エンドポイントにアクセスし、ドキュメ
 <li>AWS 認証は環境変数または <code>--profile</code> で指定されたプロファイルを使用します。</li>
 </ul>
 <hr />
+<h2 id="batch-transform">Batch Transform出力の変換<a class="headerlink" href="#batch-transform" title="Permanent link">&para;</a></h2>
+<p>保存済みのBatch Transform <code>.out</code>を、再推論せずにMarkdown、CSV、HTMLへ変換します。このコマンドはSageMakerエンドポイントやAWS認証を必要としません。</p>
+<h3 id="_11">クイックスタート<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span>--format<span class="w"> </span>md,csv,html<span class="w"> </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p>出力先には元文書の拡張子と<code>.out</code>を除いた名前でファイルが生成されます。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>converted/document.md
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>converted/document.csv
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>converted/document.html
+</span></code></pre></div>
+<p>ディレクトリを指定すると、配下の<code>.out</code>を一括変換できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>./batch-output<span class="w"> </span>--format<span class="w"> </span>md,csv<span class="w"> </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<h3 id="_12">図の画像を出力する<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>MarkdownまたはHTMLへ図の切り出し画像を含める場合は、元画像または元PDFを<code>--src</code>で指定します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>--format<span class="w"> </span>md,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>--src<span class="w"> </span>document.pdf<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p><code>--src</code>を省略した場合も変換できますが、図の画像は出力されません。段落、見出し、表などJSONだけで復元できる内容が出力されます。</p>
+<h3 id="_13">オプション詳細<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>オプション</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-f, --format</code></td>
+<td>出力形式。<code>md</code>, <code>csv</code>, <code>html</code>をカンマ区切りで指定（デフォルト: <code>md</code>）</td>
+</tr>
+<tr>
+<td><code>-o, --output-dir</code></td>
+<td>出力ディレクトリ。省略時は単一ファイルなら入力元、ディレクトリなら<code>converted</code>配下</td>
+</tr>
+<tr>
+<td><code>--src</code></td>
+<td>図の切り出しに使用する元文書、または元文書を保存したディレクトリ</td>
+</tr>
+<tr>
+<td><code>--split-mode</code></td>
+<td><code>combine</code>または<code>separate</code>（デフォルト: <code>combine</code>）</td>
+</tr>
+<tr>
+<td><code>--pages</code></td>
+<td>変換するページ（例: <code>0,1,3-5</code>）</td>
+</tr>
+<tr>
+<td><code>--dpi</code></td>
+<td>元PDFを読み込むDPI（デフォルト: <code>200</code>）</td>
+</tr>
+<tr>
+<td><code>--ignore-line-break</code></td>
+<td>本文中の改行を除去</td>
+</tr>
+<tr>
+<td><code>--overwrite</code></td>
+<td>既存の出力ファイルを上書き</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">既存ファイルはデフォルトで上書きしません</p>
+<p>同名の出力が既に存在する場合はエラーになります。置き換える場合のみ<code>--overwrite</code>を指定してください。</p>
+</div>
 
 
 
