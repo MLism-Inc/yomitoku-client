@@ -41,19 +41,40 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 | `delete` | スタックの削除（リソースの全削除） |
 
 
+### プロダクトの選択
+
+YomiToku-ProはAWS Marketplace上で、通常版と軽量版（liteモデル）が別々のプロダクトとして提供されています。
+`configure`と`deploy`では、`--product`オプションで対象のプロダクトを指定します。
+
+| `--product` | プロダクト |
+| --- | --- |
+| `document-analyzer`（デフォルト） | YomiToku-Pro - Document Analyzer（通常版） |
+| `document-analyzer-lite` | YomiToku-Pro - Document Analyzer Lite（軽量版） |
+
+軽量版はスループット向上・コスト削減が見込めます。通常版との精度・処理性能の比較は[技術記事](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace)を参照してください。
+
+!!! note
+    モデルパッケージARNはプロダクトごとに設定を保持します。通常版と軽量版を併用する場合は、それぞれ`configure`を実行してください。
+    また、両方のエンドポイントを同時に稼働させる場合は、`--endpoint-name`で別々の名前を指定してデプロイしてください（それぞれ課金が発生します）。
+
 ### Step 1: 初期設定（ARNの取得と登録）
 
 最初に、AWS Marketplaceで購読しているYomiToku-Proの「モデルパッケージARN」を取得してクライアントに設定する必要があります。
 
-1. ターミナルで以下のコマンドを実行します。
+1. ターミナルで以下のコマンドを実行します。利用するプロダクトを`--product`で指定します。
 
 ```bash
+# 通常版
 yomitoku-client sagemaker configure
+
+# 軽量版
+yomitoku-client sagemaker configure --product document-analyzer-lite
 ```
 
 2. 実行すると、ブラウザで開くべきURLが表示されます。
 
 ```text
+Product: YomiToku-Pro - Document Analyzer (document-analyzer)
 Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.
 --------------------------------------------------------------------------------
 https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast-1#/model-packages/my-subscriptions/prod-o37wuz7bn7kvc
@@ -66,7 +87,7 @@ https://ap-northeast-1.console.aws.amazon.com/sagemaker/home?region=ap-northeast
 4. ターミナルのプロンプトにコピーしたARNを貼り付けてエンターキーを押します。
 ```text
 Please enter the Model Package ARN: arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/yomitoku-pro-xxx
-Successfully configured Model Package ARN!
+Successfully configured Model Package ARN for 'document-analyzer'!
 
 ```
 
@@ -84,10 +105,10 @@ Successfully configured Model Package ARN!
 yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-type ml.g4dn.xlarge
 ```
 
-GPUインスタンスで軽量版（liteモデル）を利用する場合は、`--lite`を指定します。
+軽量版（liteモデル）を利用する場合は、`--product document-analyzer-lite`を指定します。
 
 ```bash
-yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-type ml.g6.xlarge --lite
+yomitoku-client sagemaker deploy --product document-analyzer-lite --instance-type ml.g6.xlarge
 ```
 
 
@@ -96,10 +117,11 @@ yomitoku-client sagemaker deploy --endpoint-name yomitoku-sagemaker --instance-t
 
 | オプション | デフォルト値 | 説明 |
 | --- | --- | --- |
+| `--product` | `document-analyzer` | デプロイするプロダクト。`document-analyzer`（通常版）, `document-analyzer-lite`（軽量版）が選択可能。 |
 | `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
 | `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
 | `--instance-count` | `1` | デプロイするインスタンス数。 |
-| `--lite` | `False` | GPUインスタンスで軽量版（liteモデル）を利用する場合に指定します。コンテナ環境変数`YOMITOKU_MODEL_LITE`を設定してデプロイします。スループット向上・コスト削減が見込めます。CPUインスタンスは本フラグに関わらず常にliteで動作します。通常版との精度・処理性能の比較は[技術記事](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace)を参照してください。 |
+| `--lite` | `False` | **非推奨。** `--product document-analyzer-lite`と同じ意味として扱われます。軽量版はAWS Marketplace上の別プロダクトとして提供しているため、`--product`での指定に移行してください。 |
 
 
 !!! warning
@@ -180,7 +202,7 @@ AWS Marketplaceを用いてAWS SageMakerでデプロイします。
 ![marketplace sagemaker configure9](images/marketplace-sagemaker-configure9.png)
 アクションの欄にある「編集」をクリックします。
 ![marketplace sagemaker configure9-2](images/marketplace-sagemaker-configure9-2.png)
-インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。`v1.1.0`よりCPUインスタンスによる推論もサポートされており、`ml.c7i.xlarge`, `ml.c7i.2xlarge`を利用することでインスタンス利用量をさらに抑えることができます。GPUインスタンスで軽量版（liteモデル）を利用する場合は、モデルの設定でコンテナ環境変数`YOMITOKU_MODEL_LITE`に`true`を設定します。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
+インスタンスタイプを選択します。検証の場合はml.g4dn.xlargeで十分ですが、性能を求める場合はml.g5.xlargeを選択します。`v1.1.0`よりCPUインスタンスによる推論もサポートされており、`ml.c7i.xlarge`, `ml.c7i.2xlarge`を利用することでインスタンス利用量をさらに抑えることができます。軽量版（liteモデル）を利用する場合は、軽量版のプロダクト（YomiToku-Pro - Document Analyzer Lite）をサブスクライブして同様の手順でデプロイします。初期インスタンス数を設定します。インスタンス数に応じて同時に処理できるリクエストの数が増えますが、コストもインスタンス数に比例して増加します。その他の設定はここでは利用しません。
 ![marketplace sagemaker configure9-3](images/marketplace-sagemaker-configure9-3.png)
 1. 右下の「保存」をクリックしてバリアントの設定を保存します。
 1. シャドウバリアントの設定はここでは利用しません。

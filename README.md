@@ -127,7 +127,7 @@ uv add yomitoku-client
 | **ml.c7i.2xlarge**  | 軽量版 | 900                 | 約 1.87 円               |
 
 > **Notes**
-> - 軽量版は、GPUインスタンスでは `yomitoku-client sagemaker deploy` の `--lite` オプションで選択できます。CPUインスタンス（c7i）は常に軽量版で動作します。
+> - 軽量版はAWS Marketplace上の別プロダクトとして提供しており、`yomitoku-client sagemaker deploy` の `--product document-analyzer-lite` オプションで選択できます。なお、CPUインスタンス（c7i）は通常版のプロダクトでも常に軽量版で動作します。
 > - コストは、SageMakerソフトウェア利用料（$10 / hour、1 USD ≒ 160 円換算）とインスタンス費（東京リージョン、測定時点の料金）を、記載のスループットで1時間処理し続ける前提で試算した概算値です。通信・ストレージ等の費用は含みません。
 > - 処理性能は文書の文字量や画像解像度などデータの分布に大きく依存します。実際に処理する文書での検証を推奨します。
 > - 測定条件の詳細と、通常版・軽量版の認識精度や処理時間の比較は[技術記事](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace)を参照してください。

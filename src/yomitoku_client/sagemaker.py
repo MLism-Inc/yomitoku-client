@@ -54,7 +54,6 @@ class SagemakerManager:
         instance_type: str,
         model_package_arn: str,
         instance_count: int,
-        model_lite: bool = False,
     ) -> bool:
         """スタックをデプロイ（作成または更新）する"""
         logger.info("'%s' スタックのデプロイを開始します...", endpoint_name)
@@ -65,10 +64,6 @@ class SagemakerManager:
             {"ParameterKey": "InstanceType", "ParameterValue": instance_type},
             {"ParameterKey": "ModelPackageARN", "ParameterValue": model_package_arn},
             {"ParameterKey": "InstanceCount", "ParameterValue": str(instance_count)},
-            {
-                "ParameterKey": "ModelLite",
-                "ParameterValue": "true" if model_lite else "false",
-            },
         ]
         try:
             if self._stack_exists(endpoint_name):

@@ -16,18 +16,6 @@ Parameters:
   EndpointName:
     Type: String
     Description: Specify suitable name to host the model endpoint. This is a mandatory field.
-  ModelLite:
-    Type: String
-    Default: "false"
-    AllowedValues:
-      - "true"
-      - "false"
-    Description: >-
-      Opt into the lite (dynamic-width tiny) recognizer on GPU instances by
-      setting the YOMITOKU_MODEL_LITE container environment variable. CPU
-      instances always run lite regardless of this value.
-Conditions:
-  EnableModelLite: !Equals [!Ref ModelLite, "true"]
 Resources:
   SageMakerExecutionRole:
     Type: "AWS::IAM::Role"
@@ -48,10 +36,6 @@ Resources:
       ExecutionRoleArn: !GetAtt SageMakerExecutionRole.Arn
       PrimaryContainer:
         ModelPackageName: !Ref ModelPackageARN
-        Environment: !If
-          - EnableModelLite
-          - YOMITOKU_MODEL_LITE: "true"
-          - !Ref "AWS::NoValue"
   EndPointConfig:
     Type: "AWS::SageMaker::EndpointConfig"
     Properties:
