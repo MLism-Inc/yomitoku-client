@@ -6,7 +6,6 @@ import click
 from yomitoku_client.sagemaker import SagemakerManager
 from yomitoku_client.utils import load_config, save_config
 
-YOMITOKU_PRODUCT_ID = "prod-o37wuz7bn7kvc"
 DEFAULT_REGION = "ap-northeast-1"
 
 
@@ -36,14 +35,24 @@ def configure(profile, region):
         boto3.Session(profile_name=profile, region_name=region).region_name
         or DEFAULT_REGION
     )
-    destination_url = f"https://{region}.console.aws.amazon.com/sagemaker/home?region={region}#/model-packages/my-subscriptions/{YOMITOKU_PRODUCT_ID}"
+    destination_url = (
+        f"https://console.aws.amazon.com/sagemaker/home?region={region}#/model-packages"
+    )
     click.echo(
-        "Please sign-in to AWS Console and open the following URL in your browser to find the Model Package ARN.",
+        "Please sign in to the AWS account subscribed to YomiToku-Pro and open "
+        "the following SageMaker URL.",
     )
 
     click.echo("-" * 80)
     click.echo(destination_url)
     click.echo("-" * 80)
+    click.echo(
+        "Open AWS Marketplace resources > Model packages > AWS Marketplace "
+        "subscriptions, then select YomiToku-Pro and its version."
+    )
+    click.echo(
+        f"If no packages are displayed, confirm the AWS account and region ({region})."
+    )
 
     model_package_arn = click.prompt("Please enter the Model Package ARN")
     _validate_model_package_arn(model_package_arn)
@@ -92,17 +101,6 @@ def configure(profile, region):
     default=None,
     help="Model Package ARN to deploy. If not provided, it will be loaded from the configuration file.",
 )
-@click.option(
-    "--lite",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help=(
-        "Opt into the lite (dynamic-width tiny) recognizer on GPU instances by "
-        "setting the YOMITOKU_MODEL_LITE container environment variable. "
-        "CPU instances always run lite regardless of this flag."
-    ),
-)
 @click.option("--profile", default=None, help="AWS profile name.")
 @click.option("--region", default=None, help="AWS region.")
 def deploy(
@@ -110,7 +108,6 @@ def deploy(
     instance_type,
     instance_count,
     model_package_arn,
-    lite,
     profile,
     region,
 ):
@@ -139,7 +136,6 @@ def deploy(
         instance_type=instance_type,
         model_package_arn=deploy_model_package_arn,
         instance_count=instance_count,
-        model_lite=lite,
     )
     if not success:
         sys.exit(1)

@@ -1,6 +1,7 @@
 import click
 
 from .batch import batch_command
+from .convert import convert_command
 from .sagemaker import sagemaker
 from .single import single_command
 
@@ -12,6 +13,7 @@ def cli():
 
 cli.add_command(single_command)
 cli.add_command(batch_command)
+cli.add_command(convert_command)
 cli.add_command(sagemaker)
 
 

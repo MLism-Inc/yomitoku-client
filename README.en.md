@@ -8,6 +8,15 @@
 **YomiToku-Client** is a Python client library designed for handling the output from the YomiToku-Pro API provided on AWS SageMaker. It converts OCR analysis results into structured data and makes it easy to save or visualize them in formats such as CSV, JSON, Markdown, and PDF.
 It acts as the “bridge” linking YomiToku-Pro’s high-accuracy OCR with your business applications.
 
+## Supported Services
+
+YomiToku-Client supports the following AWS Marketplace products:
+
+- Standard: [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
+- Lite: [YomiToku-Pro Lite - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
+
+The Standard and Lite editions are separate AWS Marketplace products. Subscribe to each product separately and configure the Model Package ARN for the edition you want to use.
+
 ---
 
 ## Key Features
@@ -57,8 +66,8 @@ It is deployed securely within your own AWS account as a private endpoint, enabl
   All processing takes place entirely **within your AWS environment**.
   No data is transmitted to external networks or third-party servers, ensuring full data privacy and compliance.
 
-* **Unlimited scalability**
-  Delivered as a dedicated SageMaker endpoint, the service has **no rate limits or request quotas** — you can process as many documents as needed while the endpoint is active.
+* **Flexible scalability**
+  Delivered as a dedicated SageMaker endpoint, the service lets you choose the instance type and count for your workload. The service does not impose its own request-count limit, but actual throughput and instance availability depend on the endpoint configuration and AWS Service Quotas.
 
 ---
 
@@ -138,7 +147,7 @@ The following values are **measured results** from internal testing conducted by
 
 > **Notes**
 >
-> * On GPU instances, the lite model can be selected with the `--lite` option of `yomitoku-client sagemaker deploy`. CPU instances (c7i) always run the lite model.
+> * The Standard and Lite editions are separate AWS Marketplace products. To use the Lite edition, subscribe to the Lite product and configure its Model Package ARN.
 > * Costs are rough estimates that include the SageMaker software fee ($10 / hour, converted at 1 USD ≒ 160 JPY) and the instance fee (Tokyo region, at the time of measurement), assuming the endpoint keeps processing at the listed throughput for a full hour. Network, storage, and other charges are not included.
 > * Performance depends heavily on the distribution of your documents (text volume, image resolution, and so on). We recommend validating with your own documents.
 > * For measurement details and an accuracy/latency comparison between the standard and lite models, see the [tech blog article](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace) (Japanese).

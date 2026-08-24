@@ -149,7 +149,7 @@ async def process_batch(
 )
 @click.option(
     "--threthold_circuit",
-    default=0.5,
+    default=5,
     type=int,
     help="Threshold for circuit breaker",
 )

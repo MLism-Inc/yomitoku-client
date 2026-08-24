@@ -8,11 +8,21 @@
 YomiToku-Clientは、AWS SageMaker上で提供されるYomiToku-Pro APIの出力を扱うためのPythonクライアントライブラリです。OCR解析結果を構造化データへ変換し、CSV・JSON・Markdown・PDFなどの形式での保存や可視化を容易にします。
 YomiToku-Proの高精度OCRと、業務アプリケーションを結びつける「橋渡し」役を担います。
 
+## 対象サービス
+
+YomiToku-Clientは、次のAWS Marketplace製品に対応しています。
+
+- 通常版: [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
+- Lite版: [YomiToku-Pro Lite - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
+
+通常版とLite版は別のMarketplace製品です。それぞれ個別にサブスクライブし、使用する製品のModel Package ARNを設定してください。
+
 ## 主な機能 
 - AWS SageMakerで作成されたエンドポイントを簡単、安全かつ効率的に呼び出せます。
 - 読み取り結果を多様な出力形式(CSV / JSON / Markdown / HTML / PDF)への変換をサポートします。
 - 読み取り結果を可視化し、内容をすぐに確認できます。
 - バッチ処理機能で大量の文書を効率的に処理できます。
+- SageMaker Batch Transformが出力した`.out` JSONを、再推論せずにMarkdown / CSV / HTMLへ変換できます。
 
 ```mermaid
 flowchart LR
@@ -54,15 +64,17 @@ flowchart LR
   解析はすべてお客様の AWS 環境内で完結します。
   データは外部ネットワークや第三者サーバーに送信されず、安全にデータを解析可能です。
 
-* **無制限のスケーラビリティ**
-  SageMaker の専用エンドポイントとして提供されるため、
-  **レートリミットやクオーター制限がなく**、起動中は無制限にリクエストを実行できます。
+* **柔軟なスケーラビリティ**
+  SageMaker の専用エンドポイントとして提供され、用途に応じてインスタンスタイプや台数を選択できます。
+  サービス独自のリクエスト回数制限はありませんが、実際の処理能力や利用可能なインスタンス数は、エンドポイント構成および AWS Service Quotas に依存します。
 
 ---
 
 ## クイックリンク
 - 🔒 **[AWSの認証設定](https://mlism-inc.github.io/yomitoku-client/iam-doc/)** - AWSの認証の設定ガイド
 - 🚀 **[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** - YomiToku-Pro Document Analyzerのエンドポイントのデプロイガイド
+- 📦 **[Batch Transform](https://mlism-inc.github.io/yomitoku-client/batch-transform/)** - S3上の文書を一括解析し、`.out`を取得する手順
+- 🔄 **[Batch Transform出力の変換](https://mlism-inc.github.io/yomitoku-client/cli-usage/#batch-transform)** - `.out`をMarkdown / CSV / HTMLへ変換する手順
 - 📋 **[解析結果のサンプル](./gallery.md)** - 解析結果のサンプルデータを載せています。
 - 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアルNotebook
 - 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
@@ -79,7 +91,54 @@ yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} -f json
 yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
 ```
 
+**Batch Transformの`.out`を変換**
+
+```bash
+yomitoku-client convert document.pdf.out \
+  --format md,csv,html \
+  --output-dir ./converted
+```
+
 オプションの詳細は`--help`を参照してください。
+
+## Batch Transform出力の変換
+
+SageMaker Batch Transformの解析結果は、入力名に`.out`が付いたJSONとしてS3へ保存されます。ダウンロードした`.out`は、SageMakerエンドポイントやAWS認証を使用せずに変換できます。
+
+```bash
+yomitoku-client convert document.pdf.out \
+  --format md,csv,html \
+  --output-dir ./converted
+```
+
+上記の例では次のファイルを生成します。
+
+```text
+converted/document.md
+converted/document.csv
+converted/document.html
+```
+
+複数の`.out`を一括変換する場合は、入力ディレクトリを指定します。
+
+```bash
+yomitoku-client convert ./batch-output \
+  --format md,csv \
+  --output-dir ./converted
+```
+
+図の切り出し画像をMarkdownまたはHTMLへ含める場合は、元の画像またはPDFを`--src`で指定します。
+
+```bash
+yomitoku-client convert document.pdf.out \
+  --format md,html \
+  --src document.pdf \
+  --output-dir ./converted
+```
+
+`--src`を省略した場合は、段落・見出し・表を変換し、図の画像は出力しません。既存ファイルはデフォルトで上書きされないため、置き換える場合は`--overwrite`を指定してください。
+
+Batch Transformジョブの作成から`.out`の取得までは[Batch Transformを実行する](https://mlism-inc.github.io/yomitoku-client/batch-transform/)、変換オプションの詳細は[CLIマニュアル](https://mlism-inc.github.io/yomitoku-client/cli-usage/#batch-transform)を参照してください。
 
 
 ## クイックスタート(同期版)
@@ -127,7 +186,7 @@ uv add yomitoku-client
 | **ml.c7i.2xlarge**  | 軽量版 | 900                 | 約 1.87 円               |
 
 > **Notes**
-> - 軽量版は、GPUインスタンスでは `yomitoku-client sagemaker deploy` の `--lite` オプションで選択できます。CPUインスタンス（c7i）は常に軽量版で動作します。
+> - 通常版と軽量版は別のAWS Marketplace製品です。軽量版を利用する場合は、軽量版製品をサブスクライブし、そのModel Package ARNを設定してください。
 > - コストは、SageMakerソフトウェア利用料（$10 / hour、1 USD ≒ 160 円換算）とインスタンス費（東京リージョン、測定時点の料金）を、記載のスループットで1時間処理し続ける前提で試算した概算値です。通信・ストレージ等の費用は含みません。
 > - 処理性能は文書の文字量や画像解像度などデータの分布に大きく依存します。実際に処理する文書での検証を推奨します。
 > - 測定条件の詳細と、通常版・軽量版の認識精度や処理時間の比較は[技術記事](https://mlism.com/blog/tech/yomitoku-pro-lite-gpu-marketplace)を参照してください。
@@ -274,6 +333,3 @@ Apache License 2.0 - 詳細はLICENSEファイルを参照してください。
 ## お問い合わせ
 ご質問やサポートのご依頼は、以下までご連絡ください。  
 📧 **support-aws-marketplace@mlism.com**
-
-
-

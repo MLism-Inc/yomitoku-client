@@ -30,14 +30,12 @@ def mock_sagemaker_manager(monkeypatch):
             instance_type,
             model_package_arn,
             instance_count,
-            model_lite=False,
         ):
             record["deploy_args"] = {
                 "endpoint_name": endpoint_name,
                 "instance_type": instance_type,
                 "model_package_arn": model_package_arn,
                 "instance_count": instance_count,
-                "model_lite": model_lite,
             }
             return True  # 成功をシミュレート
 
@@ -74,7 +72,8 @@ def test_configure_success(runner: CliRunner, mock_home_dir: Path, mock_boto3_se
 
     assert result.exit_code == 0
     assert "Successfully configured Model Package ARN!" in result.output
-    assert "ap-northeast-1.console.aws.amazon.com" in result.output
+    assert "console.aws.amazon.com/sagemaker/home?region=ap-northeast-1" in result.output
+    assert "AWS Marketplace subscriptions" in result.output
 
     # 設定ファイルが正しく書き込まれているか確認
     config_path = mock_home_dir / ".yomitoku" / "config.json"
@@ -126,29 +125,6 @@ def test_deploy_with_cli_option(runner: CliRunner, mock_sagemaker_manager):
     assert deploy_args["instance_type"] == instance_type
     assert deploy_args["endpoint_name"] == endpoint_name
     assert deploy_args["instance_count"] == 1  # Default value
-    assert deploy_args["model_lite"] is False  # Default value
-
-
-def test_deploy_with_lite_flag(runner: CliRunner, mock_sagemaker_manager):
-    """
-    deploy コマンドで --lite フラグが渡された場合に、model_lite=True で呼ばれることをテストする
-    """
-    cli_arn = "arn:aws:sagemaker:us-west-2:111122223333:model-package/cli-model"
-
-    result = runner.invoke(
-        sagemaker,
-        [
-            "deploy",
-            "--endpoint-name",
-            "test-endpoint",
-            "--model-package-arn",
-            cli_arn,
-            "--lite",
-        ],
-        catch_exceptions=False,
-    )
-    assert result.exit_code == 0
-    assert mock_sagemaker_manager["deploy_args"]["model_lite"] is True
 
 
 def test_deploy_with_config_file(

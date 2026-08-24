@@ -104,7 +104,7 @@ from .utils import parse_formats, parse_pages
 )
 @click.option(
     "--threthold_circuit",
-    default=0.5,
+    default=5,
     type=int,
     help="Threshold for circuit breaker",
 )
