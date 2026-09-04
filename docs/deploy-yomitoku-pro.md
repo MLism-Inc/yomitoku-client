@@ -213,12 +213,12 @@ yomitoku-client sagemaker delete \
 削除完了後に、正しいModel Package ARNなどを指定して`deploy`を再実行します。スタックがまだ`ROLLBACK_IN_PROGRESS`の場合は、ロールバック完了後に削除してください。
 
 
-## AWS SageMakerでデプロイをする場合
+## Amazon SageMaker AIでデプロイする場合 {#aws-sagemaker}
 
-### AWS SageMakerでデプロイ
+### AWS Marketplaceからモデルを作成する
 
-AWS Marketplaceを用いてAWS SageMakerでデプロイします。
-SageMakerモデルの作成までは、リアルタイム推論とBatch Transformで共通です。モデルを作成した後、利用する推論方式へ進みます。
+AWS Marketplaceでサブスクライブしたモデルパッケージを使い、Amazon SageMaker AIへデプロイします。
+Amazon SageMaker AIモデルの作成までは、リアルタイム推論とBatch Transformで共通です。モデルを作成した後、利用する推論方式へ進みます。
 
 1. モデルの作成
 2. 推論方式の選択
@@ -227,7 +227,7 @@ SageMakerモデルの作成までは、リアルタイム推論とBatch Transfor
 
 モデルの作成だけでは推論インスタンスの料金は発生しません。リアルタイム推論ではエンドポイントの稼働中、Batch Transformではジョブの実行中にインスタンス料金とソフトウェア利用料が発生します。
 
-### Step 1: SageMakerモデルを作成する {#create-sagemaker-model}
+### Step 1: Amazon SageMaker AIモデルを作成する {#create-sagemaker-model}
 
 1. [AWS マネジメントコンソール](https://aws.amazon.com/jp/console/)にサインインします。
 1. 左上の検索ウィンドウから使用する製品を検索し、通常版ではYomiToku-Pro、Lite版ではYomiToku-Pro Lite版の製品を選択します。両方を利用する場合は、それぞれ個別にサブスクライブしてください。
@@ -240,7 +240,12 @@ SageMakerモデルの作成までは、リアルタイム推論とBatch Transfor
     - リアルタイム推論: **Create a real-time inference endpoint**
     - Batch Transform: **Create a batch transform job**
 ![marketplace sagemaker configure2](images/marketplace-sagemaker-configure2.png)
-1. モデルの設定をします。モデル名を設定し、ロールを設定します。「新しいロールの作成」を選択した際に自動作成されるロールを利用することを推奨します。「ロール作成ウィザードを使用してロールを作成」を選択するとロール名やロールに与える権限をより詳細に設定してロールを作成できます。2回目以降など、既にロールが存在している場合は新しくロールを作成する必要はありません。ロールの設定画面を開く場合は、本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
+1. モデル名を入力し、Amazon SageMaker AIの実行ロール（Execution role）を選択します。新しく作成する場合は、入力先と出力先のS3バケットへアクセスできるよう設定します。既存のロールも選択できます。
+
+    !!! warning "Batch Transformでは、この実行ロールがS3へアクセスします"
+        Batch Transformが入力ファイルを読み取り、解析結果を書き込むときは、ここで選択した実行ロールが使われます。コンソールへサインインしているAdminロールの権限は使われません。必要なS3権限と確認方法は、[モデルの実行ロールへS3権限を設定する](batch-transform.md#batch-transform-execution-role)を参照してください。
+
+    ロールの設定画面を開く場合は、本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
 ![marketplace sagemaker configure3](images/marketplace-sagemaker-configure3.png)
 1. コンテナの定義1のコンテナ入力オプションで「AWS Marketplaceからのモデルパッケージサブスクリプションを使用する」を選択します。（デフォルト設定）
 ![marketplace sagemaker configure4](images/marketplace-sagemaker-configure4.png)

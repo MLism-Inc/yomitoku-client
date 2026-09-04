@@ -1,60 +1,56 @@
-# Batch Transformを実行する
+# Batch Transformで文書を一括解析する
 
-Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存した文書をまとめて解析できます。ジョブの実行中だけ推論用インスタンスが起動し、解析結果はJSONとしてS3に保存されます。
+Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存したPDFや画像をジョブ単位でまとめて解析できます。ジョブの開始時に推論用インスタンスが起動し、完了後に自動で終了するため、夜間バッチや大量文書の一括処理に適しています。
 
-このページでは、YomiToku-Proのモデルを使ってBatch Transformを実行し、出力された`.out`ファイルをダウンロードするまでの手順を説明します。
+このページでは、AWS Marketplace版YomiToku-Proのモデルを使ってBatch Transformジョブを実行し、解析結果をYomiToku-ClientでMarkdownやCSVへ変換するまでを説明します。
 
-## Batch Transformの特長
+!!! note "利用できる推論方式"
+    AWS Marketplaceのモデルパッケージでは、リアルタイム推論とBatch Transformを利用できます。非同期推論は利用できません。
 
-- ジョブ単位でバッチ処理を開始します。
-- バッチ処理中のみ推論用インスタンスが起動します。
-- ジョブが完了すると、推論用インスタンスは自動的に停止します。
+## このページで行うこと
 
-処理が必要な時間だけインスタンスを稼働させるため、リアルタイムエンドポイントを常時稼働する構成と比べてコストを最適化できます。夜間バッチ、定期スケジュールによる処理、大量文書の一括処理に適しています。
+1. YomiToku-ProのAmazon SageMaker AIモデルを準備する
+2. モデルの実行ロールへS3権限を設定する
+3. 入力ファイルをS3へアップロードする
+4. Batch Transformジョブを作成する
+5. 出力された`.out`ファイルをダウンロードする
+6. YomiToku-ClientでMarkdownやCSVへ変換する
 
-!!! info "Batch Transformの出力"
-    入力オブジェクトごとに、元の名前へ`.out`を付けたJSONファイルが作成されます。たとえば`document.pdf`の出力名は`document.pdf.out`です。
+このページでは、次の値を例として使用します。実際の環境に合わせて読み替えてください。
 
-## 前提条件
+| 項目 | 例 |
+| --- | --- |
+| モデル名 | `yomitoku-pro-document-analyzer-lite` |
+| ジョブ名 | `yomitoku-pro-document-analyzer-lite-batch-0000` |
+| 入力先 | `s3://YOUR_BUCKET/input/` |
+| 出力先 | `s3://YOUR_BUCKET/output/` |
+| インスタンスタイプ | `ml.g4dn.xlarge` |
+| リージョン | `ap-northeast-1` |
 
-以下を準備してください。
+!!! warning "ジョブ名は実行ごとに変更してください"
+    Batch Transformのジョブ名は、AWSアカウントとリージョン内で一意である必要があります。上記のジョブ名は初回実行用の例です。再実行時は末尾の番号や日時を変更してください。
 
-- AWS MarketplaceでYomiToku-Proをサブスクライブ済みであること
-- サブスクライブしたモデルパッケージから作成したSageMakerモデル（未作成の場合は次の「SageMakerモデルを準備する」を参照）
-- 入出力に使用するS3バケット
-- SageMaker実行ロール
-- AWS CLIを使う場合は、AWS CLIの認証とリージョンが設定済みであること
+## 事前準備
 
-SageMaker実行ロールには、少なくとも入力先S3オブジェクトの読み取り権限と、出力先S3プレフィックスへの書き込み権限が必要です。S3オブジェクトをAWS KMSで暗号化している場合は、使用するKMSキーの権限も必要です。
+- AWS Marketplaceで利用するYomiToku-Pro製品をサブスクライブしていること
+- サブスクライブしたモデルパッケージからAmazon SageMaker AIモデルを作成していること
+- 入出力に使用するS3バケットがあること
+- AWS CLIを使う場合は、認証情報とリージョンを設定していること
 
-## SageMakerモデルを準備する
+## 1. Amazon SageMaker AIモデルを準備する
 
-Batch Transformを実行するには、サブスクライブしたYomiToku-Proのモデルパッケージから作成したSageMakerモデルが必要です。
+モデルをまだ作成していない場合は、[Amazon SageMaker AIモデルを作成する](deploy-yomitoku-pro.md#create-sagemaker-model)の手順で作成してください。Batch Transformで必要なのはモデルまでです。リアルタイム推論用のエンドポイント設定やエンドポイントは作成しません。
 
-モデルをまだ作成していない場合は、[Step 1: SageMakerモデルを作成する](deploy-yomitoku-pro.md#create-sagemaker-model)の手順で作成してください。モデルを作成したらこのページへ戻り、「1. 入力ファイルをS3にアップロードする」へ進みます。
-
-!!! info "エンドポイントは不要です"
-    Batch Transformで必要なのはSageMakerモデルです。リアルタイム推論用のエンドポイント設定とエンドポイントを作成する必要はありません。
+<figure markdown="span">
+  ![Amazon SageMaker AIのモデル作成画面。モデル名とIAMロールを設定している](images/create-model.png)
+  <figcaption>モデル名と、Batch Transformで使用するIAMロールを設定する</figcaption>
+</figure>
 
 ### Model Package ARNを取得する {#get-model-package-arn}
 
-AWS CLIでSageMakerモデルを作成するには、使用するYomiToku-Pro製品およびバージョンのModel Package ARNが必要です。通常版とLite版は別のMarketplace製品であり、ARNも異なります。通常版では通常版製品、Lite版ではLite版製品をサブスクライブして、それぞれのARNを取得してください。
+AWS CLIでモデルを作成する場合は、サブスクライブした製品のModel Package ARNが必要です。Amazon SageMaker AIコンソールの **AWS Marketplace resources > モデルパッケージ** から対象製品とバージョンを開き、Model Package ARNをコピーします。
 
-#### AWSコンソールから取得する
-
-1. Amazon SageMaker AIコンソールを開きます。
-2. 左側のメニューから **AWS Marketplace resources > モデルパッケージ** を開きます。
-3. **AWS Marketplaceサブスクリプション**から、使用する通常版またはLite版のYomiToku-Pro製品を開きます。Lite版を利用する場合はLite版製品のサブスクリプションを選択します。
-4. 使用するバージョンを選択します。
-5. 詳細画面に表示される **Model Package ARN**をコピーします。
-
-ARNは次のような形式です。
-
-```text
-arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/example
-```
-
-`yomitoku-client`をインストールしている場合は、使用する製品を`--product`で指定すると、その製品のモデルパッケージ一覧のURLを表示できます。
+YomiToku-Clientをインストール済みの場合は、次のコマンドから対象製品のモデルパッケージ一覧を開けます。
 
 ```bash
 # 通常版
@@ -68,16 +64,10 @@ yomitoku-client sagemaker configure \
   --region ap-northeast-1
 ```
 
-表示されたURLを、指定した製品をサブスクライブしたAWSアカウントで開きます。使用するバージョンを選び、Model Package ARNをコピーしてターミナルへ貼り付けます。入力したARNは`~/.yomitoku/config.json`へ製品ごとに保存されます。
+!!! warning "製品とリージョンを確認してください"
+    通常版とLite版では、製品とModel Package ARNが異なります。Batch Transformジョブと同じリージョンにある、利用する製品のARNを選択してください。
 
-一覧が空の場合は、AWSアカウントとリージョンが購読時のものか確認してください。URLから確認できない場合は、Marketplaceのダッシュボードから対象製品を開いてSageMakerモデルを作成し、SageMaker AIコンソールの **Deployments & inference > モデル** にあるモデル詳細画面から **Model package name**を取得します。詳しくは[URLからModel Package ARNを取得できない場合](deploy-yomitoku-pro.md#arn-fallback)を参照してください。
-
-!!! warning "リージョンとバージョンを確認してください"
-    Model Package ARNは通常版／Lite版の製品、リージョン、ソフトウェアバージョンごとに異なります。Batch Transformジョブと同じリージョンにある、使用する製品とバージョンのARNをコピーしてください。製品ページのURLや製品ID（`prod-...`）はModel Package ARNではありません。
-
-#### 作成済みモデルから確認する
-
-既にYomiToku-ProのSageMakerモデルがある場合は、モデルのコンテナ定義からARNを取得できます。
+既存モデルのModel Package ARNは、次のコマンドでも確認できます。
 
 ```bash
 aws sagemaker describe-model \
@@ -87,32 +77,72 @@ aws sagemaker describe-model \
   --region ap-northeast-1
 ```
 
-### 軽量モードを利用する {#batch-lite-model}
+### YomiToku-Pro - Document Analyzer Liteを利用する {#batch-lite-model}
 
-Lite版は通常版とは別のAWS Marketplace製品として提供されます。AWS MarketplaceでLite版製品をサブスクライブし、**AWS Marketplaceサブスクリプション**からLite版のModel Package ARNを取得してください。通常版のARNを指定したまま、環境変数やエンドポイント名でLite版へ切り替えることはできません。
+Lite版は通常版とは別のAWS Marketplace製品です。Lite版製品をサブスクライブし、そのModel Package ARNからモデルを作成してください。環境変数やモデル名だけで通常版をLite版へ切り替えることはできません。
 
-Lite版モデルをAWS CLIで作成する場合は、Lite版製品のARNを`ModelPackageName`へ指定します。`Environment`は指定しません。
+<figure markdown="span">
+  ![AWS MarketplaceのモデルパッケージサブスクリプションからYomiToku-Pro Document Analyzer Liteを選択している](images/marketplace-container.png)
+  <figcaption>利用するAWS Marketplaceのモデルパッケージを選択する</figcaption>
+</figure>
+
+## 2. モデルの実行ロールへS3権限を設定する {#batch-transform-execution-role}
+
+!!! warning "S3へアクセスするのはモデル作成時の実行ロールです"
+    Batch TransformがS3の入力ファイルを読み書きするときは、**モデルの作成時に選択した実行ロール（Execution role）**が使われます。AWSマネジメントコンソールへサインインしているAdminロールや、AWS CLIのプロファイルに付与したS3権限は使われません。
+
+実行ロールは、Amazon SageMaker AIコンソールの **Deployments & inference > モデル > 対象モデル** にある **Execution role ARN**で確認できます。AWS CLIでは次のコマンドを実行します。
 
 ```bash
-aws sagemaker create-model \
-  --model-name yomitoku-pro-lite-batch \
-  --execution-role-arn arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_SAGEMAKER_ROLE \
-  --primary-container '{"ModelPackageName":"YOUR_LITE_MODEL_PACKAGE_ARN"}' \
+aws sagemaker describe-model \
+  --model-name yomitoku-pro-document-analyzer-lite \
+  --query ExecutionRoleArn \
+  --output text \
   --region ap-northeast-1
 ```
 
-## 1. 入力ファイルをS3にアップロードする
+実行ロールには、入力プレフィックスの一覧・読み取り権限と、出力プレフィックスへの書き込み権限を付与します。次は、`s3://YOUR_BUCKET/input/`から読み取り、`s3://YOUR_BUCKET/output/`へ書き込む場合の例です。
 
-この例では、ローカルの`input`ディレクトリにあるPDFをS3へアップロードします。
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::YOUR_BUCKET",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["input", "input/*"]
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::YOUR_BUCKET/input/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::YOUR_BUCKET/output/*"
+    }
+  ]
+}
+```
+
+## 3. 入力ファイルをS3へアップロードする
+
+次の例では、ローカルの`input`ディレクトリにあるPDFをアップロードします。
 
 ```bash
-aws s3 cp ./input/ s3://YOUR_BUCKET/yomitoku-batch/input/ \
+aws s3 cp ./input/ s3://YOUR_BUCKET/input/ \
   --recursive \
   --exclude "*" \
   --include "*.pdf"
 ```
 
-YomiToku-Proが受け付けるContent-Typeは次のとおりです。
+入力形式に応じて、ジョブへ次のContent-Typeを指定します。
 
 | 入力形式 | Content-Type |
 | --- | --- |
@@ -121,28 +151,36 @@ YomiToku-Proが受け付けるContent-Typeは次のとおりです。
 | PNG | `image/png` |
 | TIFF | `image/tiff` |
 
-!!! warning "1ジョブには同じ形式のファイルを指定してください"
-    Batch Transformの`ContentType`はジョブ全体で1つです。PDFとPNGのようにContent-Typeが異なるファイルは、入力プレフィックスまたはジョブを分けてください。
+!!! warning "1つのジョブには同じ形式のファイルを入れてください"
+    Content-Typeはジョブ全体で1つだけ指定します。PDFとPNGなど、形式の異なるファイルは入力プレフィックスまたはジョブを分けてください。また、出力プレフィックスは入力プレフィックスの外に設定してください。
 
-!!! warning "入力プレフィックスを空にしないでください"
-    `S3DataType=S3Prefix`では、指定したプレフィックス以下のオブジェクトが処理対象になります。入力プレフィックスには、処理対象以外のファイルを置かないでください。また、出力プレフィックスは入力プレフィックスの外にしてください。
-
-## 2. Batch Transformジョブを作成する
+## 4. Batch Transformジョブを作成する
 
 ### AWSマネジメントコンソールを使う場合
 
 1. 入力ファイルと同じリージョンのAmazon SageMaker AIコンソールを開きます。
-2. 左側のメニューから **Deployments & inference > バッチ変換ジョブ** を開きます。
-![SageMaker AIのバッチ変換ジョブメニュー](images/sagemaker-batch-transform-menu.png)
+2. **Deployments & inference > バッチ変換ジョブ** を開きます。
+
+    <figure markdown="span">
+      ![Amazon SageMaker AIコンソールのバッチ変換ジョブメニュー](images/batch-transform-menu-cropped.png){ width="267" }
+      <figcaption>Deployments & inferenceからバッチ変換ジョブを開く</figcaption>
+    </figure>
+
 3. **バッチ変換ジョブを作成** を選択します。
-4. ジョブ名と、YomiToku-Proのモデル名を指定します。
-5. インスタンスタイプとインスタンス数を指定します。最初の動作確認では、モデルパッケージが対応しているインスタンスタイプを1台指定してください。
+4. ジョブ名とYomiToku-Proのモデル名を指定します。
+5. 対応するインスタンスタイプとインスタンス数を指定します。最初は1台での動作確認を推奨します。
+
+    <figure markdown="span">
+      ![Batch Transformジョブの作成画面。ジョブ名、モデル名、インスタンスタイプ、インスタンス数を設定している](images/job-settings.png)
+      <figcaption>ジョブ名、モデル、インスタンスを設定する</figcaption>
+    </figure>
+
 6. 入力データを次のように設定します。
 
-    | 項目 | PDFの場合の設定値 |
+    | 項目 | 設定値 |
     | --- | --- |
     | S3データタイプ | `S3Prefix` |
-    | S3の場所 | `s3://YOUR_BUCKET/yomitoku-batch/input/` |
+    | S3の場所 | `s3://YOUR_BUCKET/input/` |
     | Content-Type | `application/pdf` |
     | 圧縮タイプ | `None` |
     | 分割タイプ | `None` |
@@ -151,92 +189,81 @@ YomiToku-Proが受け付けるContent-Typeは次のとおりです。
 
     | 項目 | 設定値 |
     | --- | --- |
-    | S3出力先 | `s3://YOUR_BUCKET/yomitoku-batch/output/` |
+    | S3出力先 | `s3://YOUR_BUCKET/output/` |
     | Accept | `application/json` |
     | 結合方法 | `None` |
 
+    <figure markdown="span">
+      ![Batch Transformジョブの入力と出力にS3 URI、Content-Type、分割タイプを設定している](images/io-settings.png)
+      <figcaption>S3の入力先、Content-Type、出力先を設定する</figcaption>
+    </figure>
+
 8. ジョブを作成します。
 
-`SplitType=None`を指定すると、S3オブジェクト全体が1回の推論リクエストとしてYomiToku-Proへ渡されます。画像やPDFのバイナリを行単位で分割しないよう、`Line`は指定しないでください。
+    <figure markdown="span">
+      ![作成したBatch TransformジョブがInProgressになっている](images/job-created.png)
+      <figcaption>ジョブが作成され、文書の解析が開始される</figcaption>
+    </figure>
+
+`SplitType=None`を指定すると、1つのPDFまたは画像が1回の推論リクエストとして渡されます。複数のファイルは複数のインスタンスで処理できますが、1つの大きなPDFが複数のインスタンスへ分割されるわけではありません。大きなPDFで処理時間が問題になる場合は、事前にファイルを分割してください。
 
 ### AWS CLIを使う場合
 
-次の値を環境に合わせて置き換えます。
-
-- `YOUR_MODEL_NAME`: 作成済みのSageMakerモデル名
-- `YOUR_BUCKET`: 入出力用S3バケット名
-- `ml.g4dn.xlarge`: 使用するモデルパッケージが対応しているインスタンスタイプ
-- `ap-northeast-1`: 使用するAWSリージョン
+次のコマンドはPDFを処理する例です。
 
 ```bash
 aws sagemaker create-transform-job \
-  --transform-job-name yomitoku-batch-001 \
-  --model-name YOUR_MODEL_NAME \
-  --transform-input 'DataSource={S3DataSource={S3DataType=S3Prefix,S3Uri=s3://YOUR_BUCKET/yomitoku-batch/input/}},ContentType=application/pdf,CompressionType=None,SplitType=None' \
-  --transform-output 'S3OutputPath=s3://YOUR_BUCKET/yomitoku-batch/output/,Accept=application/json,AssembleWith=None' \
+  --transform-job-name yomitoku-pro-document-analyzer-lite-batch-0000 \
+  --model-name yomitoku-pro-document-analyzer-lite \
+  --transform-input 'DataSource={S3DataSource={S3DataType=S3Prefix,S3Uri=s3://YOUR_BUCKET/input/}},ContentType=application/pdf,CompressionType=None,SplitType=None' \
+  --transform-output 'S3OutputPath=s3://YOUR_BUCKET/output/,Accept=application/json,AssembleWith=None' \
   --transform-resources 'InstanceType=ml.g4dn.xlarge,InstanceCount=1' \
+  --max-concurrent-transforms 1 \
+  --max-payload-in-mb 100 \
   --region ap-northeast-1
 ```
 
-JPEG、PNG、TIFFを処理するときは、`ContentType`を入力形式に合わせて変更してください。
+`MaxPayloadInMB`の既定値は6 MB、設定可能な最大値は100 MBです。この例では6 MBを超えるPDFも処理できるよう、100 MBを指定しています。100 MBを超えるファイルは事前に分割してください。
 
-!!! note "ペイロードサイズ"
-    SageMaker Batch Transformの`MaxPayloadInMB`は最大100 MBです。大きなPDFを処理する場合はこの制限と処理時間に注意してください。まずは小さな画像またはPDF 1ファイルで動作を確認することを推奨します。
+JPEG、PNG、TIFFを処理するときは、`ContentType`を入力形式に合わせて変更します。
 
-## 3. ジョブの状態を確認する
-
-AWS CLIでは次のコマンドで状態を確認できます。
+### ジョブの状態を確認する
 
 ```bash
 aws sagemaker describe-transform-job \
-  --transform-job-name yomitoku-batch-001 \
+  --transform-job-name yomitoku-pro-document-analyzer-lite-batch-0000 \
   --query '{Status:TransformJobStatus,FailureReason:FailureReason}' \
   --region ap-northeast-1
 ```
 
-`TransformJobStatus`が`Completed`になれば完了です。`Failed`の場合は、`FailureReason`とAmazon CloudWatch Logsの推論コンテナログを確認してください。
+`TransformJobStatus`が`Completed`になれば完了です。`Failed`の場合は、`FailureReason`とAmazon CloudWatch Logsの`/aws/sagemaker/TransformJobs`を確認してください。
 
-Batch Transformのインスタンスはジョブ完了後に終了するため、リアルタイムエンドポイントのような削除操作は不要です。ただし、S3の入力・出力オブジェクトには保存料金が発生します。
-
-## 4. `.out`ファイルを確認・ダウンロードする {#download-batch-output}
+## 5. `.out`ファイルを確認・ダウンロードする {#download-batch-output}
 
 出力先を一覧表示します。
 
 ```bash
-aws s3 ls s3://YOUR_BUCKET/yomitoku-batch/output/ --recursive
+aws s3 ls s3://YOUR_BUCKET/output/ --recursive
 ```
 
-入力が次の場所にある場合:
+入力したオブジェクトごとに、元のファイル名に`.out`を付けたJSONファイルが作成されます。
 
 ```text
-s3://YOUR_BUCKET/yomitoku-batch/input/document.pdf
+入力: s3://YOUR_BUCKET/input/document.pdf
+出力: s3://YOUR_BUCKET/output/document.pdf.out
 ```
 
-出力先には、入力名に`.out`が付いたオブジェクトが作成されます。入力プレフィックス以下にサブディレクトリがある場合、その相対パスも出力先に引き継がれます。
-
-```text
-document.pdf.out
-```
-
-実際の出力キーは、先ほどの`aws s3 ls ... --recursive`の結果で確認してください。確認したS3 URIを指定してローカルへダウンロードします。
+入力プレフィックス以下にサブフォルダがある場合は、その階層に応じたサブフォルダへ保存されます。実際のS3 URIは`aws s3 ls`の結果で確認してください。
 
 ```bash
 aws s3 cp \
-  s3://YOUR_BUCKET/yomitoku-batch/output/PATH/TO/document.pdf.out \
+  s3://YOUR_BUCKET/output/document.pdf.out \
   ./document.pdf.out
 ```
 
-JSONとして読めることを確認します。
+## 6. YomiToku-ClientでMarkdownやCSVへ変換する
 
-```bash
-python -m json.tool ./document.pdf.out > /dev/null
-```
-
-`python -m json.tool`が終了コード`0`で完了すれば、JSONとして解析できています。変換機能の検証に使用するときは、元の入力ファイルと`.out`ファイルをセットで保管してください。図の画像をMarkdownやHTMLへ書き出すには元画像または元PDFが必要です。
-
-## 5. `.out`をMarkdown、CSV、HTMLへ変換する
-
-`yomitoku-client convert`を使用すると、ダウンロードしたJSONを再推論せずに変換できます。
+`.out`ファイルにはYomiToku-Proの解析結果がJSON形式で保存されています。`yomitoku-client convert`を使用すると、再推論せずにMarkdown、CSV、HTMLへ変換できます。
 
 ```bash
 yomitoku-client convert document.pdf.out \
@@ -244,7 +271,7 @@ yomitoku-client convert document.pdf.out \
   --output-dir ./converted
 ```
 
-元PDFを保管している場合は、`--src`を指定するとMarkdownとHTMLへ図の切り出し画像を出力できます。
+元のPDFを保管している場合は、`--src`を指定するとMarkdownやHTMLで使用する図の切り出し画像も出力できます。
 
 ```bash
 yomitoku-client convert document.pdf.out \
@@ -253,32 +280,66 @@ yomitoku-client convert document.pdf.out \
   --output-dir ./converted
 ```
 
-詳細は[Batch Transform出力の変換](cli-usage.md#batch-transform)を参照してください。
+ローカルでの確認だけでなく、実運用ではAWS LambdaなどでYomiToku-Clientを実行し、Batch Transformの出力を後続システム向けの形式へ変換する構成を想定しています。詳細は[Batch Transform出力の変換](cli-usage.md#batch-transform)を参照してください。
+
+## 定期的に実行する場合
+
+Batch Transform自体にはスケジュール機能がありません。定期実行する場合は、次のようにAWSサービスを組み合わせます。
+
+```text
+EventBridge Scheduler
+        ↓
+Step Functions
+        ↓
+Amazon SageMaker AI Batch Transform
+        ↓
+出力先S3 ──→ AWS Lambda（YomiToku-Client）──→ 後続システム
+```
+
+EventBridge SchedulerからStep Functionsを起動し、Step FunctionsからBatch Transformジョブを作成します。ジョブ完了後は、AWS LambdaなどでYomiToku-Clientを実行してMarkdownやCSVへ変換できます。
+
+定期実行で同じ入力プレフィックスを指定すると、既存ファイルも再処理されます。`input/YYYY-MM-DD/`のように実行単位でプレフィックスを分け、ジョブ名も実行ごとに変更してください。
 
 ## トラブルシューティング
 
+### `getObjectMetadata`で`403 Forbidden`になる
+
+```text
+Got client error from S3 due to '403 Forbidden' processing getObjectMetadata
+```
+
+`getObjectMetadata`は、S3オブジェクトのサイズやContent-Typeを確認する`HeadObject`相当の処理です。`s3:GetObjectMetadata`というIAMアクションを追加する必要はありません。対象モデルの実行ロールに、入力オブジェクトへの`s3:GetObject`があるか確認してください。
+
+コンソールから作成したモデルとAWS CLIから作成したモデルでは、実行ロールが異なることがあります。まずジョブのモデル名を確認し、続けてモデルの`ExecutionRoleArn`を確認します。
+
+```bash
+aws sagemaker describe-transform-job \
+  --transform-job-name YOUR_JOB_NAME \
+  --query ModelName \
+  --output text \
+  --region ap-northeast-1
+
+aws sagemaker describe-model \
+  --model-name YOUR_MODEL_NAME \
+  --query ExecutionRoleArn \
+  --output text \
+  --region ap-northeast-1
+```
+
 ### `Unsupported content type`になる
 
-`TransformInput.ContentType`と入力ファイルの形式が一致しているか確認してください。特に、同じ入力プレフィックスへPDFと画像を混在させないでください。
-
-### ジョブが入力ファイルを見つけられない
-
-- SageMaker実行ロールに入力S3プレフィックスの読み取り権限があるか
-- S3 URIのバケット名とプレフィックスが正しいか
-- S3バケットとBatch Transformジョブのリージョンが一致しているか
-
-を確認してください。
+`TransformInput.ContentType`と入力ファイルの形式が一致しているか確認してください。同じ入力プレフィックスへPDFと画像を混在させないでください。
 
 ### 出力ファイルが見つからない
 
-出力オブジェクトは入力オブジェクトの相対パスを保持して、指定した出力プレフィックス以下に配置されることがあります。`aws s3 ls ... --recursive`で出力プレフィックス全体を確認してください。
+`aws s3 ls s3://YOUR_BUCKET/output/ --recursive`を実行し、出力プレフィックス以下を確認してください。入力キーの階層に応じたサブフォルダへ保存されている場合があります。
 
 ### ジョブが`Failed`になる
 
-`describe-transform-job`の`FailureReason`を確認したうえで、Amazon CloudWatch Logsで`/aws/sagemaker/TransformJobs`のログを確認してください。大きな文書でのみ失敗する場合は、より小さなファイルで再実行し、ペイロードサイズまたは処理時間の影響を切り分けてください。
+`describe-transform-job`の`FailureReason`と、Amazon CloudWatch Logsの`/aws/sagemaker/TransformJobs`を確認してください。大きなファイルだけが失敗する場合は、ペイロードサイズや処理時間を切り分けるため、小さなPDFまたは画像で再実行してください。
 
-## 関連するAWS公式ドキュメント
+## 関連ドキュメント
 
-- [Batch Transformによる推論](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/batch-transform.html)
-- [create-transform-job AWS CLIリファレンス](https://docs.aws.amazon.com/cli/latest/reference/sagemaker/create-transform-job.html)
-- [モデルパッケージからSageMakerモデルを作成する](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-mkt-model-pkg-model.html)
+- [YomiToku-ProをAmazon SageMaker AIへデプロイする](deploy-yomitoku-pro.md)
+- [Batch Transform出力を変換する](cli-usage.md#batch-transform)
+- [Amazon SageMaker AIのBatch Transform](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/batch-transform.html)
