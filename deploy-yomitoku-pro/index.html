@@ -704,19 +704,19 @@
   <a href="#aws-sagemaker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AWS SageMakerでデプロイをする場合
+        Amazon SageMaker AIでデプロイする場合
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="AWS SageMakerでデプロイをする場合">
+    <nav class="md-nav" aria-label="Amazon SageMaker AIでデプロイする場合">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#aws-sagemaker_1" class="md-nav__link">
+  <a href="#aws-marketplace" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AWS SageMakerでデプロイ
+        AWS Marketplaceからモデルを作成する
       
     </span>
   </a>
@@ -727,7 +727,7 @@
   <a href="#create-sagemaker-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: SageMakerモデルを作成する
+        Step 1: Amazon SageMaker AIモデルを作成する
       
     </span>
   </a>
@@ -746,7 +746,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#aws-sagemaker_2" class="md-nav__link">
+  <a href="#aws-sagemaker_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         AWS SageMakerでアンデプロイ
@@ -835,7 +835,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#aws-sagemaker_3" class="md-nav__link">
+  <a href="#aws-sagemaker_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         AWS SageMakerのモデル・エンドポイント設定・エンドポイント
@@ -1156,19 +1156,19 @@
   <a href="#aws-sagemaker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AWS SageMakerでデプロイをする場合
+        Amazon SageMaker AIでデプロイする場合
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="AWS SageMakerでデプロイをする場合">
+    <nav class="md-nav" aria-label="Amazon SageMaker AIでデプロイする場合">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#aws-sagemaker_1" class="md-nav__link">
+  <a href="#aws-marketplace" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AWS SageMakerでデプロイ
+        AWS Marketplaceからモデルを作成する
       
     </span>
   </a>
@@ -1179,7 +1179,7 @@
   <a href="#create-sagemaker-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: SageMakerモデルを作成する
+        Step 1: Amazon SageMaker AIモデルを作成する
       
     </span>
   </a>
@@ -1198,7 +1198,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#aws-sagemaker_2" class="md-nav__link">
+  <a href="#aws-sagemaker_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         AWS SageMakerでアンデプロイ
@@ -1287,7 +1287,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#aws-sagemaker_3" class="md-nav__link">
+  <a href="#aws-sagemaker_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         AWS SageMakerのモデル・エンドポイント設定・エンドポイント
@@ -1623,10 +1623,10 @@
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
 <p>削除完了後に、正しいModel Package ARNなどを指定して<code>deploy</code>を再実行します。スタックがまだ<code>ROLLBACK_IN_PROGRESS</code>の場合は、ロールバック完了後に削除してください。</p>
-<h2 id="aws-sagemaker">AWS SageMakerでデプロイをする場合<a class="headerlink" href="#aws-sagemaker" title="Permanent link">&para;</a></h2>
-<h3 id="aws-sagemaker_1">AWS SageMakerでデプロイ<a class="headerlink" href="#aws-sagemaker_1" title="Permanent link">&para;</a></h3>
-<p>AWS Marketplaceを用いてAWS SageMakerでデプロイします。
-SageMakerモデルの作成までは、リアルタイム推論とBatch Transformで共通です。モデルを作成した後、利用する推論方式へ進みます。</p>
+<h2 id="aws-sagemaker">Amazon SageMaker AIでデプロイする場合<a class="headerlink" href="#aws-sagemaker" title="Permanent link">&para;</a></h2>
+<h3 id="aws-marketplace">AWS Marketplaceからモデルを作成する<a class="headerlink" href="#aws-marketplace" title="Permanent link">&para;</a></h3>
+<p>AWS Marketplaceでサブスクライブしたモデルパッケージを使い、Amazon SageMaker AIへデプロイします。
+Amazon SageMaker AIモデルの作成までは、リアルタイム推論とBatch Transformで共通です。モデルを作成した後、利用する推論方式へ進みます。</p>
 <ol>
 <li>モデルの作成</li>
 <li>推論方式の選択<ul>
@@ -1636,7 +1636,7 @@ SageMakerモデルの作成までは、リアルタイム推論とBatch Transfor
 </li>
 </ol>
 <p>モデルの作成だけでは推論インスタンスの料金は発生しません。リアルタイム推論ではエンドポイントの稼働中、Batch Transformではジョブの実行中にインスタンス料金とソフトウェア利用料が発生します。</p>
-<h3 id="create-sagemaker-model">Step 1: SageMakerモデルを作成する<a class="headerlink" href="#create-sagemaker-model" title="Permanent link">&para;</a></h3>
+<h3 id="create-sagemaker-model">Step 1: Amazon SageMaker AIモデルを作成する<a class="headerlink" href="#create-sagemaker-model" title="Permanent link">&para;</a></h3>
 <ol>
 <li><a href="https://aws.amazon.com/jp/console/">AWS マネジメントコンソール</a>にサインインします。</li>
 <li>左上の検索ウィンドウから使用する製品を検索し、通常版ではYomiToku-Pro、Lite版ではYomiToku-Pro Lite版の製品を選択します。両方を利用する場合は、それぞれ個別にサブスクライブしてください。
@@ -1651,12 +1651,17 @@ SageMakerモデルの作成までは、リアルタイム推論とBatch Transfor
 <img alt="marketplace sagemaker configure2" src="../images/marketplace-sagemaker-configure2.png" /></li>
 </ul>
 </li>
-<li>モデルの設定をします。モデル名を設定し、ロールを設定します。「新しいロールの作成」を選択した際に自動作成されるロールを利用することを推奨します。「ロール作成ウィザードを使用してロールを作成」を選択するとロール名やロールに与える権限をより詳細に設定してロールを作成できます。2回目以降など、既にロールが存在している場合は新しくロールを作成する必要はありません。ロールの設定画面を開く場合は、本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
-<img alt="marketplace sagemaker configure3" src="../images/marketplace-sagemaker-configure3.png" /></li>
-<li>コンテナの定義1のコンテナ入力オプションで「AWS Marketplaceからのモデルパッケージサブスクリプションを使用する」を選択します。（デフォルト設定）
-<img alt="marketplace sagemaker configure4" src="../images/marketplace-sagemaker-configure4.png" /></li>
 <li>
-<p>「モデルパッケージサブスクリプションの選択」で使用する製品の行を選択します。通常版では通常版のサブスクリプション、Lite版ではLite版のサブスクリプションを選択します。Lite版を環境変数で切り替える必要はありません。詳細は<a href="../batch-transform/#batch-lite-model">軽量モードを利用する</a>を参照してください。</p>
+<p>モデル名を入力し、Amazon SageMaker AIの実行ロール（Execution role）を選択します。新しく作成する場合は、入力先と出力先のS3バケットへアクセスできるよう設定します。既存のロールも選択できます。</p>
+<div class="admonition warning">
+<p class="admonition-title">Batch Transformでは、この実行ロールがS3へアクセスします</p>
+<p>Batch Transformが入力ファイルを読み取り、解析結果を書き込むときは、ここで選択した実行ロールが使われます。コンソールへサインインしているAdminロールの権限は使われません。必要なS3権限と確認方法は、<a href="../batch-transform/#batch-transform-execution-role">モデルの実行ロールへS3権限を設定する</a>を参照してください。</p>
+</div>
+<p>ロールの設定画面を開く場合は、本ドキュメントの「付録:各種設定画面の開き方」をご確認ください。
+<img alt="marketplace sagemaker configure3" src="../images/marketplace-sagemaker-configure3.png" />
+1. コンテナの定義1のコンテナ入力オプションで「AWS Marketplaceからのモデルパッケージサブスクリプションを使用する」を選択します。（デフォルト設定）
+<img alt="marketplace sagemaker configure4" src="../images/marketplace-sagemaker-configure4.png" />
+1. 「モデルパッケージサブスクリプションの選択」で使用する製品の行を選択します。通常版では通常版のサブスクリプション、Lite版ではLite版のサブスクリプションを選択します。Lite版を環境変数で切り替える必要はありません。詳細は<a href="../batch-transform/#batch-lite-model">軽量モードを利用する</a>を参照してください。</p>
 </li>
 <li>
 <p>VPCはAWS上に構築する仮想的なプライベートネットワークです。AWS上の他のサービスから接続する際にVPCを用いることでセキュアな通信経路を構築できます。VPCの設定は必要に応じて設定します。（VPCの設定は必須ではありません。）詳しくは<a href="https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/host-vpc.html">こちらの公式ドキュメント</a>をご確認ください。タグは、AWSリソースに設定するキーと値のペアです。リソースの識別、分類、管理を目的として、必要に応じて設定します。詳しくは<a href="https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/what-are-tags.html">こちらの公式ドキュメント</a>をご確認ください。
@@ -1702,7 +1707,7 @@ SageMakerモデルの作成までは、リアルタイム推論とBatch Transfor
 <p>サービスはエンドポイントをデプロイしてから、エンドポイントを削除するまで、従量課金で料金が発生します。サービスの利用を終了する場合は、必ずエンドポイントを削除してください。</p>
 </div>
 <hr />
-<h3 id="aws-sagemaker_2">AWS SageMakerでアンデプロイ<a class="headerlink" href="#aws-sagemaker_2" title="Permanent link">&para;</a></h3>
+<h3 id="aws-sagemaker_1">AWS SageMakerでアンデプロイ<a class="headerlink" href="#aws-sagemaker_1" title="Permanent link">&para;</a></h3>
 <p>次の順番でアンデプロイをします。</p>
 <ol>
 <li>エンドポイントの削除</li>
@@ -1789,7 +1794,7 @@ SageMakerモデルの作成までは、リアルタイム推論とBatch Transfor
 <img alt="iam search" src="../images/iam-search.png" /></li>
 <li>左側のメニューでロールを選択します。</li>
 </ol>
-<h3 id="aws-sagemaker_3">AWS SageMakerのモデル・エンドポイント設定・エンドポイント<a class="headerlink" href="#aws-sagemaker_3" title="Permanent link">&para;</a></h3>
+<h3 id="aws-sagemaker_2">AWS SageMakerのモデル・エンドポイント設定・エンドポイント<a class="headerlink" href="#aws-sagemaker_2" title="Permanent link">&para;</a></h3>
 <p>AWS SageMakerのモデル・エンドポイント設定・エンドポイントの設定画面はAmazon SageMaker AIの推論の項目から開くことができます。一度作成したモデルやエンドポイント設定からエンドポイントを作成することや、モデル・エンドポイント設定・エンドポイントの削除などができます。</p>
 <p>次の手順でモデル・エンドポイント設定・エンドポイントの設定画面を開くことができます。</p>
 <ol>
