@@ -1,0 +1,51 @@
+{
+  "result": [
+    {
+      "tables": [
+        {
+          "id": "t0",
+          "style": "border",
+          "box": [10, 10, 400, 220],
+          "cells": {
+            "c0": {"id": "c0", "box": [10, 10, 100, 40], "contents": "氏 名", "role": "header", "row": 0, "col": 0, "row_span": 1, "col_span": 1},
+            "c1": {"id": "c1", "box": [100, 10, 400, 40], "contents": "山田 太郎", "role": "cell", "row": 0, "col": 1, "row_span": 1, "col_span": 1},
+            "c2": {"id": "c2", "box": [10, 40, 100, 70], "contents": "住所", "role": "header", "row": 1, "col": 0, "row_span": 1, "col_span": 1},
+            "c3": {"id": "c3", "box": [100, 40, 250, 70], "contents": "都道府県", "role": "header", "row": 1, "col": 1, "row_span": 1, "col_span": 1},
+            "c4": {"id": "c4", "box": [250, 40, 400, 70], "contents": "東京都", "role": "cell", "row": 1, "col": 2, "row_span": 1, "col_span": 1},
+            "c5": {"id": "c5", "box": [100, 70, 250, 100], "contents": "市区町村", "role": "header", "row": 2, "col": 1, "row_span": 1, "col_span": 1},
+            "c6": {"id": "c6", "box": [250, 70, 400, 100], "contents": "千代田区", "role": "cell", "row": 2, "col": 2, "row_span": 1, "col_span": 1},
+            "c7": {"id": "c7", "box": [10, 110, 100, 140], "contents": "品名", "role": "header", "row": 3, "col": 0, "row_span": 1, "col_span": 1},
+            "c8": {"id": "c8", "box": [100, 110, 250, 140], "contents": "数量", "role": "header", "row": 3, "col": 1, "row_span": 1, "col_span": 1},
+            "c9": {"id": "c9", "box": [10, 140, 100, 170], "contents": "りんご", "role": "cell", "row": 4, "col": 0, "row_span": 1, "col_span": 1},
+            "c10": {"id": "c10", "box": [100, 140, 250, 170], "contents": "3", "role": "cell", "row": 4, "col": 1, "row_span": 1, "col_span": 1},
+            "c11": {"id": "c11", "box": [10, 170, 100, 200], "contents": "みかん", "role": "cell", "row": 5, "col": 0, "row_span": 1, "col_span": 1},
+            "c12": {"id": "c12", "box": [100, 170, 250, 200], "contents": "5", "role": "cell", "row": 5, "col": 1, "row_span": 1, "col_span": 1},
+            "c13": {"id": "c13", "box": [250, 110, 400, 140], "contents": "備考なし", "role": "cell", "row": null, "col": null, "row_span": null, "col_span": null}
+          },
+          "kv_items": [
+            {"id": "kv0", "key": ["c0"], "value": "c1", "box": [10, 10, 400, 40]},
+            {"id": "kv1", "key": ["c2", "c3"], "value": "c4", "box": [10, 40, 400, 70]},
+            {"id": "kv2", "key": ["c2", "c5"], "value": "c6", "box": [10, 70, 400, 100]},
+            {"id": "kv3", "key": [], "value": "c13", "box": [250, 110, 400, 140]}
+          ],
+          "grids": [
+            {
+              "id": "g0",
+              "box": [10, 110, 250, 200],
+              "n_row": 3,
+              "n_col": 2,
+              "col_headers": [["c7"], ["c8"]],
+              "data": [["c7", "c8"], ["c9", "c10"], ["c11", "c12"]]
+            }
+          ]
+        }
+      ],
+      "paragraphs": [
+        {"id": "p0", "box": [10, 230, 300, 260], "score": 0.98, "role": null, "contents": "以上のとおり申請します。"}
+      ],
+      "words": [
+        {"content": "山田", "points": [[100, 12], [150, 12], [150, 32], [100, 32]], "direction": "horizontal", "det_score": 0.95, "rec_score": 0.93}
+      ]
+    }
+  ]
+}

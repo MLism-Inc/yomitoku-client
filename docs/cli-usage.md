@@ -21,6 +21,7 @@ yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o de
 | `${path_file}` | 解析対象のファイルパスを指定します。 *(必須)*                                  |
 | `-e`           | SageMaker のエンドポイント名を指定します。 *(必須)*                          |
 | `-r`           | AWS のリージョン名を指定します。                                         |
+| `-a`           | エンドポイントが提供する API を指定します。<br>`document-analyzer`（既定） / `table-semantic-parser` |
 | `-f`           | 出力フォーマットを指定します。<br>対応形式：`json`, `csv`, `html`, `md`, `pdf` |
 | `-o`           | 解析結果を保存する出力先ディレクトリを指定します。                                  |
 
@@ -52,13 +53,14 @@ yomitoku-client single --help
 | --------------------- | ---------------------------------------- | ------------------------------------------------------------ |
 | `-e, --endpoint`      | `TEXT`                                   | **SageMaker のエンドポイント名（必須）**                                  |
 | `-r, --region`        | `TEXT`                                   | AWS リージョン名（例：`ap-northeast-1`）                               |
+| `-a, --api`           | `[document-analyzer / table-semantic-parser]` | エンドポイントが提供する API（既定：`document-analyzer`）<br>`table-semantic-parser` の出力は `json` のみ |
 | `-f, --file_format`   | `TEXT（カンマ区切りで複数指定可）`<br>例：`json,csv,pdf` | 解析結果の出力フォーマット（`json` / `csv` / `html` / `md` / `pdf`）を複数指定可能 |
 | `-o, --output_dir`    | `PATH`                                   | 解析結果を保存するディレクトリパス                                            |
 | `--dpi`               | `INTEGER`                                | 画像解析時の解像度（DPI）                                               |
 | `-p, --profile`       | `TEXT`                                   | 使用する AWS CLI プロファイル名                                         |
 | `--request_timeout`   | `FLOAT`                                  | 各リクエスト単位のタイムアウト（秒）                                           |
 | `--total_timeout`     | `FLOAT`                                  | 全体処理のタイムアウト（秒）                                               |
-| `-v, --vis_mode`      | `[both / ocr / layout / none]`           | 出力画像の可視化モード<br>（OCR結果 / レイアウト / 両方 / なし）                     |
+| `-v, --vis_mode`      | `[both / ocr / layout / none]`           | 出力画像の可視化モード<br>（OCR結果 / レイアウト / 両方 / なし）<br>`table-semantic-parser` では未対応のためスキップ |
 | `-s, --split_mode`    | `[combine / separate]`                   | 出力ファイルの分割モード<br>（1つにまとめる / ページごとに分割）                         |
 | `--ignore_line_break` | *(flag)*                                 | テキスト抽出時に改行を無視する                                              |
 | `--pages`             | `TEXT`                                   | 解析対象ページを指定（例：`0,1,3-5`）                                      |
@@ -114,6 +116,7 @@ yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${
 | `-o, --output_dir`  | 解析結果を保存するディレクトリを指定します。 *(必須)*                              |
 | `-e, --endpoint`    | SageMaker のエンドポイント名を指定します。 *(必須)*                          |
 | `-r, --region`      | AWS のリージョン名を指定します。                                         |
+| `-a, --api`         | エンドポイントが提供する API を指定します。<br>`document-analyzer`（既定） / `table-semantic-parser` |
 | `-f, --file_format` | 出力フォーマットを指定します。<br>対応形式：`json`, `csv`, `html`, `md`, `pdf` |
 
 > **例**
@@ -147,12 +150,13 @@ yomitoku-client batch --help
 | `-o, --output_dir`    | `PATH`                                   | **解析結果を保存する出力先ディレクトリのパス（必須）**                           |
 | `-e, --endpoint`      | `TEXT`                                   | **SageMaker のエンドポイント名（必須）**                             |
 | `-r, --region`        | `TEXT`                                   | AWS リージョン名（例：`ap-northeast-1`）                          |
+| `-a, --api`           | `[document-analyzer / table-semantic-parser]` | エンドポイントが提供する API（既定：`document-analyzer`）<br>`table-semantic-parser` の出力は `json` のみ |
 | `-f, --file_format`   | `TEXT（カンマ区切りで複数指定可）`<br>例：`json,csv,pdf` | 出力フォーマット（`json` / `csv` / `html` / `md` / `pdf`）を複数指定可能 |
 | `--dpi`               | `INTEGER`                                | 画像解析時の DPI（解像度）                                         |
 | `-p, --profile`       | `TEXT`                                   | 使用する AWS CLI プロファイル名                                    |
 | `--request_timeout`   | `FLOAT`                                  | 各リクエスト単位のタイムアウト（秒）                                      |
 | `--total_timeout`     | `FLOAT`                                  | 全体処理のタイムアウト（秒）                                          |
-| `-v, --vis_mode`      | `[both / ocr / layout / none]`           | OCR 結果やレイアウト構造の可視化モード                                   |
+| `-v, --vis_mode`      | `[both / ocr / layout / none]`           | OCR 結果やレイアウト構造の可視化モード<br>`table-semantic-parser` では未対応のためスキップ |
 | `-s, --split_mode`    | `[combine / separate]`                   | 出力ファイルの分割モード（1つにまとめる / ページごとに分割）                        |
 | `--ignore_line_break` | *(flag)*                                 | テキスト抽出時に改行を無視する                                         |
 | `--pages`             | `TEXT`                                   | 解析対象ページを指定（例：`0,1,3-5`）                                 |

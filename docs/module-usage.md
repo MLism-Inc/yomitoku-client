@@ -8,6 +8,10 @@ YomiToku-Client は、Python コードから直接利用することができま
 
 <https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb>
 
+Table Semantic Parser 版のNotebookは以下から試せます。
+
+<https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb>
+
 ## クイックスタート
 
 最もシンプルな実行例です。PDF を入力し、解析結果を Markdown として保存します。
@@ -181,3 +185,26 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+---
+
+## Table Semantic Parser
+
+帳票の表構造を取得する場合は、Table Semantic Parser のエンドポイントを利用します。
+エンドポイントの呼び出し方は共通で、レスポンスの変換に `parse_table_semantic_parser()` を使います。
+
+```python
+from yomitoku_client import YomitokuClient, parse_table_semantic_parser
+
+with YomitokuClient(endpoint="yomitoku-tsp", region="ap-northeast-1") as client:
+    result = client.analyze("notebooks/sample/table.jpg")
+
+model = parse_table_semantic_parser(result)
+
+table = model.pages[0].tables[0]
+print(table.cells["c0"].contents)              # セルのテキスト
+print(table.kv_items[0].key, table.kv_items[0].value)  # いずれもセルID
+
+model.to_json(output_path="table.json")
+```
+
+レスポンスの構造や CLI からの利用は[Table Semantic Parser](table-semantic-parser.md)を参照してください。

@@ -4,10 +4,18 @@ import os
 
 import click
 
-from yomitoku_client import YomitokuClient, parse_pydantic_model
+from yomitoku_client import YomitokuClient
 from yomitoku_client.client import CircuitConfig, RequestConfig
+from yomitoku_client.constants import API_DOCUMENT_ANALYZER, SUPPORT_API
 
-from .utils import parse_formats, parse_pages
+from .utils import (
+    export_model,
+    parse_formats,
+    parse_model,
+    parse_pages,
+    validate_formats,
+    visualize_model,
+)
 
 
 async def process_batch(
@@ -83,6 +91,14 @@ async def process_batch(
     type=str,
     default=None,
     help="AWS region name",
+)
+@click.option(
+    "--api",
+    "-a",
+    type=click.Choice(SUPPORT_API),
+    default=API_DOCUMENT_ANALYZER,
+    show_default=True,
+    help="API served by the endpoint",
 )
 @click.option(
     "--file_format",
@@ -188,6 +204,7 @@ def batch_command(
     output_dir,
     endpoint,
     region,
+    api,
     dpi,
     profile,
     request_timeout,
@@ -209,7 +226,10 @@ def batch_command(
     if pages is not None:
         page_index = parse_pages(pages)
 
-    extract_formats = parse_formats(file_format)
+    try:
+        extract_formats = validate_formats(parse_formats(file_format), api)
+    except ValueError as e:
+        raise click.BadParameter(str(e), param_hint="--file_format") from e
 
     # バッチ処理の実行
     asyncio.run(
@@ -251,72 +271,29 @@ def batch_command(
         with open(log["output_path"], encoding="utf-8") as rf:
             result = json.load(rf)
 
-        model = parse_pydantic_model(result)
+        model = parse_model(result, api=api)
 
         input_path = log["file_path"]
         base = os.path.splitext(os.path.basename(log["file_path"]))[0]
 
-        if "json" in extract_formats:
-            output_file_path = os.path.join(out_formatted, f"{base}.json")
-            model.to_json(
-                output_path=output_file_path,
-                mode=split_mode,
-                page_index=page_index,
-                ignore_line_break=ignore_line_break,
-            )
-        if "csv" in extract_formats:
-            output_file_path = os.path.join(out_formatted, f"{base}.csv")
-            model.to_csv(
-                output_path=output_file_path,
-                mode=split_mode,
-                page_index=page_index,
-                ignore_line_break=ignore_line_break,
-            )
-        if "html" in extract_formats:
-            output_file_path = os.path.join(out_formatted, f"{base}.html")
-            model.to_html(
-                output_path=output_file_path,
-                image_path=input_path,
-                mode=split_mode,
-                dpi=dpi,
-                page_index=page_index,
-                ignore_line_break=ignore_line_break,
-            )
-        if "md" in extract_formats:
-            output_file_path = os.path.join(out_formatted, f"{base}.md")
-            model.to_markdown(
-                output_path=output_file_path,
-                image_path=input_path,
-                mode=split_mode,
-                dpi=dpi,
-                page_index=page_index,
-                ignore_line_break=ignore_line_break,
-            )
-        if "pdf" in extract_formats:
-            output_file_path = os.path.join(out_formatted, f"{base}.pdf")
-            model.to_pdf(
-                output_path=output_file_path,
-                image_path=input_path,
-                mode=split_mode,
-                dpi=dpi,
-                page_index=page_index,
-            )
+        export_model(
+            model,
+            api=api,
+            output_base=os.path.join(out_formatted, base),
+            formats=extract_formats,
+            image_path=input_path,
+            split_mode=split_mode,
+            page_index=page_index,
+            dpi=dpi,
+            ignore_line_break=ignore_line_break,
+        )
 
-        # 解析結果の可視化
-        if vis_mode in ["both", "ocr"]:
-            model.visualize(
-                image_path=input_path,
-                mode="ocr",
-                output_directory=out_visualize,
-                dpi=dpi,
-                page_index=page_index,
-            )
-
-        if vis_mode in ["both", "layout"]:
-            model.visualize(
-                image_path=input_path,
-                mode="layout",
-                output_directory=out_visualize,
-                dpi=dpi,
-                page_index=page_index,
-            )
+        visualize_model(
+            model,
+            api=api,
+            image_path=input_path,
+            vis_mode=vis_mode,
+            output_directory=out_visualize,
+            page_index=page_index,
+            dpi=dpi,
+        )

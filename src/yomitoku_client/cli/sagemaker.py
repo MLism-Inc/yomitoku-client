@@ -17,12 +17,17 @@ class SagemakerProduct:
     display_name: str
     """ユーザーに表示するプロダクト名"""
 
-    marketplace_product_id: str
-    """サブスクリプション画面のURL生成に利用するMarketplaceのプロダクトID"""
+    marketplace_product_id: str | None = None
+    """サブスクリプション画面のURL生成に利用するMarketplaceのプロダクトID
+
+    Marketplaceのリスティング登録前のプロダクトはNone。その場合はサブスクリプション
+    一覧のURLを案内する。
+    """
 
 
 DEFAULT_PRODUCT = "document-analyzer"
 LITE_PRODUCT = "document-analyzer-lite"
+TABLE_SEMANTIC_PARSER_PRODUCT = "table-semantic-parser"
 
 # プロダクトを追加する場合はこの辞書にエントリを追加する
 PRODUCTS: dict[str, SagemakerProduct] = {
@@ -33,6 +38,10 @@ PRODUCTS: dict[str, SagemakerProduct] = {
     LITE_PRODUCT: SagemakerProduct(
         display_name="YomiToku-Pro Lite - Document Analyzer",
         marketplace_product_id="prod-n6jdf73xzm24m",
+    ),
+    TABLE_SEMANTIC_PARSER_PRODUCT: SagemakerProduct(
+        # Marketplaceのリスティング公開後にmarketplace_product_idを設定する
+        display_name="YomiToku-Pro - Table Semantic Parser",
     ),
 }
 
@@ -114,7 +123,10 @@ def configure(product, profile, region):
         or DEFAULT_REGION
     )
     product_id = PRODUCTS[product].marketplace_product_id
-    destination_url = f"https://{region}.console.aws.amazon.com/sagemaker/home?region={region}#/model-packages/my-subscriptions/{product_id}"
+    destination_url = f"https://{region}.console.aws.amazon.com/sagemaker/home?region={region}#/model-packages/my-subscriptions"
+    if product_id:
+        destination_url = f"{destination_url}/{product_id}"
+
     click.echo(
         f"Product: {PRODUCTS[product].display_name} ({product})",
     )

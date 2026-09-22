@@ -671,3 +671,53 @@ def save_config(config: dict) -> None:
     config_path.parent.mkdir(exist_ok=True)
     with open(config_path, "w") as f:
         json.dump(config, f, indent=2)
+
+
+def export_results_to_file(
+    results: list[Any],
+    output_path: str,
+    mode: str,
+    encoding: str,
+    page_index: list[int],
+) -> None:
+    """
+    Write per-page rendering results to file
+
+    Args:
+        results: List of rendered results, one per page
+        output_path: Path to save the file
+        mode: 'combine' to write a single file, 'separate' to write one file per page
+        encoding: File encoding
+        page_index: List of page indices matching ``results``
+    """
+
+    base_name, ext = os.path.splitext(output_path)
+    if mode == "combine":
+        if ext == ".json":
+            with open(output_path, "w", encoding=encoding) as f:
+                json.dump(
+                    results,
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        else:
+            combined_content = "\n".join(results)
+            with open(output_path, "w", encoding=encoding) as f:
+                f.write(combined_content)
+
+    elif mode == "separate":
+        for i, content in zip(page_index, results, strict=True):
+            page_output_path = f"{base_name}_page_{i}{ext}"
+
+            if ext == ".json":
+                with open(page_output_path, "w", encoding=encoding) as f:
+                    json.dump(
+                        content,
+                        f,
+                        ensure_ascii=False,
+                        indent=2,
+                    )
+            else:
+                with open(page_output_path, "w", encoding=encoding) as f:
+                    f.write(content)

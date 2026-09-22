@@ -14,8 +14,9 @@ YomiToku-Clientは、次のAWS Marketplace製品に対応しています。
 
 - 通常版: [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
 - Lite版: [YomiToku-Pro Lite - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
+- 帳票の表構造の抽出: YomiToku-Pro - Table Semantic Parser
 
-通常版とLite版は別のMarketplace製品です。それぞれ個別にサブスクライブし、使用する製品のModel Package ARNを設定してください。
+いずれも別のMarketplace製品です。それぞれ個別にサブスクライブし、使用する製品のModel Package ARNを設定してください。
 
 ## 主な機能 
 - AWS SageMakerで作成されたエンドポイントを簡単、安全かつ効率的に呼び出せます。
@@ -23,6 +24,7 @@ YomiToku-Clientは、次のAWS Marketplace製品に対応しています。
 - 読み取り結果を可視化し、内容をすぐに確認できます。
 - バッチ処理機能で大量の文書を効率的に処理できます。
 - SageMaker Batch Transformが出力した`.out` JSONを、再推論せずにMarkdown / CSV / HTMLへ変換できます。
+- Table Semantic Parserに対応し、帳票の表構造(cells / kv_items / grids)のレスポンスを取得・保存できます。
 
 ```mermaid
 flowchart LR
@@ -77,6 +79,7 @@ flowchart LR
 - 🔄 **[Batch Transform出力の変換](https://mlism-inc.github.io/yomitoku-client/cli-usage/#batch-transform)** - `.out`をMarkdown / CSV / HTMLへ変換する手順
 - 📋 **[解析結果のサンプル](./gallery.md)** - 解析結果のサンプルデータを載せています。
 - 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアルNotebook
+- 📋 **[Table Semantic Parser](https://mlism-inc.github.io/yomitoku-client/table-semantic-parser/)** - 帳票の表構造を抽出するAPIの利用手順（[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb)）
 - 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
 
 ---
