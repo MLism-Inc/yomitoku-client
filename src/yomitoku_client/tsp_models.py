@@ -8,9 +8,9 @@ semantic structure of every table in a page:
 * ``kv_items``  : key-value pairs resolved from form-style layouts
 * ``grids``     : row/column grids with their column headers
 
-These models mirror ``TableSemanticParserSchema`` of yomitoku-pro so a response
-can be validated and saved as JSON. Interpreting the structure (resolving cell
-ids to texts, rendering, visualizing) is out of scope here.
+These models mirror the API response so it can be validated and saved as JSON.
+Interpreting the structure (resolving cell ids to texts, rendering, visualizing)
+is out of scope here.
 
 The response envelope is the same as the document analyzer
 (``{"result": [<page>, ...]}``), so :class:`~yomitoku_client.client.YomitokuClient`

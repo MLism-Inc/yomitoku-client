@@ -75,7 +75,7 @@ model.to_json(output_path="table.json")
 
 `kv_items` と `grids` はセルの**テキストではなくセルID**を参照します。テキストは `cells[cell_id].contents` から引きます。
 
-正確なスキーマは yomitoku-pro の `yomitoku/schemas/table_semantic_parser.py`、および OpenAPI 定義を参照してください。
+正確なスキーマは、Table Semantic Parser API の OpenAPI 定義を参照してください。
 
 ---
 
