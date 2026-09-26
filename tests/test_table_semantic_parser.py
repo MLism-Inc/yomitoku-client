@@ -40,6 +40,7 @@ class TestParse:
         assert list(tsp_document.pages) == [0]
 
         page = tsp_document.pages[0]
+        assert page.document_name == "施設利用申込書"
         assert len(page.tables) == 1
         assert page.paragraphs[0].contents == "以上のとおり申請します。"
         assert page.words[0].content == "山田"
@@ -70,6 +71,14 @@ class TestParse:
 
         assert sorted(document.pages) == [0, 1]
         assert document.pages[1].num_page == 1
+
+    def test_parse_without_document_name(self, tsp_api_result):
+        """document_name を返さない旧バージョンのレスポンスも読める"""
+        older = json.loads(json.dumps(tsp_api_result))
+        del older["result"][0]["document_name"]
+
+        page = parse_table_semantic_parser(older).pages[0]
+        assert page.document_name is None
 
     def test_parse_missing_result(self):
         with pytest.raises(DocumentAnalysisError):
@@ -104,6 +113,7 @@ class TestJsonExport:
         source = tsp_api_result["result"][0]
 
         assert page["num_page"] == 0
+        assert page["document_name"] == source["document_name"]
         assert page["tables"][0]["cells"]["c0"]["contents"] == "氏 名"
         assert len(page["tables"][0]["grids"]) == len(source["tables"][0]["grids"])
         assert [p["contents"] for p in page["paragraphs"]] == [

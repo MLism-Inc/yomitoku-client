@@ -5,6 +5,7 @@
 
 | フィールド | 内容 |
 | --- | --- |
+| `document_name` | 文書から検出したタイトル |
 | `tables[].cells` | 検出したセル（`cell_id` をキーにした辞書）。テキスト・役割(header / cell / empty / group)・行列位置を持ちます |
 | `tables[].kv_items` | 「項目名 → 値」の組。キー・値はセルIDで参照します |
 | `tables[].grids` | 行・列のグリッド。列ヘッダーと各セルの配置をセルIDで持ちます |

@@ -99,6 +99,10 @@ class TableSemanticParserResult(BaseModel):
     """Table semantic parsing result of a single page"""
 
     num_page: int = Field(default=0, description="Page index in the original document")
+    document_name: str | None = Field(
+        default=None,
+        description="Document title detected in the page",
+    )
     tables: list[SemanticTable] = Field(
         default_factory=list,
         description="Tables with their semantic structure",
