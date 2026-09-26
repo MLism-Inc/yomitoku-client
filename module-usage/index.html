@@ -12,7 +12,7 @@
         <link rel="prev" href="../cli-usage/">
       
       
-        <link rel="next" href="../advanced/">
+        <link rel="next" href="../table-semantic-parser/">
       
       
         
@@ -342,6 +342,25 @@
     
   
   Python API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../table-semantic-parser/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Table Semantic Parser
 
       </a>
     </li>
@@ -703,10 +722,59 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        import asyncio import json import os from yomitoku_client import YomitokuClient, parse_pydantic_model # 入出力設定 target_dir = "notebooks/sample" outdir = "output" # SageMaker エンドポイント設定 ENDPOINT_NAME = "my-endpoint" AWS_REGION = "ap-northeast-1" async def main(): # バッチ解析の実行 async with YomitokuClient( endpoint=ENDPOINT_NAME, region=AWS_REGION, ) as client: await client.analyze_batch_async( input_dir=target_dir, output_dir=outdir, ) # ログから成功したファイルのみを処理 log_path = os.path.join(outdir, "process_log.jsonl") with open(log_path, "r", encoding="utf-8") as f: logs = [json.loads(line) for line in f if line.strip()] out_markdown = os.path.join(outdir, "markdown") out_visualize = os.path.join(outdir, "visualization") os.makedirs(out_markdown, exist_ok=True) os.makedirs(out_visualize, exist_ok=True) for log in logs: if not log.get("success"): continue # 解析結果の JSON を読み込み with open(log["output_path"], "r", encoding="utf-8") as rf: result = json.load(rf) doc = parse_pydantic_model(result) # Markdown 出力 base = os.path.splitext(os.path.basename(log["file_path"]))[0] doc.to_markdown( output_path=os.path.join(out_markdown, f"{base}.md"), ) # 解析結果の可視化 doc.visualize( image_path=log["file_path"], mode="ocr", output_directory=out_visualize, dpi=log.get("dpi", 200), ) if __name__ == "__main__": asyncio.run(main())
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-semantic-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table Semantic Parser
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../table-semantic-parser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Table Semantic Parser
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -835,6 +903,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        import asyncio import json import os from yomitoku_client import YomitokuClient, parse_pydantic_model # 入出力設定 target_dir = "notebooks/sample" outdir = "output" # SageMaker エンドポイント設定 ENDPOINT_NAME = "my-endpoint" AWS_REGION = "ap-northeast-1" async def main(): # バッチ解析の実行 async with YomitokuClient( endpoint=ENDPOINT_NAME, region=AWS_REGION, ) as client: await client.analyze_batch_async( input_dir=target_dir, output_dir=outdir, ) # ログから成功したファイルのみを処理 log_path = os.path.join(outdir, "process_log.jsonl") with open(log_path, "r", encoding="utf-8") as f: logs = [json.loads(line) for line in f if line.strip()] out_markdown = os.path.join(outdir, "markdown") out_visualize = os.path.join(outdir, "visualization") os.makedirs(out_markdown, exist_ok=True) os.makedirs(out_visualize, exist_ok=True) for log in logs: if not log.get("success"): continue # 解析結果の JSON を読み込み with open(log["output_path"], "r", encoding="utf-8") as rf: result = json.load(rf) doc = parse_pydantic_model(result) # Markdown 出力 base = os.path.splitext(os.path.basename(log["file_path"]))[0] doc.to_markdown( output_path=os.path.join(out_markdown, f"{base}.md"), ) # 解析結果の可視化 doc.visualize( image_path=log["file_path"], mode="ocr", output_directory=out_visualize, dpi=log.get("dpi", 200), ) if __name__ == "__main__": asyncio.run(main())
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-semantic-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table Semantic Parser
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -860,6 +950,8 @@
 <h2 id="notebook">サンプルNotebook<a class="headerlink" href="#notebook" title="Permanent link">&para;</a></h2>
 <p>以下のリンクからGoogle Colab上ですぐに試せます</p>
 <p><a href="https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb">https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb</a></p>
+<p>Table Semantic Parser 版のNotebookは以下から試せます。</p>
+<p><a href="https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb">https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb</a></p>
 <h2 id="_1">クイックスタート<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>最もシンプルな実行例です。PDF を入力し、解析結果を Markdown として保存します。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">YomitokuClient</span><span class="p">,</span> <span class="n">parse_pydantic_model</span>
@@ -957,7 +1049,7 @@
 <li><strong>再実行対応</strong>：ログをもとに、失敗したファイルのみ再解析する運用が容易</li>
 <li><strong>ログを利用した後処理</strong>：<code>process_log.jsonl</code> を読み込み、成功ファイルのみ Markdown 出力や可視化を自動実行</li>
 </ul>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<h2 id="import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain"><div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
@@ -1019,7 +1111,24 @@
 </span><span id="__span-2-60"><a id="__codelineno-2-60" name="__codelineno-2-60" href="#__codelineno-2-60"></a>
 </span><span id="__span-2-61"><a id="__codelineno-2-61" name="__codelineno-2-61" href="#__codelineno-2-61"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 </span><span id="__span-2-62"><a id="__codelineno-2-62" name="__codelineno-2-62" href="#__codelineno-2-62"></a>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</span></code></pre></div><a class="headerlink" href="#import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain" title="Permanent link">&para;</a></h2>
+<h2 id="table-semantic-parser">Table Semantic Parser<a class="headerlink" href="#table-semantic-parser" title="Permanent link">&para;</a></h2>
+<p>帳票の表構造を取得する場合は、Table Semantic Parser のエンドポイントを利用します。
+エンドポイントの呼び出し方は共通で、レスポンスの変換に <code>parse_table_semantic_parser()</code> を使います。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">YomitokuClient</span><span class="p">,</span> <span class="n">parse_table_semantic_parser</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">with</span> <span class="n">YomitokuClient</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">"yomitoku-tsp"</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">"ap-northeast-1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="s2">"notebooks/sample/table.jpg"</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">parse_table_semantic_parser</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">table</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="s2">"c0"</span><span class="p">]</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span>              <span class="c1"># セルのテキスト</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">kv_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">kv_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># いずれもセルID</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="s2">"table.json"</span><span class="p">)</span>
 </span></code></pre></div>
+<p>レスポンスの構造や CLI からの利用は<a href="../table-semantic-parser/">Table Semantic Parser</a>を参照してください。</p>
 
 
 
