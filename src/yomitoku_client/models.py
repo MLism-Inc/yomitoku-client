@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 from typing import Any
@@ -8,7 +7,7 @@ import pypdfium2 as pdfium
 from PIL import Image
 from pydantic import BaseModel, Field
 
-from .utils import load_image, load_pdf, make_page_index
+from .utils import export_results_to_file, load_image, load_pdf, make_page_index
 from .visualizers.document_visualizer import DocumentVisualizer
 
 
@@ -420,36 +419,13 @@ class MultiPageDocumentResult(BaseModel):
             page_index: List of page indices
         """
 
-        base_name, ext = os.path.splitext(output_path)
-        if mode == "combine":
-            if ext == ".json":
-                with open(output_path, "w", encoding=encoding) as f:
-                    json.dump(
-                        results,
-                        f,
-                        ensure_ascii=False,
-                        indent=2,
-                    )
-            else:
-                combined_content = "\n".join(results)
-                with open(output_path, "w", encoding=encoding) as f:
-                    f.write(combined_content)
-
-        elif mode == "separate":
-            for i, content in zip(page_index, results, strict=True):
-                page_output_path = f"{base_name}_page_{i}{ext}"
-
-                if ext == ".json":
-                    with open(page_output_path, "w", encoding=encoding) as f:
-                        json.dump(
-                            content,
-                            f,
-                            ensure_ascii=False,
-                            indent=2,
-                        )
-                else:
-                    with open(page_output_path, "w", encoding=encoding) as f:
-                        f.write(content)
+        export_results_to_file(
+            results,
+            output_path=output_path,
+            mode=mode,
+            encoding=encoding,
+            page_index=page_index,
+        )
 
     def to_csv(
         self,

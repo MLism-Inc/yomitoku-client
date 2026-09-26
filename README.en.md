@@ -14,8 +14,10 @@ YomiToku-Client supports the following AWS Marketplace products:
 
 - Standard: [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
 - Lite: [YomiToku-Pro Lite - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
+- Table structure extraction: YomiToku-Pro - Table Semantic Parser
+- Table structure extraction (Lite): YomiToku-Pro Lite - Table Semantic Parser
 
-The Standard and Lite editions are separate AWS Marketplace products. Subscribe to each product separately and configure the Model Package ARN for the edition you want to use.
+These are separate AWS Marketplace products. Subscribe to each product separately and configure the Model Package ARN for the product you want to use.
 
 ---
 
@@ -25,6 +27,7 @@ The Standard and Lite editions are separate AWS Marketplace products. Subscribe 
 * Support conversion of OCR results into multiple output formats (CSV / JSON / Markdown / HTML / PDF).
 * Visualize OCR results so you can quickly review the content.
 * Batch-processing capabilities allow efficient handling of large numbers of documents.
+* Support the Table Semantic Parser API, which returns the cells, key-value items and grids of the tables in a form.
 
 ```mermaid
 flowchart LR
@@ -77,6 +80,7 @@ It is deployed securely within your own AWS account as a private endpoint, enabl
 * 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Deployment guide for the **YomiToku-Pro Document Analyzer** endpoint.
 * 📋 **[Sample Analysis Results](./gallery.md)** – Example datasets of analysis results.
 * 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial notebook for connecting to the AWS SageMaker endpoint and performing document analysis.
+* 📋 **[Table Semantic Parser](https://mlism-inc.github.io/yomitoku-client/table-semantic-parser/)** – How to use the API that extracts table structures from forms ([Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb)).
 * 📖 **[Documentation](https://mlism-inc.github.io/yomitoku-client/)** – Detailed usage guide for **YomiToku-Client**.
 ---
 

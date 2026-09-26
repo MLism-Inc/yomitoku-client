@@ -36,6 +36,15 @@ SUPPORT_OUTPUT_FORMAT = ["html", "md", "csv", "json", "pdf"]
 
 SUPPORT_INPUT_FORMAT = ["jpg", "jpeg", "png", "bmp", "tiff", "tif", "pdf"]
 
+# YomiToku-Pro APIs served on SageMaker. The API is baked into the image
+# (YOMITOKU_SAGEMAKER_APP), so an endpoint always serves exactly one of them.
+API_DOCUMENT_ANALYZER = "document-analyzer"
+API_TABLE_SEMANTIC_PARSER = "table-semantic-parser"
+SUPPORT_API = [API_DOCUMENT_ANALYZER, API_TABLE_SEMANTIC_PARSER]
+
+# Table Semantic Parser results are saved as the API returns them
+SUPPORT_TSP_OUTPUT_FORMAT = ["json"]
+
 # Default font size
 DEFAULT_FONT_SIZE = 12
 

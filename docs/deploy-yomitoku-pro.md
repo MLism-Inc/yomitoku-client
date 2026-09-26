@@ -52,6 +52,8 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 | --- | --- |
 | `document-analyzer`（デフォルト） | YomiToku-Pro - Document Analyzer（通常版） |
 | `document-analyzer-lite` | YomiToku-Pro Lite - Document Analyzer（Lite版） |
+| `table-semantic-parser` | YomiToku-Pro - Table Semantic Parser（通常版） |
+| `table-semantic-parser-lite` | YomiToku-Pro Lite - Table Semantic Parser（Lite版） |
 
 1. ターミナルで以下のコマンドを実行します。
 

@@ -6,6 +6,10 @@ from typing import Any
 
 from .exceptions import DocumentAnalysisError, ValidationError
 from .models import DocumentResult, MultiPageDocumentResult
+from .tsp_models import (
+    MultiPageTableSemanticParserResult,
+    TableSemanticParserResult,
+)
 
 
 def parse_pydantic_model(data: dict[str, Any]) -> MultiPageDocumentResult:
@@ -49,3 +53,48 @@ def parse_pydantic_model(data: dict[str, Any]) -> MultiPageDocumentResult:
         return MultiPageDocumentResult(pages=pages)
     except Exception as e:
         raise DocumentAnalysisError(f"Failed to parse document: {e}") from e
+
+
+def parse_table_semantic_parser(
+    data: dict[str, Any],
+) -> MultiPageTableSemanticParserResult:
+    """
+    Parse dictionary data from the Table Semantic Parser endpoint
+
+    Args:
+        data: Dictionary from SageMaker
+
+    Returns:
+        MultiPageTableSemanticParserResult: Result containing all pages
+
+    Raises:
+        ValidationError: If data format is invalid
+        DocumentAnalysisError: If parsing fails
+    """
+    try:
+        if "result" not in data or not data["result"]:
+            raise ValidationError(
+                "Invalid SageMaker output format: missing 'result' field",
+            )
+
+        results = (
+            data["result"] if isinstance(data["result"], list) else [data["result"]]
+        )
+        if len(results) == 0:
+            raise ValidationError("Empty result list")
+
+        pages = []
+        for i, result_data in enumerate(results):
+            # Batch Transform output does not include num_page. Infer it from
+            # the response order without mutating the caller's dictionary.
+            page_data = {"num_page": i, **result_data}
+            pages.append(TableSemanticParserResult(**page_data))
+
+        return MultiPageTableSemanticParserResult(
+            pages={page.num_page: page for page in pages},
+        )
+    except Exception as e:
+        raise DocumentAnalysisError(
+            f"Failed to parse table semantic result: {e}"
+        ) from e
+

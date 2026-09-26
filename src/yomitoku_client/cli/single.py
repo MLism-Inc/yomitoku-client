@@ -4,10 +4,18 @@ from pathlib import Path
 
 import click
 
-from yomitoku_client import YomitokuClient, parse_pydantic_model
+from yomitoku_client import YomitokuClient
 from yomitoku_client.client import CircuitConfig, RequestConfig
+from yomitoku_client.constants import API_DOCUMENT_ANALYZER, SUPPORT_API
 
-from .utils import parse_formats, parse_pages
+from .utils import (
+    export_model,
+    parse_formats,
+    parse_model,
+    parse_pages,
+    validate_formats,
+    visualize_model,
+)
 
 
 @click.command("single")
@@ -25,6 +33,14 @@ from .utils import parse_formats, parse_pages
     type=str,
     default=None,
     help="AWS region name",
+)
+@click.option(
+    "--api",
+    "-a",
+    type=click.Choice(SUPPORT_API),
+    default=API_DOCUMENT_ANALYZER,
+    show_default=True,
+    help="API served by the endpoint",
 )
 @click.option(
     "--file_format",
@@ -135,6 +151,7 @@ from .utils import parse_formats, parse_pages
 def single_command(
     endpoint,
     region,
+    api,
     input_path,
     output_dir,
     dpi,
@@ -158,7 +175,10 @@ def single_command(
     if pages is not None:
         page_index = parse_pages(pages)
 
-    extract_formats = parse_formats(file_format)
+    try:
+        extract_formats = validate_formats(parse_formats(file_format), api)
+    except ValueError as e:
+        raise click.BadParameter(str(e), param_hint="--file_format") from e
 
     """Analyze a single file and save the result."""
     with YomitokuClient(
@@ -204,71 +224,29 @@ def single_command(
         with open(intermediate_file_path, "w") as f:
             json.dump(result, f, indent=4)
 
-    model = parse_pydantic_model(result)
+    model = parse_model(result, api=api)
 
-    if "json" in extract_formats:
-        output_file_path = output_file_base + ".json"
-        model.to_json(
-            output_path=output_file_path,
-            mode=split_mode,
-            page_index=page_index,
-            ignore_line_break=ignore_line_break,
-        )
-    if "csv" in extract_formats:
-        output_file_path = output_file_base + ".csv"
-        model.to_csv(
-            output_path=output_file_path,
-            mode=split_mode,
-            page_index=page_index,
-            ignore_line_break=ignore_line_break,
-        )
-    if "html" in extract_formats:
-        output_file_path = output_file_base + ".html"
-        model.to_html(
-            output_path=output_file_path,
-            image_path=input_path,
-            mode=split_mode,
-            dpi=dpi,
-            page_index=page_index,
-            ignore_line_break=ignore_line_break,
-        )
-    if "md" in extract_formats:
-        output_file_path = output_file_base + ".md"
-        model.to_markdown(
-            output_path=output_file_path,
-            image_path=input_path,
-            mode=split_mode,
-            dpi=dpi,
-            page_index=page_index,
-            ignore_line_break=ignore_line_break,
-        )
-    if "pdf" in extract_formats:
-        output_file_path = output_file_base + ".pdf"
-        model.to_pdf(
-            output_path=output_file_path,
-            image_path=input_path,
-            mode=split_mode,
-            dpi=dpi,
-            page_index=page_index,
-        )
+    export_model(
+        model,
+        api=api,
+        output_base=output_file_base,
+        formats=extract_formats,
+        image_path=input_path,
+        split_mode=split_mode,
+        page_index=page_index,
+        dpi=dpi,
+        ignore_line_break=ignore_line_break,
+    )
 
-    if vis_mode in ["both", "ocr"]:
-        model.visualize(
-            image_path=input_path,
-            mode="ocr",
-            output_directory=output_dir,
-            dpi=dpi,
-            page_index=page_index,
-        )
-
-    if vis_mode in ["both", "layout"]:
-        model.visualize(
-            image_path=input_path,
-            mode="layout",
-            output_directory=output_dir,
-            dpi=dpi,
-            page_index=page_index,
-        )
+    visualize_model(
+        model,
+        api=api,
+        image_path=input_path,
+        vis_mode=vis_mode,
+        output_directory=output_dir,
+        page_index=page_index,
+        dpi=dpi,
+    )
 
 
 if __name__ == "__main__":

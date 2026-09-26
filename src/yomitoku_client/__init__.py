@@ -16,7 +16,7 @@ from .models import (
     DocumentResult,
     MultiPageDocumentResult,
 )
-from .parser import parse_pydantic_model
+from .parser import parse_pydantic_model, parse_table_semantic_parser
 from .renderers.csv_renderer import CSVRenderer
 from .renderers.html_renderer import HTMLRenderer
 from .renderers.json_renderer import JSONRenderer
@@ -28,12 +28,28 @@ from .renderers.searchable_pdf import (
     create_searchable_pdf,
 )
 
+# Import Table Semantic Parser models
+from .tsp_models import (
+    KvItem,
+    MultiPageTableSemanticParserResult,
+    SemanticCell,
+    SemanticTable,
+    TableGrid,
+    TableSemanticParserResult,
+)
+
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
 
 __all__ = [
     "DocumentResult",
     "MultiPageDocumentResult",
+    "MultiPageTableSemanticParserResult",
+    "TableSemanticParserResult",
+    "SemanticTable",
+    "SemanticCell",
+    "TableGrid",
+    "KvItem",
     "SageMakerParser",
     "YomitokuClient",
     "MarkdownRenderer",
@@ -46,6 +62,7 @@ __all__ = [
     "create_searchable_pdf",
     "create_searchable_pdf_from_pdf",
     "parse_pydantic_model",
+    "parse_table_semantic_parser",
 ]
 
 
