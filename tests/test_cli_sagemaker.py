@@ -91,6 +91,37 @@ def test_configure_success(runner: CliRunner, mock_home_dir: Path, mock_boto3_se
     )
 
 
+def test_configure_table_semantic_parser_products(
+    runner: CliRunner,
+    mock_home_dir: Path,
+    mock_boto3_session,  # noqa: ARG001
+):
+    """
+    Table Semantic Parser の通常版 / Lite版がプロダクトとして選べ、
+    それぞれ別のキーに ARN が保存されることをテストする
+    """
+    arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/tsp"
+    lite_arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/tsp-lite"
+
+    for product, model_package_arn in (
+        ("table-semantic-parser", arn),
+        ("table-semantic-parser-lite", lite_arn),
+    ):
+        result = runner.invoke(
+            sagemaker,
+            ["configure", "--product", product],
+            input=f"{model_package_arn}\n",
+        )
+
+        assert result.exit_code == 0, result.output
+        # Marketplace のリスティング公開前はサブスクリプション一覧が案内される
+        assert "my-subscriptions" in result.output
+
+    products = _read_config(mock_home_dir)["sagemaker"]["products"]
+    assert products["table-semantic-parser"]["model_package_arn"] == arn
+    assert products["table-semantic-parser-lite"]["model_package_arn"] == lite_arn
+
+
 def test_configure_lite_product(
     runner: CliRunner,
     mock_home_dir: Path,

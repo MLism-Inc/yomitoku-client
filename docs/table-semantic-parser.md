@@ -36,9 +36,27 @@ yomitoku-client sagemaker deploy \
   --model-package-arn arn:aws:sagemaker:ap-northeast-1:xxxxxxxxxxxx:model-package/xxxxxxxx
 ```
 
+Lite版は通常版とは別のMarketplace製品です。Lite版を使う場合は、Lite版製品のModel Package ARNを指定します。
+
+```bash
+yomitoku-client sagemaker deploy \
+  --product table-semantic-parser-lite \
+  --endpoint-name yomitoku-tsp-lite \
+  --model-package-arn arn:aws:sagemaker:ap-northeast-1:xxxxxxxxxxxx:model-package/xxxxxxxx
+```
+
+| `--product` | 対象製品 |
+| --- | --- |
+| `table-semantic-parser` | YomiToku-Pro - Table Semantic Parser（通常版） |
+| `table-semantic-parser-lite` | YomiToku-Pro Lite - Table Semantic Parser（Lite版） |
+
 !!! info "Model Package ARNの設定"
     `yomitoku-client sagemaker configure --product table-semantic-parser` でARNを設定ファイルに保存しておくと、
-    以降は `--model-package-arn` を省略できます。
+    以降は `--model-package-arn` を省略できます。製品ごとに保存されるので、通常版とLite版を併用できます。
+
+!!! note "レスポンスは通常版とLite版で同じです"
+    Lite版は軽量な認識モデルを使いますが、返すフィールドの構造は通常版と同じです。
+    クライアント側の扱いに違いはありません。
 
 ---
 

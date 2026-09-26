@@ -28,6 +28,7 @@ class SagemakerProduct:
 DEFAULT_PRODUCT = "document-analyzer"
 LITE_PRODUCT = "document-analyzer-lite"
 TABLE_SEMANTIC_PARSER_PRODUCT = "table-semantic-parser"
+TABLE_SEMANTIC_PARSER_LITE_PRODUCT = "table-semantic-parser-lite"
 
 # プロダクトを追加する場合はこの辞書にエントリを追加する
 PRODUCTS: dict[str, SagemakerProduct] = {
@@ -42,6 +43,10 @@ PRODUCTS: dict[str, SagemakerProduct] = {
     TABLE_SEMANTIC_PARSER_PRODUCT: SagemakerProduct(
         # Marketplaceのリスティング公開後にmarketplace_product_idを設定する
         display_name="YomiToku-Pro - Table Semantic Parser",
+    ),
+    TABLE_SEMANTIC_PARSER_LITE_PRODUCT: SagemakerProduct(
+        # Marketplaceのリスティング公開後にmarketplace_product_idを設定する
+        display_name="YomiToku-Pro Lite - Table Semantic Parser",
     ),
 }
 
