@@ -103,9 +103,9 @@ def test_configure_table_semantic_parser_products(
     arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/tsp"
     lite_arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/tsp-lite"
 
-    for product, model_package_arn in (
-        ("table-semantic-parser", arn),
-        ("table-semantic-parser-lite", lite_arn),
+    for product, model_package_arn, product_id in (
+        ("table-semantic-parser", arn, "prod-y3f2sgyo7oyqk"),
+        ("table-semantic-parser-lite", lite_arn, "prod-teja67irjsrrg"),
     ):
         result = runner.invoke(
             sagemaker,
@@ -114,8 +114,8 @@ def test_configure_table_semantic_parser_products(
         )
 
         assert result.exit_code == 0, result.output
-        # Marketplace のリスティング公開前はサブスクリプション一覧が案内される
-        assert "my-subscriptions" in result.output
+        # プロダクトごとのサブスクリプション画面が案内される
+        assert product_id in result.output
 
     products = _read_config(mock_home_dir)["sagemaker"]["products"]
     assert products["table-semantic-parser"]["model_package_arn"] == arn
