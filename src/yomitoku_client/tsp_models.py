@@ -4,7 +4,7 @@ Data models for the YomiToku-Pro Table Semantic Parser (TSP) API.
 The TSP endpoint (``YOMITOKU_SAGEMAKER_APP=table_semantic_parser``) returns the
 semantic structure of every table in a page:
 
-* ``cells``     : detected cells keyed by cell id (contents / role / span)
+* ``cells``     : detected cells as a list or keyed by cell id (contents / role / span)
 * ``kv_items``  : key-value pairs resolved from form-style layouts
 * ``grids``     : row/column grids with their column headers
 
@@ -87,9 +87,9 @@ class SemanticTable(BaseModel):
     id: str | None = Field(default=None, description="Table id")
     box: list[int] = Field(description="Bounding box coordinates [x1, y1, x2, y2]")
     style: str = Field(default="border", description="Border style of the table")
-    cells: dict[str, SemanticCell] = Field(
+    cells: dict[str, SemanticCell] | list[SemanticCell] = Field(
         default_factory=dict,
-        description="Cells keyed by cell id",
+        description="Cells as a list or a dictionary keyed by cell id",
     )
     kv_items: list[KvItem] = Field(default_factory=list, description="Key-value items")
     grids: list[TableGrid] = Field(default_factory=list, description="Table grids")

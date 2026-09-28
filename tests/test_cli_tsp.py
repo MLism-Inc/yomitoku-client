@@ -45,12 +45,17 @@ def _patch_yomitoku_client(monkeypatch, sample_api_result):
     monkeypatch.setattr(single_module, "YomitokuClient", FakeClient)
 
 
+@pytest.mark.parametrize("cells_format", ["dict", "list"])
 def test_single_command_saves_json(
     monkeypatch,
     tmp_path: Path,
     runner,
     tsp_api_result,
+    cells_format,
 ):
+    if cells_format == "list":
+        table = tsp_api_result["result"][0]["tables"][0]
+        table["cells"] = list(table["cells"].values())
     _patch_yomitoku_client(monkeypatch, tsp_api_result)
 
     input_file = DATA_DIR / "image.pdf"
@@ -76,7 +81,12 @@ def test_single_command_saves_json(
     assert result.exit_code == 0, result.output
 
     saved = json.loads((output_dir / f"{input_file.stem}.json").read_text("utf-8"))
-    assert saved[0]["tables"][0]["cells"]["c0"]["contents"] == "氏 名"
+    cells = saved[0]["tables"][0]["cells"]
+    if cells_format == "list":
+        assert isinstance(cells, list)
+        assert cells[0]["contents"] == "氏 名"
+    else:
+        assert cells["c0"]["contents"] == "氏 名"
 
 
 @pytest.mark.parametrize("file_format", ["csv", "md", "html", "pdf"])
