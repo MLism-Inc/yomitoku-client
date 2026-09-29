@@ -41,12 +41,12 @@ PRODUCTS: dict[str, SagemakerProduct] = {
         marketplace_product_id="prod-n6jdf73xzm24m",
     ),
     TABLE_SEMANTIC_PARSER_PRODUCT: SagemakerProduct(
-        # Marketplaceのリスティング公開後にmarketplace_product_idを設定する
         display_name="YomiToku-Pro - Table Semantic Parser",
+        marketplace_product_id="prod-y3f2sgyo7oyqk",
     ),
     TABLE_SEMANTIC_PARSER_LITE_PRODUCT: SagemakerProduct(
-        # Marketplaceのリスティング公開後にmarketplace_product_idを設定する
         display_name="YomiToku-Pro Lite - Table Semantic Parser",
+        marketplace_product_id="prod-teja67irjsrrg",
     ),
 }
 
