@@ -4,10 +4,12 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from yomitoku_client import parse_table_semantic_parser
-from yomitoku_client.studio_form_template import (
+from yomitoku_client import (
+    StudioFormTemplate,
     apply_studio_form_template,
+    apply_studio_template_to_document,
     load_studio_form_template,
+    parse_table_semantic_parser,
 )
 
 
@@ -91,3 +93,10 @@ def test_studio_template_rejects_unknown_cell_references(tmp_path):
 
     with pytest.raises(ValidationError, match="unknown cells"):
         load_studio_form_template(path)
+
+
+def test_studio_template_api_is_exported_from_package():
+    assert StudioFormTemplate is not None
+    assert apply_studio_form_template is not None
+    assert apply_studio_template_to_document is not None
+    assert load_studio_form_template is not None

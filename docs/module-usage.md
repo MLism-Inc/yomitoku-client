@@ -318,3 +318,34 @@ model.to_json("corrected.json", output_mode="simple")
 
 テンプレートは`meta`と`tables`を持つYomiToku-Pro互換形式です。表は座標の重なりで照合し、セルは`meta.match_policy`の`cell_id`（既定）または`bbox`で照合します。
 セルの`contents` / `role`、表の`kv_items` / `grids`を補正できます。省略または`null`の項目は変更せず、空文字列や空配列は上書きとして扱います。
+
+
+### YomiToku Studioテンプレートの適用
+
+YomiToku Studioの帳票解析画面から保存した`kind: "form-template"`のテンプレートは、`apply_studio_template_to_document()`でTable Semantic Parserの解析結果へ適用できます。バージョン2と3に対応しています。
+
+```python
+from yomitoku_client import (
+    YomitokuClient,
+    apply_studio_template_to_document,
+    parse_table_semantic_parser,
+)
+
+image_path = "notebooks/sample/application.pdf"
+
+with YomitokuClient(endpoint="yomitoku-tsp", region="ap-northeast-1") as client:
+    result = client.analyze(image_path)
+
+model = parse_table_semantic_parser(result)
+apply_studio_template_to_document(
+    model,
+    template_path="templates/application.template.json",
+    image_path=image_path,
+    dpi=200,
+)
+model.to_json("application.simple.json", output_mode="simple")
+```
+
+テンプレートに保存された表・セル・Key-Value・グリッド・段落の構造へ、APIレスポンスのOCR単語を割り当てます。PDFでは解析時と同じ`dpi`を指定してください。OCRできなかった見出し（`header` / `group`）にはテンプレート作成時の文字を補いますが、値セルには作成時の値を補わず空文字にします。
+
+テンプレートの検証や1ページ単位の適用には、トップレベルAPIの`load_studio_form_template()`と`apply_studio_form_template()`を利用できます。
