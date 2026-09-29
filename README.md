@@ -14,10 +14,10 @@ YomiToku-Clientは、次のAWS Marketplace製品に対応しています。
 
 - 通常版: [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
 - Lite版: [YomiToku-Pro Lite - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
-- 帳票の表構造の抽出: YomiToku-Pro - Table Semantic Parser
+- 帳票の表構造の抽出: [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6)
 - 帳票の表構造の抽出(Lite版): YomiToku-Pro Lite - Table Semantic Parser
 
-いずれも別のMarketplace製品です。それぞれ個別にサブスクライブし、使用する製品のModel Package ARNを設定してください。
+いずれも別のMarketplace製品です。上記の製品ページから利用する製品を個別にサブスクライブし、その製品のModel Package ARNを設定してください。詳しい手順は[SageMakerエンドポイントのデプロイ](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)を参照してください。
 
 ## 主な機能 
 - AWS SageMakerで作成されたエンドポイントを簡単、安全かつ効率的に呼び出せます。

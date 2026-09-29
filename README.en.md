@@ -14,10 +14,10 @@ YomiToku-Client supports the following AWS Marketplace products:
 
 - Standard: [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
 - Lite: [YomiToku-Pro Lite - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
-- Table structure extraction: YomiToku-Pro - Table Semantic Parser
+- Table structure extraction: [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6)
 - Table structure extraction (Lite): YomiToku-Pro Lite - Table Semantic Parser
 
-These are separate AWS Marketplace products. Subscribe to each product separately and configure the Model Package ARN for the product you want to use.
+These are separate AWS Marketplace products. Open the product page above, subscribe to each product you plan to use, and configure that product's Model Package ARN. See [Deploying YomiToku-Pro](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/) for the complete procedure.
 
 ---
 

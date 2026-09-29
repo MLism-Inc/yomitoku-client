@@ -23,7 +23,10 @@ flowchart LR
 
 ## 利用の手順
 1. [YomiToku-Clientをインストール](installation.md)
-1. [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&ref_=beagle&applicationId=AWSMPContessa)より**YomiToku-Pro - Document Analyzer**をサブスクライブ
+1. AWS Marketplaceで利用する製品をサブスクライブ
+    - [YomiToku-Pro - Document Analyzer](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
+    - [YomiToku-Pro - Document Analyzer Lite](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
+    - [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6)
 1. [AWSの認証の設定する](iam-doc.md)
 1. [SageMakerモデルを作成する](deploy-yomitoku-pro.md#create-sagemaker-model)
 1. 利用する推論方式を選択する

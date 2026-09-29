@@ -24,10 +24,11 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 
 ### デプロイの流れ
 
-1. 初期設定（ARNの取得と登録）
-2. エンドポイントのデプロイ
-3. ステータスの確認
-4. エンドポイントの削除（アンデプロイ）
+1. AWS Marketplaceで製品をサブスクライブ
+2. 初期設定（ARNの取得と登録）
+3. エンドポイントのデプロイ
+4. ステータスの確認
+5. エンドポイントの削除（アンデプロイ）
 
 ### コマンドリファレンスまとめ
 
@@ -41,6 +42,16 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 | `delete` | スタックの削除（リソースの全削除） |
 
 
+### AWS Marketplaceで製品をサブスクライブする
+
+使用する製品のAWS Marketplaceページを開き、YomiToku-ProをデプロイするAWSアカウントでサブスクライブします。
+
+- [YomiToku-Pro - Document Analyzer（通常版）](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi)
+- [YomiToku-Pro - Document Analyzer Lite](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe)
+- [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6)
+
+各製品は別々のサブスクリプションです。Document Analyzer LiteやTable Semantic Parserを利用する場合、Document Analyzer通常版の購読だけでは利用できません。製品ページで **View purchase options** を選択し、契約条件を確認して購読を完了してください。
+
 ### Step 1: 初期設定（ARNの取得と登録）
 
 最初に、AWS Marketplaceで購読している製品の「モデルパッケージARN」を取得してクライアントに設定する必要があります。
@@ -51,8 +62,8 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 | `--product` | 対象製品 |
 | --- | --- |
 | `document-analyzer`（デフォルト） | YomiToku-Pro - Document Analyzer（通常版） |
-| `document-analyzer-lite` | YomiToku-Pro Lite - Document Analyzer（Lite版） |
-| `table-semantic-parser` | YomiToku-Pro - Table Semantic Parser（通常版） |
+| `document-analyzer-lite` | [YomiToku-Pro - Document Analyzer Lite](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe) |
+| `table-semantic-parser` | [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6) |
 | `table-semantic-parser-lite` | YomiToku-Pro Lite - Table Semantic Parser（Lite版） |
 
 1. ターミナルで以下のコマンドを実行します。
