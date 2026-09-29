@@ -61,7 +61,7 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 
 | `--product` | 対象製品 |
 | --- | --- |
-| `document-analyzer`（デフォルト） | YomiToku-Pro - Document Analyzer（通常版） |
+| `document-analyzer`（デフォルト） | [YomiToku-Pro - Document Analyzer（通常版）](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi) |
 | `document-analyzer-lite` | [YomiToku-Pro - Document Analyzer Lite](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe) |
 | `table-semantic-parser` | [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6) |
 | `table-semantic-parser-lite` | YomiToku-Pro Lite - Table Semantic Parser（Lite版） |
