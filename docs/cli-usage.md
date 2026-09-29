@@ -5,12 +5,17 @@ SageMaker 上の YomiToku エンドポイントにアクセスし、ドキュメ
 
 ---
 
-## 🚀　ファイル単体の処理
+## Document Analyzer
+
+文書解析APIを利用する場合は、`--api`を省略するか、`--api document-analyzer`を指定します。
+JSONに加えて、CSV、HTML、Markdown、Searchable PDFへの変換と、OCR・レイアウトの可視化を利用できます。
+
+### 🚀　ファイル単体の処理
 
 指定したファイルを解析するためのコマンドです。
 ファイルを処理し、解析結果を指定のフォーマットで出力します。
 
-### クイックスタート
+#### クイックスタート
 
 ```bash
 yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
@@ -37,7 +42,7 @@ yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o de
 
 ---
 
-### 🆘 ヘルプの参照
+#### 🆘 ヘルプの参照
 
 CLI の利用可能なオプションは、`--help` で確認できます。
 
@@ -47,7 +52,7 @@ yomitoku-client single --help
 
 ---
 
-### ⚙️ オプション詳細
+#### ⚙️ オプション詳細
 
 | オプション                 | 型 / 値                                    | 説明                                                           |
 | --------------------- | ---------------------------------------- | ------------------------------------------------------------ |
@@ -76,7 +81,7 @@ yomitoku-client single --help
 
 ---
 
-### 💡 Tips
+#### 💡 Tips
 
 !!! tip "よく使う組み合わせ"
     - Markdown 形式とCSVで解析結果を保存する：
@@ -89,7 +94,7 @@ yomitoku-client single --help
     `yomitoku-client single book.pdf -e yomitoku-endpoint --pages "1,2-5"`
 ---
 
-### 🧾 補足
+#### 🧾 補足
 
 * AWS CLI の設定済み環境で実行することを推奨します。
 * 出力ディレクトリ（`-o`）が存在しない場合、自動で作成されます。
@@ -99,12 +104,12 @@ yomitoku-client single --help
 
 ---
 
-## 🚀　バッチ処理（ディレクトリ一括解析）
+### 🚀　バッチ処理（ディレクトリ一括解析）
 
 複数ファイルを一括解析するための バッチ処理コマンドです。
 指定したディレクトリ内のファイルを順次処理し、解析結果を指定のフォーマットで出力します。
 
-### クイックスタート
+#### クイックスタート
 
 ```bash
 yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${region} -f md
@@ -132,7 +137,7 @@ yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${
 
 ---
 
-### 🆘 ヘルプの参照
+#### 🆘 ヘルプの参照
 
 CLI の利用可能なオプションは、`--help` で確認できます。
 
@@ -142,7 +147,7 @@ yomitoku-client batch --help
 
 ---
 
-### ⚙️ オプション詳細
+#### ⚙️ オプション詳細
 
 | オプション                 | 型 / 値                                    | 説明                                                      |
 | --------------------- | ---------------------------------------- | ------------------------------------------------------- |
@@ -171,7 +176,7 @@ yomitoku-client batch --help
 
 ---
 
-### 💡 Tips
+#### 💡 Tips
 
 !!! tip "よく使う組み合わせ"
     - Markdown 形式とSearchable-PDFで全ファイルを一括解析する：
@@ -185,7 +190,7 @@ yomitoku-client batch --help
 
 ---
 
-### 🧾 補足
+#### 🧾 補足
 
 * 指定されたディレクトリ配下のすべての対応ファイル（`PDF`, `PNG`, `JPEG` など）が自動的に解析対象になります。
 * `--vis_mode` により OCR / レイアウト枠付きの画像を生成できます。
@@ -194,11 +199,11 @@ yomitoku-client batch --help
 
 ---
 
-## Batch Transform出力の変換
+### Batch Transform出力の変換
 
 保存済みのBatch Transform `.out`を、再推論せずにMarkdown、CSV、HTMLへ変換します。このコマンドはSageMakerエンドポイントやAWS認証を必要としません。
 
-### クイックスタート
+#### クイックスタート
 
 ```bash
 yomitoku-client convert document.pdf.out --format md,csv,html --output-dir ./converted
@@ -218,7 +223,7 @@ converted/document.html
 yomitoku-client convert ./batch-output --format md,csv --output-dir ./converted
 ```
 
-### 図の画像を出力する
+#### 図の画像を出力する
 
 MarkdownまたはHTMLへ図の切り出し画像を含める場合は、元画像または元PDFを`--src`で指定します。
 
@@ -231,7 +236,7 @@ yomitoku-client convert document.pdf.out \
 
 `--src`を省略した場合も変換できますが、図の画像は出力されません。段落、見出し、表などJSONだけで復元できる内容が出力されます。
 
-### オプション詳細
+#### オプション詳細
 
 | オプション | 説明 |
 | --- | --- |
@@ -246,3 +251,284 @@ yomitoku-client convert document.pdf.out \
 
 !!! warning "既存ファイルはデフォルトで上書きしません"
     同名の出力が既に存在する場合はエラーになります。置き換える場合のみ`--overwrite`を指定してください。
+
+
+---
+
+## Table Semantic Parser
+
+帳票解析APIを利用する場合は、`--api table-semantic-parser`を指定します。
+Document Analyzerとはレスポンスの構造と対応する出力形式が異なり、出力はJSONのみです。既定では、セルIDをテキストと座標へ解決した`structured`形式を保存します。
+
+### 単一ファイルとバッチ処理
+
+```bash
+# 単一ファイル
+yomitoku-client single sample/table.jpg \
+  --api table-semantic-parser \
+  --endpoint yomitoku-tsp \
+  --output_dir output/
+
+# ディレクトリを一括処理
+yomitoku-client batch \
+  --api table-semantic-parser \
+  --input_dir sample/ \
+  --output_dir output/ \
+  --endpoint yomitoku-tsp
+```
+
+### 出力モード {#tsp-output-formats}
+
+| 指定 | 出力 | 用途 |
+| --- | --- | --- |
+| 指定なし | `structured` | 解決済みテキストと由来セルのID・座標を確認する |
+| `--simple` | `simple` | 座標などを除き、Key-Valueや表の値だけを利用する |
+| `--raw` | `raw` | セル・単語・参照を保持し、後から再変換する |
+
+`--raw`と`--simple`は同時には指定できません。
+後から出力形式を変える可能性がある場合は`raw`を保管してください。`structured`と`simple`は`cells`や`words`を省略するため、`raw`には戻せません。
+
+```bash
+# structured（既定）
+yomitoku-client single sample/table.jpg -a table-semantic-parser -e yomitoku-tsp -o structured/
+
+# simple
+yomitoku-client single sample/table.jpg -a table-semantic-parser -e yomitoku-tsp --simple -o simple/
+
+# raw
+yomitoku-client single sample/table.jpg -a table-semantic-parser -e yomitoku-tsp --raw -o raw/
+```
+
+以下の例は1ページ分の内容です。既定の`combine`保存では、複数ページをJSON配列にまとめ、各ページに`num_page`を付けます。
+`--split_mode separate`を指定すると、ページごとに別ファイルへ保存します。
+
+#### raw：セルと参照を保持
+
+APIレスポンスを正規化した形式です。セルのテキストや座標を`cells`に保持し、`kv_items`と`grids`はセルIDで参照します。`words`も残るため、解析結果の保管、テンプレート作成、後からの再変換に使用できます。
+
+```json
+{
+  "num_page": 0,
+  "document_name": "施設利用申込書",
+  "tables": [
+    {
+      "id": "t0",
+      "box": [10, 10, 400, 220],
+      "style": "border",
+      "cells": {
+        "c0": {"id": "c0", "box": [10, 10, 100, 40], "contents": "氏名", "role": "header"},
+        "c1": {"id": "c1", "box": [100, 10, 400, 40], "contents": "山田太郎", "role": "cell"},
+        "c2": {"id": "c2", "box": [10, 60, 200, 90], "contents": "品名", "role": "header"},
+        "c3": {"id": "c3", "box": [200, 60, 400, 90], "contents": "数量", "role": "header"},
+        "c4": {"id": "c4", "box": [10, 90, 200, 120], "contents": "りんご", "role": "cell"},
+        "c5": {"id": "c5", "box": [200, 90, 400, 120], "contents": "3", "role": "cell"},
+        "c6": {"id": "c6", "box": [10, 120, 200, 150], "contents": "みかん", "role": "cell"},
+        "c7": {"id": "c7", "box": [200, 120, 400, 150], "contents": "5", "role": "cell"}
+      },
+      "kv_items": [
+        {"id": "kv0", "key": ["c0"], "value": "c1", "box": [10, 10, 400, 40]}
+      ],
+      "grids": [
+        {
+          "id": "g0",
+          "box": [10, 60, 400, 150],
+          "n_row": 3,
+          "n_col": 2,
+          "col_headers": [["c2"], ["c3"]],
+          "data": [
+            ["c2", "c3"],
+            ["c4", "c5"],
+            ["c6", "c7"]
+          ]
+        }
+      ]
+    }
+  ],
+  "paragraphs": [
+    {
+      "id": "p0",
+      "box": [10, 170, 300, 200],
+      "score": 0.98,
+      "contents": "以上のとおり申請します。"
+    }
+  ],
+  "words": []
+}
+```
+
+この例では`kv_items[].key`の`c0`と`value`の`c1`が、`cells.c0`と`cells.c1`を参照します。APIが`cells`を配列で返すバージョンも読み込めますが、clientで保存する際はセルIDをキーにした辞書へ正規化します。
+
+#### structured：テキストと由来セル
+
+セルID参照をテキストへ解決し、`key_cells`と`value_cells`に由来セルのIDと座標を残します。値の確認画面や、画像上の位置との対応付けに適しています。
+
+```json
+{
+  "num_page": 0,
+  "document_name": "施設利用申込書",
+  "tables": [
+    {
+      "id": "t0",
+      "box": [10, 10, 400, 220],
+      "style": "border",
+      "kv_items": [
+        {
+          "key": ["氏名"],
+          "value": "山田太郎",
+          "key_cells": [{"id": "c0", "box": [10, 10, 100, 40]}],
+          "value_cells": [{"id": "c1", "box": [100, 10, 400, 40]}]
+        }
+      ],
+      "grids": [
+        {
+          "id": "g0",
+          "box": [10, 60, 400, 150],
+          "n_row": 3,
+          "n_col": 2,
+          "rows": [
+            {
+              "cells": [
+                {
+                  "key": ["品名"],
+                  "value": "りんご",
+                  "key_cells": [{"id": "c2", "box": [10, 60, 200, 90]}],
+                  "value_cells": [{"id": "c4", "box": [10, 90, 200, 120]}]
+                },
+                {
+                  "key": ["数量"],
+                  "value": "3",
+                  "key_cells": [{"id": "c3", "box": [200, 60, 400, 90]}],
+                  "value_cells": [{"id": "c5", "box": [200, 90, 400, 120]}]
+                }
+              ]
+            },
+            {
+              "cells": [
+                {
+                  "key": ["品名"],
+                  "value": "みかん",
+                  "key_cells": [{"id": "c2", "box": [10, 60, 200, 90]}],
+                  "value_cells": [{"id": "c6", "box": [10, 120, 200, 150]}]
+                },
+                {
+                  "key": ["数量"],
+                  "value": "5",
+                  "key_cells": [{"id": "c3", "box": [200, 60, 400, 90]}],
+                  "value_cells": [{"id": "c7", "box": [200, 120, 400, 150]}]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "paragraphs": [
+    {
+      "id": "p0",
+      "box": [10, 170, 300, 200],
+      "score": 0.98,
+      "contents": "以上のとおり申請します。"
+    }
+  ]
+}
+```
+
+同じキーセルに複数の値セルが結び付く場合、値を画像上の順序に並べて改行で結合し、結合元セルを同じ順序で`value_cells`に残します。同じ見出し文字列でもキーセルIDが異なる項目は別々に扱い、キーのない単独セルは`key: []`の独立した項目として残します。
+
+#### simple：テキストのみ
+
+座標、セルID、スコア、役割を除き、`kv_items`を見出し階層に沿った辞書、グリッド行を`{列見出し: 値}`、段落を文字列の配列として出力します。
+
+```json
+{
+  "num_page": 0,
+  "document_name": "施設利用申込書",
+  "tables": [
+    {
+      "id": "t0",
+      "kv_items": {"氏名": "山田太郎"},
+      "grids": [
+        {
+          "id": "g0",
+          "rows": [
+            {"品名": "りんご", "数量": "3"},
+            {"品名": "みかん", "数量": "5"}
+          ]
+        }
+      ]
+    }
+  ],
+  "paragraphs": ["以上のとおり申請します。"]
+}
+```
+
+変換規則はYomiToku-Pro本体と同じです。
+
+- 親見出しと子見出しは入れ子の辞書として保持します。
+- 同じキーセルの複数値は画像上の順序に並べ、改行で結合します。
+- 同じ階層に同名の別キーセルがある場合は配列にします。
+- 親見出し自身の値と子見出しが共存する場合、親の値を`_value`へ格納します。
+- キーのない単独セルは`_unkeyed`の配列へ格納します。
+- グリッド行に同名の列見出しがある場合、`日付_0`、`日付_1`のように連番を付けます。
+
+### 保存済みraw JSONの変換
+
+`convert`を使うとAWSへ再リクエストせずに、保存済みの`raw`を`structured`または`simple`へ変換できます。
+入力にはAPIレスポンスの`{"result": [...]}`、clientが保存したページ配列、1ページ分のJSONを使用できます。
+`structured`と`simple`はセル情報を省略しているため、変換元には使用できません。
+
+```bash
+yomitoku-client convert raw/table.json -a table-semantic-parser -o structured/
+yomitoku-client convert raw/table.json -a table-semantic-parser --simple -o simple/
+```
+
+入力ファイルを上書きしないよう、JSON変換では別の`--output-dir`を指定してください。既存の出力を置き換える場合は`--overwrite`を付けます。
+
+### YomiToku-Proテンプレートの適用
+
+`--template PATH`を指定すると、保存済みテンプレートを解析結果へ適用してから出力します。`single`、`batch`、`convert`で共通して利用できます。
+テンプレートの作成には[Python APIの`save_template_json()`](module-usage.md#tsp-template)を使用します。
+テンプレートは`meta`と`tables`を持つYomiToku-Pro互換形式です。表は座標の重なりで照合し、セルは`meta.match_policy`の`cell_id`（既定）または`bbox`で照合します。
+セルの`contents` / `role`、表の`kv_items` / `grids`を補正できます。省略または`null`の項目は変更せず、空文字列や空配列は上書きとして扱います。
+照合しない表・セルはスキップし、推論モデルの再実行やセルの新規検出は行いません。
+
+```bash
+yomitoku-client single sample/table.jpg \
+  -a table-semantic-parser \
+  -e yomitoku-tsp \
+  --template templates/table.json \
+  --simple \
+  -o corrected/
+```
+
+### YomiToku Studioテンプレートの適用
+
+YomiToku Studioの帳票解析画面から保存した`kind: "form-template"`のテンプレートには、`--studio-template PATH`を使用します。バージョン2と3に対応しています。
+
+Batch CLIでは、入力ディレクトリ内の各画像・PDFをTable Semantic Parserで読み取り、APIレスポンスのOCR単語をStudioテンプレートの表・セル・段落へ割り当てます。表・セル・Key-Value・グリッドの構造はStudioテンプレート側の定義へ置き換わります。
+
+```bash
+yomitoku-client batch \
+  --input_dir input/ \
+  --output_dir output/ \
+  --endpoint yomitoku-tsp \
+  --api table-semantic-parser \
+  --studio-template templates/application.template.json \
+  --simple
+```
+
+テンプレート作成時の文字列は見出しセル（`header` / `group`）のOCR結果が空だった場合だけ補完に使います。値セルが読めなかった場合は、別帳票の値を誤って引き継がないよう空文字列を出力します。
+
+`single`でも同じオプションを使用できます。保存済みraw JSONを`convert`する場合は、正規化座標を対象ページのピクセル座標へ戻すため、元の画像またはPDFを`--src`で指定します。
+
+```bash
+yomitoku-client convert raw/application.json \
+  --api table-semantic-parser \
+  --src input/application.pdf \
+  --studio-template templates/application.template.json \
+  --simple \
+  --output-dir corrected/
+```
+
+`--template`と`--studio-template`はJSON形式と適用方法が異なり、同時には指定できません。

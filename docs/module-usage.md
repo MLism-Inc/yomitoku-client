@@ -12,7 +12,14 @@ Table Semantic Parser 版のNotebookは以下から試せます。
 
 <https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb>
 
-## クイックスタート
+---
+
+## Document Analyzer
+
+文書解析APIのレスポンスは`parse_pydantic_model()`で読み込みます。
+Markdown、CSV、HTML、JSON、Searchable PDFへの変換と、OCR・レイアウトの可視化を利用できます。
+
+### クイックスタート
 
 最もシンプルな実行例です。PDF を入力し、解析結果を Markdown として保存します。
 
@@ -28,7 +35,7 @@ model.to_markdown(output_path="output.md")
 
 ---
 
-## 非同期実行
+### 非同期実行
 
 YomiToku-Client は **非同期処理** にも対応しており、エンドポイント呼び出しからフォーマット変換・保存までを非同期で実行できます。
 
@@ -108,7 +115,7 @@ if __name__ == "__main__":
 
 ---
 
-## バッチ処理
+### バッチ処理
 
 YomiToku-Client は **バッチ処理** もサポートしており、安全かつ効率的に大量の文書を解析できます。
 
@@ -185,12 +192,15 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
 ---
 
 ## Table Semantic Parser
 
 帳票の表構造を取得する場合は、Table Semantic Parser のエンドポイントを利用します。
-エンドポイントの呼び出し方は共通で、レスポンスの変換に `parse_table_semantic_parser()` を使います。
+エンドポイントの呼び出し方はDocument Analyzerと共通ですが、レスポンスの変換には`parse_table_semantic_parser()`を使います。
+
+### 解析結果の読み込み
 
 ```python
 from yomitoku_client import YomitokuClient, parse_table_semantic_parser
@@ -201,10 +211,157 @@ with YomitokuClient(endpoint="yomitoku-tsp", region="ap-northeast-1") as client:
 model = parse_table_semantic_parser(result)
 
 table = model.pages[0].tables[0]
-print(table.cells["c0"].contents)              # セルのテキスト
+print(table.find_cell_by_id("r0c0").contents)  # セルのテキスト
 print(table.kv_items[0].key, table.kv_items[0].value)  # いずれもセルID
 
-model.to_json(output_path="table.json")
+# Python APIのto_json()はrawが既定
+model.to_json(output_path="table.raw.json")
 ```
 
-レスポンスの構造や CLI からの利用は[Table Semantic Parser](table-semantic-parser.md)を参照してください。
+出力例:
+
+```text
+利用情報
+['r0c0', 'r1c0'] r1c1
+```
+
+`model.pages`はページ番号をキー、`TableSemanticParserResult`を値とする辞書です。
+各ページの`cells`、`kv_items`、`grids`はrawスキーマで、Key-ValueとグリッドはセルのテキストではなくセルIDを参照します。
+
+| クラス | 内容 |
+| --- | --- |
+| `MultiPageTableSemanticParserResult` | 文書全体。`pages`にページ番号とページ結果を保持 |
+| `TableSemanticParserResult` | 1ページ分の`tables`、`paragraphs`、`words`、`num_page` |
+| `SemanticTable` | 1つの表の`cells`、`kv_items`、`grids`、`box`、`style` |
+| `SemanticCell` | セルのテキスト、役割、座標、行列位置 |
+| `KvItem` | キーセルIDの配列と値セルID |
+| `TableGrid` | 列ヘッダーとデータセルをセルIDで表したグリッド |
+
+### raw・structured・simple
+
+Python APIでは、用途に応じて3種類の表現を取得できます。
+
+| API | 戻り値 | 用途 |
+| --- | --- | --- |
+| `page.to_json()` | `dict` | セル・単語・セルID参照を保持するraw |
+| `page.to_structured()` | `StructuredDocumentSchema` | テキストと由来セルのID・座標を持つstructured |
+| `page.to_simple()` | `SimpleDocumentSchema` | 座標などを除いたテキストのみのsimple |
+| `model.to_structured()` | `dict[int, StructuredDocumentSchema]` | 全ページのstructured |
+| `model.to_simple()` | `dict[int, SimpleDocumentSchema]` | 全ページのsimple |
+
+```python
+page = model.pages[0]
+
+# 値と、その由来になったセルのID・座標を取得
+structured = page.to_structured()
+entry = structured.tables[0].kv_items[0]
+print(entry.key, entry.value)
+print(entry.key_cells, entry.value_cells)
+
+# Key-Valueとグリッドをテキストだけで取得
+simple = page.to_simple()
+print(simple.tables[0].kv_items)
+print(simple.tables[0].grids[0].rows[0])
+
+# 同じキーセルに結び付いた複数値の区切り文字を変更
+simple_with_custom_separator = page.to_simple(separator=" / ")
+```
+
+出力例:
+
+```text
+['利用情報', '施設名称'] MLism株式会社
+[StructuredCellRefSchema(id='r0c0', box=[150, 500, 1499, 550]), StructuredCellRefSchema(id='r1c0', box=[150, 550, 364, 645])] [StructuredCellRefSchema(id='r1c1', box=[365, 550, 1499, 645])]
+{'利用情報': {'施設名称': 'MLism株式会社', '利用目的': 'セミナー', '実施内容': 'YomiTokuの利用方法に関する説明会'}}
+{'日付': '2025年01月30日(月曜日)', '入室時刻': '10時00分', '退室時刻': '17時00分'}
+```
+
+`structured`と`simple`では、同じキーセルに複数の値セルが結び付く場合、値を画像上の順序で並べ、既定では改行で結合します。
+`simple`の変換規則は次のとおりです。
+
+- 親子見出しを入れ子の辞書にします。
+- 同じ階層に同名の別キーセルがある場合は配列にします。
+- 親見出し自身の値と子見出しが共存する場合、親の値を`_value`へ格納します。
+- キーのない単独セルは`_unkeyed`の配列へ格納します。
+- グリッド行に同名の列見出しがある場合、`日付_0`、`日付_1`のように連番を付けます。
+
+各形式のJSON例は[CLIの出力モード](cli-usage.md#tsp-output-formats)を参照してください。
+
+### JSONへの保存
+
+`MultiPageTableSemanticParserResult.to_json()`の`output_mode`で保存形式を指定します。
+後方互換性のため、Python APIでは`output_mode`を省略すると`raw`を保存します。CLIの既定値は`structured`です。
+
+```python
+# raw：後から別形式へ変換できるよう解析情報を保管
+model.to_json("table.raw.json")
+
+# structured：CLIの既定出力と同じ
+model.to_json("table.structured.json", output_mode="structured")
+
+# simple：テキストのみ
+model.to_json("table.simple.json", output_mode="simple")
+
+# ページごとに別ファイルへ保存
+model.to_json(
+    "table.json",
+    output_mode="structured",
+    mode="separate",
+)
+```
+
+`mode="combine"`ではページをJSON配列にまとめ、`mode="separate"`ではページごとに別ファイルへ保存します。
+`structured`と`simple`は`cells`や`words`を省略するため、別形式へ再変換する可能性がある場合は`raw`も保存してください。
+
+### テンプレートの保存と適用 {#tsp-template}
+
+YomiToku-Pro互換のテンプレートをページ単位または文書単位で保存し、取得済みの解析結果へ適用できます。
+
+```python
+page = model.pages[0]
+
+# 1ページのテンプレート
+page.save_template_json("page.template.json")
+page.load_template_json("page.template.json")
+
+# 複数ページのテンプレート
+model.save_template_json("document.template.json")
+model.load_template_json("document.template.json")
+
+# 適用後の結果をsimpleで保存
+model.to_json("corrected.json", output_mode="simple")
+```
+
+テンプレートは`meta`と`tables`を持つYomiToku-Pro互換形式です。表は座標の重なりで照合し、セルは`meta.match_policy`の`cell_id`（既定）または`bbox`で照合します。
+セルの`contents` / `role`、表の`kv_items` / `grids`を補正できます。省略または`null`の項目は変更せず、空文字列や空配列は上書きとして扱います。
+
+
+### YomiToku Studioテンプレートの適用 {#studio-template-python}
+
+YomiToku Studioの帳票解析画面から保存した`kind: "form-template"`のテンプレートは、`apply_studio_template_to_document()`でTable Semantic Parserの解析結果へ適用できます。バージョン2と3に対応しています。
+
+```python
+from yomitoku_client import (
+    YomitokuClient,
+    apply_studio_template_to_document,
+    parse_table_semantic_parser,
+)
+
+image_path = "notebooks/sample/application.pdf"
+
+with YomitokuClient(endpoint="yomitoku-tsp", region="ap-northeast-1") as client:
+    result = client.analyze(image_path)
+
+model = parse_table_semantic_parser(result)
+apply_studio_template_to_document(
+    model,
+    template_path="templates/application.template.json",
+    image_path=image_path,
+    dpi=200,
+)
+model.to_json("application.simple.json", output_mode="simple")
+```
+
+テンプレートに保存された表・セル・Key-Value・グリッド・段落の構造へ、APIレスポンスのOCR単語を割り当てます。PDFでは解析時と同じ`dpi`を指定してください。OCRできなかった見出し（`header` / `group`）にはテンプレート作成時の文字を補いますが、値セルには作成時の値を補わず空文字にします。
+
+テンプレートの検証や1ページ単位の適用には、トップレベルAPIの`load_studio_form_template()`と`apply_studio_form_template()`を利用できます。

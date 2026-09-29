@@ -72,7 +72,6 @@ nav:
   - Batch Transform: 'batch-transform.md'
   - CLI: 'cli-usage.md'
   - Python API: 'module-usage.md'
-  - Table Semantic Parser: 'table-semantic-parser.md'
   - Advanced: 'advanced.md'
   - FAQ: 'faq.md'
 

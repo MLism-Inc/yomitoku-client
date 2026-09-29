@@ -27,6 +27,12 @@ from .renderers.pdf_renderer import PDFRenderer
 from .renderers.searchable_pdf import (
     create_searchable_pdf,
 )
+from .studio_form_template import (
+    StudioFormTemplate,
+    apply_studio_form_template,
+    apply_studio_template_to_document,
+    load_studio_form_template,
+)
 
 # Import Table Semantic Parser models
 from .tsp_models import (
@@ -37,11 +43,31 @@ from .tsp_models import (
     TableGrid,
     TableSemanticParserResult,
 )
+from .tsp_semantics import (
+    CellTemplateSchema,
+    SimpleDocumentSchema,
+    StructuredDocumentSchema,
+    TableSemanticContentsTemplateSchema,
+    TableSemanticParserTemplateSchema,
+    TemplateMetaSchema,
+    apply_table_template,
+)
 
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
 
 __all__ = [
+    "StructuredDocumentSchema",
+    "SimpleDocumentSchema",
+    "CellTemplateSchema",
+    "TableSemanticContentsTemplateSchema",
+    "TableSemanticParserTemplateSchema",
+    "TemplateMetaSchema",
+    "apply_table_template",
+    "StudioFormTemplate",
+    "load_studio_form_template",
+    "apply_studio_form_template",
+    "apply_studio_template_to_document",
     "DocumentResult",
     "MultiPageDocumentResult",
     "MultiPageTableSemanticParserResult",

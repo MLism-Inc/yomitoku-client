@@ -2,7 +2,9 @@
 
 Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存したPDFや画像をジョブ単位でまとめて解析できます。ジョブの開始時に推論用インスタンスが起動し、完了後に自動で終了するため、夜間バッチや大量文書の一括処理に適しています。
 
-このページでは、AWS Marketplace版YomiToku-Proのモデルを使ってBatch Transformジョブを実行し、解析結果をYomiToku-ClientでMarkdownやCSVへ変換するまでを説明します。
+このページでは、AWS Marketplace版YomiToku-ProのDocument AnalyzerまたはTable Semantic Parserを使ってBatch Transformジョブを実行し、解析結果をYomiToku-Clientで用途に応じた形式へ変換するまでを説明します。
+
+Document Analyzerの出力はMarkdown、CSV、HTMLへ変換できます。Table Semantic Parserの出力は、表のセル・Key-Value・グリッド・段落を保持するJSONとして、structured（既定）、simple、rawの3形式へ変換できます。
 
 !!! note "利用できる推論方式"
     AWS Marketplaceのモデルパッケージでは、リアルタイム推論とBatch Transformを利用できます。非同期推論は利用できません。
@@ -26,6 +28,8 @@ Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存し�
 | 出力先 | `s3://YOUR_BUCKET/output/` |
 | インスタンスタイプ | `ml.g4dn.xlarge` |
 | リージョン | `ap-northeast-1` |
+
+表中のモデル名とジョブ名はDocument Analyzer Liteの例です。Table Semantic Parserを使う場合は、Table Semantic Parser製品から作成したモデル名（例: `yomitoku-pro-table-semantic-parser`）へ読み替えてください。
 
 !!! warning "ジョブ名は実行ごとに変更してください"
     Batch Transformのジョブ名は、AWSアカウントとリージョン内で一意である必要があります。上記のジョブ名は初回実行用の例です。再実行時は末尾の番号や日時を変更してください。
@@ -62,10 +66,15 @@ yomitoku-client sagemaker configure \
 yomitoku-client sagemaker configure \
   --product document-analyzer-lite \
   --region ap-northeast-1
+
+# Table Semantic Parser
+yomitoku-client sagemaker configure \
+  --product table-semantic-parser \
+  --region ap-northeast-1
 ```
 
 !!! warning "製品とリージョンを確認してください"
-    通常版とLite版では、製品とModel Package ARNが異なります。Batch Transformジョブと同じリージョンにある、利用する製品のARNを選択してください。
+    Document Analyzer、Document Analyzer Lite、Table Semantic Parserはそれぞれ別のMarketplace製品で、Model Package ARNも異なります。Batch Transformジョブと同じリージョンにある、利用する製品のARNを選択してください。
 
 既存モデルのModel Package ARNは、次のコマンドでも確認できます。
 
@@ -85,6 +94,12 @@ Lite版は通常版とは別のAWS Marketplace製品です。Lite版製品をサ
   ![AWS MarketplaceのモデルパッケージサブスクリプションからYomiToku-Pro Document Analyzer Liteを選択している](images/marketplace-container.png)
   <figcaption>利用するAWS Marketplaceのモデルパッケージを選択する</figcaption>
 </figure>
+
+### YomiToku-Pro - Table Semantic Parserを利用する {#batch-tsp-model}
+
+Table Semantic ParserはDocument Analyzerとは別のAWS Marketplace製品です。[YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6)をサブスクライブし、そのModel Package ARNから専用モデルを作成してください。Document Analyzerのモデルを指定しても、Table Semantic Parserの`cells`、`kv_items`、`grids`は出力されません。
+
+AWS CLIでモデルを作成する場合は、`configure --product table-semantic-parser`で確認したARNを`PrimaryContainer.ModelPackageName`へ設定します。Batch Transformジョブでは、そのモデル名（以下の例では`yomitoku-pro-table-semantic-parser`）を指定します。
 
 ## 2. モデルの実行ロールへS3権限を設定する {#batch-transform-execution-role}
 
@@ -227,6 +242,20 @@ aws sagemaker create-transform-job \
 
 JPEG、PNG、TIFFを処理するときは、`ContentType`を入力形式に合わせて変更します。
 
+Table Semantic ParserでもBatch Transformの入出力設定は同じです。`--model-name`だけを、Table Semantic Parser製品から作成したモデルへ変更します。
+
+```bash
+aws sagemaker create-transform-job \
+  --transform-job-name yomitoku-pro-tsp-batch-0000 \
+  --model-name yomitoku-pro-table-semantic-parser \
+  --transform-input 'DataSource={S3DataSource={S3DataType=S3Prefix,S3Uri=s3://YOUR_BUCKET/input/}},ContentType=application/pdf,CompressionType=None,SplitType=None' \
+  --transform-output 'S3OutputPath=s3://YOUR_BUCKET/output/,Accept=application/json,AssembleWith=None' \
+  --transform-resources 'InstanceType=ml.g4dn.xlarge,InstanceCount=1' \
+  --max-concurrent-transforms 1 \
+  --max-payload-in-mb 100 \
+  --region ap-northeast-1
+```
+
 ### ジョブの状態を確認する
 
 ```bash
@@ -255,13 +284,17 @@ aws s3 ls s3://YOUR_BUCKET/output/ --recursive
 
 入力プレフィックス以下にサブフォルダがある場合は、その階層に応じたサブフォルダへ保存されます。実際のS3 URIは`aws s3 ls`の結果で確認してください。
 
+Table Semantic Parserの`.out`には、ページごとの`tables`、`cells`、`kv_items`、`grids`、`paragraphs`、`words`を含むraw解析結果が保存されます。このraw出力は、次節の`convert`でstructuredまたはsimpleへ変換できるため、元データとして保管してください。
+
 ```bash
 aws s3 cp \
   s3://YOUR_BUCKET/output/document.pdf.out \
   ./document.pdf.out
 ```
 
-## 6. YomiToku-ClientでMarkdownやCSVへ変換する
+## 6. YomiToku-Clientで出力を変換する
+
+### Document Analyzerの`.out`を変換する
 
 `.out`ファイルにはYomiToku-Proの解析結果がJSON形式で保存されています。`yomitoku-client convert`を使用すると、再推論せずにMarkdown、CSV、HTMLへ変換できます。
 
@@ -279,6 +312,51 @@ yomitoku-client convert document.pdf.out \
   --src document.pdf \
   --output-dir ./converted
 ```
+
+### Table Semantic Parserの`.out`を変換する {#convert-tsp-batch-output}
+
+Table Semantic Parserの出力を変換するときは、`--api table-semantic-parser`を指定します。出力形式はJSONのみです。オプションを省略すると、Key-Valueとグリッドのテキストに由来セルのID・座標を付けたstructured JSONを出力します。
+
+```bash
+# structured（既定）
+yomitoku-client convert document.pdf.out \
+  --api table-semantic-parser \
+  --output-dir ./structured
+
+# 座標やセル参照を除いたテキスト中心のsimple
+yomitoku-client convert document.pdf.out \
+  --api table-semantic-parser \
+  --simple \
+  --output-dir ./simple
+
+# cells、words、セルID参照を保持するraw
+yomitoku-client convert document.pdf.out \
+  --api table-semantic-parser \
+  --raw \
+  --output-dir ./raw
+```
+
+ディレクトリを指定すると、配下の`.out`を一括変換できます。
+
+```bash
+yomitoku-client convert ./batch-output \
+  --api table-semantic-parser \
+  --simple \
+  --output-dir ./converted
+```
+
+YomiToku Studioから保存した帳票テンプレートを適用する場合は、座標変換に使用する元画像またはPDFを`--src`で指定します。`--src`には単一ファイル、または元文書を同じ名前で保存したディレクトリを指定できます。
+
+```bash
+yomitoku-client convert document.pdf.out \
+  --api table-semantic-parser \
+  --src document.pdf \
+  --studio-template templates/application.template.json \
+  --simple \
+  --output-dir ./corrected
+```
+
+`--simple`と`--raw`は同時に指定できません。structuredとsimpleでは`cells`や`words`を省略するため、後から別形式へ変換またはテンプレートを適用する可能性がある場合は、Batch Transformの`.out`またはraw JSONも保管してください。
 
 ローカルでの確認だけでなく、実運用ではAWS LambdaなどでYomiToku-Clientを実行し、Batch Transformの出力を後続システム向けの形式へ変換する構成を想定しています。詳細は[Batch Transform出力の変換](cli-usage.md#batch-transform)を参照してください。
 
@@ -342,4 +420,6 @@ aws sagemaker describe-model \
 
 - [YomiToku-ProをAmazon SageMaker AIへデプロイする](deploy-yomitoku-pro.md)
 - [Batch Transform出力を変換する](cli-usage.md#batch-transform)
+- [Table Semantic Parserの出力形式](cli-usage.md#tsp-output-formats)
+- [YomiToku StudioテンプレートをPython APIで適用する](module-usage.md#studio-template-python)
 - [Amazon SageMaker AIのBatch Transform](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/batch-transform.html)

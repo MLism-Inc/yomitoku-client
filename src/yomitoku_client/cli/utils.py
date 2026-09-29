@@ -8,6 +8,44 @@ from yomitoku_client.constants import (
 )
 
 
+def tsp_options(command):
+    """Shared local TSP output/template options."""
+    options = [
+        click.option("--raw", is_flag=True, help="Save raw TSP cells and references."),
+        click.option("--simple", is_flag=True, help="Save text-only TSP structure."),
+        click.option(
+            "--template",
+            type=click.Path(exists=True, dir_okay=False),
+            help="Apply a TSP template locally before export.",
+        ),
+        click.option(
+            "--studio-template",
+            type=click.Path(exists=True, dir_okay=False),
+            help="Apply a YomiToku Studio form-template (v2/v3).",
+        ),
+    ]
+    for option in reversed(options):
+        command = option(command)
+    return command
+
+
+def resolve_tsp_options(api, raw, simple, template, studio_template):
+    if raw and simple:
+        raise click.UsageError("--raw and --simple are mutually exclusive")
+    selected = "raw" if raw else "simple" if simple else "structured"
+    if template and studio_template:
+        raise click.UsageError(
+            "--template and --studio-template are mutually exclusive"
+        )
+    if api != API_TABLE_SEMANTIC_PARSER and (
+        selected != "structured" or template or studio_template
+    ):
+        raise click.UsageError(
+            "TSP output/template options require --api table-semantic-parser"
+        )
+    return selected
+
+
 def parse_pages(pages_str):
     pages = set()
     for part in pages_str.split(","):
@@ -87,6 +125,9 @@ def export_model(
     page_index: list | None = None,
     dpi: int = 200,
     ignore_line_break: bool = False,
+    output_mode: str = "structured",
+    template: str | None = None,
+    studio_template: str | None = None,
 ) -> None:
     """
     Save a parsed result in every requested format
@@ -101,14 +142,35 @@ def export_model(
         page_index: Pages to export
         dpi: DPI used when the original document is a PDF
         ignore_line_break: Whether to drop line breaks (document analyzer only)
+        template: YomiToku-Pro table correction template
+        studio_template: YomiToku Studio form-template (v2/v3)
     """
     if api == API_TABLE_SEMANTIC_PARSER:
-        # The response is saved as-is; formats are validated by validate_formats
-        model.to_json(
-            output_path=f"{output_base}.json",
-            mode=split_mode,
-            page_index=page_index,
-        )
+        try:
+            if template:
+                model.load_template_json(template)
+            if studio_template:
+                if image_path is None:
+                    raise ValueError(
+                        "Studio template application requires the source document"
+                    )
+                from yomitoku_client.studio_form_template import (
+                    apply_studio_template_to_document,
+                )
+
+                apply_studio_template_to_document(
+                    model, studio_template, image_path, dpi=dpi
+                )
+            model.to_json(
+                output_path=f"{output_base}.json",
+                mode=split_mode,
+                page_index=page_index,
+                output_mode=output_mode,
+            )
+        except (ValueError, OSError, KeyError) as error:
+            raise click.ClickException(
+                f"Failed to export TSP result: {error}"
+            ) from error
         return
 
     common = {

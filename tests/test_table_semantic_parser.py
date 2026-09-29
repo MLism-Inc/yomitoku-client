@@ -3,6 +3,7 @@ Tests for the Table Semantic Parser (TSP) models and parser
 """
 
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -63,6 +64,43 @@ class TestParse:
         assert (grid.id, grid.n_row, grid.n_col) == ("g0", 3, 2)
         assert grid.col_headers == [["c7"], ["c8"]]
         assert grid.data[1] == ["c9", "c10"]
+
+    @pytest.mark.parametrize("with_ids", [True, False])
+    def test_parse_and_export_cell_list(self, tsp_api_result, tmp_path, with_ids):
+        table = tsp_api_result["result"][0]["tables"][0]
+        table["cells"] = list(table["cells"].values())
+        if not with_ids:
+            for cell in table["cells"]:
+                cell.pop("id", None)
+        original = deepcopy(tsp_api_result)
+
+        document = parse_table_semantic_parser(tsp_api_result)
+        cells = document.pages[0].tables[0].cells
+        assert isinstance(cells, list)
+        assert len(cells) == len(table["cells"])
+        assert cells[0].contents == "氏 名"
+        assert tsp_api_result == original
+
+        output_path = tmp_path / "table.json"
+        document.to_json(str(output_path))
+        saved_table = json.loads(output_path.read_text("utf-8"))[0]["tables"][0]
+        assert isinstance(saved_table["cells"], list)
+        for source, saved in zip(table["cells"], saved_table["cells"], strict=True):
+            assert all(saved[key] == value for key, value in source.items())
+        assert saved_table["kv_items"] == table["kv_items"]
+        assert saved_table["grids"] == table["grids"]
+
+    def test_parse_empty_cell_list(self):
+        document = parse_table_semantic_parser(
+            {"result": {"tables": [{"box": [0, 0, 100, 100], "cells": []}]}}
+        )
+        assert document.pages[0].to_json()["tables"][0]["cells"] == []
+
+    def test_parse_invalid_cell_list(self):
+        with pytest.raises(DocumentAnalysisError):
+            parse_table_semantic_parser(
+                {"result": {"tables": [{"box": [0, 0, 100, 100], "cells": [{}]}]}}
+            )
 
     def test_parse_assigns_page_index(self, tsp_api_result):
         """Batch Transform 出力には num_page が無いので順序から補う"""
