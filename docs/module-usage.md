@@ -218,6 +218,13 @@ print(table.kv_items[0].key, table.kv_items[0].value)  # いずれもセルID
 model.to_json(output_path="table.raw.json")
 ```
 
+出力例:
+
+```text
+氏名
+['c0'] c1
+```
+
 `model.pages`はページ番号をキー、`TableSemanticParserResult`を値とする辞書です。
 各ページの`cells`、`kv_items`、`grids`はrawスキーマで、Key-ValueとグリッドはセルのテキストではなくセルIDを参照します。
 
@@ -260,7 +267,16 @@ print(simple.tables[0].grids[0].rows)
 simple_with_custom_separator = page.to_simple(separator=" / ")
 ```
 
-`structured`と`simple`では、同じキーセルに結び付いた複数の値を画像上の順序で並べ、既定では改行で結合します。
+出力例:
+
+```text
+['氏名'] 山田太郎
+[StructuredCellRefSchema(id='c0', box=[10, 10, 100, 40])] [StructuredCellRefSchema(id='c1', box=[100, 10, 400, 40])]
+{'氏名': '山田太郎'}
+[{'品名': 'りんご', '数量': '3'}, {'品名': 'みかん', '数量': '5'}]
+```
+
+`structured`と`simple`では、同じキーセルに複数の値セルが結び付く場合、値を画像上の順序で並べ、既定では改行で結合します。
 `simple`の変換規則は次のとおりです。
 
 - 親子見出しを入れ子の辞書にします。
