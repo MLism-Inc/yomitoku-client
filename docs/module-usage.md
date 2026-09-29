@@ -211,7 +211,7 @@ with YomitokuClient(endpoint="yomitoku-tsp", region="ap-northeast-1") as client:
 model = parse_table_semantic_parser(result)
 
 table = model.pages[0].tables[0]
-print(table.find_cell_by_id("c0").contents)    # セルのテキスト
+print(table.find_cell_by_id("r0c0").contents)  # セルのテキスト
 print(table.kv_items[0].key, table.kv_items[0].value)  # いずれもセルID
 
 # Python APIのto_json()はrawが既定
@@ -221,8 +221,8 @@ model.to_json(output_path="table.raw.json")
 出力例:
 
 ```text
-氏名
-['c0'] c1
+利用情報
+['r0c0', 'r1c0'] r1c1
 ```
 
 `model.pages`はページ番号をキー、`TableSemanticParserResult`を値とする辞書です。
@@ -261,7 +261,7 @@ print(entry.key_cells, entry.value_cells)
 # Key-Valueとグリッドをテキストだけで取得
 simple = page.to_simple()
 print(simple.tables[0].kv_items)
-print(simple.tables[0].grids[0].rows)
+print(simple.tables[0].grids[0].rows[0])
 
 # 同じキーセルに結び付いた複数値の区切り文字を変更
 simple_with_custom_separator = page.to_simple(separator=" / ")
@@ -270,10 +270,10 @@ simple_with_custom_separator = page.to_simple(separator=" / ")
 出力例:
 
 ```text
-['氏名'] 山田太郎
-[StructuredCellRefSchema(id='c0', box=[10, 10, 100, 40])] [StructuredCellRefSchema(id='c1', box=[100, 10, 400, 40])]
-{'氏名': '山田太郎'}
-[{'品名': 'りんご', '数量': '3'}, {'品名': 'みかん', '数量': '5'}]
+['利用情報', '施設名称'] MLism株式会社
+[StructuredCellRefSchema(id='r0c0', box=[150, 500, 1499, 550]), StructuredCellRefSchema(id='r1c0', box=[150, 550, 364, 645])] [StructuredCellRefSchema(id='r1c1', box=[365, 550, 1499, 645])]
+{'利用情報': {'施設名称': 'MLism株式会社', '利用目的': 'セミナー', '実施内容': 'YomiTokuの利用方法に関する説明会'}}
+{'日付': '2025年01月30日(月曜日)', '入室時刻': '10時00分', '退室時刻': '17時00分'}
 ```
 
 `structured`と`simple`では、同じキーセルに複数の値セルが結び付く場合、値を画像上の順序で並べ、既定では改行で結合します。
