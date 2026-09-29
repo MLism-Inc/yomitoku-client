@@ -12,7 +12,7 @@
         <link rel="prev" href="../cli-usage/">
       
       
-        <link rel="next" href="../table-semantic-parser/">
+        <link rel="next" href="../advanced/">
       
       
         
@@ -354,25 +354,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="../table-semantic-parser/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Table Semantic Parser
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="../advanced/" class="md-tabs__link">
         
   
@@ -690,6 +671,18 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#document-analyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Analyzer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Document Analyzer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -699,8 +692,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -710,8 +703,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -721,15 +714,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        import asyncio import json import os from yomitoku_client import YomitokuClient, parse_pydantic_model # 入出力設定 target_dir = "notebooks/sample" outdir = "output" # SageMaker エンドポイント設定 ENDPOINT_NAME = "my-endpoint" AWS_REGION = "ap-northeast-1" async def main(): # バッチ解析の実行 async with YomitokuClient( endpoint=ENDPOINT_NAME, region=AWS_REGION, ) as client: await client.analyze_batch_async( input_dir=target_dir, output_dir=outdir, ) # ログから成功したファイルのみを処理 log_path = os.path.join(outdir, "process_log.jsonl") with open(log_path, "r", encoding="utf-8") as f: logs = [json.loads(line) for line in f if line.strip()] out_markdown = os.path.join(outdir, "markdown") out_visualize = os.path.join(outdir, "visualization") os.makedirs(out_markdown, exist_ok=True) os.makedirs(out_visualize, exist_ok=True) for log in logs: if not log.get("success"): continue # 解析結果の JSON を読み込み with open(log["output_path"], "r", encoding="utf-8") as rf: result = json.load(rf) doc = parse_pydantic_model(result) # Markdown 出力 base = os.path.splitext(os.path.basename(log["file_path"]))[0] doc.to_markdown( output_path=os.path.join(out_markdown, f"{base}.md"), ) # 解析結果の可視化 doc.visualize( image_path=log["file_path"], mode="ocr", output_directory=out_visualize, dpi=log.get("dpi", 200), ) if __name__ == "__main__": asyncio.run(main())
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -742,39 +729,73 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Table Semantic Parser">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析結果の読み込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rawstructuredsimple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        raw・structured・simple
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSONへの保存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tsp-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テンプレートの保存と適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#studio-template-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YomiToku Studioテンプレートの適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../table-semantic-parser/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Table Semantic Parser
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -871,6 +892,18 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#document-analyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Analyzer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Document Analyzer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -880,8 +913,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -891,8 +924,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -902,15 +935,9 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        import asyncio import json import os from yomitoku_client import YomitokuClient, parse_pydantic_model # 入出力設定 target_dir = "notebooks/sample" outdir = "output" # SageMaker エンドポイント設定 ENDPOINT_NAME = "my-endpoint" AWS_REGION = "ap-northeast-1" async def main(): # バッチ解析の実行 async with YomitokuClient( endpoint=ENDPOINT_NAME, region=AWS_REGION, ) as client: await client.analyze_batch_async( input_dir=target_dir, output_dir=outdir, ) # ログから成功したファイルのみを処理 log_path = os.path.join(outdir, "process_log.jsonl") with open(log_path, "r", encoding="utf-8") as f: logs = [json.loads(line) for line in f if line.strip()] out_markdown = os.path.join(outdir, "markdown") out_visualize = os.path.join(outdir, "visualization") os.makedirs(out_markdown, exist_ok=True) os.makedirs(out_visualize, exist_ok=True) for log in logs: if not log.get("success"): continue # 解析結果の JSON を読み込み with open(log["output_path"], "r", encoding="utf-8") as rf: result = json.load(rf) doc = parse_pydantic_model(result) # Markdown 出力 base = os.path.splitext(os.path.basename(log["file_path"]))[0] doc.to_markdown( output_path=os.path.join(out_markdown, f"{base}.md"), ) # 解析結果の可視化 doc.visualize( image_path=log["file_path"], mode="ocr", output_directory=out_visualize, dpi=log.get("dpi", 200), ) if __name__ == "__main__": asyncio.run(main())
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -922,6 +949,67 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Table Semantic Parser">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解析結果の読み込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rawstructuredsimple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        raw・structured・simple
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSONへの保存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tsp-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テンプレートの保存と適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#studio-template-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YomiToku Studioテンプレートの適用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -952,7 +1040,11 @@
 <p><a href="https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb">https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb</a></p>
 <p>Table Semantic Parser 版のNotebookは以下から試せます。</p>
 <p><a href="https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb">https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb</a></p>
-<h2 id="_1">クイックスタート<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<hr />
+<h2 id="document-analyzer">Document Analyzer<a class="headerlink" href="#document-analyzer" title="Permanent link">&para;</a></h2>
+<p>文書解析APIのレスポンスは<code>parse_pydantic_model()</code>で読み込みます。
+Markdown、CSV、HTML、JSON、Searchable PDFへの変換と、OCR・レイアウトの可視化を利用できます。</p>
+<h3 id="_1">クイックスタート<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <p>最もシンプルな実行例です。PDF を入力し、解析結果を Markdown として保存します。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">YomitokuClient</span><span class="p">,</span> <span class="n">parse_pydantic_model</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -963,7 +1055,7 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">model</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="s2">"output.md"</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
-<h2 id="_2">非同期実行<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_2">非同期実行<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>YomiToku-Client は <strong>非同期処理</strong> にも対応しており、エンドポイント呼び出しからフォーマット変換・保存までを非同期で実行できます。</p>
 <p>内部では主に次のような処理を行っています。</p>
 <ul>
@@ -1038,7 +1130,7 @@
 </span><span id="__span-1-64"><a id="__codelineno-1-64" name="__codelineno-1-64" href="#__codelineno-1-64"></a>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </span></code></pre></div>
 <hr />
-<h2 id="_3">バッチ処理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_3">バッチ処理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>YomiToku-Client は <strong>バッチ処理</strong> もサポートしており、安全かつ効率的に大量の文書を解析できます。</p>
 <p>主な特徴：</p>
 <ul>
@@ -1049,7 +1141,7 @@
 <li><strong>再実行対応</strong>：ログをもとに、失敗したファイルのみ再解析する運用が容易</li>
 <li><strong>ログを利用した後処理</strong>：<code>process_log.jsonl</code> を読み込み、成功ファイルのみ Markdown 出力や可視化を自動実行</li>
 </ul>
-<h2 id="import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain"><div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
@@ -1111,10 +1203,12 @@
 </span><span id="__span-2-60"><a id="__codelineno-2-60" name="__codelineno-2-60" href="#__codelineno-2-60"></a>
 </span><span id="__span-2-61"><a id="__codelineno-2-61" name="__codelineno-2-61" href="#__codelineno-2-61"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 </span><span id="__span-2-62"><a id="__codelineno-2-62" name="__codelineno-2-62" href="#__codelineno-2-62"></a>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
-</span></code></pre></div><a class="headerlink" href="#import-asyncio-import-json-import-os-from-yomitoku_client-import-yomitokuclient-parse_pydantic_model-target_dir-notebookssample-outdir-output-sagemaker-endpoint_name-my-endpoint-aws_region-ap-northeast-1-async-def-main-async-with-yomitokuclient-endpointendpoint_name-regionaws_region-as-client-await-clientanalyze_batch_async-input_dirtarget_dir-output_diroutdir-log_path-ospathjoinoutdir-process_logjsonl-with-openlog_path-r-encodingutf-8-as-f-logs-jsonloadsline-for-line-in-f-if-linestrip-out_markdown-ospathjoinoutdir-markdown-out_visualize-ospathjoinoutdir-visualization-osmakedirsout_markdown-exist_oktrue-osmakedirsout_visualize-exist_oktrue-for-log-in-logs-if-not-loggetsuccess-continue-json-with-openlogoutput_path-r-encodingutf-8-as-rf-result-jsonloadrf-doc-parse_pydantic_modelresult-markdown-base-ospathsplitextospathbasenamelogfile_path0-docto_markdown-output_pathospathjoinout_markdown-fbasemd-docvisualize-image_pathlogfile_path-modeocr-output_directoryout_visualize-dpiloggetdpi-200-if-__name__-__main__-asynciorunmain" title="Permanent link">&para;</a></h2>
+</span></code></pre></div>
+<hr />
 <h2 id="table-semantic-parser">Table Semantic Parser<a class="headerlink" href="#table-semantic-parser" title="Permanent link">&para;</a></h2>
 <p>帳票の表構造を取得する場合は、Table Semantic Parser のエンドポイントを利用します。
-エンドポイントの呼び出し方は共通で、レスポンスの変換に <code>parse_table_semantic_parser()</code> を使います。</p>
+エンドポイントの呼び出し方はDocument Analyzerと共通ですが、レスポンスの変換には<code>parse_table_semantic_parser()</code>を使います。</p>
+<h3 id="_4">解析結果の読み込み<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">YomitokuClient</span><span class="p">,</span> <span class="n">parse_table_semantic_parser</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">with</span> <span class="n">YomitokuClient</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">"yomitoku-tsp"</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">"ap-northeast-1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
@@ -1123,12 +1217,184 @@
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">parse_table_semantic_parser</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">table</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="s2">"c0"</span><span class="p">]</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span>              <span class="c1"># セルのテキスト</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">find_cell_by_id</span><span class="p">(</span><span class="s2">"r0c0"</span><span class="p">)</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span>  <span class="c1"># セルのテキスト</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">kv_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">kv_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># いずれもセルID</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="s2">"table.json"</span><span class="p">)</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Python APIのto_json()はrawが既定</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="s2">"table.raw.json"</span><span class="p">)</span>
 </span></code></pre></div>
-<p>レスポンスの構造や CLI からの利用は<a href="../table-semantic-parser/">Table Semantic Parser</a>を参照してください。</p>
+<p>出力例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>利用情報
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>['r0c0', 'r1c0'] r1c1
+</span></code></pre></div>
+<p><code>model.pages</code>はページ番号をキー、<code>TableSemanticParserResult</code>を値とする辞書です。
+各ページの<code>cells</code>、<code>kv_items</code>、<code>grids</code>はrawスキーマで、Key-ValueとグリッドはセルのテキストではなくセルIDを参照します。</p>
+<table>
+<thead>
+<tr>
+<th>クラス</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MultiPageTableSemanticParserResult</code></td>
+<td>文書全体。<code>pages</code>にページ番号とページ結果を保持</td>
+</tr>
+<tr>
+<td><code>TableSemanticParserResult</code></td>
+<td>1ページ分の<code>tables</code>、<code>paragraphs</code>、<code>words</code>、<code>num_page</code></td>
+</tr>
+<tr>
+<td><code>SemanticTable</code></td>
+<td>1つの表の<code>cells</code>、<code>kv_items</code>、<code>grids</code>、<code>box</code>、<code>style</code></td>
+</tr>
+<tr>
+<td><code>SemanticCell</code></td>
+<td>セルのテキスト、役割、座標、行列位置</td>
+</tr>
+<tr>
+<td><code>KvItem</code></td>
+<td>キーセルIDの配列と値セルID</td>
+</tr>
+<tr>
+<td><code>TableGrid</code></td>
+<td>列ヘッダーとデータセルをセルIDで表したグリッド</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rawstructuredsimple">raw・structured・simple<a class="headerlink" href="#rawstructuredsimple" title="Permanent link">&para;</a></h3>
+<p>Python APIでは、用途に応じて3種類の表現を取得できます。</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>戻り値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>page.to_json()</code></td>
+<td><code>dict</code></td>
+<td>セル・単語・セルID参照を保持するraw</td>
+</tr>
+<tr>
+<td><code>page.to_structured()</code></td>
+<td><code>StructuredDocumentSchema</code></td>
+<td>テキストと由来セルのID・座標を持つstructured</td>
+</tr>
+<tr>
+<td><code>page.to_simple()</code></td>
+<td><code>SimpleDocumentSchema</code></td>
+<td>座標などを除いたテキストのみのsimple</td>
+</tr>
+<tr>
+<td><code>model.to_structured()</code></td>
+<td><code>dict[int, StructuredDocumentSchema]</code></td>
+<td>全ページのstructured</td>
+</tr>
+<tr>
+<td><code>model.to_simple()</code></td>
+<td><code>dict[int, SimpleDocumentSchema]</code></td>
+<td>全ページのsimple</td>
+</tr>
+</tbody>
+</table>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">page</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># 値と、その由来になったセルのID・座標を取得</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">structured</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">to_structured</span><span class="p">()</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">entry</span> <span class="o">=</span> <span class="n">structured</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">kv_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">key_cells</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">value_cells</span><span class="p">)</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># Key-Valueとグリッドをテキストだけで取得</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="n">simple</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">to_simple</span><span class="p">()</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">simple</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">kv_items</span><span class="p">)</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">simple</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="c1"># 同じキーセルに結び付いた複数値の区切り文字を変更</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="n">simple_with_custom_separator</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">to_simple</span><span class="p">(</span><span class="n">separator</span><span class="o">=</span><span class="s2">" / "</span><span class="p">)</span>
+</span></code></pre></div>
+<p>出力例:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>['利用情報', '施設名称'] MLism株式会社
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>[StructuredCellRefSchema(id='r0c0', box=[150, 500, 1499, 550]), StructuredCellRefSchema(id='r1c0', box=[150, 550, 364, 645])] [StructuredCellRefSchema(id='r1c1', box=[365, 550, 1499, 645])]
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>{'利用情報': {'施設名称': 'MLism株式会社', '利用目的': 'セミナー', '実施内容': 'YomiTokuの利用方法に関する説明会'}}
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>{'日付': '2025年01月30日(月曜日)', '入室時刻': '10時00分', '退室時刻': '17時00分'}
+</span></code></pre></div>
+<p><code>structured</code>と<code>simple</code>では、同じキーセルに複数の値セルが結び付く場合、値を画像上の順序で並べ、既定では改行で結合します。
+<code>simple</code>の変換規則は次のとおりです。</p>
+<ul>
+<li>親子見出しを入れ子の辞書にします。</li>
+<li>同じ階層に同名の別キーセルがある場合は配列にします。</li>
+<li>親見出し自身の値と子見出しが共存する場合、親の値を<code>_value</code>へ格納します。</li>
+<li>キーのない単独セルは<code>_unkeyed</code>の配列へ格納します。</li>
+<li>グリッド行に同名の列見出しがある場合、<code>日付_0</code>、<code>日付_1</code>のように連番を付けます。</li>
+</ul>
+<p>各形式のJSON例は<a href="../cli-usage/#tsp-output-formats">CLIの出力モード</a>を参照してください。</p>
+<h3 id="json">JSONへの保存<a class="headerlink" href="#json" title="Permanent link">&para;</a></h3>
+<p><code>MultiPageTableSemanticParserResult.to_json()</code>の<code>output_mode</code>で保存形式を指定します。
+後方互換性のため、Python APIでは<code>output_mode</code>を省略すると<code>raw</code>を保存します。CLIの既定値は<code>structured</code>です。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># raw：後から別形式へ変換できるよう解析情報を保管</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">"table.raw.json"</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># structured：CLIの既定出力と同じ</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">"table.structured.json"</span><span class="p">,</span> <span class="n">output_mode</span><span class="o">=</span><span class="s2">"structured"</span><span class="p">)</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># simple：テキストのみ</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">"table.simple.json"</span><span class="p">,</span> <span class="n">output_mode</span><span class="o">=</span><span class="s2">"simple"</span><span class="p">)</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># ページごとに別ファイルへ保存</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="s2">"table.json"</span><span class="p">,</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="n">output_mode</span><span class="o">=</span><span class="s2">"structured"</span><span class="p">,</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="n">mode</span><span class="o">=</span><span class="s2">"separate"</span><span class="p">,</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="p">)</span>
+</span></code></pre></div>
+<p><code>mode="combine"</code>ではページをJSON配列にまとめ、<code>mode="separate"</code>ではページごとに別ファイルへ保存します。
+<code>structured</code>と<code>simple</code>は<code>cells</code>や<code>words</code>を省略するため、別形式へ再変換する可能性がある場合は<code>raw</code>も保存してください。</p>
+<h3 id="tsp-template">テンプレートの保存と適用<a class="headerlink" href="#tsp-template" title="Permanent link">&para;</a></h3>
+<p>YomiToku-Pro互換のテンプレートをページ単位または文書単位で保存し、取得済みの解析結果へ適用できます。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">page</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># 1ページのテンプレート</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">page</span><span class="o">.</span><span class="n">save_template_json</span><span class="p">(</span><span class="s2">"page.template.json"</span><span class="p">)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">page</span><span class="o">.</span><span class="n">load_template_json</span><span class="p">(</span><span class="s2">"page.template.json"</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># 複数ページのテンプレート</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">model</span><span class="o">.</span><span class="n">save_template_json</span><span class="p">(</span><span class="s2">"document.template.json"</span><span class="p">)</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">model</span><span class="o">.</span><span class="n">load_template_json</span><span class="p">(</span><span class="s2">"document.template.json"</span><span class="p">)</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># 適用後の結果をsimpleで保存</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">"corrected.json"</span><span class="p">,</span> <span class="n">output_mode</span><span class="o">=</span><span class="s2">"simple"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>テンプレートは<code>meta</code>と<code>tables</code>を持つYomiToku-Pro互換形式です。表は座標の重なりで照合し、セルは<code>meta.match_policy</code>の<code>cell_id</code>（既定）または<code>bbox</code>で照合します。
+セルの<code>contents</code> / <code>role</code>、表の<code>kv_items</code> / <code>grids</code>を補正できます。省略または<code>null</code>の項目は変更せず、空文字列や空配列は上書きとして扱います。</p>
+<h3 id="studio-template-python">YomiToku Studioテンプレートの適用<a class="headerlink" href="#studio-template-python" title="Permanent link">&para;</a></h3>
+<p>YomiToku Studioの帳票解析画面から保存した<code>kind: "form-template"</code>のテンプレートは、<code>apply_studio_template_to_document()</code>でTable Semantic Parserの解析結果へ適用できます。バージョン2と3に対応しています。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">yomitoku_client</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">YomitokuClient</span><span class="p">,</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="n">apply_studio_template_to_document</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">parse_table_semantic_parser</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">image_path</span> <span class="o">=</span> <span class="s2">"notebooks/sample/application.pdf"</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="k">with</span> <span class="n">YomitokuClient</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">"yomitoku-tsp"</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">"ap-northeast-1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="n">model</span> <span class="o">=</span> <span class="n">parse_table_semantic_parser</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="n">apply_studio_template_to_document</span><span class="p">(</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    <span class="n">model</span><span class="p">,</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    <span class="n">template_path</span><span class="o">=</span><span class="s2">"templates/application.template.json"</span><span class="p">,</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="n">image_path</span><span class="o">=</span><span class="n">image_path</span><span class="p">,</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="p">)</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s2">"application.simple.json"</span><span class="p">,</span> <span class="n">output_mode</span><span class="o">=</span><span class="s2">"simple"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>テンプレートに保存された表・セル・Key-Value・グリッド・段落の構造へ、APIレスポンスのOCR単語を割り当てます。PDFでは解析時と同じ<code>dpi</code>を指定してください。OCRできなかった見出し（<code>header</code> / <code>group</code>）にはテンプレート作成時の文字を補いますが、値セルには作成時の値を補わず空文字にします。</p>
+<p>テンプレートの検証や1ページ単位の適用には、トップレベルAPIの<code>load_studio_form_template()</code>と<code>apply_studio_form_template()</code>を利用できます。</p>
 
 
 

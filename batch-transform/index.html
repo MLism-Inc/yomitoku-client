@@ -354,25 +354,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="../table-semantic-parser/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Table Semantic Parser
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="../advanced/" class="md-tabs__link">
         
   
@@ -680,6 +661,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#batch-tsp-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YomiToku-Pro - Table Semantic Parserを利用する
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -769,13 +761,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-yomitoku-clientmarkdowncsv" class="md-nav__link">
+  <a href="#6-yomitoku-client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. YomiToku-ClientでMarkdownやCSVへ変換する
+        6. YomiToku-Clientで出力を変換する
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="6. YomiToku-Clientで出力を変換する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#document-analyzerout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Analyzerの.outを変換する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convert-tsp-batch-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table Semantic Parserの.outを変換する
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -931,33 +951,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../table-semantic-parser/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Table Semantic Parser
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../advanced/" class="md-nav__link">
         
   
@@ -1087,6 +1080,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#batch-tsp-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YomiToku-Pro - Table Semantic Parserを利用する
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1176,13 +1180,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-yomitoku-clientmarkdowncsv" class="md-nav__link">
+  <a href="#6-yomitoku-client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        6. YomiToku-ClientでMarkdownやCSVへ変換する
+        6. YomiToku-Clientで出力を変換する
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="6. YomiToku-Clientで出力を変換する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#document-analyzerout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Analyzerの.outを変換する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convert-tsp-batch-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table Semantic Parserの.outを変換する
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1291,7 +1323,8 @@
 
 <h1 id="batch-transform">Batch Transformで文書を一括解析する<a class="headerlink" href="#batch-transform" title="Permanent link">&para;</a></h1>
 <p>Amazon SageMaker AIのBatch Transformを使用すると、Amazon S3に保存したPDFや画像をジョブ単位でまとめて解析できます。ジョブの開始時に推論用インスタンスが起動し、完了後に自動で終了するため、夜間バッチや大量文書の一括処理に適しています。</p>
-<p>このページでは、AWS Marketplace版YomiToku-Proのモデルを使ってBatch Transformジョブを実行し、解析結果をYomiToku-ClientでMarkdownやCSVへ変換するまでを説明します。</p>
+<p>このページでは、AWS Marketplace版YomiToku-ProのDocument AnalyzerまたはTable Semantic Parserを使ってBatch Transformジョブを実行し、解析結果をYomiToku-Clientで用途に応じた形式へ変換するまでを説明します。</p>
+<p>Document Analyzerの出力はMarkdown、CSV、HTMLへ変換できます。Table Semantic Parserの出力は、表のセル・Key-Value・グリッド・段落を保持するJSONとして、structured（既定）、simple、rawの3形式へ変換できます。</p>
 <div class="admonition note">
 <p class="admonition-title">利用できる推論方式</p>
 <p>AWS Marketplaceのモデルパッケージでは、リアルタイム推論とBatch Transformを利用できます。非同期推論は利用できません。</p>
@@ -1340,6 +1373,7 @@
 </tr>
 </tbody>
 </table>
+<p>表中のモデル名とジョブ名はDocument Analyzer Liteの例です。Table Semantic Parserを使う場合は、Table Semantic Parser製品から作成したモデル名（例: <code>yomitoku-pro-table-semantic-parser</code>）へ読み替えてください。</p>
 <div class="admonition warning">
 <p class="admonition-title">ジョブ名は実行ごとに変更してください</p>
 <p>Batch Transformのジョブ名は、AWSアカウントとリージョン内で一意である必要があります。上記のジョブ名は初回実行用の例です。再実行時は末尾の番号や日時を変更してください。</p>
@@ -1370,10 +1404,15 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span>--product<span class="w"> </span>document-analyzer-lite<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Table Semantic Parser</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span>--product<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">製品とリージョンを確認してください</p>
-<p>通常版とLite版では、製品とModel Package ARNが異なります。Batch Transformジョブと同じリージョンにある、利用する製品のARNを選択してください。</p>
+<p>Document Analyzer、Document Analyzer Lite、Table Semantic Parserはそれぞれ別のMarketplace製品で、Model Package ARNも異なります。Batch Transformジョブと同じリージョンにある、利用する製品のARNを選択してください。</p>
 </div>
 <p>既存モデルのModel Package ARNは、次のコマンドでも確認できます。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-model<span class="w"> </span><span class="se">\</span>
@@ -1389,6 +1428,9 @@
 <br />
 <figcaption>利用するAWS Marketplaceのモデルパッケージを選択する</figcaption>
 </figure>
+<h3 id="batch-tsp-model">YomiToku-Pro - Table Semantic Parserを利用する<a class="headerlink" href="#batch-tsp-model" title="Permanent link">&para;</a></h3>
+<p>Table Semantic ParserはDocument Analyzerとは別のAWS Marketplace製品です。<a href="https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6">YomiToku-Pro - Table Semantic Parser</a>をサブスクライブし、そのModel Package ARNから専用モデルを作成してください。Document Analyzerのモデルを指定しても、Table Semantic Parserの<code>cells</code>、<code>kv_items</code>、<code>grids</code>は出力されません。</p>
+<p>AWS CLIでモデルを作成する場合は、<code>configure --product table-semantic-parser</code>で確認したARNを<code>PrimaryContainer.ModelPackageName</code>へ設定します。Batch Transformジョブでは、そのモデル名（以下の例では<code>yomitoku-pro-table-semantic-parser</code>）を指定します。</p>
 <h2 id="batch-transform-execution-role">2. モデルの実行ロールへS3権限を設定する<a class="headerlink" href="#batch-transform-execution-role" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">S3へアクセスするのはモデル作成時の実行ロールです</p>
@@ -1573,68 +1615,115 @@
 </span></code></pre></div>
 <p><code>MaxPayloadInMB</code>の既定値は6 MB、設定可能な最大値は100 MBです。この例では6 MBを超えるPDFも処理できるよう、100 MBを指定しています。100 MBを超えるファイルは事前に分割してください。</p>
 <p>JPEG、PNG、TIFFを処理するときは、<code>ContentType</code>を入力形式に合わせて変更します。</p>
+<p>Table Semantic ParserでもBatch Transformの入出力設定は同じです。<code>--model-name</code>だけを、Table Semantic Parser製品から作成したモデルへ変更します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>create-transform-job<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>yomitoku-pro-tsp-batch-0000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--model-name<span class="w"> </span>yomitoku-pro-table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>--transform-input<span class="w"> </span><span class="s1">'DataSource={S3DataSource={S3DataType=S3Prefix,S3Uri=s3://YOUR_BUCKET/input/}},ContentType=application/pdf,CompressionType=None,SplitType=None'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span>--transform-output<span class="w"> </span><span class="s1">'S3OutputPath=s3://YOUR_BUCKET/output/,Accept=application/json,AssembleWith=None'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span>--transform-resources<span class="w"> </span><span class="s1">'InstanceType=ml.g4dn.xlarge,InstanceCount=1'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span>--max-concurrent-transforms<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span>--max-payload-in-mb<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span></code></pre></div>
 <h3 id="_3">ジョブの状態を確認する<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-transform-job<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>yomitoku-pro-document-analyzer-lite-batch-0000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s1">'{Status:TransformJobStatus,FailureReason:FailureReason}'</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-transform-job<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>yomitoku-pro-document-analyzer-lite-batch-0000<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>--query<span class="w"> </span><span class="s1">'{Status:TransformJobStatus,FailureReason:FailureReason}'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
 <p><code>TransformJobStatus</code>が<code>Completed</code>になれば完了です。<code>Failed</code>の場合は、<code>FailureReason</code>とAmazon CloudWatch Logsの<code>/aws/sagemaker/TransformJobs</code>を確認してください。</p>
 <h2 id="download-batch-output">5. <code>.out</code>ファイルを確認・ダウンロードする<a class="headerlink" href="#download-batch-output" title="Permanent link">&para;</a></h2>
 <p>出力先を一覧表示します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://YOUR_BUCKET/output/<span class="w"> </span>--recursive
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://YOUR_BUCKET/output/<span class="w"> </span>--recursive
 </span></code></pre></div>
 <p>入力したオブジェクトごとに、元のファイル名に<code>.out</code>を付けたJSONファイルが作成されます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>入力: s3://YOUR_BUCKET/input/document.pdf
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>出力: s3://YOUR_BUCKET/output/document.pdf.out
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>入力: s3://YOUR_BUCKET/input/document.pdf
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>出力: s3://YOUR_BUCKET/output/document.pdf.out
 </span></code></pre></div>
 <p>入力プレフィックス以下にサブフォルダがある場合は、その階層に応じたサブフォルダへ保存されます。実際のS3 URIは<code>aws s3 ls</code>の結果で確認してください。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>s3://YOUR_BUCKET/output/document.pdf.out<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>./document.pdf.out
+<p>Table Semantic Parserの<code>.out</code>には、ページごとの<code>tables</code>、<code>cells</code>、<code>kv_items</code>、<code>grids</code>、<code>paragraphs</code>、<code>words</code>を含むraw解析結果が保存されます。このraw出力は、次節の<code>convert</code>でstructuredまたはsimpleへ変換できるため、元データとして保管してください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>s3://YOUR_BUCKET/output/document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>./document.pdf.out
 </span></code></pre></div>
-<h2 id="6-yomitoku-clientmarkdowncsv">6. YomiToku-ClientでMarkdownやCSVへ変換する<a class="headerlink" href="#6-yomitoku-clientmarkdowncsv" title="Permanent link">&para;</a></h2>
+<h2 id="6-yomitoku-client">6. YomiToku-Clientで出力を変換する<a class="headerlink" href="#6-yomitoku-client" title="Permanent link">&para;</a></h2>
+<h3 id="document-analyzerout">Document Analyzerの<code>.out</code>を変換する<a class="headerlink" href="#document-analyzerout" title="Permanent link">&para;</a></h3>
 <p><code>.out</code>ファイルにはYomiToku-Proの解析結果がJSON形式で保存されています。<code>yomitoku-client convert</code>を使用すると、再推論せずにMarkdown、CSV、HTMLへ変換できます。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>--format<span class="w"> </span>md,csv,html<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>--format<span class="w"> </span>md,csv,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
 </span></code></pre></div>
 <p>元のPDFを保管している場合は、<code>--src</code>を指定するとMarkdownやHTMLで使用する図の切り出し画像も出力できます。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>--format<span class="w"> </span>md,html<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span>--src<span class="w"> </span>document.pdf<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>--format<span class="w"> </span>md,html<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>--src<span class="w"> </span>document.pdf<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
 </span></code></pre></div>
+<h3 id="convert-tsp-batch-output">Table Semantic Parserの<code>.out</code>を変換する<a class="headerlink" href="#convert-tsp-batch-output" title="Permanent link">&para;</a></h3>
+<p>Table Semantic Parserの出力を変換するときは、<code>--api table-semantic-parser</code>を指定します。出力形式はJSONのみです。オプションを省略すると、Key-Valueとグリッドのテキストに由来セルのID・座標を付けたstructured JSONを出力します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># structured（既定）</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span>--api<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./structured
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># 座標やセル参照を除いたテキスト中心のsimple</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">  </span>--api<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">  </span>--simple<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">  </span>--output-dir<span class="w"> </span>./simple
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="c1"># cells、words、セルID参照を保持するraw</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">  </span>--api<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">  </span>--raw<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">  </span>--output-dir<span class="w"> </span>./raw
+</span></code></pre></div>
+<p>ディレクトリを指定すると、配下の<code>.out</code>を一括変換できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>./batch-output<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>--api<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>--simple<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span>--output-dir<span class="w"> </span>./converted
+</span></code></pre></div>
+<p>YomiToku Studioから保存した帳票テンプレートを適用する場合は、座標変換に使用する元画像またはPDFを<code>--src</code>で指定します。<code>--src</code>には単一ファイル、または元文書を同じ名前で保存したディレクトリを指定できます。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span>--api<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span>--src<span class="w"> </span>document.pdf<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span>--studio-template<span class="w"> </span>templates/application.template.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span>--simple<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span>--output-dir<span class="w"> </span>./corrected
+</span></code></pre></div>
+<p><code>--simple</code>と<code>--raw</code>は同時に指定できません。structuredとsimpleでは<code>cells</code>や<code>words</code>を省略するため、後から別形式へ変換またはテンプレートを適用する可能性がある場合は、Batch Transformの<code>.out</code>またはraw JSONも保管してください。</p>
 <p>ローカルでの確認だけでなく、実運用ではAWS LambdaなどでYomiToku-Clientを実行し、Batch Transformの出力を後続システム向けの形式へ変換する構成を想定しています。詳細は<a href="../cli-usage/#batch-transform">Batch Transform出力の変換</a>を参照してください。</p>
 <h2 id="_4">定期的に実行する場合<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>Batch Transform自体にはスケジュール機能がありません。定期実行する場合は、次のようにAWSサービスを組み合わせます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>EventBridge Scheduler
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>        ↓
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Step Functions
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>        ↓
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>Amazon SageMaker AI Batch Transform
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>        ↓
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>出力先S3 ──→ AWS Lambda（YomiToku-Client）──→ 後続システム
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>EventBridge Scheduler
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>        ↓
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Step Functions
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>        ↓
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>Amazon SageMaker AI Batch Transform
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>        ↓
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>出力先S3 ──→ AWS Lambda（YomiToku-Client）──→ 後続システム
 </span></code></pre></div>
 <p>EventBridge SchedulerからStep Functionsを起動し、Step FunctionsからBatch Transformジョブを作成します。ジョブ完了後は、AWS LambdaなどでYomiToku-Clientを実行してMarkdownやCSVへ変換できます。</p>
 <p>定期実行で同じ入力プレフィックスを指定すると、既存ファイルも再処理されます。<code>input/YYYY-MM-DD/</code>のように実行単位でプレフィックスを分け、ジョブ名も実行ごとに変更してください。</p>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="getobjectmetadata403-forbidden"><code>getObjectMetadata</code>で<code>403 Forbidden</code>になる<a class="headerlink" href="#getobjectmetadata403-forbidden" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Got client error from S3 due to '403 Forbidden' processing getObjectMetadata
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Got client error from S3 due to '403 Forbidden' processing getObjectMetadata
 </span></code></pre></div>
 <p><code>getObjectMetadata</code>は、S3オブジェクトのサイズやContent-Typeを確認する<code>HeadObject</code>相当の処理です。<code>s3:GetObjectMetadata</code>というIAMアクションを追加する必要はありません。対象モデルの実行ロールに、入力オブジェクトへの<code>s3:GetObject</code>があるか確認してください。</p>
 <p>コンソールから作成したモデルとAWS CLIから作成したモデルでは、実行ロールが異なることがあります。まずジョブのモデル名を確認し、続けてモデルの<code>ExecutionRoleArn</code>を確認します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-transform-job<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>YOUR_JOB_NAME<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>--query<span class="w"> </span>ModelName<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span>--output<span class="w"> </span>text<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-model<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">  </span>--model-name<span class="w"> </span>YOUR_MODEL_NAME<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">  </span>--query<span class="w"> </span>ExecutionRoleArn<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">  </span>--output<span class="w"> </span>text<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-transform-job<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span>--transform-job-name<span class="w"> </span>YOUR_JOB_NAME<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span>--query<span class="w"> </span>ModelName<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">  </span>--output<span class="w"> </span>text<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>aws<span class="w"> </span>sagemaker<span class="w"> </span>describe-model<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">  </span>--model-name<span class="w"> </span>YOUR_MODEL_NAME<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">  </span>--query<span class="w"> </span>ExecutionRoleArn<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">  </span>--output<span class="w"> </span>text<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
 <h3 id="unsupported-content-type"><code>Unsupported content type</code>になる<a class="headerlink" href="#unsupported-content-type" title="Permanent link">&para;</a></h3>
 <p><code>TransformInput.ContentType</code>と入力ファイルの形式が一致しているか確認してください。同じ入力プレフィックスへPDFと画像を混在させないでください。</p>
@@ -1646,6 +1735,8 @@
 <ul>
 <li><a href="../deploy-yomitoku-pro/">YomiToku-ProをAmazon SageMaker AIへデプロイする</a></li>
 <li><a href="../cli-usage/#batch-transform">Batch Transform出力を変換する</a></li>
+<li><a href="../cli-usage/#tsp-output-formats">Table Semantic Parserの出力形式</a></li>
+<li><a href="../module-usage/#studio-template-python">YomiToku StudioテンプレートをPython APIで適用する</a></li>
 <li><a href="https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/batch-transform.html">Amazon SageMaker AIのBatch Transform</a></li>
 </ul>
 

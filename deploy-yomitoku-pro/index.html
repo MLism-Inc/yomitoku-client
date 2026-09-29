@@ -354,25 +354,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="../table-semantic-parser/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Table Semantic Parser
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="../advanced/" class="md-tabs__link">
         
   
@@ -643,6 +624,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#aws-marketplace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Marketplaceで製品をサブスクライブする
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#step-1-arn" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -732,7 +724,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#aws-marketplace" class="md-nav__link">
+  <a href="#aws-marketplace_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         AWS Marketplaceからモデルを作成する
@@ -976,33 +968,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../table-semantic-parser/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Table Semantic Parser
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../advanced/" class="md-nav__link">
         
   
@@ -1122,6 +1087,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#aws-marketplace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Marketplaceで製品をサブスクライブする
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#step-1-arn" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1211,7 +1187,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#aws-marketplace" class="md-nav__link">
+  <a href="#aws-marketplace_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         AWS Marketplaceからモデルを作成する
@@ -1419,6 +1395,7 @@
 <p><code>yomitoku-client</code> のCLIツールを使用すると、コマンドラインから簡単にSageMakerエンドポイントの作成、状態確認、削除を行うことができます。内部的にはAWS CloudFormationを利用しているため、関連するリソース（モデル、エンドポイント設定、エンドポイント）を「スタック」として一括管理できます。</p>
 <h3 id="_1">デプロイの流れ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <ol>
+<li>AWS Marketplaceで製品をサブスクライブ</li>
 <li>初期設定（ARNの取得と登録）</li>
 <li>エンドポイントのデプロイ</li>
 <li>ステータスの確認</li>
@@ -1455,6 +1432,14 @@
 </tr>
 </tbody>
 </table>
+<h3 id="aws-marketplace">AWS Marketplaceで製品をサブスクライブする<a class="headerlink" href="#aws-marketplace" title="Permanent link">&para;</a></h3>
+<p>使用する製品のAWS Marketplaceページを開き、YomiToku-ProをデプロイするAWSアカウントでサブスクライブします。</p>
+<ul>
+<li><a href="https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi">YomiToku-Pro - Document Analyzer（通常版）</a></li>
+<li><a href="https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe">YomiToku-Pro - Document Analyzer Lite</a></li>
+<li><a href="https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6">YomiToku-Pro - Table Semantic Parser</a></li>
+</ul>
+<p>各製品は別々のサブスクリプションです。Document Analyzer LiteやTable Semantic Parserを利用する場合、Document Analyzer通常版の購読だけでは利用できません。製品ページで <strong>View purchase options</strong> を選択し、契約条件を確認して購読を完了してください。</p>
 <h3 id="step-1-arn">Step 1: 初期設定（ARNの取得と登録）<a class="headerlink" href="#step-1-arn" title="Permanent link">&para;</a></h3>
 <p>最初に、AWS Marketplaceで購読している製品の「モデルパッケージARN」を取得してクライアントに設定する必要があります。</p>
 <div class="admonition important">
@@ -1471,15 +1456,15 @@
 <tbody>
 <tr>
 <td><code>document-analyzer</code>（デフォルト）</td>
-<td>YomiToku-Pro - Document Analyzer（通常版）</td>
+<td><a href="https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi">YomiToku-Pro - Document Analyzer（通常版）</a></td>
 </tr>
 <tr>
 <td><code>document-analyzer-lite</code></td>
-<td>YomiToku-Pro Lite - Document Analyzer（Lite版）</td>
+<td><a href="https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe">YomiToku-Pro - Document Analyzer Lite</a></td>
 </tr>
 <tr>
 <td><code>table-semantic-parser</code></td>
-<td>YomiToku-Pro - Table Semantic Parser（通常版）</td>
+<td><a href="https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6">YomiToku-Pro - Table Semantic Parser</a></td>
 </tr>
 <tr>
 <td><code>table-semantic-parser-lite</code></td>
@@ -1559,6 +1544,21 @@
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
+<p>Table Semantic ParserはDocument Analyzerとは別のモデルパッケージです。通常版またはLite版の製品を指定し、専用のエンドポイントとしてデプロイします。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Table Semantic Parser通常版</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span>--product<span class="w"> </span>table-semantic-parser
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>--product<span class="w"> </span>table-semantic-parser<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-tsp<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="c1"># Table Semantic Parser Lite版</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>configure<span class="w"> </span>--product<span class="w"> </span>table-semantic-parser-lite
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>deploy<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span>--product<span class="w"> </span>table-semantic-parser-lite<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-tsp-lite<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span>--instance-type<span class="w"> </span>ml.g4dn.xlarge
+</span></code></pre></div>
 <p><code>deploy</code>のオプション</p>
 <table>
 <thead>
@@ -1616,13 +1616,13 @@
 <li>
 <p>スタック一覧の表示</p>
 <p>作成済みの管理スタックとその状態を一覧表示します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>list
 </span></code></pre></div>
 </li>
 <li>
 <p>詳細情報の表示</p>
 <p>特定のエンドポイント（スタック）の詳細な情報を取得します。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>describe<span class="w"> </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker
 </span></code></pre></div>
 <p>ステータスが <code>CREATE_COMPLETE</code> になっていれば、エンドポイントは正常に起動し、推論が可能な状態です。</p>
 </li>
@@ -1632,10 +1632,10 @@
 <ol>
 <li>
 <p>以下のコマンドを実行します。
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div></p>
 </li>
 <li>
@@ -1671,14 +1671,14 @@
 </table>
 <h3 id="_3">デプロイに失敗した場合<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>作成に失敗したCloudFormationスタックが<code>ROLLBACK_COMPLETE</code>になると、そのスタックは更新できません。原因を修正しただけで<code>deploy</code>を再実行せず、デプロイ時と同じ<code>--endpoint-name</code>、<code>--profile</code>、<code>--region</code>を指定して一度削除してください。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>yomitoku-client<span class="w"> </span>sagemaker<span class="w"> </span>delete<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span>--endpoint-name<span class="w"> </span>yomitoku-sagemaker<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span>--profile<span class="w"> </span>YOUR_AWS_PROFILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>--region<span class="w"> </span>ap-northeast-1
 </span></code></pre></div>
 <p>削除完了後に、正しいModel Package ARNなどを指定して<code>deploy</code>を再実行します。スタックがまだ<code>ROLLBACK_IN_PROGRESS</code>の場合は、ロールバック完了後に削除してください。</p>
 <h2 id="aws-sagemaker">Amazon SageMaker AIでデプロイする場合<a class="headerlink" href="#aws-sagemaker" title="Permanent link">&para;</a></h2>
-<h3 id="aws-marketplace">AWS Marketplaceからモデルを作成する<a class="headerlink" href="#aws-marketplace" title="Permanent link">&para;</a></h3>
+<h3 id="aws-marketplace_1">AWS Marketplaceからモデルを作成する<a class="headerlink" href="#aws-marketplace_1" title="Permanent link">&para;</a></h3>
 <p>AWS Marketplaceでサブスクライブしたモデルパッケージを使い、Amazon SageMaker AIへデプロイします。
 Amazon SageMaker AIモデルの作成までは、リアルタイム推論とBatch Transformで共通です。モデルを作成した後、利用する推論方式へ進みます。</p>
 <ol>

@@ -352,25 +352,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="table-semantic-parser/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Table Semantic Parser
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="advanced/" class="md-tabs__link">
         
   
@@ -774,33 +755,6 @@
   
   
     <li class="md-nav__item">
-      <a href="table-semantic-parser/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Table Semantic Parser
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="advanced/" class="md-nav__link">
         
   
@@ -997,7 +951,12 @@
 <h2 id="_2">利用の手順<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
 <li><a href="installation/">YomiToku-Clientをインストール</a></li>
-<li><a href="https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi?sr=0-1&amp;ref_=beagle&amp;applicationId=AWSMPContessa">AWS Marketplace</a>より<strong>YomiToku-Pro - Document Analyzer</strong>をサブスクライブ</li>
+<li>AWS Marketplaceで利用する製品をサブスクライブ<ul>
+<li><a href="https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi">YomiToku-Pro - Document Analyzer</a></li>
+<li><a href="https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe">YomiToku-Pro - Document Analyzer Lite</a></li>
+<li><a href="https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6">YomiToku-Pro - Table Semantic Parser</a></li>
+</ul>
+</li>
 <li><a href="iam-doc/">AWSの認証の設定する</a></li>
 <li><a href="deploy-yomitoku-pro/#create-sagemaker-model">SageMakerモデルを作成する</a></li>
 <li>利用する推論方式を選択する<ul>
@@ -1014,7 +973,7 @@
 <li>読み取り結果を可視化し、内容をすぐに確認できます。</li>
 <li>バッチ処理機能で大量の文書を効率的に処理できます。</li>
 <li>Batch Transformの<code>.out</code>を再推論せずにMarkdown / CSV / HTMLへ変換できます。</li>
-<li><a href="table-semantic-parser/">Table Semantic Parser</a>に対応し、帳票の表構造(cells / kv_items / grids)のレスポンスを取得・保存できます。</li>
+<li><a href="cli-usage/#table-semantic-parser">Table Semantic Parser</a>に対応し、帳票の表構造（cells / kv_items / grids）をraw / structured / simple JSONで取得・保存できます。</li>
 </ul>
 <h2 id="batch-transform">Batch Transform出力を変換する<a class="headerlink" href="#batch-transform" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>yomitoku-client<span class="w"> </span>convert<span class="w"> </span>document.pdf.out<span class="w"> </span><span class="se">\</span>
