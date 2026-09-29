@@ -485,7 +485,7 @@ yomitoku-client convert raw/table.json -a table-semantic-parser --simple -o simp
 
 入力ファイルを上書きしないよう、JSON変換では別の`--output-dir`を指定してください。既存の出力を置き換える場合は`--overwrite`を付けます。
 
-### テンプレートの適用
+### YomiToku-Proテンプレートの適用
 
 `--template PATH`を指定すると、保存済みテンプレートを解析結果へ適用してから出力します。`single`、`batch`、`convert`で共通して利用できます。
 テンプレートの作成には[Python APIの`save_template_json()`](module-usage.md#tsp-template)を使用します。
@@ -501,3 +501,34 @@ yomitoku-client single sample/table.jpg \
   --simple \
   -o corrected/
 ```
+
+### YomiToku Studioテンプレートの適用
+
+YomiToku Studioの帳票解析画面から保存した`kind: "form-template"`のテンプレートには、`--studio-template PATH`を使用します。バージョン2と3に対応しています。
+
+Batch CLIでは、入力ディレクトリ内の各画像・PDFをTable Semantic Parserで読み取り、APIレスポンスのOCR単語をStudioテンプレートの表・セル・段落へ割り当てます。表・セル・Key-Value・グリッドの構造はStudioテンプレート側の定義へ置き換わります。
+
+```bash
+yomitoku-client batch \
+  --input_dir input/ \
+  --output_dir output/ \
+  --endpoint yomitoku-tsp \
+  --api table-semantic-parser \
+  --studio-template templates/application.template.json \
+  --simple
+```
+
+テンプレート作成時の文字列は見出しセル（`header` / `group`）のOCR結果が空だった場合だけ補完に使います。値セルが読めなかった場合は、別帳票の値を誤って引き継がないよう空文字列を出力します。
+
+`single`でも同じオプションを使用できます。保存済みraw JSONを`convert`する場合は、正規化座標を対象ページのピクセル座標へ戻すため、元の画像またはPDFを`--src`で指定します。
+
+```bash
+yomitoku-client convert raw/application.json \
+  --api table-semantic-parser \
+  --src input/application.pdf \
+  --studio-template templates/application.template.json \
+  --simple \
+  --output-dir corrected/
+```
+
+`--template`と`--studio-template`はJSON形式と適用方法が異なり、同時には指定できません。

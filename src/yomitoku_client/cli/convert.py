@@ -54,6 +54,7 @@ def convert_file(
     api: str = API_DOCUMENT_ANALYZER,
     output_mode: str = "structured",
     template: str | None = None,
+    studio_template: str | None = None,
 ) -> list[Path]:
     """Convert one YomiToku Batch Transform JSON output."""
     try:
@@ -99,6 +100,18 @@ def convert_file(
         try:
             if template:
                 model.load_template_json(template)
+            if studio_template:
+                if source_path is None:
+                    raise ValueError(
+                        "--studio-template requires --src with the original document"
+                    )
+                from yomitoku_client.studio_form_template import (
+                    apply_studio_template_to_document,
+                )
+
+                apply_studio_template_to_document(
+                    model, studio_template, source_path, dpi=dpi
+                )
             model.to_json(
                 str(output_path),
                 mode=split_mode,
@@ -202,9 +215,10 @@ def convert_command(
     raw: bool,
     simple: bool,
     template: str | None,
+    studio_template: str | None,
 ):
     """Convert saved Batch Transform output or raw TSP JSON locally."""
-    output_mode = resolve_tsp_options(api, raw, simple, template)
+    output_mode = resolve_tsp_options(api, raw, simple, template, studio_template)
     formats = formats or ("json" if api == API_TABLE_SEMANTIC_PARSER else "md")
     try:
         parsed_formats = parse_formats(formats)
@@ -237,6 +251,10 @@ def convert_command(
                     or target not in path.resolve().parents
                 )
                 and (template is None or path.resolve() != Path(template).resolve())
+                and (
+                    studio_template is None
+                    or path.resolve() != Path(studio_template).resolve()
+                )
             ]
     else:
         inputs = [input_path]
@@ -262,6 +280,7 @@ def convert_command(
                 api=api,
                 output_mode=output_mode,
                 template=template,
+                studio_template=studio_template,
             )
         )
 

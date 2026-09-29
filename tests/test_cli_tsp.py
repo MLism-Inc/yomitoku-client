@@ -237,6 +237,74 @@ def test_single_applies_template(monkeypatch, tmp_path, runner, tsp_api_result):
     assert saved["tables"][0]["kv_items"]["名前"] == "山田太郎"
 
 
+def test_batch_applies_studio_template(monkeypatch, tmp_path, runner, tsp_api_result):
+    from tests.test_cli_batch import _patch_process_batch
+    from yomitoku_client.cli.batch import batch_command
+
+    template = {
+        "kind": "form-template",
+        "version": 3,
+        "documentName": "Studio申込書",
+        "page": {"width": 1654, "height": 2339},
+        "fields": [],
+        "structure": {
+            "tables": [
+                {
+                    "id": "studio-table",
+                    "normBox": [0, 0, 0.25, 0.1],
+                    "style": "border",
+                    "cells": [
+                        {
+                            "id": "key",
+                            "normBox": [0, 0, 0.048, 0.022],
+                            "role": "header",
+                            "contents": "氏名",
+                        },
+                        {
+                            "id": "value",
+                            "normBox": [0.048, 0, 0.11, 0.022],
+                            "role": "cell",
+                            "contents": "古い値",
+                        },
+                    ],
+                    "kvItems": [{"id": "kv0", "key": ["key"], "value": "value"}],
+                    "grids": [],
+                }
+            ],
+            "paragraphs": [],
+        },
+    }
+    template_path = tmp_path / "studio.template.json"
+    template_path.write_text(json.dumps(template), encoding="utf-8")
+    _patch_process_batch(monkeypatch, tsp_api_result)
+
+    result = runner.invoke(
+        batch_command,
+        [
+            "-i",
+            str(DATA_DIR),
+            "-o",
+            str(tmp_path / "output"),
+            "-e",
+            "test",
+            "--api",
+            "table-semantic-parser",
+            "--studio-template",
+            str(template_path),
+            "--simple",
+            "--vis_mode",
+            "none",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    saved = json.loads(
+        (tmp_path / "output/formatted/image.json").read_text(encoding="utf-8")
+    )[0]
+    assert saved["document_name"] == "Studio申込書"
+    assert saved["tables"][0]["kv_items"] == {"氏名": "山田"}
+
+
 @pytest.mark.parametrize("options", [[], ["--simple"], ["--raw"]])
 def test_batch_tsp_modes(monkeypatch, tmp_path, tsp_api_result, options):
     from tests.test_cli_batch import _patch_process_batch

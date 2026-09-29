@@ -227,8 +227,9 @@ def batch_command(
     raw,
     simple,
     template,
+    studio_template,
 ):
-    output_mode = resolve_tsp_options(api, raw, simple, template)
+    output_mode = resolve_tsp_options(api, raw, simple, template, studio_template)
     page_index = None
     if pages is not None:
         page_index = parse_pages(pages)
@@ -295,6 +296,7 @@ def batch_command(
             ignore_line_break=ignore_line_break,
             output_mode=output_mode,
             template=template,
+            studio_template=studio_template,
         )
 
         visualize_model(
