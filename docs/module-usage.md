@@ -320,7 +320,7 @@ model.to_json("corrected.json", output_mode="simple")
 セルの`contents` / `role`、表の`kv_items` / `grids`を補正できます。省略または`null`の項目は変更せず、空文字列や空配列は上書きとして扱います。
 
 
-### YomiToku Studioテンプレートの適用
+### YomiToku Studioテンプレートの適用 {#studio-template-python}
 
 YomiToku Studioの帳票解析画面から保存した`kind: "form-template"`のテンプレートは、`apply_studio_template_to_document()`でTable Semantic Parserの解析結果へ適用できます。バージョン2と3に対応しています。
 
