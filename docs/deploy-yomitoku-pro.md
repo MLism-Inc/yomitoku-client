@@ -137,6 +137,24 @@ yomitoku-client sagemaker deploy \
   --region ap-northeast-1
 ```
 
+Table Semantic ParserはDocument Analyzerとは別のモデルパッケージです。通常版またはLite版の製品を指定し、専用のエンドポイントとしてデプロイします。
+
+```bash
+# Table Semantic Parser通常版
+yomitoku-client sagemaker configure --product table-semantic-parser
+yomitoku-client sagemaker deploy \
+  --product table-semantic-parser \
+  --endpoint-name yomitoku-tsp \
+  --instance-type ml.g4dn.xlarge
+
+# Table Semantic Parser Lite版
+yomitoku-client sagemaker configure --product table-semantic-parser-lite
+yomitoku-client sagemaker deploy \
+  --product table-semantic-parser-lite \
+  --endpoint-name yomitoku-tsp-lite \
+  --instance-type ml.g4dn.xlarge
+```
+
 
 `deploy`のオプション
 

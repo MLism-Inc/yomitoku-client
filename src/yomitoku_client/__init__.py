@@ -37,11 +37,27 @@ from .tsp_models import (
     TableGrid,
     TableSemanticParserResult,
 )
+from .tsp_semantics import (
+    CellTemplateSchema,
+    SimpleDocumentSchema,
+    StructuredDocumentSchema,
+    TableSemanticContentsTemplateSchema,
+    TableSemanticParserTemplateSchema,
+    TemplateMetaSchema,
+    apply_table_template,
+)
 
 # Import visualizers
 from .visualizers.document_visualizer import DocumentVisualizer
 
 __all__ = [
+    "StructuredDocumentSchema",
+    "SimpleDocumentSchema",
+    "CellTemplateSchema",
+    "TableSemanticContentsTemplateSchema",
+    "TableSemanticParserTemplateSchema",
+    "TemplateMetaSchema",
+    "apply_table_template",
     "DocumentResult",
     "MultiPageDocumentResult",
     "MultiPageTableSemanticParserResult",

@@ -80,7 +80,7 @@ flowchart LR
 - 🔄 **[Batch Transform出力の変換](https://mlism-inc.github.io/yomitoku-client/cli-usage/#batch-transform)** - `.out`をMarkdown / CSV / HTMLへ変換する手順
 - 📋 **[解析結果のサンプル](./gallery.md)** - 解析結果のサンプルデータを載せています。
 - 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** - AWS SageMakerエンドポイントとの接続とドキュメント解析のチュートリアルNotebook
-- 📋 **[Table Semantic Parser](https://mlism-inc.github.io/yomitoku-client/table-semantic-parser/)** - 帳票の表構造を抽出するAPIの利用手順（[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb)）
+- 📋 **[Table Semantic Parser](https://mlism-inc.github.io/yomitoku-client/cli-usage/#table-semantic-parser)** - 帳票の表構造を抽出するCLIの利用手順（[Python API](https://mlism-inc.github.io/yomitoku-client/module-usage/#table-semantic-parser)、[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb)）
 - 📖 **[ドキュメント](https://mlism-inc.github.io/yomitoku-client/)** - YomiToku-Clientの利用方法の詳細
 
 ---

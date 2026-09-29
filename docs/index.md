@@ -37,7 +37,7 @@ flowchart LR
 - 読み取り結果を可視化し、内容をすぐに確認できます。
 - バッチ処理機能で大量の文書を効率的に処理できます。
 - Batch Transformの`.out`を再推論せずにMarkdown / CSV / HTMLへ変換できます。
-- [Table Semantic Parser](table-semantic-parser.md)に対応し、帳票の表構造(cells / kv_items / grids)のレスポンスを取得・保存できます。
+- [Table Semantic Parser](cli-usage.md#table-semantic-parser)に対応し、帳票の表構造（cells / kv_items / grids）をraw / structured / simple JSONで取得・保存できます。
 
 ## Batch Transform出力を変換する
 

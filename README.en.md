@@ -80,7 +80,7 @@ It is deployed securely within your own AWS account as a private endpoint, enabl
 * 🚀 **[Deploying the SageMaker Endpoint](https://mlism-inc.github.io/yomitoku-client/deploy-yomitoku-pro/)** – Deployment guide for the **YomiToku-Pro Document Analyzer** endpoint.
 * 📋 **[Sample Analysis Results](./gallery.md)** – Example datasets of analysis results.
 * 📓 **[Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-document-analyzer.ipynb)** – Tutorial notebook for connecting to the AWS SageMaker endpoint and performing document analysis.
-* 📋 **[Table Semantic Parser](https://mlism-inc.github.io/yomitoku-client/table-semantic-parser/)** – How to use the API that extracts table structures from forms ([Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb)).
+* 📋 **[Table Semantic Parser](https://mlism-inc.github.io/yomitoku-client/cli-usage/#table-semantic-parser)** – CLI usage for extracting table structures from forms ([Python API](https://mlism-inc.github.io/yomitoku-client/module-usage/#table-semantic-parser), [Notebook](https://colab.research.google.com/github/MLism-Inc/yomitoku-client/blob/main/notebooks/yomitoku-pro-table-semantic-parser.ipynb)).
 * 📖 **[Documentation](https://mlism-inc.github.io/yomitoku-client/)** – Detailed usage guide for **YomiToku-Client**.
 ---
 

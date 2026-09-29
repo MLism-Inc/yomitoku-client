@@ -13,12 +13,15 @@ from .utils import (
     parse_formats,
     parse_model,
     parse_pages,
+    resolve_tsp_options,
+    tsp_options,
     validate_formats,
     visualize_model,
 )
 
 
 @click.command("single")
+@tsp_options
 @click.argument("input_path", type=click.Path(exists=True))
 @click.option(
     "--endpoint",
@@ -170,7 +173,11 @@ def single_command(
     read_timeout,
     connect_timeout,
     max_retries,
+    raw,
+    simple,
+    template,
 ):
+    output_mode = resolve_tsp_options(api, raw, simple, template)
     page_index = None
     if pages is not None:
         page_index = parse_pages(pages)
@@ -236,6 +243,8 @@ def single_command(
         page_index=page_index,
         dpi=dpi,
         ignore_line_break=ignore_line_break,
+        output_mode=output_mode,
+        template=template,
     )
 
     visualize_model(

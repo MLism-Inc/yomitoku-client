@@ -158,6 +158,7 @@ for case_def in "${CASES[@]}"; do
   # shellcheck disable=SC2086
   "${CLIENT_BIN}" single "${input_path}" \
     --api table-semantic-parser \
+    --raw \
     --endpoint "${ENDPOINT}" \
     ${CLIENT_AUTH_ARGS[@]+"${CLIENT_AUTH_ARGS[@]}"} \
     --file_format json \

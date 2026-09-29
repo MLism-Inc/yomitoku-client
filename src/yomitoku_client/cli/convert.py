@@ -3,10 +3,20 @@ from pathlib import Path
 
 import click
 
-from yomitoku_client import parse_pydantic_model
+from yomitoku_client.constants import (
+    API_DOCUMENT_ANALYZER,
+    API_TABLE_SEMANTIC_PARSER,
+    SUPPORT_API,
+)
 from yomitoku_client.exceptions import DocumentAnalysisError
 
-from .utils import parse_formats, parse_pages
+from .utils import (
+    parse_formats,
+    parse_model,
+    parse_pages,
+    resolve_tsp_options,
+    tsp_options,
+)
 
 CONVERT_FORMATS = {"md", "csv", "html"}
 
@@ -41,12 +51,21 @@ def convert_file(
     dpi: int = 200,
     ignore_line_break: bool = False,
     overwrite: bool = False,
+    api: str = API_DOCUMENT_ANALYZER,
+    output_mode: str = "structured",
+    template: str | None = None,
 ) -> list[Path]:
     """Convert one YomiToku Batch Transform JSON output."""
     try:
         with input_path.open(encoding="utf-8") as f:
             raw_result = json.load(f)
-        model = parse_pydantic_model(raw_result)
+        if api == API_TABLE_SEMANTIC_PARSER and (
+            isinstance(raw_result, list)
+            or isinstance(raw_result, dict)
+            and "result" not in raw_result
+        ):
+            raw_result = {"result": raw_result}
+        model = parse_model(raw_result, api)
     except (OSError, json.JSONDecodeError, DocumentAnalysisError) as e:
         raise click.ClickException(f"Failed to read {input_path}: {e}") from e
 
@@ -54,6 +73,43 @@ def convert_file(
     base = output_dir / _output_stem(input_path)
     source_path = _find_source(input_path, src)
     outputs = []
+
+    if api == API_TABLE_SEMANTIC_PARSER:
+        if formats != ["json"]:
+            raise click.ClickException("table-semantic-parser supports only: json")
+        output_path = Path(f"{base}.json")
+        indices = list(model.pages) if page_index is None else page_index
+        outputs = (
+            [output_path]
+            if split_mode == "combine"
+            else [
+                output_path.with_name(f"{output_path.stem}_page_{idx}.json")
+                for idx in indices
+            ]
+        )
+        for path in outputs:
+            if path.resolve() == input_path.resolve():
+                raise click.ClickException(
+                    "Choose --output-dir to avoid replacing the input JSON."
+                )
+            if path.exists() and not overwrite:
+                raise click.ClickException(
+                    f"Output already exists: {path}. Use --overwrite to replace it."
+                )
+        try:
+            if template:
+                model.load_template_json(template)
+            model.to_json(
+                str(output_path),
+                mode=split_mode,
+                page_index=page_index,
+                output_mode=output_mode,
+            )
+        except (ValueError, OSError, KeyError) as error:
+            raise click.ClickException(
+                f"Failed to export TSP result: {error}"
+            ) from error
+        return outputs
 
     for output_format in formats:
         output_path = base.with_suffix(f".{output_format}")
@@ -90,6 +146,14 @@ def convert_file(
 
 
 @click.command("convert")
+@tsp_options
+@click.option(
+    "--api",
+    "-a",
+    type=click.Choice(SUPPORT_API),
+    default=API_DOCUMENT_ANALYZER,
+    show_default=True,
+)
 @click.argument(
     "input_path",
     type=click.Path(exists=True, path_type=Path),
@@ -98,9 +162,8 @@ def convert_file(
     "--format",
     "formats",
     "-f",
-    default="md",
-    show_default=True,
-    help="Comma-separated output formats: md,csv,html",
+    default=None,
+    help="Output formats: md,csv,html (default: md); TSP: json (default).",
 )
 @click.option(
     "--output-dir",
@@ -135,16 +198,25 @@ def convert_command(
     dpi: int,
     ignore_line_break: bool,
     overwrite: bool,
+    api: str,
+    raw: bool,
+    simple: bool,
+    template: str | None,
 ):
-    """Convert saved Batch Transform .out JSON to other formats."""
+    """Convert saved Batch Transform output or raw TSP JSON locally."""
+    output_mode = resolve_tsp_options(api, raw, simple, template)
+    formats = formats or ("json" if api == API_TABLE_SEMANTIC_PARSER else "md")
     try:
         parsed_formats = parse_formats(formats)
     except ValueError as e:
         raise click.BadParameter(str(e), param_hint="--format") from e
 
-    unsupported = set(parsed_formats) - CONVERT_FORMATS
+    supported_formats = (
+        {"json"} if api == API_TABLE_SEMANTIC_PARSER else CONVERT_FORMATS
+    )
+    unsupported = set(parsed_formats) - supported_formats
     if unsupported:
-        supported = ", ".join(sorted(CONVERT_FORMATS))
+        supported = ", ".join(sorted(supported_formats))
         raise click.BadParameter(
             f"convert supports only: {supported}", param_hint="--format"
         )
@@ -152,13 +224,27 @@ def convert_command(
     page_index = parse_pages(pages) if pages is not None else None
     if input_path.is_dir():
         inputs = sorted(input_path.rglob("*.out"))
+        if api == API_TABLE_SEMANTIC_PARSER:
+            inputs += sorted(input_path.rglob("*.json"))
         target_dir = output_dir or input_path / "converted"
+        if api == API_TABLE_SEMANTIC_PARSER:
+            target = target_dir.resolve()
+            inputs = [
+                path
+                for path in inputs
+                if (
+                    target == input_path.resolve()
+                    or target not in path.resolve().parents
+                )
+                and (template is None or path.resolve() != Path(template).resolve())
+            ]
     else:
         inputs = [input_path]
         target_dir = output_dir or input_path.parent
 
     if not inputs:
-        raise click.ClickException(f"No .out files found under {input_path}")
+        extensions = ".out/.json" if api == API_TABLE_SEMANTIC_PARSER else ".out"
+        raise click.ClickException(f"No {extensions} files found under {input_path}")
 
     generated = []
     for path in inputs:
@@ -173,6 +259,9 @@ def convert_command(
                 dpi=dpi,
                 ignore_line_break=ignore_line_break,
                 overwrite=overwrite,
+                api=api,
+                output_mode=output_mode,
+                template=template,
             )
         )
 
