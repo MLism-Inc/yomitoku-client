@@ -416,7 +416,7 @@ def test_configure_warns_when_product_is_not_specified(
     arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/da"
 
     result = runner.invoke(sagemaker, ["configure"], input=f"{arn}\n")
-    assert "Warning: --product is not specified" in result.stderr
+    assert "Warning: --product is not specified" in result.output
 
     # 明示したときは警告しない
     result = runner.invoke(
@@ -424,7 +424,7 @@ def test_configure_warns_when_product_is_not_specified(
         ["configure", "--product", "da"],
         input=f"{arn}\n",
     )
-    assert "Warning: --product is not specified" not in result.stderr
+    assert "Warning: --product is not specified" not in result.output
 
 
 def test_configure_rejects_unknown_product(
@@ -436,5 +436,5 @@ def test_configure_rejects_unknown_product(
     result = runner.invoke(sagemaker, ["configure", "--product", "tsp2"])
 
     assert result.exit_code == 2
-    assert "'tsp2' is not one of" in result.stderr
+    assert "'tsp2' is not one of" in result.output
     assert not (mock_home_dir / ".yomitoku" / "config.json").exists()

@@ -390,12 +390,14 @@ def test_single_command_warns_when_api_is_not_specified(
         "none",
     ]
 
+    # NOTE: click 8.1 では CliRunner が stdout/stderr を混ぜるため、
+    # どちらのバージョンでも中身を見られる result.output で検証する
     result = runner.invoke(single_command, args)
-    assert "Warning: --api is not specified" in result.stderr
+    assert "Warning: --api is not specified" in result.output
 
     # 明示したときは警告しない
     result = runner.invoke(single_command, [*args, "--api", "da"])
-    assert "Warning: --api is not specified" not in result.stderr
+    assert "Warning: --api is not specified" not in result.output
 
 
 def test_single_rejects_unknown_api(monkeypatch, runner):
@@ -412,5 +414,5 @@ def test_single_rejects_unknown_api(monkeypatch, runner):
     )
 
     assert result.exit_code == 2
-    assert "'tsq' is not one of" in result.stderr
-    assert "table-semantic-parser" in result.stderr
+    assert "'tsq' is not one of" in result.output
+    assert "table-semantic-parser" in result.output
