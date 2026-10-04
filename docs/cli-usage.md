@@ -12,7 +12,7 @@ SageMaker 上の YomiToku エンドポイントにアクセスし、ドキュメ
     省略した場合はこれまでどおり文書解析API（`document-analyzer`）として動作し、
     確認のための警告を表示します。
 
-    入力を短くするための短縮名も利用できます。
+    入力を短くするための短縮名も利用できます（本ドキュメントの例では正式名を使用しています）。
 
     | 短縮名 | 正式名 |
     | --- | --- |
@@ -38,7 +38,7 @@ JSONに加えて、CSV、HTML、Markdown、Searchable PDFへの変換と、OCR�
 #### クイックスタート
 
 ```bash
-yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
+yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} --api document-analyzer -f md -o demo
 ```
 
 | 引数             | 説明                                                         |
@@ -56,6 +56,7 @@ yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o de
 > yomitoku-client single samples/demo.pdf \
 >   -e yomitoku-endpoint \
 >   -r ap-northeast-1 \
+>   --api document-analyzer \
 >   -f md \
 >   -o output/
 > ```
@@ -105,13 +106,13 @@ yomitoku-client single --help
 
 !!! tip "よく使う組み合わせ"
     - Markdown 形式とCSVで解析結果を保存する：
-    `yomitoku-client single invoice.pdf -e yomitoku-endpoint -f md,csv`
+    `yomitoku-client single invoice.pdf -e yomitoku-endpoint --api document-analyzer -f md,csv`
     - OCR 結果を PDF に埋め込み可視化する：
-    `yomitoku-client single report.pdf -e yomitoku-endpoint -f pdf -v both`
+    `yomitoku-client single report.pdf -e yomitoku-endpoint --api document-analyzer -f pdf -v both`
     - 中間JSONも同時に保存する：
-    `yomitoku-client single form.png -e yomitoku-endpoint -f csv --intermediate_save`
+    `yomitoku-client single form.png -e yomitoku-endpoint --api document-analyzer -f csv --intermediate_save`
     - 特定ページのみを解析：
-    `yomitoku-client single book.pdf -e yomitoku-endpoint --pages "1,2-5"`
+    `yomitoku-client single book.pdf -e yomitoku-endpoint --api document-analyzer --pages "1,2-5"`
 ---
 
 #### 🧾 補足
@@ -132,7 +133,7 @@ yomitoku-client single --help
 #### クイックスタート
 
 ```bash
-yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${region} -f md
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${region} --api document-analyzer -f md
 ```
 
 | 引数                  | 説明                                                         |
@@ -152,6 +153,7 @@ yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${
 >   -o ./results \
 >   -e yomitoku-endpoint \
 >   -r ap-northeast-1 \
+>   --api document-analyzer \
 >   -f md
 > ```
 
@@ -200,13 +202,13 @@ yomitoku-client batch --help
 
 !!! tip "よく使う組み合わせ"
     - Markdown 形式とSearchable-PDFで全ファイルを一括解析する：
-    `yomitoku-client batch -i ./docs -o ./out -e yomitoku-endpoint -f md,pdf`
+    `yomitoku-client batch -i ./docs -o ./out -e yomitoku-endpoint --api document-analyzer -f md,pdf`
     - OCR 結果を PDF に可視化して出力する：
-    `yomitoku-client batch -i ./input -o ./vis -e yomitoku-endpoint -f pdf -v both`
+    `yomitoku-client batch -i ./input -o ./vis -e yomitoku-endpoint --api document-analyzer -f pdf -v both`
     - CSV 出力で構造化データとして保存する：
-    `yomitoku-client batch -i ./forms -o ./csv -e yomitoku-endpoint -f csv`
+    `yomitoku-client batch -i ./forms -o ./csv -e yomitoku-endpoint --api document-analyzer -f csv`
     - 特定ページのみを対象に解析：
-    `yomitoku-client batch -i ./pdfs -o ./out -e yomitoku-endpoint --pages 0,2-4`
+    `yomitoku-client batch -i ./pdfs -o ./out -e yomitoku-endpoint --api document-analyzer --pages 0,2-4`
 
 ---
 
@@ -226,7 +228,7 @@ yomitoku-client batch --help
 #### クイックスタート
 
 ```bash
-yomitoku-client convert document.pdf.out --format md,csv,html --output-dir ./converted
+yomitoku-client convert document.pdf.out --api document-analyzer --format md,csv,html --output-dir ./converted
 ```
 
 出力先には元文書の拡張子と`.out`を除いた名前でファイルが生成されます。
@@ -240,7 +242,7 @@ converted/document.html
 ディレクトリを指定すると、配下の`.out`を一括変換できます。
 
 ```bash
-yomitoku-client convert ./batch-output --format md,csv --output-dir ./converted
+yomitoku-client convert ./batch-output --api document-analyzer --format md,csv --output-dir ./converted
 ```
 
 #### 図の画像を出力する
@@ -249,6 +251,7 @@ MarkdownまたはHTMLへ図の切り出し画像を含める場合は、元画�
 
 ```bash
 yomitoku-client convert document.pdf.out \
+  --api document-analyzer \
   --format md,html \
   --src document.pdf \
   --output-dir ./converted

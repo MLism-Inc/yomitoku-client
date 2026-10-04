@@ -46,6 +46,7 @@ flowchart LR
 
 ```bash
 yomitoku-client convert document.pdf.out \
+  --api document-analyzer \
   --format md,csv,html \
   --output-dir ./converted
 ```
@@ -54,6 +55,7 @@ yomitoku-client convert document.pdf.out \
 
 ```bash
 yomitoku-client convert document.pdf.out \
+  --api document-analyzer \
   --format md,html \
   --src document.pdf \
   --output-dir ./converted
