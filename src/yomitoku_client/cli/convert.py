@@ -6,16 +6,17 @@ import click
 from yomitoku_client.constants import (
     API_DOCUMENT_ANALYZER,
     API_TABLE_SEMANTIC_PARSER,
-    SUPPORT_API,
 )
 from yomitoku_client.exceptions import DocumentAnalysisError
 
 from .utils import (
+    api_option,
     parse_formats,
     parse_model,
     parse_pages,
     resolve_tsp_options,
     tsp_options,
+    warn_if_api_unspecified,
 )
 
 CONVERT_FORMATS = {"md", "csv", "html"}
@@ -160,13 +161,7 @@ def convert_file(
 
 @click.command("convert")
 @tsp_options
-@click.option(
-    "--api",
-    "-a",
-    type=click.Choice(SUPPORT_API),
-    default=API_DOCUMENT_ANALYZER,
-    show_default=True,
-)
+@api_option
 @click.argument(
     "input_path",
     type=click.Path(exists=True, path_type=Path),
@@ -218,6 +213,8 @@ def convert_command(
     studio_template: str | None,
 ):
     """Convert saved Batch Transform output or raw TSP JSON locally."""
+    warn_if_api_unspecified(api)
+
     output_mode = resolve_tsp_options(api, raw, simple, template, studio_template)
     formats = formats or ("json" if api == API_TABLE_SEMANTIC_PARSER else "md")
     try:

@@ -386,3 +386,55 @@ def test_deploy_no_arn_fails(runner: CliRunner):
 
     assert result.exit_code == 1
     assert "Model Package ARN for 'document-analyzer' is not specified" in result.output
+
+
+def test_configure_accepts_product_alias(
+    runner: CliRunner,
+    mock_home_dir: Path,
+    mock_boto3_session,  # noqa: ARG001
+):
+    """--product tsp-lite のような短縮名を受け付ける"""
+    arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/tsp-lite"
+
+    result = runner.invoke(
+        sagemaker,
+        ["configure", "--product", "tsp-lite"],
+        input=f"{arn}\n",
+    )
+
+    assert result.exit_code == 0, result.output
+    products = _read_config(mock_home_dir)["sagemaker"]["products"]
+    assert products["table-semantic-parser-lite"]["model_package_arn"] == arn
+
+
+def test_configure_warns_when_product_is_not_specified(
+    runner: CliRunner,
+    mock_home_dir: Path,  # noqa: ARG001
+    mock_boto3_session,  # noqa: ARG001
+):
+    """--product を省略すると既定値が使われることを警告する"""
+    arn = "arn:aws:sagemaker:ap-northeast-1:123456789012:model-package/da"
+
+    result = runner.invoke(sagemaker, ["configure"], input=f"{arn}\n")
+    assert "Warning: --product is not specified" in result.stderr
+
+    # 明示したときは警告しない
+    result = runner.invoke(
+        sagemaker,
+        ["configure", "--product", "da"],
+        input=f"{arn}\n",
+    )
+    assert "Warning: --product is not specified" not in result.stderr
+
+
+def test_configure_rejects_unknown_product(
+    runner: CliRunner,
+    mock_home_dir: Path,
+    mock_boto3_session,  # noqa: ARG001
+):
+    """未知の --product 値は設定を保存せずエラーにする"""
+    result = runner.invoke(sagemaker, ["configure", "--product", "tsp2"])
+
+    assert result.exit_code == 2
+    assert "'tsp2' is not one of" in result.stderr
+    assert not (mock_home_dir / ".yomitoku" / "config.json").exists()
