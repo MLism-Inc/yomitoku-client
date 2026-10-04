@@ -42,6 +42,12 @@ API_DOCUMENT_ANALYZER = "document-analyzer"
 API_TABLE_SEMANTIC_PARSER = "table-semantic-parser"
 SUPPORT_API = [API_DOCUMENT_ANALYZER, API_TABLE_SEMANTIC_PARSER]
 
+# 短縮名。毎回 table-semantic-parser と打たずに済むようにする
+API_ALIASES = {
+    "da": API_DOCUMENT_ANALYZER,
+    "tsp": API_TABLE_SEMANTIC_PARSER,
+}
+
 # Table Semantic Parser results are saved as the API returns them
 SUPPORT_TSP_OUTPUT_FORMAT = ["json"]
 

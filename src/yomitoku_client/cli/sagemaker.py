@@ -7,6 +7,8 @@ import click
 from yomitoku_client.sagemaker import SagemakerManager
 from yomitoku_client.utils import load_config, save_config
 
+from .utils import AliasedChoice, warn_if_product_unspecified
+
 DEFAULT_REGION = "ap-northeast-1"
 
 
@@ -50,6 +52,14 @@ PRODUCTS: dict[str, SagemakerProduct] = {
     ),
 }
 
+# 短縮名。毎回 table-semantic-parser-lite などと打たずに済むようにする
+PRODUCT_ALIASES = {
+    "da": DEFAULT_PRODUCT,
+    "da-lite": LITE_PRODUCT,
+    "tsp": TABLE_SEMANTIC_PARSER_PRODUCT,
+    "tsp-lite": TABLE_SEMANTIC_PARSER_LITE_PRODUCT,
+}
+
 INSTANCE_TYPES = [
     "ml.g4dn.xlarge",
     "ml.g5.xlarge",
@@ -61,12 +71,13 @@ INSTANCE_TYPES = [
 
 def product_option(func):
     """--product オプションを付与するデコレータ"""
+    aliases = ", ".join(PRODUCT_ALIASES)
     return click.option(
         "--product",
-        type=click.Choice(list(PRODUCTS)),
+        type=AliasedChoice(list(PRODUCTS), PRODUCT_ALIASES),
         default=DEFAULT_PRODUCT,
         show_default=True,
-        help="AWS Marketplace product to operate on.",
+        help=f"AWS Marketplace product to operate on. Aliases: {aliases}",
     )(func)
 
 
@@ -123,6 +134,8 @@ def configure(product, profile, region):
     """
     Configure the Model Package ARN for SageMaker deployment.
     """
+    warn_if_product_unspecified(product)
+
     region = (
         boto3.Session(profile_name=profile, region_name=region).region_name
         or DEFAULT_REGION
@@ -194,6 +207,8 @@ def deploy(
     """
     Create a new stack or update an existing one.
     """
+    warn_if_product_unspecified(product)
+
     deploy_model_package_arn = model_package_arn or _load_model_package_arn(product)
 
     if not deploy_model_package_arn:

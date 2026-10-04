@@ -6,9 +6,9 @@ import click
 
 from yomitoku_client import YomitokuClient
 from yomitoku_client.client import CircuitConfig, RequestConfig
-from yomitoku_client.constants import API_DOCUMENT_ANALYZER, SUPPORT_API
 
 from .utils import (
+    api_option,
     export_model,
     parse_formats,
     parse_model,
@@ -17,6 +17,7 @@ from .utils import (
     tsp_options,
     validate_formats,
     visualize_model,
+    warn_if_api_unspecified,
 )
 
 
@@ -37,14 +38,7 @@ from .utils import (
     default=None,
     help="AWS region name",
 )
-@click.option(
-    "--api",
-    "-a",
-    type=click.Choice(SUPPORT_API),
-    default=API_DOCUMENT_ANALYZER,
-    show_default=True,
-    help="API served by the endpoint",
-)
+@api_option
 @click.option(
     "--file_format",
     "-f",
@@ -179,6 +173,8 @@ def single_command(
     studio_template,
 ):
     output_mode = resolve_tsp_options(api, raw, simple, template, studio_template)
+    warn_if_api_unspecified(api)
+
     page_index = None
     if pages is not None:
         page_index = parse_pages(pages)

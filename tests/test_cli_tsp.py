@@ -333,3 +333,86 @@ def test_batch_tsp_modes(monkeypatch, tmp_path, tsp_api_result, options):
         assert saved["tables"][0]["kv_items"]["氏名"] == "山田太郎"
     else:
         assert saved["tables"][0]["cells"]["c0"]["contents"] == "氏 名"
+
+
+def test_single_command_accepts_api_alias(
+    monkeypatch,
+    tmp_path: Path,
+    runner,
+    tsp_api_result,
+):
+    """--api tsp のような短縮名を受け付ける"""
+    _patch_yomitoku_client(monkeypatch, tsp_api_result)
+
+    output_dir = tmp_path / "out"
+    result = runner.invoke(
+        single_command,
+        [
+            str(DATA_DIR / "image.pdf"),
+            "--endpoint",
+            "tsp-endpoint",
+            "--api",
+            "tsp",
+            "--raw",
+            "--file_format",
+            "json",
+            "--output_dir",
+            str(output_dir),
+            "--vis_mode",
+            "none",
+        ],
+    )
+
+    # 正式名を指定したときと同じく TSP として解析される
+    assert result.exit_code == 0, result.output
+    saved = json.loads((output_dir / "image.json").read_text("utf-8"))
+    assert saved[0]["tables"][0]["cells"]["c0"]["contents"] == "氏 名"
+
+
+def test_single_command_warns_when_api_is_not_specified(
+    monkeypatch,
+    tmp_path: Path,
+    runner,
+    tsp_api_result,
+):
+    """--api を省略すると既定値が使われることを警告する"""
+    _patch_yomitoku_client(monkeypatch, tsp_api_result)
+
+    args = [
+        str(DATA_DIR / "image.pdf"),
+        "--endpoint",
+        "some-endpoint",
+        "--file_format",
+        "json",
+        "--output_dir",
+        str(tmp_path / "out"),
+        "--vis_mode",
+        "none",
+    ]
+
+    # NOTE: click 8.1 では CliRunner が stdout/stderr を混ぜるため、
+    # どちらのバージョンでも中身を見られる result.output で検証する
+    result = runner.invoke(single_command, args)
+    assert "Warning: --api is not specified" in result.output
+
+    # 明示したときは警告しない
+    result = runner.invoke(single_command, [*args, "--api", "da"])
+    assert "Warning: --api is not specified" not in result.output
+
+
+def test_single_rejects_unknown_api(monkeypatch, runner):
+    """未知の --api 値はエンドポイントを呼ぶ前にエラーにする"""
+
+    def unexpected_client(**_kwargs):
+        pytest.fail("Invalid --api should not invoke AWS")
+
+    monkeypatch.setattr(single_module, "YomitokuClient", unexpected_client)
+
+    result = runner.invoke(
+        single_command,
+        [str(DATA_DIR / "image.pdf"), "-e", "test", "--api", "tsq"],
+    )
+
+    assert result.exit_code == 2
+    assert "'tsq' is not one of" in result.output
+    assert "table-semantic-parser" in result.output

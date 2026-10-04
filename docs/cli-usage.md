@@ -5,9 +5,29 @@ SageMaker 上の YomiToku エンドポイントにアクセスし、ドキュメ
 
 ---
 
+!!! tip "`--api`・`--product`の指定を推奨します"
+    Lite版やTable Semantic Parserの提供により、利用できるAPIとモデルの種類が増えました。
+    どのAPI・製品を利用するかを指定していただくと、エンドポイントと設定の取り違えを防げます。
+
+    省略した場合はこれまでどおり文書解析API（`document-analyzer`）として動作し、
+    確認のための警告を表示します。
+
+    入力を短くするための短縮名も利用できます（本ドキュメントの例では正式名を使用しています）。
+
+    | 短縮名 | 正式名 |
+    | --- | --- |
+    | `da` | `document-analyzer` |
+    | `tsp` | `table-semantic-parser` |
+    | `da-lite` | `document-analyzer-lite`（`--product`のみ） |
+    | `tsp-lite` | `table-semantic-parser-lite`（`--product`のみ） |
+
+    ```bash
+    yomitoku-client single table.jpg -e ${endpoint_name} -a tsp -f json
+    ```
+
 ## Document Analyzer
 
-文書解析APIを利用する場合は、`--api`を省略するか、`--api document-analyzer`を指定します。
+文書解析APIを利用する場合は、`--api document-analyzer`（短縮名`da`）を指定します。
 JSONに加えて、CSV、HTML、Markdown、Searchable PDFへの変換と、OCR・レイアウトの可視化を利用できます。
 
 ### 🚀　ファイル単体の処理
@@ -18,7 +38,7 @@ JSONに加えて、CSV、HTML、Markdown、Searchable PDFへの変換と、OCR�
 #### クイックスタート
 
 ```bash
-yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o demo
+yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} --api document-analyzer -f md -o demo
 ```
 
 | 引数             | 説明                                                         |
@@ -26,7 +46,7 @@ yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o de
 | `${path_file}` | 解析対象のファイルパスを指定します。 *(必須)*                                  |
 | `-e`           | SageMaker のエンドポイント名を指定します。 *(必須)*                          |
 | `-r`           | AWS のリージョン名を指定します。                                         |
-| `-a`           | エンドポイントが提供する API を指定します。<br>`document-analyzer`（既定） / `table-semantic-parser` |
+| `-a`           | エンドポイントが提供する API を指定します。<br>`document-analyzer`（`da`） / `table-semantic-parser`（`tsp`）<br>省略時は`document-analyzer`として動作します（確認のための警告を表示） |
 | `-f`           | 出力フォーマットを指定します。<br>対応形式：`json`, `csv`, `html`, `md`, `pdf` |
 | `-o`           | 解析結果を保存する出力先ディレクトリを指定します。                                  |
 
@@ -36,6 +56,7 @@ yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md -o de
 > yomitoku-client single samples/demo.pdf \
 >   -e yomitoku-endpoint \
 >   -r ap-northeast-1 \
+>   --api document-analyzer \
 >   -f md \
 >   -o output/
 > ```
@@ -58,7 +79,7 @@ yomitoku-client single --help
 | --------------------- | ---------------------------------------- | ------------------------------------------------------------ |
 | `-e, --endpoint`      | `TEXT`                                   | **SageMaker のエンドポイント名（必須）**                                  |
 | `-r, --region`        | `TEXT`                                   | AWS リージョン名（例：`ap-northeast-1`）                               |
-| `-a, --api`           | `[document-analyzer / table-semantic-parser]` | エンドポイントが提供する API（既定：`document-analyzer`）<br>`table-semantic-parser` の出力は `json` のみ |
+| `-a, --api`           | `[document-analyzer / table-semantic-parser]` | エンドポイントが提供する API。短縮名 `da` / `tsp` が使えます<br>省略時は `document-analyzer` として動作します（確認のための警告を表示）<br>`table-semantic-parser` の出力は `json` のみ |
 | `-f, --file_format`   | `TEXT（カンマ区切りで複数指定可）`<br>例：`json,csv,pdf` | 解析結果の出力フォーマット（`json` / `csv` / `html` / `md` / `pdf`）を複数指定可能 |
 | `-o, --output_dir`    | `PATH`                                   | 解析結果を保存するディレクトリパス                                            |
 | `--dpi`               | `INTEGER`                                | 画像解析時の解像度（DPI）                                               |
@@ -85,13 +106,13 @@ yomitoku-client single --help
 
 !!! tip "よく使う組み合わせ"
     - Markdown 形式とCSVで解析結果を保存する：
-    `yomitoku-client single invoice.pdf -e yomitoku-endpoint -f md,csv`
+    `yomitoku-client single invoice.pdf -e yomitoku-endpoint --api document-analyzer -f md,csv`
     - OCR 結果を PDF に埋め込み可視化する：
-    `yomitoku-client single report.pdf -e yomitoku-endpoint -f pdf -v both`
+    `yomitoku-client single report.pdf -e yomitoku-endpoint --api document-analyzer -f pdf -v both`
     - 中間JSONも同時に保存する：
-    `yomitoku-client single form.png -e yomitoku-endpoint -f csv --intermediate_save`
+    `yomitoku-client single form.png -e yomitoku-endpoint --api document-analyzer -f csv --intermediate_save`
     - 特定ページのみを解析：
-    `yomitoku-client single book.pdf -e yomitoku-endpoint --pages "1,2-5"`
+    `yomitoku-client single book.pdf -e yomitoku-endpoint --api document-analyzer --pages "1,2-5"`
 ---
 
 #### 🧾 補足
@@ -112,7 +133,7 @@ yomitoku-client single --help
 #### クイックスタート
 
 ```bash
-yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${region} -f md
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${region} --api document-analyzer -f md
 ```
 
 | 引数                  | 説明                                                         |
@@ -121,7 +142,7 @@ yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${
 | `-o, --output_dir`  | 解析結果を保存するディレクトリを指定します。 *(必須)*                              |
 | `-e, --endpoint`    | SageMaker のエンドポイント名を指定します。 *(必須)*                          |
 | `-r, --region`      | AWS のリージョン名を指定します。                                         |
-| `-a, --api`         | エンドポイントが提供する API を指定します。<br>`document-analyzer`（既定） / `table-semantic-parser` |
+| `-a, --api`         | エンドポイントが提供する API を指定します。<br>`document-analyzer`（`da`） / `table-semantic-parser`（`tsp`）<br>省略時は`document-analyzer`として動作します（確認のための警告を表示） |
 | `-f, --file_format` | 出力フォーマットを指定します。<br>対応形式：`json`, `csv`, `html`, `md`, `pdf` |
 
 > **例**
@@ -132,6 +153,7 @@ yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint_name} -r ${
 >   -o ./results \
 >   -e yomitoku-endpoint \
 >   -r ap-northeast-1 \
+>   --api document-analyzer \
 >   -f md
 > ```
 
@@ -155,7 +177,7 @@ yomitoku-client batch --help
 | `-o, --output_dir`    | `PATH`                                   | **解析結果を保存する出力先ディレクトリのパス（必須）**                           |
 | `-e, --endpoint`      | `TEXT`                                   | **SageMaker のエンドポイント名（必須）**                             |
 | `-r, --region`        | `TEXT`                                   | AWS リージョン名（例：`ap-northeast-1`）                          |
-| `-a, --api`           | `[document-analyzer / table-semantic-parser]` | エンドポイントが提供する API（既定：`document-analyzer`）<br>`table-semantic-parser` の出力は `json` のみ |
+| `-a, --api`           | `[document-analyzer / table-semantic-parser]` | エンドポイントが提供する API。短縮名 `da` / `tsp` が使えます<br>省略時は `document-analyzer` として動作します（確認のための警告を表示）<br>`table-semantic-parser` の出力は `json` のみ |
 | `-f, --file_format`   | `TEXT（カンマ区切りで複数指定可）`<br>例：`json,csv,pdf` | 出力フォーマット（`json` / `csv` / `html` / `md` / `pdf`）を複数指定可能 |
 | `--dpi`               | `INTEGER`                                | 画像解析時の DPI（解像度）                                         |
 | `-p, --profile`       | `TEXT`                                   | 使用する AWS CLI プロファイル名                                    |
@@ -180,13 +202,13 @@ yomitoku-client batch --help
 
 !!! tip "よく使う組み合わせ"
     - Markdown 形式とSearchable-PDFで全ファイルを一括解析する：
-    `yomitoku-client batch -i ./docs -o ./out -e yomitoku-endpoint -f md,pdf`
+    `yomitoku-client batch -i ./docs -o ./out -e yomitoku-endpoint --api document-analyzer -f md,pdf`
     - OCR 結果を PDF に可視化して出力する：
-    `yomitoku-client batch -i ./input -o ./vis -e yomitoku-endpoint -f pdf -v both`
+    `yomitoku-client batch -i ./input -o ./vis -e yomitoku-endpoint --api document-analyzer -f pdf -v both`
     - CSV 出力で構造化データとして保存する：
-    `yomitoku-client batch -i ./forms -o ./csv -e yomitoku-endpoint -f csv`
+    `yomitoku-client batch -i ./forms -o ./csv -e yomitoku-endpoint --api document-analyzer -f csv`
     - 特定ページのみを対象に解析：
-    `yomitoku-client batch -i ./pdfs -o ./out -e yomitoku-endpoint --pages 0,2-4`
+    `yomitoku-client batch -i ./pdfs -o ./out -e yomitoku-endpoint --api document-analyzer --pages 0,2-4`
 
 ---
 
@@ -206,7 +228,7 @@ yomitoku-client batch --help
 #### クイックスタート
 
 ```bash
-yomitoku-client convert document.pdf.out --format md,csv,html --output-dir ./converted
+yomitoku-client convert document.pdf.out --api document-analyzer --format md,csv,html --output-dir ./converted
 ```
 
 出力先には元文書の拡張子と`.out`を除いた名前でファイルが生成されます。
@@ -220,7 +242,7 @@ converted/document.html
 ディレクトリを指定すると、配下の`.out`を一括変換できます。
 
 ```bash
-yomitoku-client convert ./batch-output --format md,csv --output-dir ./converted
+yomitoku-client convert ./batch-output --api document-analyzer --format md,csv --output-dir ./converted
 ```
 
 #### 図の画像を出力する
@@ -229,6 +251,7 @@ MarkdownまたはHTMLへ図の切り出し画像を含める場合は、元画�
 
 ```bash
 yomitoku-client convert document.pdf.out \
+  --api document-analyzer \
   --format md,html \
   --src document.pdf \
   --output-dir ./converted

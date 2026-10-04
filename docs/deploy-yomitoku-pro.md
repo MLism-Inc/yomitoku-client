@@ -59,12 +59,16 @@ YomiToku-ProをAWS Marketplaceを通してデプロイするには、次の３�
 !!! important "通常版とLite版は別のMarketplace製品です"
     YomiToku-Pro通常版とYomiToku-Pro Lite版はMarketplaceのサブスクリプションが分かれており、モデルパッケージARNも異なります。使用する製品をそれぞれサブスクライブし、通常版を使う場合は通常版のARN、Lite版を使う場合はLite版のARNを取得してください。
 
-| `--product` | 対象製品 |
-| --- | --- |
-| `document-analyzer`（デフォルト） | [YomiToku-Pro - Document Analyzer（通常版）](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi) |
-| `document-analyzer-lite` | [YomiToku-Pro - Document Analyzer Lite](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe) |
-| `table-semantic-parser` | [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6) |
-| `table-semantic-parser-lite` | YomiToku-Pro Lite - Table Semantic Parser（Lite版） |
+提供する製品が増えたため、利用する製品を`--product`で指定することを推奨します。
+省略した場合は`document-analyzer`として動作し、確認のための警告を表示します。
+短縮名（`da` / `da-lite` / `tsp` / `tsp-lite`）も利用できます。
+
+| `--product` | 短縮名 | 対象製品 |
+| --- | --- | --- |
+| `document-analyzer`（デフォルト） | `da` | [YomiToku-Pro - Document Analyzer（通常版）](https://aws.amazon.com/marketplace/pp/prodview-64qkuwrqi4lhi) |
+| `document-analyzer-lite` | `da-lite` | [YomiToku-Pro - Document Analyzer Lite](https://aws.amazon.com/marketplace/pp/prodview-zh2ubewvb6hxe) |
+| `table-semantic-parser` | `tsp` | [YomiToku-Pro - Table Semantic Parser](https://aws.amazon.com/marketplace/pp/prodview-mqprrj24bp4w6) |
+| `table-semantic-parser-lite` | `tsp-lite` | YomiToku-Pro Lite - Table Semantic Parser（Lite版） |
 
 1. ターミナルで以下のコマンドを実行します。
 
@@ -172,7 +176,7 @@ yomitoku-client sagemaker deploy \
 
 | オプション | デフォルト値 | 説明 |
 | --- | --- | --- |
-| `--product` | `document-analyzer` | デプロイする製品。Lite版では`document-analyzer-lite`を指定します。 |
+| `--product` | `document-analyzer` | デプロイする製品。短縮名（`da` / `da-lite` / `tsp` / `tsp-lite`）も利用できます。指定を推奨します。 |
 | `--endpoint-name` | `yomitoku-sagemaker` | 作成するエンドポイントの名前。CloudFormationのスタック名にも利用されます。 |
 | `--instance-type` | `ml.g4dn.xlarge` | 使用するインスタンスタイプ。`ml.g4dn.xlarge`, `ml.g5.xlarge`, `ml.g6.xlarge`, `ml.c7i.xlarge`, `ml.c7i.2xlarge` が選択可能。検証用途ならデフォルトの`ml.g4dn.xlarge`で十分。性能を求める場合はg5やg6系, インフラコストの安いCPUインスタンス利用の場合はc7i系を推奨。 |
 | `--instance-count` | `1` | デプロイするインスタンス数。 |

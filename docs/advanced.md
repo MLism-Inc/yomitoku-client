@@ -13,7 +13,7 @@ SageMaker エンドポイントから取得できる API スキーマは以下�
 YomitokuClientでは、複数ページで構成されるPDFなどのデータをページ単位で分割し、Endpointに並列でリクエストを行います。並列処理のワーカーの数の設定が可能です。
 
 ```bash
-yomitoku-client batch -i ./input -o ./output -e my-endpoint --workers 8
+yomitoku-client batch -i ./input -o ./output -e my-endpoint --api document-analyzer --workers 8
 ```
 
 ### タイムアウト / リトライ処理
@@ -32,7 +32,7 @@ YomitokuClient では、Boto3 レイヤおよびクライアントレイヤの�
 **使用例**
 ```bash
 yomitoku-client batch \
-  -i ./input -o ./output -e my-endpoint \
+  -i ./input -o ./output -e my-endpoint --api document-analyzer \
   --connect_timeout 5 \
   --read_timeout 120 \
   --max_retries 5 \
@@ -57,7 +57,7 @@ YomitokuClient はこのリスクを防ぐため、**連続失敗時に一時的
 **使用例**
 ```bash
 yomitoku-client batch \
-  -i ./input -o ./output -e my-endpoint \
+  -i ./input -o ./output -e my-endpoint --api document-analyzer \
   --threthold_circuit 3 \
   --cooldown_time 60
 ```
@@ -72,7 +72,7 @@ YomiToku-Clientのバッチ処理は過去のログ情報(`${OUTPUT_DIR}/process
 
 `--overwrite`オプションを使用すると、処理の実施/未実施に関わらずフォルダ内の全ファイルを再リクエストします。
 ```bash
-yomitoku-client batch -i ./input -o ./output -e my-endpoint --overwrite
+yomitoku-client batch -i ./input -o ./output -e my-endpoint --api document-analyzer --overwrite
 ```
 
 | オプション         | 型        | 説明                            |

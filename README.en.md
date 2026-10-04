@@ -88,12 +88,12 @@ It is deployed securely within your own AWS account as a private endpoint, enabl
 ## Quick Start (CLI)
 **single file processing**
 ```bash
-yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} -f md
+yomitoku-client single ${path_file} -e ${endpoint_name} -r ${region} --api document-analyzer -f md
 ```
 
 **batch processing**
 ```bash
-yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} --api document-analyzer -f md
 ```
 
 See --help for available options.

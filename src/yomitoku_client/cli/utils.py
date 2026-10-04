@@ -1,11 +1,84 @@
 import click
+from click.core import ParameterSource
 
 from yomitoku_client import parse_pydantic_model, parse_table_semantic_parser
 from yomitoku_client.constants import (
+    API_ALIASES,
+    API_DOCUMENT_ANALYZER,
     API_TABLE_SEMANTIC_PARSER,
+    SUPPORT_API,
     SUPPORT_OUTPUT_FORMAT,
     SUPPORT_TSP_OUTPUT_FORMAT,
 )
+
+
+class AliasedChoice(click.Choice):
+    """短縮名を受け付ける Choice
+
+    ヘルプには正式名だけを出し、エイリアスは help 文で案内する。
+    """
+
+    def __init__(self, choices: list[str], aliases: dict[str, str]):
+        super().__init__(choices)
+        self.aliases = aliases
+
+    def convert(self, value, param, ctx):
+        if isinstance(value, str):
+            value = self.aliases.get(value.strip().lower(), value)
+        return super().convert(value, param, ctx)
+
+
+def warn_if_unspecified(param_name: str, option: str, value: str, hint: str) -> None:
+    """既定値のまま実行されたことを警告する
+
+    エンドポイントが提供する API / Marketplace のプロダクトを取り違えたまま
+    実行する事故を防ぐため、明示指定を促す。後方互換のため既定値は残す。
+    """
+    ctx = click.get_current_context(silent=True)
+    if ctx is None:
+        return
+    if ctx.get_parameter_source(param_name) is not ParameterSource.DEFAULT:
+        return
+
+    click.secho(
+        f"Warning: {option} is not specified; using the default '{value}'. {hint}",
+        fg="yellow",
+        err=True,
+    )
+
+
+def api_option(func):
+    """--api オプションを付与するデコレータ"""
+    aliases = ", ".join(API_ALIASES)
+    return click.option(
+        "--api",
+        "-a",
+        type=AliasedChoice(SUPPORT_API, API_ALIASES),
+        default=API_DOCUMENT_ANALYZER,
+        show_default=True,
+        help=f"API served by the endpoint. Aliases: {aliases}",
+    )(func)
+
+
+def warn_if_api_unspecified(api: str) -> None:
+    """--api を指定せずに実行したことを警告する"""
+    warn_if_unspecified(
+        "api",
+        "--api",
+        api,
+        "Specifying --api is recommended "
+        "(e.g. --api tsp for a Table Semantic Parser endpoint).",
+    )
+
+
+def warn_if_product_unspecified(product: str) -> None:
+    """--product を指定せずに実行したことを警告する"""
+    warn_if_unspecified(
+        "product",
+        "--product",
+        product,
+        "Specifying --product is recommended (e.g. --product tsp, tsp-lite).",
+    )
 
 
 def tsp_options(command):

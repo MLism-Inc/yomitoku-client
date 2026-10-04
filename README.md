@@ -88,17 +88,18 @@ flowchart LR
 ## クイックスタート(CLI)
 **ファイル単体の解析**
 ```bash
-yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} -f json
+yomitoku-client single ${path_file} -e ${endpoint} -p ${profile_name} --api document-analyzer -f json
 ```
 **バッチ処理**
 ```bash
-yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} -f md
+yomitoku-client batch -i ${input_dir} -o ${output_dir} -e ${endpoint} -p ${profile_name} --api document-analyzer -f md
 ```
 
 **Batch Transformの`.out`を変換**
 
 ```bash
 yomitoku-client convert document.pdf.out \
+  --api document-analyzer \
   --format md,csv,html \
   --output-dir ./converted
 ```
